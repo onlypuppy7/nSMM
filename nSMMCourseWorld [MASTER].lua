@@ -1,4 +1,4 @@
--- (c) onlypuppy7/chalex0 2024
+-- (c) onlypuppy7/chalex0 2025
 --This code has been indented in places where it may not look necessary, this is in order to be able to collapse entire code categories in IDEs such as VSCode. Indents do not affect syntax in Lua :>
 
 platform.apilevel = "1.0"
@@ -42,6 +42,7 @@ platform.apilevel = "1.0"
     fontLookup["/"]="_S"    --forward slash
     fontLookup[">"]="_T"    --clock/time icon
     fontLookup["+"]="_X"    --X icon
+
 --------------------------
 ----------EVENTS----------
 --------------------------

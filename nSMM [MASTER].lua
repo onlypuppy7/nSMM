@@ -15,7 +15,7 @@ platform.apilevel = '2.2'
 debug=false
 despook=0
 
--- (c) onlypuppy7/chalex0 2023
+-- (c) onlypuppy7/chalex0 2025
 --This code has been indented in places where it may not look necessary, this is in order to be able to collapse entire code categories in IDEs such as VSCode. Indents do not affect syntax in Lua :>
 
 --------------------------
@@ -546,129 +546,130 @@ despook=0
         hitProgressionMario={100, 200, 400, 500, 800, 1000, 2000, 4000, 5000, 8000} --credit mariowiki :>
         debugBoxes={}
         blockIndex={}
-        fontLookup={}           --all special characters - <>&^&@.!-+
-        fontLookup["["]="_1"    --coin icon 1
-        fontLookup["{"]="_2"    --coin icon 2
-        fontLookup["}"]="_3"    --coin icon 3
-        fontLookup["'"]="_A"    --apostrophe
-        fontLookup[")"]="_b"    --close brackets
-        fontLookup["("]="_B"    --open brackets
-        fontLookup[":"]="_c"    --colon
-        fontLookup["@"]="_C"    --copyright icon
-        fontLookup["."]="_D"    --period
-        fontLookup["="]="_e"    --equal
-        fontLookup["!"]="_E"    --exclamation mark
-        fontLookup["$"]="_h"    --home icon
-        fontLookup["-"]="_H"    --hyphen
-        fontLookup[","]="_K"    --comma
-        fontLookup["<"]="_M"    --mario icon
-        fontLookup["~"]="_N"    --back icon
-        fontLookup["^"]="_P"    --power
-        fontLookup["?"]="_Q"    --question mark
-        fontLookup[";"]="_s"    --semicolon
-        fontLookup["/"]="_S"    --forward slash
-        fontLookup[">"]="_T"    --clock/time icon
-        fontLookup["+"]="_X"    --X icon
-
-        typeIndex={}
-            typeIndex["goomb"]={"objGoomba",        "entityListInner"}
-            typeIndex["koopa"]={"objKoopa",         "entityListInner"}
-            typeIndex["Pkoop"]={"objKoopaPara",     "entityListInner"}
-            typeIndex["shell"]={"objShell",         "entityListInner"}
-            typeIndex["bulle"]={"objBulletBill",    "entityListInner"}
-            typeIndex["flame"]={"objBowserFlame",   "entityListInner"}
-            typeIndex["blast"]={"objBlaster",       "entityListInner"}
-            typeIndex["piran"]={"objPiranhaPlant",  "entityListBackground"}
-            typeIndex["bowse"]={"objBowser",        "entityListInner"}
-            typeIndex["platf"]={"objPlatform",      "entityListOuter"}
-            typeIndex["firef"]={"objPowerUp",       "entityListInner"}
-            typeIndex["mushr"]={"objPowerUp",       "entityListInner"}
-            typeIndex["Pfire"]={"objPowerUp",       "entityListInner"}
-            typeIndex["star"] ={"objPowerUp",       "entityListInner"}
-            typeIndex["coin"] ={"objCoinAnim",      "entityListOuter"}
-            typeIndex["multi"]={"objMultiCoinBlock","entityListBackground"} 
-            typeIndex["brick"]={"objBrickParticle", "entityListParticle"} 
-            typeIndex["score"]={"objScoreParticle", "entityListParticle"} 
-            typeIndex["fireb"]={"objFireball",      "entityListParticle"}
-            typeIndex["flagp"]={"objFlagpole",      "entityListBackground"}
-            typeIndex["magic"]={"objMagicOrb",      "entityListInner"}
-            typeIndex["sprin"]={"objSpring",        "entityListInner"}
-            typeIndex["event"]={"objEvent",         "entityListInner"}
-
-        nameIndex={} --this is mainly cope for not having an entity index like the block index
-            nameIndex["goomba"]=        "Goomba"
-            nameIndex["koopa_G"]=       "Koopa Troopa (Green)"
-            nameIndex["koopa_R"]=       "Koopa Troopa (Red)"
-            nameIndex["koopa_B"]=       "Buzzy Beetle"
-            nameIndex["Pkoopa_G"]=      "Koopa Paratroopa (Jumping)"
-            nameIndex["Pkoopa_R_V"]=    "Koopa Paratroopa (Vertical)"
-            nameIndex["Pkoopa_R_H"]=    "Koopa Paratroopa (Horizontal)"
-            nameIndex["Pkoopa_R_HV"]=   "Koopa Paratroopa (Horizontal, Wavering)"
-            nameIndex["Pkoopa_R"]=      "Koopa Paratroopa (Stationary)"
-            nameIndex["shell_G"]=       "Shell (Green)"
-            nameIndex["shell_R"]=       "Shell (Red)"
-            nameIndex["shell_G_-4"]=    "Shell (Green) (Slow Left)"
-            nameIndex["shell_G_4"]=     "Shell (Green) (Slow Right)"
-            nameIndex["shell_R_-6"]=    "Shell (Red) (Fast Left)"
-            nameIndex["shell_R_6"]=     "Shell (Red) (Fast Right)"
-            nameIndex["shell_B"]=       "Shell (Buzzy Beetle)"
-            nameIndex["bullet_L"]=      "Bullet (L)"
-            nameIndex["bullet_R"]=      "Bullet (R)"
-            nameIndex["blaster_L"]=     "Bullet Blaster (L)"
-            nameIndex["blaster_R"]=     "Bullet Blaster (R)"
-            nameIndex["blaster_LR"]=    "Bullet Blaster (LR)"
-            nameIndex["flame_L"]=       "Bowser's Flame (L)"
-            nameIndex["flame_R"]=       "Bowser's Flame (R)"
-            nameIndex["mushroom"]=      "Mushroom"
-            nameIndex["mushroom1up"]=   "1-up Mushroom"
-            nameIndex["star"]=          "Star"
-            nameIndex["fireflower"]=    "Fireflower"
-            nameIndex["Pfireflower"]=   "Fireflower (Progressive)"
-            nameIndex["piranhaplant_1"]="Piranha Plant (North)"
-            nameIndex["piranhaplant_2"]="Piranha Plant (East)"
-            nameIndex["piranhaplant_3"]="Piranha Plant (South)"
-            nameIndex["piranhaplant_4"]="Piranha Plant (West)"
-            nameIndex["theme0"]        ="Overworld Theme"
-            nameIndex["theme1"]        ="Underground Theme"
-            nameIndex["theme2"]        ="Night Theme"
-            nameIndex["theme3"]        ="Castle Theme"
-            nameIndex["mario"]         ="Set Start Pos"
-            nameIndex["scrollStopL"]   ="Add Scroll Stop (L)"
-            nameIndex["scrollStopR"]   ="Add Scroll Stop (R)"
-            nameIndex["scrollStopC"]   ="Remove Scroll Stop"
-            nameIndex["newwarp"]       ="Create New Warp"
-            nameIndex["warp_ID_2_1"]   ="West Facing Pipe Entrance"
-            nameIndex["warp_ID_2_2"]   ="North Facing Pipe Entrance"
-            nameIndex["warp_ID_2_3"]   ="East Facing Pipe Entrance"
-            nameIndex["warp_ID_4_1"]   ="West Facing Pipe Exit"
-            nameIndex["warp_ID_4_2"]   ="North Facing Pipe Exit"
-            nameIndex["warp_ID_4_3"]   ="East Facing Pipe Exit"
-            nameIndex["warp_ID_4_4"]   ="Teleport Exit"
-            nameIndex["warp_ID_1"]     ="Edit Entrance Type"
-            nameIndex["warp_ID_3"]     ="Edit Exit Type"
-            nameIndex["warp_ID_6"]     ="Delete Pipe"
-            nameIndex["warp_ID_7"]     ="View Entrance Pipe Position"
-            nameIndex["warp_ID_8"]     ="View Exit Pipe Position"
-            nameIndex["au"]            ="(Trigger - North)"
-            nameIndex["ad"]            ="(Trigger - South)"
-            nameIndex["ar"]            ="(Trigger - East)"
-            nameIndex["al"]            ="(Trigger - West)"
-            nameIndex["fu"]            ="(Falling - North)"
-            nameIndex["fd"]            ="(Falling - South)"
-            nameIndex["fr"]            ="(Falling - East)"
-            nameIndex["fl"]            ="(Falling - West)"
-            nameIndex["lx"]            ="(Looping - X)"
-            nameIndex["ly"]            ="(Looping - Y)"
-            nameIndex["ru"]            ="(Repeating - North)"
-            nameIndex["rd"]            ="(Repeating - South)"
-            nameIndex["flagpole"]      ="Flagpole"
-            nameIndex["magicorb_a1_m1"]="? Orb (Animation, Movement)"
-            nameIndex["magicorb_a1_m0"]="? Orb (Animation, Stationary)"
-            nameIndex["magicorb_a0_m1"]="? Orb (No Animation, Movement)"
-            nameIndex["magicorb_a0_m0"]="? Orb (No Animation, Stationary)"
-            nameIndex["spring_O"]      ="Spring (Regular)"
-            nameIndex["spring_L"]      ="Spring (Big)"
-            nameIndex["spring_R"]      ="Spring (Small)"
+        fontLookup={           --all special characters - <>&^&@.!-+
+            ["["] = "_1", --coin icon 1
+            ["{"] = "_2", --coin icon 2
+            ["}"] = "_3", --coin icon 3
+            ["'"] = "_A", --apostrophe
+            [")"] = "_b", --close brackets
+            ["("] = "_B", --open brackets
+            [":"] = "_c", --colon
+            ["@"] = "_C", --copyright icon
+            ["."] = "_D", --period
+            ["="] = "_e", --equal
+            ["!"] = "_E", --exclamation mark
+            ["$"] = "_h", --home icon
+            ["-"] = "_H", --hyphen
+            [","] = "_K", --comma
+            ["<"] = "_M", --mario icon
+            ["~"] = "_N", --back icon
+            ["^"] = "_P", --power
+            ["?"] = "_Q", --question mark
+            [";"] = "_s", --semicolon
+            ["/"] = "_S", --forward slash
+            [">"] = "_T", --clock/time icon
+            ["+"] = "_X"  --X icon
+        }
+        typeIndex={
+            ["goomb"] = {"objGoomba",        "entityListInner"},
+            ["koopa"] = {"objKoopa",         "entityListInner"},
+            ["Pkoop"] = {"objKoopaPara",     "entityListInner"},
+            ["shell"] = {"objShell",         "entityListInner"},
+            ["bulle"] = {"objBulletBill",    "entityListInner"},
+            ["flame"] = {"objBowserFlame",   "entityListInner"},
+            ["blast"] = {"objBlaster",       "entityListInner"},
+            ["piran"] = {"objPiranhaPlant",  "entityListBackground"},
+            ["bowse"] = {"objBowser",        "entityListInner"},
+            ["platf"] = {"objPlatform",      "entityListOuter"},
+            ["firef"] = {"objPowerUp",       "entityListInner"},
+            ["mushr"] = {"objPowerUp",       "entityListInner"},
+            ["Pfire"] = {"objPowerUp",       "entityListInner"},
+            ["star"]  = {"objPowerUp",       "entityListInner"},
+            ["coin"]  = {"objCoinAnim",      "entityListOuter"},
+            ["multi"] = {"objMultiCoinBlock","entityListBackground"}, 
+            ["brick"] = {"objBrickParticle", "entityListParticle"}, 
+            ["score"] = {"objScoreParticle", "entityListParticle"}, 
+            ["fireb"] = {"objFireball",      "entityListParticle"},
+            ["flagp"] = {"objFlagpole",      "entityListBackground"},
+            ["magic"] = {"objMagicOrb",      "entityListInner"},
+            ["sprin"] = {"objSpring",        "entityListInner"},
+            ["event"] = {"objEvent",         "entityListInner"}
+        }
+        nameIndex={
+            ["goomba"] =        "Goomba",
+            ["koopa_G"] =       "Koopa Troopa (Green)",
+            ["koopa_R"] =       "Koopa Troopa (Red)",
+            ["koopa_B"] =       "Buzzy Beetle",
+            ["Pkoopa_G"] =      "Koopa Paratroopa (Jumping)",
+            ["Pkoopa_R_V"] =    "Koopa Paratroopa (Vertical)",
+            ["Pkoopa_R_H"] =    "Koopa Paratroopa (Horizontal)",
+            ["Pkoopa_R_HV"] =   "Koopa Paratroopa (Horizontal, Wavering)",
+            ["Pkoopa_R"] =      "Koopa Paratroopa (Stationary)",
+            ["shell_G"] =       "Shell (Green)",
+            ["shell_R"] =       "Shell (Red)",
+            ["shell_G_-4"] =    "Shell (Green) (Slow Left)",
+            ["shell_G_4"] =     "Shell (Green) (Slow Right)",
+            ["shell_R_-6"] =    "Shell (Red) (Fast Left)",
+            ["shell_R_6"] =     "Shell (Red) (Fast Right)",
+            ["shell_B"] =       "Shell (Buzzy Beetle)",
+            ["bullet_L"] =      "Bullet (L)",
+            ["bullet_R"] =      "Bullet (R)",
+            ["blaster_L"] =     "Bullet Blaster (L)",
+            ["blaster_R"] =     "Bullet Blaster (R)",
+            ["blaster_LR"] =    "Bullet Blaster (LR)",
+            ["flame_L"] =       "Bowser's Flame (L)",
+            ["flame_R"] =       "Bowser's Flame (R)",
+            ["mushroom"] =      "Mushroom",
+            ["mushroom1up"] =   "1-up Mushroom",
+            ["star"] =          "Star",
+            ["fireflower"] =    "Fireflower",
+            ["Pfireflower"] =   "Fireflower (Progressive)",
+            ["piranhaplant_1"]="Piranha Plant (North)",
+            ["piranhaplant_2"]="Piranha Plant (East)",
+            ["piranhaplant_3"]="Piranha Plant (South)",
+            ["piranhaplant_4"]="Piranha Plant (West)",
+            ["theme0"]        ="Overworld Theme",
+            ["theme1"]        ="Underground Theme",
+            ["theme2"]        ="Night Theme",
+            ["theme3"]        ="Castle Theme",
+            ["mario"]         ="Set Start Pos",
+            ["scrollStopL"]   ="Add Scroll Stop (L)",
+            ["scrollStopR"]   ="Add Scroll Stop (R)",
+            ["scrollStopC"]   ="Remove Scroll Stop",
+            ["newwarp"]       ="Create New Warp",
+            ["warp_ID_2_1"]   ="West Facing Pipe Entrance",
+            ["warp_ID_2_2"]   ="North Facing Pipe Entrance",
+            ["warp_ID_2_3"]   ="East Facing Pipe Entrance",
+            ["warp_ID_4_1"]   ="West Facing Pipe Exit",
+            ["warp_ID_4_2"]   ="North Facing Pipe Exit",
+            ["warp_ID_4_3"]   ="East Facing Pipe Exit",
+            ["warp_ID_4_4"]   ="Teleport Exit",
+            ["warp_ID_1"]     ="Edit Entrance Type",
+            ["warp_ID_3"]     ="Edit Exit Type",
+            ["warp_ID_6"]     ="Delete Pipe",
+            ["warp_ID_7"]     ="View Entrance Pipe Position",
+            ["warp_ID_8"]     ="View Exit Pipe Position",
+            ["au"]            ="(Trigger - North)",
+            ["ad"]            ="(Trigger - South)",
+            ["ar"]            ="(Trigger - East)",
+            ["al"]            ="(Trigger - West)",
+            ["fu"]            ="(Falling - North)",
+            ["fd"]            ="(Falling - South)",
+            ["fr"]            ="(Falling - East)",
+            ["fl"]            ="(Falling - West)",
+            ["lx"]            ="(Looping - X)",
+            ["ly"]            ="(Looping - Y)",
+            ["ru"]            ="(Repeating - North)",
+            ["rd"]            ="(Repeating - South)",
+            ["flagpole"]      ="Flagpole",
+            ["magicorb_a1_m1"]="? Orb (Animation, Movement)",
+            ["magicorb_a1_m0"]="? Orb (Animation, Stationary)",
+            ["magicorb_a0_m1"]="? Orb (No Animation, Movement)",
+            ["magicorb_a0_m0"]="? Orb (No Animation, Stationary)",
+            ["spring_O"]      ="Spring (Regular)",
+            ["spring_L"]      ="Spring (Big)",
+            ["spring_S"]      ="Spring (Small)",
+        }
 
         if platform.hw()==7 then
             studentSoftware=true flashingDelay=1
@@ -723,18 +724,20 @@ despook=0
             "New update when?"
         }
 
-        input={}
-        input.up=0
-        input.down=0
-        input.left=0
-        input.right=0
-        input.action=0
-        input.stor={}
-        input.stor.left=0
-        input.stor.right=0
-        input.stor.up=0
-        input.stor.down=0
-        input.stor.action=0
+        input={
+            up=0,
+            down=0,
+            left=0,
+            right=0,
+            action=0,
+            stor={
+                left=0,
+                right=0,
+                up=0,
+                down=0,
+                action=0
+            },
+        }
 
         arrowUpInput=0
         arrowDownInput=0
@@ -1369,20 +1372,22 @@ addBlock=class()
         self.id=id
         blockIndex[self.id]={["solid"]=solid,["name"]=name,["texture"]=textureID}
         --set default
-        if blockIndex[self.id]["semisolid"]== nil then      blockIndex[self.id]["semisolid"]=false end      --semisolid (mario must be above the top eg mushrooms): in arrangement NESW (north,east,south,west) where a 1 represents that it is solid on that side and 0 means the side is passable
-        if blockIndex[self.id]["containing"]== nil then     blockIndex[self.id]["containing"]=false end     --contains coins, powerup, vine or star
-        if blockIndex[self.id]["bumpable"]== nil then       blockIndex[self.id]["bumpable"]={false} end     --ie moves when hit (bricks, question marks), second arg for texture to display during animation (if true uses first frame), third arg for what to replace it with once animation finished
-        if blockIndex[self.id]["breakable"]== nil then      blockIndex[self.id]["breakable"]=false end      --creates brick particles and disappears if super or fire mario
-        if blockIndex[self.id]["entityonly"]== nil then     blockIndex[self.id]["entityonly"]=false end     --only entities can pass through
-        if blockIndex[self.id]["marioonly"]== nil then      blockIndex[self.id]["marioonly"]=false end      --only mario can pass through
-        if blockIndex[self.id]["coin"]== nil then           blockIndex[self.id]["coin"]=false end           --it is a coin, that is all
-        if blockIndex[self.id]["invisiblock"]== nil then    blockIndex[self.id]["invisiblock"]=false end    --can still be bumped, but passed through from other angles
-        if blockIndex[self.id]["theme"]== nil then          blockIndex[self.id]["theme"]={nil} end          --changes appearance based on the theme it is in
-        if blockIndex[self.id]["editor"]== nil then         blockIndex[self.id]["editor"]=false end         --changes appearance in editor to the id
-        if blockIndex[self.id]["damage"]== nil then         blockIndex[self.id]["damage"]=false end         --hurts mario (spikes)
-        if blockIndex[self.id]["kill"]== nil then           blockIndex[self.id]["kill"]=false end           --kills mario (lava)
-        if blockIndex[self.id]["ceiling"]== nil then        blockIndex[self.id]["ceiling"]=false end        --cannot be jumped over when on y=13
-        if blockIndex[self.id]["eventswitch"]== nil then    blockIndex[self.id]["eventswitch"]={false} end  --switch block with another when event conditions are met. args: 1. the event name, 2. the event state, 3. the new block ID
+        local props = blockIndex[self.id]
+
+        if props["semisolid"]== nil then      props["semisolid"]=false end      --semisolid (mario must be above the top eg mushrooms): in arrangement NESW (north,east,south,west) where a 1 represents that it is solid on that side and 0 means the side is passable
+        if props["containing"]== nil then     props["containing"]=false end     --contains coins, powerup, vine or star
+        if props["bumpable"]== nil then       props["bumpable"]={false} end     --ie moves when hit (bricks, question marks), second arg for texture to display during animation (if true uses first frame), third arg for what to replace it with once animation finished
+        if props["breakable"]== nil then      props["breakable"]=false end      --creates brick particles and disappears if super or fire mario
+        if props["entityonly"]== nil then     props["entityonly"]=false end     --only entities can pass through
+        if props["marioonly"]== nil then      props["marioonly"]=false end      --only mario can pass through
+        if props["coin"]== nil then           props["coin"]=false end           --it is a coin, that is all
+        if props["invisiblock"]== nil then    props["invisiblock"]=false end    --can still be bumped, but passed through from other angles
+        if props["theme"]== nil then          props["theme"]={nil} end          --changes appearance based on the theme it is in
+        if props["editor"]== nil then         props["editor"]=false end         --changes appearance in editor to the id
+        if props["damage"]== nil then         props["damage"]=false end         --hurts mario (spikes)
+        if props["kill"]== nil then           props["kill"]=false end           --kills mario (lava)
+        if props["ceiling"]== nil then        props["ceiling"]=false end        --cannot be jumped over when on y=13
+        if props["eventswitch"]== nil then    props["eventswitch"]={false} end  --switch block with another when event conditions are met. args: 1. the event name, 2. the event state, 3. the new block ID
     end
 
     function addBlock:attribute(property,val) --eg semisolid, containing, bumpable,
@@ -1752,33 +1757,38 @@ objAPI=class() --categories are only roughly representative
         function objAPI:cleanup() --these huge functions relating to every object are very fun :>
             for iH=1,#hitBoxList do --hitBox aggressor array: {classID,x,y,w,h,type} // hitBox passive array: {w,h,willBeKilled,destroyFireball,xOffset,yOffset}
                 for list=1,#entityLists do --do all entity lists
-                    local focusedList=tostring(entityLists[list])
-                    for i=1,#_G[focusedList] do --for all entities within the list
-                        if _G[tostring(_G[focusedList][i])].hitBox then --if entity can be hit
-                            local hitBox=_G[tostring(_G[focusedList][i])].hitBox
+                    local focusedList=_G[entityLists[list]]
+                    for i=1,#focusedList do --for all entities within the list
+                        local entity=_G[focusedList[i]]
+
+                        if entity.hitBox then --if entity can be hit
+                            local hitBox=entity.hitBox
                             local hitArea=hitBoxList[iH]
                             hitBox[5],hitBox[6]=hitBox[5] or 0,hitBox[6] or 0
-                            local pos={_G[tostring(_G[focusedList][i])].x,_G[tostring(_G[focusedList][i])].y} -- V if there is a collision V
-                            local CLASS=_G[tostring(_G[focusedList][i])].classID
-                            if tostring(hitBoxList[iH][1])~=CLASS and (checkCollision(hitArea[2],hitArea[3],hitArea[4],hitArea[5],pos[1]+2+hitBox[5],pos[2]+2+hitBox[6],hitBox[1]-4,hitBox[2]-4)) then
-                                if _G[tostring(_G[focusedList][i])].dead~=true then
-                                    if hitBoxList[iH][6]=="shell" and hitBox[3]==true then
-                                        _G[tostring(hitArea[1])]:handleShellPoints()
-                                        if _G[tostring(_G[focusedList][i])].destroyShell then _G[tostring(hitArea[1])]:hit() end
-                                    elseif hitBoxList[iH][6]=="fireball" and hitBox[4]==true then
-                                        _G[tostring(hitArea[1])]:handleFireballHit()
-                                    elseif hitBoxList[iH][6]=="mario" and not _G[tostring(_G[focusedList][i])].disableStarPoints then
+                            local pos={entity.x,entity.y} -- V if there is a collision V
+                            local CLASS=entity.classID
+                            if hitArea[1]~=CLASS and (checkCollision(hitArea[2],hitArea[3],hitArea[4],hitArea[5],pos[1]+2+hitBox[5],pos[2]+2+hitBox[6],hitBox[1]-4,hitBox[2]-4)) then
+                                if entity.dead~=true then
+                                    local hitVictim=_G[hitArea[1]]
+                                    
+                                    if hitArea[6]=="shell" and hitBox[3]==true then
+                                        hitVictim:handleShellPoints()
+                                        if entity.destroyShell then hitVictim:hit() end
+                                    elseif hitArea[6]=="fireball" and hitBox[4]==true then
+                                        hitVictim:handleFireballHit()
+                                    elseif hitArea[6]=="mario" and not entity.disableStarPoints then
                                         objAPI:addStats("points","200",mario.x,mario.y-16)
                                     end
                                 end
-                                _G[tostring(_G[focusedList][i])]:hit(hitBoxList[iH][6]) --react to hit (death/jump/other)
+                                entity:hit(hitArea[6]) --react to hit (death/jump/other)
             end end end end end --important for hitbox to go first so that new queued requests don't get cleared
             for i=1,#cleanupListDestroy do --remove entity from list and clear all stored vars
                 local objectName,LEVEL=unpack(cleanupListDestroy[i])
                 print(objectName,LEVEL)
-                for i2=1,#_G[LEVEL] do
-                    if tostring(_G[LEVEL][i2])==objectName then
-                        table.remove(_G[LEVEL],i2)
+                local levelObject=_G[LEVEL]
+                for i2=1,#levelObject do
+                    if levelObject[i2]==objectName then
+                        table.remove(levelObject,i2)
                         _G[objectName]=nil
                         break
             end end end
@@ -1786,10 +1796,11 @@ objAPI=class() --categories are only roughly representative
                 local LEVEL=cleanupListTransfer[i][2]
                 local newLEVEL=cleanupListTransfer[i][3]
                 local objectName=cleanupListTransfer[i][1]
-                for i2=1,#_G[LEVEL] do
-                    if tostring(_G[LEVEL][i2])==objectName then
-                        table.remove(_G[LEVEL],i2)
-                        table.insert(_G[newLEVEL],tostring(objectName))
+                local levelObject=_G[LEVEL]
+                for i2=1,#levelObject do
+                    if levelObject[i2]==objectName then
+                        table.remove(levelObject,i2)
+                        table.insert(_G[newLEVEL],objectName)
                         break
             end end end
             cleanupListDestroy={}
@@ -3413,9 +3424,10 @@ objSpring=class(objAPI)
         end end
         local function checkLists()
             for list=1,#entityLists do --do all entity lists
-                local focusedList=tostring(entityLists[list])
-                for i=1,#_G[focusedList] do --for all entities within the list
-                    check(_G[tostring(_G[focusedList][i])])
+                local focusedList=_G[entityLists[list]]
+                for i=1,#focusedList do --for all entities within the list
+                    local entity=_G[focusedList[i]]
+                    check(entity)
         end end end
         checkLists() check(mario)
         for i=#self.springData,1,-1 do
@@ -3970,32 +3982,35 @@ playStage=class()
         if not playStage.wait and not mario.powerUp then
             local spawnOffsets={(math.ceil(playStage.cameraOffset/16)*16)-48,((math.ceil(screenWidth+playStage.cameraOffset)/16)*16)+48} --view distance plus 3 blocks
             for list=1,#entityLists do --do all entity lists
-                local focusedList=tostring(entityLists[list])
-                for i=1,#_G[focusedList] do --for all entities within the list
-                    if _G[tostring(_G[focusedList][i])]~=nil then --if entity exists
-                        if (( _G[tostring(_G[focusedList][i])].y)>212) then
-                            print("offscreen y",_G[tostring(_G[focusedList][i])].TYPE)
-                            objAPI:destroy(_G[tostring(_G[focusedList][i])].classID,_G[tostring(_G[focusedList][i])].LEVEL)
-                        elseif (((_G[tostring(_G[focusedList][i])].x) > (spawnOffsets[1])) and ((_G[tostring(_G[focusedList][i])].x) < (spawnOffsets[2]))) or ( _G[tostring(_G[focusedList][i])].GLOBAL==true) or currentLevel.enableGlobalEntities==true then --if in view distance
-                            _G[tostring(_G[focusedList][i])]:logic()
-                            print("logic",_G[tostring(_G[focusedList][i])].TYPE)
-                        elseif _G[tostring(_G[focusedList][i])].despawnable then
-                            print("despawn1",_G[tostring(_G[focusedList][i])].TYPE)
-                            if _G[tostring(_G[focusedList][i])].x<-16 or (_G[tostring(_G[focusedList][i])].x < spawnOffsets[1]+8) or ((_G[tostring(_G[focusedList][i])].x) > spawnOffsets[2]-8) then
-                                print("despawn2",_G[tostring(_G[focusedList][i])].TYPE)
-                                objAPI:destroy(_G[tostring(_G[focusedList][i])].classID,_G[tostring(_G[focusedList][i])].LEVEL) end
+                local focusedList=_G[entityLists[list]]
+                for i=1,#focusedList do --for all entities within the list
+                    local entity=_G[focusedList[i]]
+                    if entity~=nil then --if entity exists
+                        if ((entity.y)>212) then
+                            print("offscreen y",entity.TYPE)
+                            objAPI:destroy(entity.classID,entity.LEVEL)
+                        elseif (((entity.x) > (spawnOffsets[1])) and ((entity.x) < (spawnOffsets[2]))) or (entity.GLOBAL==true) or currentLevel.enableGlobalEntities==true then --if in view distance
+                            entity:logic()
+                            -- print("logic",entity.TYPE)
+                        elseif entity.despawnable then
+                            print("despawn1",entity.TYPE)
+                            if entity.x<-16 or (entity.x < spawnOffsets[1]+8) or ((entity.x) > spawnOffsets[2]-8) then
+                                print("despawn2",entity.TYPE)
+                                objAPI:destroy(entity.classID,entity.LEVEL) end
                         end
-                    else table.remove(_G[focusedList],i) end --get rid of blank entities that may occur as a result of overloading, NOT a substantial issue
+                    else table.remove(focusedList,i) end --get rid of blank entities that may occur as a result of overloading, NOT a substantial issue
     end end end end
 
     function playStage:objDraw(gc,entityLists)
         local spawnOffsets={(math.ceil(playStage.cameraOffset/16)*16)-48,((math.ceil(screenWidth+playStage.cameraOffset)/16)*16)+48} --view distance plus 3 blocks
         for list=1,#entityLists do --do all entity lists
-            local focusedList=tostring(entityLists[list])
-            for i=1,#_G[focusedList] do
-                if _G[tostring(_G[focusedList][i])]~=nil then
-                    if (not ((_G[tostring(_G[focusedList][i])].x) < (spawnOffsets[1])) and not ((_G[tostring(_G[focusedList][i])].x) > (spawnOffsets[2]))) or _G[tostring(_G[focusedList][i])].GLOBAL==true then
-                        local obj=_G[_G[focusedList][i]]
+            local focusedList=_G[entityLists[list]]
+            for i=1,#focusedList do
+                local entity=_G[focusedList[i]]
+                -- print(entity)
+                if entity~=nil then
+                    if (not ((entity.x) < (spawnOffsets[1])) and not ((entity.x) > (spawnOffsets[2]))) or entity.GLOBAL==true then
+                        local obj=_G[focusedList[i]]
                         obj:draw(gc,obj.x-playStage.cameraOffset,obj.y+8,obj.TYPE,false,false) --:draw(gc,x,y,TYPE,isEditor,isIcon)
     end end end end end
 
