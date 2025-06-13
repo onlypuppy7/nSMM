@@ -571,104 +571,104 @@ despook=0
             ["+"] = "_X"  --X icon
         }
         typeIndex={
-            ["goomb"] = {"objGoomba",        "entityListInner"},
-            ["koopa"] = {"objKoopa",         "entityListInner"},
-            ["Pkoop"] = {"objKoopaPara",     "entityListInner"},
-            ["shell"] = {"objShell",         "entityListInner"},
-            ["bulle"] = {"objBulletBill",    "entityListInner"},
-            ["flame"] = {"objBowserFlame",   "entityListInner"},
-            ["blast"] = {"objBlaster",       "entityListInner"},
-            ["piran"] = {"objPiranhaPlant",  "entityListBackground"},
-            ["bowse"] = {"objBowser",        "entityListInner"},
-            ["platf"] = {"objPlatform",      "entityListOuter"},
-            ["firef"] = {"objPowerUp",       "entityListInner"},
-            ["mushr"] = {"objPowerUp",       "entityListInner"},
-            ["Pfire"] = {"objPowerUp",       "entityListInner"},
-            ["star"]  = {"objPowerUp",       "entityListInner"},
-            ["coin"]  = {"objCoinAnim",      "entityListOuter"},
-            ["multi"] = {"objMultiCoinBlock","entityListBackground"}, 
-            ["brick"] = {"objBrickParticle", "entityListParticle"}, 
-            ["score"] = {"objScoreParticle", "entityListParticle"}, 
-            ["fireb"] = {"objFireball",      "entityListParticle"},
-            ["flagp"] = {"objFlagpole",      "entityListBackground"},
-            ["magic"] = {"objMagicOrb",      "entityListInner"},
-            ["sprin"] = {"objSpring",        "entityListInner"},
-            ["event"] = {"objEvent",         "entityListInner"}
+            goomb = {"objGoomba",        "entityListInner"},
+            koopa = {"objKoopa",         "entityListInner"},
+            Pkoop = {"objKoopaPara",     "entityListInner"},
+            shell = {"objShell",         "entityListInner"},
+            bulle = {"objBulletBill",    "entityListInner"},
+            flame = {"objBowserFlame",   "entityListInner"},
+            blast = {"objBlaster",       "entityListInner"},
+            piran = {"objPiranhaPlant",  "entityListBackground"},
+            bowse = {"objBowser",        "entityListInner"},
+            platf = {"objPlatform",      "entityListOuter"},
+            firef = {"objPowerUp",       "entityListInner"},
+            mushr = {"objPowerUp",       "entityListInner"},
+            Pfire = {"objPowerUp",       "entityListInner"},
+            star  = {"objPowerUp",       "entityListInner"},
+            coin  = {"objCoinAnim",      "entityListOuter"},
+            multi = {"objMultiCoinBlock","entityListBackground"}, 
+            brick = {"objBrickParticle", "entityListParticle"}, 
+            score = {"objScoreParticle", "entityListParticle"}, 
+            fireb = {"objFireball",      "entityListParticle"},
+            flagp = {"objFlagpole",      "entityListBackground"},
+            magic = {"objMagicOrb",      "entityListInner"},
+            sprin = {"objSpring",        "entityListInner"},
+            event = {"objEvent",         "entityListInner"}
         }
         nameIndex={
-            ["goomba"] =        "Goomba",
-            ["koopa_G"] =       "Koopa Troopa (Green)",
-            ["koopa_R"] =       "Koopa Troopa (Red)",
-            ["koopa_B"] =       "Buzzy Beetle",
-            ["Pkoopa_G"] =      "Koopa Paratroopa (Jumping)",
-            ["Pkoopa_R_V"] =    "Koopa Paratroopa (Vertical)",
-            ["Pkoopa_R_H"] =    "Koopa Paratroopa (Horizontal)",
-            ["Pkoopa_R_HV"] =   "Koopa Paratroopa (Horizontal, Wavering)",
-            ["Pkoopa_R"] =      "Koopa Paratroopa (Stationary)",
-            ["shell_G"] =       "Shell (Green)",
-            ["shell_R"] =       "Shell (Red)",
-            ["shell_G_-4"] =    "Shell (Green) (Slow Left)",
-            ["shell_G_4"] =     "Shell (Green) (Slow Right)",
-            ["shell_R_-6"] =    "Shell (Red) (Fast Left)",
-            ["shell_R_6"] =     "Shell (Red) (Fast Right)",
-            ["shell_B"] =       "Shell (Buzzy Beetle)",
-            ["bullet_L"] =      "Bullet (L)",
-            ["bullet_R"] =      "Bullet (R)",
-            ["blaster_L"] =     "Bullet Blaster (L)",
-            ["blaster_R"] =     "Bullet Blaster (R)",
-            ["blaster_LR"] =    "Bullet Blaster (LR)",
-            ["flame_L"] =       "Bowser's Flame (L)",
-            ["flame_R"] =       "Bowser's Flame (R)",
-            ["mushroom"] =      "Mushroom",
-            ["mushroom1up"] =   "1-up Mushroom",
-            ["star"] =          "Star",
-            ["fireflower"] =    "Fireflower",
-            ["Pfireflower"] =   "Fireflower (Progressive)",
-            ["piranhaplant_1"]="Piranha Plant (North)",
-            ["piranhaplant_2"]="Piranha Plant (East)",
-            ["piranhaplant_3"]="Piranha Plant (South)",
-            ["piranhaplant_4"]="Piranha Plant (West)",
-            ["theme0"]        ="Overworld Theme",
-            ["theme1"]        ="Underground Theme",
-            ["theme2"]        ="Night Theme",
-            ["theme3"]        ="Castle Theme",
-            ["mario"]         ="Set Start Pos",
-            ["scrollStopL"]   ="Add Scroll Stop (L)",
-            ["scrollStopR"]   ="Add Scroll Stop (R)",
-            ["scrollStopC"]   ="Remove Scroll Stop",
-            ["newwarp"]       ="Create New Warp",
-            ["warp_ID_2_1"]   ="West Facing Pipe Entrance",
-            ["warp_ID_2_2"]   ="North Facing Pipe Entrance",
-            ["warp_ID_2_3"]   ="East Facing Pipe Entrance",
-            ["warp_ID_4_1"]   ="West Facing Pipe Exit",
-            ["warp_ID_4_2"]   ="North Facing Pipe Exit",
-            ["warp_ID_4_3"]   ="East Facing Pipe Exit",
-            ["warp_ID_4_4"]   ="Teleport Exit",
-            ["warp_ID_1"]     ="Edit Entrance Type",
-            ["warp_ID_3"]     ="Edit Exit Type",
-            ["warp_ID_6"]     ="Delete Pipe",
-            ["warp_ID_7"]     ="View Entrance Pipe Position",
-            ["warp_ID_8"]     ="View Exit Pipe Position",
-            ["au"]            ="(Trigger - North)",
-            ["ad"]            ="(Trigger - South)",
-            ["ar"]            ="(Trigger - East)",
-            ["al"]            ="(Trigger - West)",
-            ["fu"]            ="(Falling - North)",
-            ["fd"]            ="(Falling - South)",
-            ["fr"]            ="(Falling - East)",
-            ["fl"]            ="(Falling - West)",
-            ["lx"]            ="(Looping - X)",
-            ["ly"]            ="(Looping - Y)",
-            ["ru"]            ="(Repeating - North)",
-            ["rd"]            ="(Repeating - South)",
-            ["flagpole"]      ="Flagpole",
-            ["magicorb_a1_m1"]="? Orb (Animation, Movement)",
-            ["magicorb_a1_m0"]="? Orb (Animation, Stationary)",
-            ["magicorb_a0_m1"]="? Orb (No Animation, Movement)",
-            ["magicorb_a0_m0"]="? Orb (No Animation, Stationary)",
-            ["spring_O"]      ="Spring (Regular)",
-            ["spring_L"]      ="Spring (Big)",
-            ["spring_S"]      ="Spring (Small)",
+            ["goomba"] =         "Goomba",
+            ["koopa_G"] =        "Koopa Troopa (Green)",
+            ["koopa_R"] =        "Koopa Troopa (Red)",
+            ["koopa_B"] =        "Buzzy Beetle",
+            ["Pkoopa_G"] =       "Koopa Paratroopa (Jumping)",
+            ["Pkoopa_R_V"] =     "Koopa Paratroopa (Vertical)",
+            ["Pkoopa_R_H"] =     "Koopa Paratroopa (Horizontal)",
+            ["Pkoopa_R_HV"] =    "Koopa Paratroopa (Horizontal, Wavering)",
+            ["Pkoopa_R"] =       "Koopa Paratroopa (Stationary)",
+            ["shell_G"] =        "Shell (Green)",
+            ["shell_R"] =        "Shell (Red)",
+            ["shell_G_-4"] =     "Shell (Green) (Slow Left)",
+            ["shell_G_4"] =      "Shell (Green) (Slow Right)",
+            ["shell_R_-6"] =     "Shell (Red) (Fast Left)",
+            ["shell_R_6"] =      "Shell (Red) (Fast Right)",
+            ["shell_B"] =        "Shell (Buzzy Beetle)",
+            ["bullet_L"] =       "Bullet (L)",
+            ["bullet_R"] =       "Bullet (R)",
+            ["blaster_L"] =      "Bullet Blaster (L)",
+            ["blaster_R"] =      "Bullet Blaster (R)",
+            ["blaster_LR"] =     "Bullet Blaster (LR)",
+            ["flame_L"] =        "Bowser's Flame (L)",
+            ["flame_R"] =        "Bowser's Flame (R)",
+            ["mushroom"] =       "Mushroom",
+            ["mushroom1up"] =    "1-up Mushroom",
+            ["star"] =           "Star",
+            ["fireflower"] =     "Fireflower",
+            ["Pfireflower"] =    "Fireflower (Progressive)",
+            ["piranhaplant_1"] = "Piranha Plant (North)",
+            ["piranhaplant_2"] = "Piranha Plant (East)",
+            ["piranhaplant_3"] = "Piranha Plant (South)",
+            ["piranhaplant_4"] = "Piranha Plant (West)",
+            ["theme0"]         = "Overworld Theme",
+            ["theme1"]         = "Underground Theme",
+            ["theme2"]         = "Night Theme",
+            ["theme3"]         = "Castle Theme",
+            ["mario"]          = "Set Start Pos",
+            ["scrollStopL"]    = "Add Scroll Stop (L)",
+            ["scrollStopR"]    = "Add Scroll Stop (R)",
+            ["scrollStopC"]    = "Remove Scroll Stop",
+            ["newwarp"]        = "Create New Warp",
+            ["warp_ID_2_1"]    = "West Facing Pipe Entrance",
+            ["warp_ID_2_2"]    = "North Facing Pipe Entrance",
+            ["warp_ID_2_3"]    = "East Facing Pipe Entrance",
+            ["warp_ID_4_1"]    = "West Facing Pipe Exit",
+            ["warp_ID_4_2"]    = "North Facing Pipe Exit",
+            ["warp_ID_4_3"]    = "East Facing Pipe Exit",
+            ["warp_ID_4_4"]    = "Teleport Exit",
+            ["warp_ID_1"]      = "Edit Entrance Type",
+            ["warp_ID_3"]      = "Edit Exit Type",
+            ["warp_ID_6"]      = "Delete Pipe",
+            ["warp_ID_7"]      = "View Entrance Pipe Position",
+            ["warp_ID_8"]      = "View Exit Pipe Position",
+            ["au"]             = "(Trigger - North)",
+            ["ad"]             = "(Trigger - South)",
+            ["ar"]             = "(Trigger - East)",
+            ["al"]             = "(Trigger - West)",
+            ["fu"]             = "(Falling - North)",
+            ["fd"]             = "(Falling - South)",
+            ["fr"]             = "(Falling - East)",
+            ["fl"]             = "(Falling - West)",
+            ["lx"]             = "(Looping - X)",
+            ["ly"]             = "(Looping - Y)",
+            ["ru"]             = "(Repeating - North)",
+            ["rd"]             = "(Repeating - South)",
+            ["flagpole"]       = "Flagpole",
+            ["magicorb_a1_m1"] = "? Orb (Animation, Movement)",
+            ["magicorb_a1_m0"] = "? Orb (Animation, Stationary)",
+            ["magicorb_a0_m1"] = "? Orb (No Animation, Movement)",
+            ["magicorb_a0_m0"] = "? Orb (No Animation, Stationary)",
+            ["spring_O"]       = "Spring (Regular)",
+            ["spring_L"]       = "Spring (Big)",
+            ["spring_S"]       = "Spring (Small)",
         }
 
         if platform.hw()==7 then
@@ -860,7 +860,7 @@ despook=0
         B=toBinary(math.floor(B/8),5)
         local data="1"..R..G..B
         data={string.sub(data, 1, 8),string.sub(data, 9, 16)}
-        return ("\\"..addZeros(tostring(tonumber(data[2],2)),3).."\\"..addZeros(tostring(tonumber(data[1],2)),3))
+        return ("\\"..addZeros(tonumber(data[2],2),3).."\\"..addZeros(tonumber(data[1],2),3))
     end
     
     function ti2rgb(data) --will not return fully accurate values due to compressing values to make it TI-image compatible
@@ -1262,7 +1262,7 @@ despook=0
             local data=splitByChar(levelDataTable[i],"*")
             if string.sub(levelDataTable[i],1,1)=="*" then table.insert(data,1,nil) end
             data={data[1] or 0,tonumber(data[2] or 1,16)}
-            if isInteger(tostring(data[1])) then data[1]=tonumber(data[1]) end
+            if isInteger(data[1]) then data[1]=tonumber(data[1]) end
             for i2=1,data[2] do
                 levelPos=levelPos+1
                 if levelPos<=levelData.END*13 then
@@ -4073,7 +4073,7 @@ playStage=class()
                 if blockIndex[ID]~=nil then
                     name=(" ("..blockIndex[ID]["name"]..") ")
                 end
-                gc:drawString("select: "..ID..name.." velX: "..mario.vx.." velY: "..mario.vy, 0, 17, top)
+                gc:drawString("fps: "..tostring(fps).." select: "..ID..name.." velX: "..mario.vx.." velY: "..mario.vy, 0, 17, top)
                 
                 gc:drawString("("..(highlightedx-1)..": "..(13-highlightedy)..") despook: "..despook.." entities: "..#entityListOuter+#entityListParticle+#entityListInner+#entityListBackground, 0, 32, top)
                 gc:drawString("blockX "..highlightedx.." blockY "..highlightedy.." id: "..plot2ID(highlightedx,highlightedy).." x"..mouse.x.."y"..(mouse.y-8).." mX: "..mario.x.." mY: "..mario.y, 0, 48, top)
@@ -4338,7 +4338,7 @@ editor=class()
                 playStage.active=true
             elseif editor.eyedropperMode==true then
                 local ID=pixel2ID(mouse.x,mouse.y-8,nil,true)
-                if not (isInteger(tostring(ID)) and ID<=0) then
+                if not (isInteger(ID) and ID<=0) then
                     editor.selectedID=ID
                 end
             elseif editor.platformSelect then
@@ -4521,9 +4521,9 @@ editor=class()
                 drawBlock=blockIndex[blockID]["editor"]
             end
             if blockIndex[drawBlock]["theme"][THEME]~=nil then
-                gc:drawImage(_G[tostring(blockIndex[drawBlock]["theme"][THEME][1])],x,y)
+                gc:drawImage(_G[blockIndex[drawBlock]["theme"][THEME][1]],x,y)
             elseif blockIndex[drawBlock]["texture"][1]~=nil then
-                gc:drawImage(_G[tostring(blockIndex[drawBlock]["texture"][1])],x,y)
+                gc:drawImage(_G[blockIndex[drawBlock]["texture"][1]],x,y)
             end local containing=blockIndex[blockID]["containing"]
             if containing and string.sub(containing,1,5)~="event" then
                 if string.sub(containing,1,9)=="multicoin" then containing="multicoin" end
@@ -5341,10 +5341,10 @@ titleScreen=class()
                     if blockID<0 then blockID=0 end
                     if i<1 and blockIndex[blockID]["theme"][THEME]~=nil then
                         local frameForAnim=(math.floor((titleScreen.framesPassedBlock/4)%#blockIndex[blockID]["theme"][THEME]))+1 --(support for animations)
-                        gc:drawImage(_G[tostring(blockIndex[blockID]["theme"][THEME][frameForAnim])], ((i2-1)*16)-titleScreen.cameraOffsetX, 212-16*(i)+titleScreen.cameraOffsetY)
+                        gc:drawImage(_G[blockIndex[blockID]["theme"][THEME][frameForAnim]], ((i2-1)*16)-titleScreen.cameraOffsetX, 212-16*(i)+titleScreen.cameraOffsetY)
                     elseif blockIndex[blockID]["texture"][1]~=nil then
                         local frameForAnim=(math.floor((titleScreen.framesPassedBlock/4)%#blockIndex[blockID]["texture"]))+1 --(support for animations)
-                        gc:drawImage(_G[tostring(blockIndex[blockID]["texture"][frameForAnim])], ((i2-1)*16)-titleScreen.cameraOffsetX, 212-16*(i)+titleScreen.cameraOffsetY) end
+                        gc:drawImage(_G[blockIndex[blockID]["texture"][frameForAnim]], ((i2-1)*16)-titleScreen.cameraOffsetX, 212-16*(i)+titleScreen.cameraOffsetY) end
     end end end end
 
     function titleScreen:drawBackground(gc)
@@ -5478,7 +5478,7 @@ gui=class()
                     local function drawRow(gc,x,y,number,courseData)
                         drawGUIBox(gc,x,y,22,19)
                         drawGUIBox(gc,x+20,y,209,19,nil,nil,true)
-                        drawFont(gc,tostring(addZeros(number,2)),x+4,y+6)
+                        drawFont(gc,addZeros(number,2),x+4,y+6)
                         drawFont(gc,courseData[1],x+49,y+4)
                         if courseData[2] then --level exists
                             --compatibility icon
@@ -5566,7 +5566,7 @@ gui=class()
                 end
             end TYPE=editor.levelList or TYPE
             for i=1,8 do local lvl=gui[LIST][i+gui[LIST].scroll-1] and true or false
-                refreshRow(hook[1]+31,(hook[2]+20+i*19)+(not editor.active and 8 or 0),tostring(addZeros(i+gui[LIST].scroll-1,2)),lvl,buttonLIST,TYPE)
+                refreshRow(hook[1]+31,(hook[2]+20+i*19)+(not editor.active and 8 or 0),addZeros(i+gui[LIST].scroll-1,2),lvl,buttonLIST,TYPE)
             end
         end
         for i=1,#gui.levelLists do
@@ -5909,6 +5909,9 @@ gui=class()
 --------------------------
 ------FRAME FUNCTIONS-----
 --------------------------
+    fps = 0
+    lastTime = timer.getMilliSecCounter()
+
     function on.paint(gc)
         if framesPassed>22 then
             local runLogic=gameSpeed[1+framesPassed%(#gameSpeed)]
@@ -5972,6 +5975,17 @@ gui=class()
                     if notFinal then gui:createPrompt("NOT RELEASE VERSION",{"THIS VERSION IS CURRENTLY","IN DEVELOPMENT. IT MAY", "HAVE THE WRONG VERSION NUMBER","AND UNFINISHED FEATURES!!"},{{"OK","close"}},true,false) end
         end end end
         framesPassed=framesPassed+1 --global framecount
+        local calculateFpsPer = 20
+
+        if framesPassed % calculateFpsPer == 0 then
+            local currentTime = timer.getMilliSecCounter()
+            local delta = currentTime - lastTime
+
+            fps = math.floor(10000 / delta * calculateFpsPer) / 10
+
+            lastTime = currentTime
+            print("FPS: " .. fps)
+        end
     end
 
 --------------------------
