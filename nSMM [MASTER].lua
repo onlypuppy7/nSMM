@@ -21,6 +21,8 @@ despook=0
 --------------------------
 -----TEXTURE LIBRARY------
 --------------------------
+    texture={}
+
     function loadTextures(option)
         if option=="tile" then --TILE TEXTURES
             texture_Barrier=image.new("\016\000\000\000\016\000\000\000\000\000\000\000 \000\000\000\016\000\001\000\196X\196X\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196X\196X\196X\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196X\196\216\196\216\196\216\196\216\196X\196X\196X\196X\196X\196X\196X\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196X\196X\196X\196X\196X\196X\196X\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196X\196X\196X\196X\196X\196X\196X\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196X\196X\196X\196X\196X\196X\196\216\196\216\196\216\196\216\196\216\196X\196\216\196\216\196\216\196\216\196X\196X\196X\196X\196X\196\216\196\216\196\216\196\216\196\216\196X\196X\196\216\196\216\196\216\196\216\196X\196X\196X\196X\196\216\196\216\196\216\196\216\196\216\196X\196X\196X\196\216\196\216\196\216\196\216\196X\196X\196X\196\216\196\216\196\216\196\216\196\216\196X\196X\196X\196X\196\216\196\216\196\216\196\216\196X\196X\196\216\196\216\196\216\196\216\196\216\196X\196X\196X\196X\196X\196\216\196\216\196\216\196\216\196X\196\216\196\216\196\216\196\216\196\216\196X\196X\196X\196X\196X\196X\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196X\196X\196X\196X\196X\196X\196X\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196X\196X\196X\196X\196X\196X\196X\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196X\196X\196X\196X\196X\196X\196X\196\216\196\216\196\216\196\216\196X\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196X\196X\196X\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196X\196X")
@@ -1712,15 +1714,24 @@ objAPI=class() --categories are only roughly representative
     objAPI.dead=false objAPI.px=0 objAPI.py=0
     objAPI.spring=false objAPI.interactSpring=true
     --OBJECT/PLATFORM MANAGEMENT
+        function objAPI:getObjectCount(passedEntityLists) --returns the number of objects in a given level
+            local entityLists=passedEntityLists or entityLists
+            local count=0
+            for k in pairs(entityLists) do
+                count=count+#entityLists[k]
+            end
+            return count
+        end
+
         function objAPI:createObj(TYPE,posX,posY,despawnable,arg1,arg2)
-            local classID=TYPE..#entityLists.inner+#entityLists.particle+#entityLists.outer+#entityLists.background+1+framesPassed.."r"..math.random(0,200) --assign random ID
+            local classID=TYPE..objAPI:getObjectCount()+1+framesPassed.."r"..math.random(0,200) --assign random ID
             local classTYPE local LEVEL
             classTYPE,LEVEL=objAPI:type2class(TYPE)
             local levelObject=entityLists[LEVEL]
             if classTYPE~=false then
-                _G[tostring(classID)]=_G[classTYPE]()  --despawnable also triggers block animation (sometimes)
-                table.insert(levelObject,tostring(classID))
-                _G[tostring(classID)]:setup(classID,posX,posY,TYPE,despawnable,arg1,arg2)
+                allEntities[classID]=_G[classTYPE]()  --despawnable also triggers block animation (sometimes) [edit idfk why i made this comment here]
+                table.insert(levelObject,classID)
+                allEntities[classID]:setup(classID,posX,posY,TYPE,despawnable,arg1,arg2)
             end return classID
         end
 
@@ -1770,7 +1781,7 @@ objAPI=class() --categories are only roughly representative
                 for k in pairs(entityLists) do --do all entity lists
                     local focusedList=entityLists[k]
                     for i=1,#focusedList do --for all entities within the list
-                        local entity=_G[focusedList[i]]
+                        local entity=allEntities[focusedList[i]]
 
                         if entity.hitBox then --if entity can be hit
                             local hitBox=entity.hitBox
@@ -1781,7 +1792,7 @@ objAPI=class() --categories are only roughly representative
 
                             if hitArea[1]~=CLASS and (checkCollision(hitArea[2],hitArea[3],hitArea[4],hitArea[5],entity.x+2+hitBox[5],entity.y+2+hitBox[6],hitBox[1]-4,hitBox[2]-4)) then
                                 if entity.dead~=true then
-                                    local hitVictim=_G[hitArea[1]]
+                                    local hitVictim=allEntities[hitArea[1]]
                                     
                                     if hitArea[6]=="shell" and hitBox[3]==true then
                                         hitVictim:handleShellPoints()
@@ -1801,7 +1812,7 @@ objAPI=class() --categories are only roughly representative
                 for i2=1,#levelObject do
                     if levelObject[i2]==objectName then
                         table.remove(levelObject,i2)
-                        _G[objectName]=nil
+                        allEntities[objectName]=nil
                         break
             end end end
             for i=1,#cleanupListTransfer do
@@ -2077,7 +2088,7 @@ objAPI=class() --categories are only roughly representative
                     elseif onStomp[1]=="transform" then
                         local vx,newID=self.vx,objAPI:createObj(onStomp[2],self.x,self.y,nil,onStomp[3],onStomp[4])
                         objAPI:destroy(self.classID,self.LEVEL) self.status=onStomp[5]
-                        if string.sub(self.TYPE,1,5)=="Pkoop" then _G[newID].vx=sign(vx)*2 end 
+                        if string.sub(self.TYPE,1,5)=="Pkoop" then allEntities[newID].vx=sign(vx)*2 end 
                     end
                     if currentLevel.enableCoinOnKill then objAPI:createObj("coin",self.x,self.y-16,true) end
                 elseif checkCollision(mario.x+1,mario.y-marioSize+1,14,14+marioSize,self.x+4,self.y+3+bodge,self.hitBox[1]-8,self.hitBox[2]-4) then --hit mario (side)
@@ -3518,7 +3529,7 @@ objSpring=class(objAPI)
             for k in pairs(entityLists) do --do all entity lists
                 local focusedList=entityLists[k]
                 for i=1,#focusedList do --for all entities within the list
-                    local entity=_G[focusedList[i]]
+                    local entity=allEntities[focusedList[i]]
                     check(entity)
         end end end
         checkLists() check(mario)
@@ -3605,7 +3616,7 @@ objBumpedBlock=class(objAPI)
     function objBumpedBlock:create(blockX,blockY,TYPE,replaceWith) --sorta forgot why i made this specifically have its own create function
         local classID="bumpedBlock"..#entityLists.outer+#entityLists.inner+1+framesPassed+math.random(1,99999) --assign random ID
         table.insert(entityLists.outer,tostring(classID))
-        _G[classID]=objBumpedBlock() _G[classID].initObject=objAPI.initObject _G[classID]:setup(classID,blockX,blockY,TYPE,replaceWith)
+        allEntities[classID]=objBumpedBlock() allEntities[classID].initObject=objAPI.initObject allEntities[classID]:setup(classID,blockX,blockY,TYPE,replaceWith)
     end
 
     function objBumpedBlock:setup(classID,blockX,blockY,TYPE,replaceWith) --eg (23,6,"UsedBlock",false)
@@ -3649,9 +3660,9 @@ objMultiCoinBlock=class(objAPI)
         elseif cTimer(self.timer)==1 then --start ending the multi coin period
             if (pixel2ID(self.x+16,self.y,true)~=99) then pixel2place(tonumber(splitByChar(self.TYPE,"_")[2]),self.x+16,self.y,true) end --get rid of the infinite coin block at all costs
             for i=1,#entityLists.outer do --now THIS is a stupid workaround to a problem i caused, finds the bumped block animation and changes what it replaces
-                local classID=_G[outer[i]].classID
-                if string.sub(classID,1,11)=="bumpedBlock" and _G[classID].x==self.x and _G[classID].y==self.y then
-                    _G[classID].replaceWith[3]=tonumber(tonumber(splitByChar(self.TYPE,"_")[2]))
+                local classID=entityLists.outer[i]
+                if string.sub(classID,1,11)=="bumpedBlock" and allEntities[classID].x==self.x and allEntities[classID].y==self.y then
+                    allEntities[classID].replaceWith[3]=tonumber(splitByChar(self.TYPE,"_")[2])
     end end end end
 
     function objMultiCoinBlock:draw(gc,x,y,TYPE,isEditor,isIcon) end -- ...nothing to draw
@@ -3771,6 +3782,7 @@ playStage=class()
         for k in pairs(entityLists) do
             entityLists[k] = {}
         end
+        allEntities={}
         cleanupListDestroy={} cleanupListTransfer={}
         hitBoxList={}
         playStage.platformList={}
@@ -3994,12 +4006,12 @@ playStage=class()
                     if blockID<0 then blockID=0 end
                     if blockIndex[blockID]["theme"][THEME]~=nil then
                         local frameForAnim=(math.floor((playStage.framesPassedBlock/4)%#blockIndex[blockID]["theme"][THEME]))+1 --(support for animations)
-                        gc:drawImage(_G[tostring(blockIndex[blockID]["theme"][THEME][frameForAnim])], ((i2-1)*16)-playStage.cameraOffset, 212-16*(i)+8)
-                        if i==13 and blockIndex[blockID]["ceiling"] and currentLevel.showCeilingBlock then gc:drawImage(_G[tostring(blockIndex[blockID]["theme"][THEME][frameForAnim])], ((i2-1)*16)-playStage.cameraOffset, 212-16*(i+1)+8) end --draw a block above the blocks to denote that mario cannot jump over it
+                        gc:drawImage(_G[blockIndex[blockID]["theme"][THEME][frameForAnim]], ((i2-1)*16)-playStage.cameraOffset, 212-16*(i)+8)
+                        if i==13 and blockIndex[blockID]["ceiling"] and currentLevel.showCeilingBlock then gc:drawImage(_G[blockIndex[blockID]["theme"][THEME][frameForAnim]], ((i2-1)*16)-playStage.cameraOffset, 212-16*(i+1)+8) end --draw a block above the blocks to denote that mario cannot jump over it
                 elseif blockIndex[blockID]["texture"][1]~=nil then
                         local frameForAnim=(math.floor((playStage.framesPassedBlock/4)%#blockIndex[blockID]["texture"]))+1 --(support for animations)
-                        gc:drawImage(_G[tostring(blockIndex[blockID]["texture"][frameForAnim])], ((i2-1)*16)-playStage.cameraOffset, 212-16*(i)+8)
-                        if i==13 and blockIndex[blockID]["ceiling"] and currentLevel.showCeilingBlock then gc:drawImage(_G[tostring(blockIndex[blockID]["texture"][frameForAnim])], ((i2-1)*16)-playStage.cameraOffset, 212-16*(i+1)+8) end --draw a block above the blocks to denote that mario cannot jump over it
+                        gc:drawImage(_G[blockIndex[blockID]["texture"][frameForAnim]], ((i2-1)*16)-playStage.cameraOffset, 212-16*(i)+8)
+                        if i==13 and blockIndex[blockID]["ceiling"] and currentLevel.showCeilingBlock then gc:drawImage(_G[blockIndex[blockID]["texture"][frameForAnim]], ((i2-1)*16)-playStage.cameraOffset, 212-16*(i+1)+8) end --draw a block above the blocks to denote that mario cannot jump over it
                     end --^^^ CAUTION so far no animated blocks are ceiling ones.. if they are then this will cease to work!
                 else --load the object
                     table.insert(currentLevel.loadedObjects,{blockID,i2,i}) --to load back if there's a pipe transition
@@ -4083,7 +4095,7 @@ playStage=class()
             for k in pairs(entityLists) do
                 local focusedList=entityLists[k]
                 for i=1,#focusedList do --for all entities within the list
-                    local entity=_G[focusedList[i]]
+                    local entity=allEntities[focusedList[i]]
                     if entity~=nil then --if entity exists
                         if ((entity.y)>212) then
                             -- print("offscreen y",entity.TYPE)
@@ -4105,11 +4117,11 @@ playStage=class()
         for k in pairs(entityLists) do
             local focusedList=entityLists[k]
             for i=1,#focusedList do
-                local entity=_G[focusedList[i]]
+                local entity=allEntities[focusedList[i]]
                 -- print(entity)
                 if entity~=nil then
                     if (not ((entity.x) < (spawnOffsets[1])) and not ((entity.x) > (spawnOffsets[2]))) or entity.GLOBAL==true then
-                        local obj=_G[focusedList[i]]
+                        local obj=allEntities[focusedList[i]]
                         obj:draw(gc,obj.x-playStage.cameraOffset,obj.y+8,obj.TYPE,false,false) --:draw(gc,x,y,TYPE,isEditor,isIcon)
     end end end end end
 
@@ -4201,7 +4213,7 @@ playStage=class()
                 end
                 gc:drawString("fps: "..tostring(fps).." select: "..ID..name.." velX: "..mario.vx.." velY: "..mario.vy, 0, 17, top)
                 
-                gc:drawString("("..(highlightedx-1)..": "..(13-highlightedy)..") despook: "..despook.." entities: "..#entityLists.outer+#entityLists.particle+#entityLists.inner+#entityLists.background, 0, 32, top)
+                gc:drawString("("..(highlightedx-1)..": "..(13-highlightedy)..") despook: "..despook.." entities: "..objAPI:getObjectCount(), 0, 32, top)
                 gc:drawString("blockX "..highlightedx.." blockY "..highlightedy.." id: "..plot2ID(highlightedx,highlightedy).." x"..mouse.x.."y"..(mouse.y-8).." mX: "..mario.x.." mY: "..mario.y, 0, 48, top)
                 --gc:drawString("("..(highlightedx-1)..": "..(13-highlightedy)..") id: "..plot2ID(highlightedx,highlightedy), 0, 48, top) --this is for translating GreatEd maps
 
@@ -4663,7 +4675,7 @@ editor=class()
             local TYPE=objAPI:type2class(blockID)
             if TYPE~=false then
                 if ICON then y=y-8 x=x+editor.cameraOffset end
-                obj=_G[TYPE]
+                obj=allEntities[TYPE]
                 if ICON then gc:clipRect("set",x-editor.cameraOffset,y+8,16,16) end
                 obj:draw(gc,x-editor.cameraOffset,y+8,blockID,true,ICON) --(gc,x,y,TYPE,isEditor,isIcon)
                 gc:clipRect("reset")
