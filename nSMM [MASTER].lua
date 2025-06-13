@@ -822,10 +822,15 @@ despook=0
 
     function isAlphaNumeric(input) return not (input:match("%W")) end
 
-    function addZeros(input, length)
+    function padString(input, length, char) --pads a string with spaces to a certain length
+        char = char or ' '
         input=tostring(input)
-        local output = string.rep('0', length-#input)..input
+        local output = string.rep(char, length-#input)..input
         return output
+    end
+
+    function addZeros(input, length)
+        return padString(input, length, '0')
     end
     
     function toBinary(num,bits)
@@ -1056,10 +1061,11 @@ despook=0
         return {plotX,math.ceil((212-y)/16)}
     end
 
-    function plot2pixel(plotX,plotY,Global)
+    function plot2pixel(plotX,plotY,Global) --
         local plotX,x=plotX-1
         if Global==true then
-            x=plotX*16-playStage.cameraOffset
+            local offset = editor.active and editor.cameraOffset or playStage.cameraOffset or 0
+            x=plotX*16-offset
         else x=(plotX*16)
         end return {x,212-(plotY*16)}
     end
@@ -1105,24 +1111,26 @@ despook=0
         return currentLevel["t"..pixel2plot(x,150,Global)[1]]
     end
 
-    function pixel2grid(x,y,w,h,Global) --editor only
+    function pixel2grid(x,y,w,h,Global) --editor only(?)
         local plotX
         if Global==true then --doesnt take camera offset into account if true
             plotX=math.ceil((x)/w)
         else -- relative to the camera (DEFAULT)
-            plotX=math.ceil((x+editor.cameraOffset)/w)
+            local offset = editor.active and editor.cameraOffset or playStage.cameraOffset or 0
+            plotX=math.ceil((x+offset)/w)
         end
         local plotY=math.ceil((212-y)/h)
         return {plotX,plotY}
     end
-    function grid2pixel(plotX,plotY,w,h,Global) --editor only
+    function grid2pixel(plotX,plotY,w,h,Global) --editor only(?)
         local plotX,x=plotX-1
         if Global==true then
-            x=plotX*w-editor.cameraOffset
+            local offset = editor.active and editor.cameraOffset or playStage.cameraOffset or 0
+            x=plotX*w-offset
         else x=(plotX*w)
         end return {x,212-(plotY*h)}
     end
-    function pixel2snapgrid(x,y,w,h,SELECTOR) --editor only
+    function pixel2snapgrid(x,y,w,h,SELECTOR) --editor only(?)
         local v=pixel2grid(x,y,w,h,SELECTOR)
         if SELECTOR==nil then SELECTOR=false end
         v=grid2pixel(v[1],v[2],w,h,not SELECTOR)
@@ -1765,9 +1773,10 @@ objAPI=class() --categories are only roughly representative
                             local hitBox=entity.hitBox
                             local hitArea=hitBoxList[iH]
                             hitBox[5],hitBox[6]=hitBox[5] or 0,hitBox[6] or 0
-                            local pos={entity.x,entity.y} -- V if there is a collision V
+                            -- local pos={entity.x,entity.y} -- V if there is a collision V
                             local CLASS=entity.classID
-                            if hitArea[1]~=CLASS and (checkCollision(hitArea[2],hitArea[3],hitArea[4],hitArea[5],pos[1]+2+hitBox[5],pos[2]+2+hitBox[6],hitBox[1]-4,hitBox[2]-4)) then
+
+                            if hitArea[1]~=CLASS and (checkCollision(hitArea[2],hitArea[3],hitArea[4],hitArea[5],entity.x+2+hitBox[5],entity.y+2+hitBox[6],hitBox[1]-4,hitBox[2]-4)) then
                                 if entity.dead~=true then
                                     local hitVictim=_G[hitArea[1]]
                                     
@@ -1922,8 +1931,10 @@ objAPI=class() --categories are only roughly representative
                 local function checkY(isMario,X,Y,V,platformCalc)
                     local pos={Y+V} --list of possible positions to fall to
                     if not platformCalc then
-                        for i=1,#playStage.platformList do 
-                            local pX=playStage.platformList[i][2] local pY=playStage.platformList[i][3] local pW=playStage.platformList[i][4] local pV=-playStage.platformList[i][6]
+                        for i=1,#playStage.platformList do
+                            local platform=playStage.platformList[i]
+
+                            local pX=platform[2] local pY=platform[3] local pW=platform[4] local pV=-platform[6]
                             if X>=pX and X<=pX+pW then --object is in x axis radius of platform, therefore possibility of landing
                                 if ((Y<=pY) and (not ((pos[1])<pY) or not ((pos[1])<(pY+pV)))) then --if above platform and not (wont land on it)
                                     table.insert(pos,pY) pos[1]=pY
@@ -2013,9 +2024,11 @@ objAPI=class() --categories are only roughly representative
             local distance=15-2
             if optionalLength then distance=optionalLength-2 end
             for i=1,#playStage.platformList do 
-                local pX=playStage.platformList[i][2] local pY=playStage.platformList[i][3] local pW=playStage.platformList[i][4]
+                local platform=playStage.platformList[i]
+                local pX=platform[2] local pY=platform[3] local pW=platform[4]
+
                 if ((x+2>=pX and x+2<=pX+pW) or (x+distance>=pX and x+distance<=pX+pW)) and y+16==pY then --object is in x axis radius of platform, and is on same y level
-                    return {tonumber(playStage.platformList[i][5]),tonumber(playStage.platformList[i][6])}
+                    return {tonumber(platform[5]),tonumber(platform[6])}
                 end
             end
             return {0,0}
@@ -2168,6 +2181,81 @@ objAPI=class() --categories are only roughly representative
                 end
             end return name
         end
+
+---------------------------
+---------PROFILER----------
+---------------------------
+
+    Profiler = {}
+    Profiler.__index = Profiler
+
+    function Profiler.new()
+        local self = setmetatable({}, Profiler)
+        self.data = {}
+        self.current = nil  -- track the currently running label
+        return self
+    end
+
+    function Profiler:dealWithStoppingPrevious()
+        if self.current then
+            self:stop(self.current, true)
+            self.current = nil  -- reset current label after stopping
+        end
+    end
+
+    function Profiler:start(label, stopThisNext)
+        self:dealWithStoppingPrevious()
+
+        if stopThisNext then
+            self.current = label
+        end
+
+        if not self.data[label] then
+            self.data[label] = { total = 0, count = 0, start = 0 }
+        end
+        self.data[label].start = timer.getMilliSecCounter()
+    end
+
+    function Profiler:stop(label, fromDealWithStoppingPrevious)
+        if not fromDealWithStoppingPrevious then
+            self:dealWithStoppingPrevious()
+        end
+
+        local entry = self.data[label]
+        if not entry or entry.start == 0 then
+            error("Profiler:stop called without matching start for '" .. label .. "'")
+        end
+        local duration = timer.getMilliSecCounter() - entry.start
+        entry.total = entry.total + duration
+        entry.count = entry.count + 1
+        entry.start = 0
+    end
+
+    function Profiler:report()
+        print("=== PROFILER REPORT ===")
+        for label, stat in pairs(self.data) do
+            local avg = stat.total / math.max(stat.count, 1)
+            print(string.format("%s: %d calls, total = %d ms, avg = %.2f ms",
+                label, stat.count, stat.total, avg))
+        end
+        self:reset()
+    end
+
+    function Profiler:reset()
+        self.data = {}
+        self.current = nil
+    end
+
+    function Profiler:wrap(label, func)
+        return function(...)
+            self:start(label)
+            local results = { func(...) }
+            self:stop(label)
+            return table.unpack(results)
+        end
+    end
+
+    Profiler = Profiler.new()
 
 ---------------------------
 ---MARIO CLASS FUNCTIONS---
@@ -3987,15 +4075,15 @@ playStage=class()
                     local entity=_G[focusedList[i]]
                     if entity~=nil then --if entity exists
                         if ((entity.y)>212) then
-                            print("offscreen y",entity.TYPE)
+                            -- print("offscreen y",entity.TYPE)
                             objAPI:destroy(entity.classID,entity.LEVEL)
                         elseif (((entity.x) > (spawnOffsets[1])) and ((entity.x) < (spawnOffsets[2]))) or (entity.GLOBAL==true) or currentLevel.enableGlobalEntities==true then --if in view distance
                             entity:logic()
                             -- print("logic",entity.TYPE)
                         elseif entity.despawnable then
-                            print("despawn1",entity.TYPE)
+                            -- print("despawn1",entity.TYPE)
                             if entity.x<-16 or (entity.x < spawnOffsets[1]+8) or ((entity.x) > spawnOffsets[2]-8) then
-                                print("despawn2",entity.TYPE)
+                                -- print("despawn2",entity.TYPE)
                                 objAPI:destroy(entity.classID,entity.LEVEL) end
                         end
                     else table.remove(focusedList,i) end --get rid of blank entities that may occur as a result of overloading, NOT a substantial issue
@@ -4017,6 +4105,7 @@ playStage=class()
     function playStage:paint(gc,runLogic) --all logic/drawing required to play the stage
         if playStage.load>1 then
         --logic
+            Profiler:start("playStage:paint logic")
             for i=1,runLogic do
                 if playStage.transition<=10 and not gui.PROMPT then
                     if not playStage.wait then
@@ -4026,26 +4115,50 @@ playStage=class()
                     if (not playStage.wait) or mario.pipe then
                         mario.framesPassed=mario.framesPassed+1
                     end
+                    Profiler:start("playStage:levelLogic", true)
                     playStage:levelLogic() --timer etc
+                    Profiler:start("playStage:scrollCamera", true)
                     playStage:scrollCamera() --scrolling
+                    Profiler:start("playStage:handleInput", true)
                     playStage:handleInput() --receive information from keys pressed and parse it
+                    Profiler:start("playStage:objLogic", true)
                     playStage:objLogic() --logic for every obj (powerups, enemies etc) except mario
+                    Profiler:start("objAPI:cleanup", true)
                     objAPI:cleanup() --transfers layers, destroys queued objects
+                    Profiler:start("mario:logic", true)
                     mario:logic()
                 end
             end
+            Profiler:stop("playStage:paint logic")
             
         --drawing (terrain and most objs)
+            Profiler:start("playStage:paint drawing")
+
+            Profiler:start("playStage:drawBackground", true)
             playStage:drawBackground(gc)
+            Profiler:start("playStage:objDraw entityListBackground", true)
             playStage:objDraw(gc,{"entityListBackground"})
-            if mario.pipe then mario:draw(gc) end
+            if mario.pipe then
+                Profiler:start("mario:draw", true)
+                mario:draw(gc)
+            end
+            Profiler:start("playStage:drawTerrain", true)
             playStage:drawTerrain(gc)
+            Profiler:start("playStage:objDraw entityListInner entityListOuter", true)
             playStage:objDraw(gc,{"entityListInner","entityListOuter"})
-            if not mario.pipe then mario:draw(gc) end
+            if not mario.pipe then
+                Profiler:start("mario:draw", true)
+                mario:draw(gc)
+            end
+            Profiler:start("playStage:objDraw entityListParticle", true)
             playStage:objDraw(gc,{"entityListParticle"})
-            if playStage.transition2 then playStage:drawCircleTransition(gc,unpack(playStage.transition2)) end
+            if playStage.transition2 then
+                Profiler:start("playStage:drawCircleTransition", true)
+                playStage:drawCircleTransition(gc,unpack(playStage.transition2))
+            end
         
         --hud (coins= %^&)
+            Profiler:start("playStage:paint HUD", true)
             local frameForAnim=(math.floor((framesPassed/4)%6))+1
             if frameForAnim<4 then frameForAnim="[" elseif frameForAnim==5 then frameForAnim="}" else frameForAnim="{" end
             local hud1=frameForAnim.."+"..addZeros(playStage.coinCount,2)
@@ -4064,6 +4177,8 @@ playStage=class()
 
         --debug stuff
             if debug then --this is very messy and a complete clusterf*ck
+                Profiler:start("playStage:paint debug", true)
+                
                 local highlightedx=pixel2plot(mouse.x,mouse.y-8)[1]
                 local highlightedy=pixel2plot(mouse.x,mouse.y-8)[2]
                 local pixels = plot2pixel(highlightedx,highlightedy,true)
@@ -4101,11 +4216,15 @@ playStage=class()
 
         --transition
             if playStage.transition>0 then
+                Profiler:start("playStage:draw transition", true)
+
                 playStage.transition=playStage.transition-1
                 gc:setColorRGB(0,0,0)
                 gc:fillRect(0,0,160-((20-playStage.transition)*8),212)
                 gc:fillRect(160+(20-playStage.transition)*8,0,160-(20-playStage.transition)*8,212)
             end
+
+            Profiler:stop("playStage:paint drawing")
         else
             gc:setColorRGB(0,0,0)
             gc:fillRect(0,0,screenWidth,screenHeight)
@@ -5985,6 +6104,7 @@ gui=class()
 
             lastTime = currentTime
             print("FPS: " .. fps)
+            Profiler:report()
         end
     end
 
