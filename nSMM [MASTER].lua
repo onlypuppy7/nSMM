@@ -1713,18 +1713,21 @@ objAPI=class() --categories are only roughly representative
     objAPI.spring=false objAPI.interactSpring=true
     --OBJECT/PLATFORM MANAGEMENT
         function objAPI:createObj(TYPE,posX,posY,despawnable,arg1,arg2)
-            local classID=TYPE..#entityListInner+#entityListParticle+#entityListOuter+#entityListBackground+1+framesPassed.."r"..math.random(0,200) --assign random ID
+            local classID=TYPE..#entityLists.entityListInner+#entityLists.entityListParticle+#entityLists.entityListOuter+#entityLists.entityListBackground+1+framesPassed.."r"..math.random(0,200) --assign random ID
             local classTYPE local LEVEL
             classTYPE,LEVEL=objAPI:type2class(TYPE)
+            local levelObject=entityLists[LEVEL]
             if classTYPE~=false then
                 _G[tostring(classID)]=_G[classTYPE]()  --despawnable also triggers block animation (sometimes)
-                table.insert(_G[LEVEL],tostring(classID))
+                table.insert(levelObject,tostring(classID))
                 _G[tostring(classID)]:setup(classID,posX,posY,TYPE,despawnable,arg1,arg2)
             end return classID
         end
 
         function objAPI:initObject(classID,TYPE,LEVEL,hitBox,xywh,vx,vy) --facilitates bringing an object into existence!
-            self.classID=classID self.TYPE=TYPE self.LEVEL=LEVEL or "entityListInner"
+            self.classID=classID
+            self.TYPE=TYPE
+            self.LEVEL=LEVEL or "entityListInner"
             self.hitBox=hitBox
             self.x=xywh[1] self.y=xywh[2] self.w=xywh[3] or 16 self.h=xywh[4] or 16 self.vy=vy or 0
             self.vx=(vx~=true) and vx or ((mario.x>self.x) and 2 or -2)
@@ -1764,8 +1767,8 @@ objAPI=class() --categories are only roughly representative
     
         function objAPI:cleanup() --these huge functions relating to every object are very fun :>
             for iH=1,#hitBoxList do --hitBox aggressor array: {classID,x,y,w,h,type} // hitBox passive array: {w,h,willBeKilled,destroyFireball,xOffset,yOffset}
-                for list=1,#entityLists do --do all entity lists
-                    local focusedList=_G[entityLists[list]]
+                for k in pairs(entityLists) do --do all entity lists
+                    local focusedList=entityLists[k]
                     for i=1,#focusedList do --for all entities within the list
                         local entity=_G[focusedList[i]]
 
@@ -1794,7 +1797,7 @@ objAPI=class() --categories are only roughly representative
             for i=1,#cleanupListDestroy do --remove entity from list and clear all stored vars
                 local objectName,LEVEL=unpack(cleanupListDestroy[i])
                 print(objectName,LEVEL)
-                local levelObject=_G[LEVEL]
+                local levelObject=entityLists[LEVEL]
                 for i2=1,#levelObject do
                     if levelObject[i2]==objectName then
                         table.remove(levelObject,i2)
@@ -1805,11 +1808,12 @@ objAPI=class() --categories are only roughly representative
                 local LEVEL=cleanupListTransfer[i][2]
                 local newLEVEL=cleanupListTransfer[i][3]
                 local objectName=cleanupListTransfer[i][1]
-                local levelObject=_G[LEVEL]
+                local levelObject=entityLists[LEVEL]
+                local newLevelObject=entityLists[newLEVEL]
                 for i2=1,#levelObject do
                     if levelObject[i2]==objectName then
                         table.remove(levelObject,i2)
-                        table.insert(_G[newLEVEL],objectName)
+                        table.insert(newLevelObject,objectName)
                         break
             end end end
             cleanupListDestroy={}
@@ -2347,7 +2351,7 @@ mario=class(objAPI)
     --SPECIAL ACTIONS
         if input.action==1 and mario.power==2 and not mario.crouch then
             local fireballCount=0
-            for _, particleName in ipairs(entityListParticle) do
+            for _, particleName in ipairs(entityLists.entityListParticle) do
                 if string.match(particleName, "fireball") then
                     fireballCount = fireballCount + 1
                 end
@@ -3511,8 +3515,8 @@ objSpring=class(objAPI)
                 entity.y=self.y-12 self.status=2 table.insert(self.springData,{0,entity,entity.vx,self.bounceHeight,self.boostHeight}) entity.vx=0
         end end
         local function checkLists()
-            for list=1,#entityLists do --do all entity lists
-                local focusedList=_G[entityLists[list]]
+            for k in pairs(entityLists) do --do all entity lists
+                local focusedList=entityLists[k]
                 for i=1,#focusedList do --for all entities within the list
                     local entity=_G[focusedList[i]]
                     check(entity)
@@ -3599,8 +3603,8 @@ objFireball=class(objAPI)
 objBumpedBlock=class(objAPI)
 
     function objBumpedBlock:create(blockX,blockY,TYPE,replaceWith) --sorta forgot why i made this specifically have its own create function
-        local classID="bumpedBlock"..#entityListOuter+#entityListInner+1+framesPassed+math.random(1,99999) --assign random ID
-        table.insert(entityListOuter,tostring(classID))
+        local classID="bumpedBlock"..#entityLists.entityListOuter+#entityLists.entityListInner+1+framesPassed+math.random(1,99999) --assign random ID
+        table.insert(entityLists.entityListOuter,tostring(classID))
         _G[classID]=objBumpedBlock() _G[classID].initObject=objAPI.initObject _G[classID]:setup(classID,blockX,blockY,TYPE,replaceWith)
     end
 
@@ -3644,7 +3648,7 @@ objMultiCoinBlock=class(objAPI)
         if cTimer(self.timer)<=0 then objAPI:destroy(self.classID,self.LEVEL)
         elseif cTimer(self.timer)==1 then --start ending the multi coin period
             if (pixel2ID(self.x+16,self.y,true)~=99) then pixel2place(tonumber(splitByChar(self.TYPE,"_")[2]),self.x+16,self.y,true) end --get rid of the infinite coin block at all costs
-            for i=1,#entityListOuter do --now THIS is a stupid workaround to a problem i caused, finds the bumped block animation and changes what it replaces
+            for i=1,#entityLists.entityListOuter do --now THIS is a stupid workaround to a problem i caused, finds the bumped block animation and changes what it replaces
                 local classID=_G[entityListOuter[i]].classID
                 if string.sub(classID,1,11)=="bumpedBlock" and _G[classID].x==self.x and _G[classID].y==self.y then
                     _G[classID].replaceWith[3]=tonumber(tonumber(splitByChar(self.TYPE,"_")[2]))
@@ -3661,7 +3665,7 @@ objBrickParticle=class(objAPI)
     function objBrickParticle:setup(classID,posX,posY,TYPE,despawnable,thrustX,thrustY)
         self:initObject(classID,TYPE,"entityListParticle",nil,{posX,posY},thrustX*0.4,math.abs(thrustY*8))
         self.THEME=(pixel2theme(self.x+1,true)==1) and "_underground" or (pixel2theme(self.x+1,true)==3) and "_castle" or ""
-        self.animIndex=#entityListParticle%4 self.delay=true self.status=((math.ceil((playStage.framesPassed/3)+self.animIndex))%4)+1
+        self.animIndex=#entityLists.entityListParticle%4 self.delay=true self.status=((math.ceil((playStage.framesPassed/3)+self.animIndex))%4)+1
         self.xAnimTimer=playStage.framesPassed+15 self.GLOBAL=true self.interactSpring=false self.disableStarPoints=true
     end
 
@@ -3750,7 +3754,12 @@ playStage=class()
     end
 
     function playStage:init()
-        entityLists={"entityListBackground","entityListInner","entityListOuter","entityListParticle"}
+        entityLists={ --todo: rename to entityList
+            entityListBackground={}, --todo: rename to just background
+            entityListInner={},
+            entityListOuter={},
+            entityListParticle={},
+        }
         currentLevel={}
         playStage.active=false
         playStage.wait=false
@@ -3759,7 +3768,9 @@ playStage=class()
     end
 
     function playStage:clearEntities()
-        for i=1,#entityLists do _G[entityLists[i]]={} end
+        for k in pairs(entityLists) do
+            entityLists[k] = {}
+        end
         cleanupListDestroy={} cleanupListTransfer={}
         hitBoxList={}
         playStage.platformList={}
@@ -4069,8 +4080,8 @@ playStage=class()
     function playStage:objLogic()
         if not playStage.wait and not mario.powerUp then
             local spawnOffsets={(math.ceil(playStage.cameraOffset/16)*16)-48,((math.ceil(screenWidth+playStage.cameraOffset)/16)*16)+48} --view distance plus 3 blocks
-            for list=1,#entityLists do --do all entity lists
-                local focusedList=_G[entityLists[list]]
+            for k in pairs(entityLists) do
+                local focusedList=entityLists[k]
                 for i=1,#focusedList do --for all entities within the list
                     local entity=_G[focusedList[i]]
                     if entity~=nil then --if entity exists
@@ -4091,8 +4102,8 @@ playStage=class()
 
     function playStage:objDraw(gc,entityLists)
         local spawnOffsets={(math.ceil(playStage.cameraOffset/16)*16)-48,((math.ceil(screenWidth+playStage.cameraOffset)/16)*16)+48} --view distance plus 3 blocks
-        for list=1,#entityLists do --do all entity lists
-            local focusedList=_G[entityLists[list]]
+        for k in pairs(entityLists) do
+            local focusedList=entityLists[k]
             for i=1,#focusedList do
                 local entity=_G[focusedList[i]]
                 -- print(entity)
@@ -4137,7 +4148,7 @@ playStage=class()
             Profiler:start("playStage:drawBackground", true)
             playStage:drawBackground(gc)
             Profiler:start("playStage:objDraw entityListBackground", true)
-            playStage:objDraw(gc,{"entityListBackground"})
+            playStage:objDraw(gc,{entityLists.entityListBackground})
             if mario.pipe then
                 Profiler:start("mario:draw", true)
                 mario:draw(gc)
@@ -4145,13 +4156,13 @@ playStage=class()
             Profiler:start("playStage:drawTerrain", true)
             playStage:drawTerrain(gc)
             Profiler:start("playStage:objDraw entityListInner entityListOuter", true)
-            playStage:objDraw(gc,{"entityListInner","entityListOuter"})
+            playStage:objDraw(gc,{entityLists.entityListInner,entityLists.entityListOuter})
             if not mario.pipe then
                 Profiler:start("mario:draw", true)
                 mario:draw(gc)
             end
             Profiler:start("playStage:objDraw entityListParticle", true)
-            playStage:objDraw(gc,{"entityListParticle"})
+            playStage:objDraw(gc,{entityLists.entityListParticle})
             if playStage.transition2 then
                 Profiler:start("playStage:drawCircleTransition", true)
                 playStage:drawCircleTransition(gc,unpack(playStage.transition2))
@@ -4190,7 +4201,7 @@ playStage=class()
                 end
                 gc:drawString("fps: "..tostring(fps).." select: "..ID..name.." velX: "..mario.vx.." velY: "..mario.vy, 0, 17, top)
                 
-                gc:drawString("("..(highlightedx-1)..": "..(13-highlightedy)..") despook: "..despook.." entities: "..#entityListOuter+#entityListParticle+#entityListInner+#entityListBackground, 0, 32, top)
+                gc:drawString("("..(highlightedx-1)..": "..(13-highlightedy)..") despook: "..despook.." entities: "..#entityLists.entityListOuter+#entityLists.entityListParticle+#entityLists.entityListInner+#entityLists.entityListBackground, 0, 32, top)
                 gc:drawString("blockX "..highlightedx.." blockY "..highlightedy.." id: "..plot2ID(highlightedx,highlightedy).." x"..mouse.x.."y"..(mouse.y-8).." mX: "..mario.x.." mY: "..mario.y, 0, 48, top)
                 --gc:drawString("("..(highlightedx-1)..": "..(13-highlightedy)..") id: "..plot2ID(highlightedx,highlightedy), 0, 48, top) --this is for translating GreatEd maps
 
