@@ -540,7 +540,10 @@ despook=0
         screenWidth=platform.window:width() screenHeight=platform.window:height()
         cursor.set("default")
         timerState=false gameSpeed={1}
-        mouse={} mouse.x=0 mouse.y=0
+        mouse={
+            x=0,
+            y=0,
+        }
         framesPassed=1
         blockSelectionTEMP=1
         blockSelectionListTEMP={0,1,2,3,4,5,6,7,8,9,10,20,21,22,23,24,28,29,30,31,32,33,34,35,36,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,99,100,101,102,103,104,"mushroom","mushroom1up","fireflower","Pfireflower","star","goomba","koopa_G","koopa_R","shell_G","shell_R","bullet_L","bullet_R","blaster_L","blaster_R","blaster_LR","fireball_L","fireball_R","piranhaplant_1","piranhaplant_2","piranhaplant_3","piranhaplant_4","platform_3~1~lx~64","platform_3~1~ly~64","platform_3~1~al","platform_3~1~ar","platform_3~1~au","platform_3~1~ad","platform_3~1~fu","platform_3~1~fd","platform_3~1~fl","platform_3~1~fr","platform_3~2~ru","platform_3~2~rd"}
@@ -740,21 +743,6 @@ despook=0
                 action=0
             },
         }
-
-        arrowUpInput=0
-        arrowDownInput=0
-        arrowLeftInput=0
-        arrowRightInput=0
-        
-        arrowUpDelay=0
-        arrowDownDelay=0
-        arrowLeftDelay=0
-        arrowRightDelay=0
-
-        arrowLeftStor=0
-        arrowRightStor=0
-        arrowUpStor=0
-        arrowDownStor=0
     end
     initialiseVARS()
 --------------------------
@@ -2547,15 +2535,17 @@ mario=class(objAPI)
             local TYPE=currentLevel.pipeData[mario.pipe[1]][mario.pipe[2]][3]
             pipeActions=pipeActions[TYPE]
             mario.pipe[5]=mario.pipe[5]+1 --timer
-            if mario.pipe[5]<=11 then --init enter pipe, small zoom
+            local pipeTime=mario.pipe[5]
+            
+            if pipeTime<=11 then --init enter pipe, small zoom
                 mario[pipeActions[1]]=mario[pipeActions[1]]+pipeActions[2]
                 mario.vx=pipeActions[3]
                 mario.pipe[6]=limit(mario.pipe[6]+1,6) --transition timer
-            elseif mario.pipe[5]<=26 then --complete zoom and show black
+            elseif pipeTime<=26 then --complete zoom and show black
                 mario.pipe[6]=mario.pipe[6]+0.35 --transition timer
-            elseif mario.pipe[5]==27 then --swap initial entr/exit with opposite
+            elseif pipeTime==27 then --swap initial entr/exit with opposite
                 mario.pipe[2]=mario.pipe[3] --could have just done 3-value here tbh, too late. cant be bothered
-            elseif mario.pipe[5]==28 then --perform any mid-transition calculation
+            elseif pipeTime==28 then --perform any mid-transition calculation
                 mario.pipe[6]=7.5
                 local pipeX,pipeY=(currentLevel.pipeData[mario.pipe[1]][mario.pipe[2]][1]-1)*16,212-16*currentLevel.pipeData[mario.pipe[1]][mario.pipe[2]][2]
                 -- print(pipeX,pipeY,"|",TYPE)
@@ -2566,14 +2556,14 @@ mario=class(objAPI)
                     plot2place(unpack(currentLevel.loadedObjects[i]))
                 end currentLevel.loadedObjects={} playStage:clearEntities()
                 -- mario[pipeActions[1]]=mario[pipeActions[1]]+pipeActions[2]*11
-            elseif mario.pipe[5]<=39 then --zoom small out again
+            elseif pipeTime<=39 then --zoom small out again
                 mario[pipeActions[1]]=mario[pipeActions[1]]-pipeActions[2]
-                if mario.pipe[5]<=32 then
+                if pipeTime<=32 then
                     mario.pipe[6]=-limit(-(mario.pipe[6]-0.35),-6) --transition timer
-                elseif mario.pipe[5]>=35 then
+                elseif pipeTime>=35 then
                     mario.pipe[6]=mario.pipe[6]-1.25 --transition timer
                 end
-                if mario.pipe[5]==39 then --return game to playing state
+                if pipeTime==39 then --return game to playing state
                     mario.pipe=false playStage.wait=false
                     playStage.transition2=false
                 end
@@ -3947,7 +3937,7 @@ playStage=class()
 
         -- math.randomseed(1)
 
-        local level={} --a relic of the past i think
+        local level=string2level(defaultCourse) --a relic of the past i think
         
         local levelWidth,levelHeight=200,13 --width/height
         local groundHeight=3 --ground parameters
