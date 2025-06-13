@@ -571,29 +571,29 @@ despook=0
             ["+"] = "_X"  --X icon
         }
         typeIndex={
-            goomb = {"objGoomba",        "entityListInner"},
-            koopa = {"objKoopa",         "entityListInner"},
-            Pkoop = {"objKoopaPara",     "entityListInner"},
-            shell = {"objShell",         "entityListInner"},
-            bulle = {"objBulletBill",    "entityListInner"},
-            flame = {"objBowserFlame",   "entityListInner"},
-            blast = {"objBlaster",       "entityListInner"},
-            piran = {"objPiranhaPlant",  "entityListBackground"},
-            bowse = {"objBowser",        "entityListInner"},
-            platf = {"objPlatform",      "entityListOuter"},
-            firef = {"objPowerUp",       "entityListInner"},
-            mushr = {"objPowerUp",       "entityListInner"},
-            Pfire = {"objPowerUp",       "entityListInner"},
-            star  = {"objPowerUp",       "entityListInner"},
-            coin  = {"objCoinAnim",      "entityListOuter"},
-            multi = {"objMultiCoinBlock","entityListBackground"}, 
-            brick = {"objBrickParticle", "entityListParticle"}, 
-            score = {"objScoreParticle", "entityListParticle"}, 
-            fireb = {"objFireball",      "entityListParticle"},
-            flagp = {"objFlagpole",      "entityListBackground"},
-            magic = {"objMagicOrb",      "entityListInner"},
-            sprin = {"objSpring",        "entityListInner"},
-            event = {"objEvent",         "entityListInner"}
+            goomb = {"objGoomba",        "inner"},
+            koopa = {"objKoopa",         "inner"},
+            Pkoop = {"objKoopaPara",     "inner"},
+            shell = {"objShell",         "inner"},
+            bulle = {"objBulletBill",    "inner"},
+            flame = {"objBowserFlame",   "inner"},
+            blast = {"objBlaster",       "inner"},
+            piran = {"objPiranhaPlant",  "background"},
+            bowse = {"objBowser",        "inner"},
+            platf = {"objPlatform",      "outer"},
+            firef = {"objPowerUp",       "inner"},
+            mushr = {"objPowerUp",       "inner"},
+            Pfire = {"objPowerUp",       "inner"},
+            star  = {"objPowerUp",       "inner"},
+            coin  = {"objCoinAnim",      "outer"},
+            multi = {"objMultiCoinBlock","background"}, 
+            brick = {"objBrickParticle", "particle"}, 
+            score = {"objScoreParticle", "particle"}, 
+            fireb = {"objFireball",      "particle"},
+            flagp = {"objFlagpole",      "background"},
+            magic = {"objMagicOrb",      "inner"},
+            sprin = {"objSpring",        "inner"},
+            event = {"objEvent",         "inner"}
         }
         nameIndex={
             ["goomba"] =         "Goomba",
@@ -1713,7 +1713,7 @@ objAPI=class() --categories are only roughly representative
     objAPI.spring=false objAPI.interactSpring=true
     --OBJECT/PLATFORM MANAGEMENT
         function objAPI:createObj(TYPE,posX,posY,despawnable,arg1,arg2)
-            local classID=TYPE..#entityLists.entityListInner+#entityLists.entityListParticle+#entityLists.entityListOuter+#entityLists.entityListBackground+1+framesPassed.."r"..math.random(0,200) --assign random ID
+            local classID=TYPE..#entityLists.inner+#entityLists.particle+#entityLists.outer+#entityLists.background+1+framesPassed.."r"..math.random(0,200) --assign random ID
             local classTYPE local LEVEL
             classTYPE,LEVEL=objAPI:type2class(TYPE)
             local levelObject=entityLists[LEVEL]
@@ -1727,7 +1727,7 @@ objAPI=class() --categories are only roughly representative
         function objAPI:initObject(classID,TYPE,LEVEL,hitBox,xywh,vx,vy) --facilitates bringing an object into existence!
             self.classID=classID
             self.TYPE=TYPE
-            self.LEVEL=LEVEL or "entityListInner"
+            self.LEVEL=LEVEL or "inner"
             self.hitBox=hitBox
             self.x=xywh[1] self.y=xywh[2] self.w=xywh[3] or 16 self.h=xywh[4] or 16 self.vy=vy or 0
             self.vx=(vx~=true) and vx or ((mario.x>self.x) and 2 or -2)
@@ -2105,8 +2105,8 @@ objAPI=class() --categories are only roughly representative
             end
             if circumstance=="mario" or circumstance=="fireball" then
                 self.vx=(mario.x<self.x) and 2 or -2
-            end objAPI:transferLayer(self.classID,self.LEVEL,"entityListParticle")
-            self.LEVEL="entityListParticle"
+            end objAPI:transferLayer(self.classID,self.LEVEL,"particle")
+            self.LEVEL="particle"
         end --NEW code approved
 
         function objAPI:handleBumpedBlock(xLOC,yLOC,shell)
@@ -2351,7 +2351,7 @@ mario=class(objAPI)
     --SPECIAL ACTIONS
         if input.action==1 and mario.power==2 and not mario.crouch then
             local fireballCount=0
-            for _, particleName in ipairs(entityLists.entityListParticle) do
+            for _, particleName in ipairs(entityLists.particle) do
                 if string.match(particleName, "fireball") then
                     fireballCount = fireballCount + 1
                 end
@@ -2749,7 +2749,7 @@ mario=class(objAPI)
 objMagicOrb=class(objAPI)
 
     function objMagicOrb:setup(classID,posX,posY,TYPE,despawnable,arg1,arg2)
-        self:initObject(classID,TYPE,"entityListInner",{16,16,false,false},{posX,posY},0,0)
+        self:initObject(classID,TYPE,"inner",{16,16,false,false},{posX,posY},0,0)
         self.status=1 self.GLOBAL=true self.animTimer=0 self.isBouncy=true self.allowStarCollision=true
         local v=splitByChar(self.TYPE,"_")
         self.animType=(v[2]=="a0") self.moveType=(v[3]=="m1") --i think the animtype is reversed, just roll with it tbh
@@ -2800,7 +2800,7 @@ objMagicOrb=class(objAPI)
 objFlagpole=class(objAPI)
 
     function objFlagpole:setup(classID,posX,posY,TYPE,despawnable,arg1,arg2)
-        self:initObject(classID,TYPE,"entityListBackground",nil,{posX,posY},0,0)
+        self:initObject(classID,TYPE,"background",nil,{posX,posY},0,0)
         self.despawnable=false self.my=0 self.interactSpring=false self.disableStarPoints=true
         local v=pixel2plot(self.x,self.y,true) plot2place(9,(v[1]+1),v[2]) --set hard block base
     end
@@ -2851,7 +2851,7 @@ objPlatform=class(objAPI)
     function objPlatform:setup(classID,posX,posY,TYPE,despawnable,arg1,arg2)  --platform_length~vel~MODE~distance eg, platform_3~2~lx~64
         local config=splitByChar(string.sub(TYPE,10,#TYPE),"~")
         self.length,self.speed,self.ox,self.oy=config[1],config[2],0,0
-        self:initObject(classID,config[3],"entityListOuter",nil,{posX,posY},0,0)
+        self:initObject(classID,config[3],"outer",nil,{posX,posY},0,0)
         if self.TYPE=="lx" or self.TYPE=="ly" then --loops back and forth on the x/y axis
             self.distance=tonumber(config[4])
             if self.distance<0 then self.distance=math.abs(self.distance) self.speed=-self.speed end
@@ -2927,7 +2927,7 @@ objPlatform=class(objAPI)
 objGoomba=class(objAPI)
 
     function objGoomba:setup(classID,posX,posY,TYPE,despawnable,arg1,arg2) --eg ("goomba77215",64,64,"goomba")
-        self:initObject(classID,TYPE,"entityListInner",{16,16,true,true},{posX,posY},true,0)
+        self:initObject(classID,TYPE,"inner",{16,16,true,true},{posX,posY},true,0)
         self.status=1 self.despawnable=false --for now, unless pipe spawning added
         self.turnAround=true
     end
@@ -2964,7 +2964,7 @@ objGoomba=class(objAPI)
 objPiranhaPlant=class(objAPI)
 
     function objPiranhaPlant:setup(classID,posX,posY,TYPE,despawnable,arg1,arg2) --eg ("piranhaplant_1r2923",64,64,"piranhaplant_1",true)
-        self:initObject(classID,TYPE,"entityListBackground",nil,{posX,posY},0,0)
+        self:initObject(classID,TYPE,"background",nil,{posX,posY},0,0)
         self.status=1 self.despawnable=false self.interactSpring=false
         self.moveTimer=50 --how far into the rising thing it is
         self.riseTimer=5 --frames to wait before rising
@@ -3039,11 +3039,11 @@ objPiranhaPlant=class(objAPI)
 objBulletBill=class(objAPI)
 
     function objBulletBill:setup(classID,posX,posY,TYPE,despawnable,fromBlaster,arg2) --eg ("bullet_L8173831",64,64,"bullet_L",true)
-        self:initObject(classID,TYPE,fromBlaster and "entityListInner" or "entityListOuter",{16,16,false,true},{posX,posY},true,0)
+        self:initObject(classID,TYPE,fromBlaster and "inner" or "outer",{16,16,false,true},{posX,posY},true,0)
         self.status=1 self.despawnable=true self.interactSpring=false self.disableStarPoints=true
         self.vx=(self.TYPE=="bullet_L") and -3 or 3
         self.timer=fromBlaster and sTimer(5) or false
-        if not fromBlaster then objAPI:transferLayer(self.classID,"entityListInner","entityListOuter") end
+        if not fromBlaster then objAPI:transferLayer(self.classID,"inner","outer") end
     end
 
     function objBulletBill:logic() --handle both movement and animation
@@ -3055,8 +3055,8 @@ objBulletBill=class(objAPI)
         end
     --LAYER STUFF
         if self.timer and gTimer(self.timer) then
-            objAPI:transferLayer(self.classID,self.LEVEL,"entityListOuter")
-            self.LEVEL="entityListOuter"
+            objAPI:transferLayer(self.classID,self.LEVEL,"outer")
+            self.LEVEL="outer"
             self.timer=false
         end
     end
@@ -3076,7 +3076,7 @@ objBulletBill=class(objAPI)
 objBlaster=class(objAPI)
 
     function objBlaster:setup(classID,posX,posY,TYPE,despawnable,arg1,arg2) --possible types: blaster_L blaster_R blaster_LR
-        self:initObject(classID,TYPE,"entityListInner",nil,{posX,posY},true,0)
+        self:initObject(classID,TYPE,"inner",nil,{posX,posY},true,0)
         self.despawnable=false self.timer=sTimer(30) self.interactSpring=false self.disableStarPoints=true
         local v=pixel2plot(self.x,self.y,true) plot2place(99,(v[1]+1),v[2]) --make block solid
     end
@@ -3108,10 +3108,10 @@ objBlaster=class(objAPI)
 objEvent=class(objAPI)
 
     function objEvent:setup(classID,posX,posY,TYPE,despawnable,arg1,arg2) --possible types: blaster_L blaster_R blaster_LR
-        self:initObject(classID,TYPE,"entityListInner",nil,{posX,posY},true,0)
+        self:initObject(classID,TYPE,"inner",nil,{posX,posY},true,0)
         local eventDetails=splitByChar(TYPE,"_")
         playStage.events[eventDetails[2]]=eventDetails[3]
-        objAPI:destroy(classID,"entityListInner")
+        objAPI:destroy(classID,"inner")
     end
 
     function objEvent:logic()
@@ -3126,7 +3126,7 @@ objEvent=class(objAPI)
 objKoopa=class(objAPI)
 
     function objKoopa:setup(classID,posX,posY,TYPE,despawnable,arg1,arg2)
-        self:initObject(classID,TYPE,"entityListInner",{16,16,true,true},{posX,posY},self.vx or true,0)
+        self:initObject(classID,TYPE,"inner",{16,16,true,true},{posX,posY},self.vx or true,0)
         self.status=1 self.despawnable=false --for now, unless pipe spawning added
         self.turnAround=true
         self.noFall=(self.TYPE=="koopa_R")
@@ -3174,7 +3174,7 @@ objKoopa=class(objAPI)
 objKoopaPara=class(objAPI)
 
     function objKoopaPara:setup(classID,posX,posY,TYPE,despawnable,arg1,arg2)
-        self:initObject(classID,TYPE,"entityListInner",{16,16,true,true},{posX,posY},true,0)
+        self:initObject(classID,TYPE,"inner",{16,16,true,true},{posX,posY},true,0)
         self.status=1 self.despawnable=false --for now, unless pipe spawning added
         self.turnAround=true self.doesBounce=(self.TYPE=="Pkoopa_G")
         local config=splitByChar(self.TYPE,"_") self.facing="L_"
@@ -3240,7 +3240,7 @@ objKoopaPara=class(objAPI)
 objShell=class(objAPI)
 
     function objShell:setup(classID,posX,posY,TYPE,despawnable,arg1,arg2) --eg ("shell_g77215",64,64,"shell_g",-4,false)
-        self:initObject(classID,string.sub(TYPE,1,7),"entityListInner",{16,16,true,true},{posX,posY},arg1 or 0,0)
+        self:initObject(classID,string.sub(TYPE,1,7),"inner",{16,16,true,true},{posX,posY},arg1 or 0,0)
         self.status=1 self.despawnable=false self.vx=tonumber(splitByChar(TYPE,"_")[3] or self.vx)
         self.koopaTimer=arg2 and playStage.framesPassed+200 or false
         self.fromKoopa=arg2 or false self.hitTimer=0 self.hitCount=0
@@ -3314,7 +3314,7 @@ objShell=class(objAPI)
 objBowser=class(objAPI)
 
     function objBowser:setup(classID,posX,posY,TYPE,despawnable,arg1,arg2) --eg ("goomba77215",64,64,"goomba")
-        self:initObject(classID,TYPE,"entityListInner",{32,32,true,true,0,-16},{posX,posY,32},1,0)
+        self:initObject(classID,TYPE,"inner",{32,32,true,true,0,-16},{posX,posY,32},1,0)
         self.status=1 self.despawnable=false
         self.turnAround=true self.hp=5 self.destroyShell=true
         self.jumpCountdown=-1
@@ -3410,7 +3410,7 @@ objBowser=class(objAPI)
 objBowserFlame=class(objAPI)
 
     function objBowserFlame:setup(classID,posX,posY,TYPE,despawnable,moveToY,arg2)
-        self:initObject(classID,TYPE,"entityListInner",{16,4,false,true},{posX,round(posY+4)},true,0)
+        self:initObject(classID,TYPE,"inner",{16,4,false,true},{posX,round(posY+4)},true,0)
         self.status=1 self.despawnable=true self.interactSpring=false
         self.vx=(self.TYPE=="flame_L") and -3 or 3
         self.moveToY=moveToY and round(moveToY+4) or self.y
@@ -3442,7 +3442,7 @@ objBowserFlame=class(objAPI)
 objPowerUp=class(objAPI)
 
     function objPowerUp:setup(classID,posX,posY,TYPE,despawnable,arg1,arg2) --eg ("mushroom37253",64,16,"mushroom",true)
-        self:initObject(classID,TYPE,"entityListInner",{16,16,false,true},{posX,posY},true,0)
+        self:initObject(classID,TYPE,"inner",{16,16,false,true},{posX,posY},true,0)
         if string.sub(TYPE,1,1)=="P" then
             if mario.power==0 then self.TYPE="mushroom"
             elseif mario.power>0 then self.TYPE="fireflower" end
@@ -3498,7 +3498,7 @@ objPowerUp=class(objAPI)
 objSpring=class(objAPI)
 
     function objSpring:setup(classID,posX,posY,TYPE,despawnable,arg1,arg2)
-        self:initObject(classID,TYPE,"entityListInner",{16,16,false,false},{posX,posY},0,0)
+        self:initObject(classID,TYPE,"inner",{16,16,false,false},{posX,posY},0,0)
         self.status=1 self.GLOBAL=true self.springData={}
         if self.TYPE=="spring_O" then     self.bounceHeight=16
         elseif self.TYPE=="spring_B" then self.bounceHeight=8
@@ -3561,7 +3561,7 @@ objSpring=class(objAPI)
 objFireball=class(objAPI)
 
     function objFireball:setup(classID,posX,posY,TYPE,despawnable,arg1,arg2)
-        self:initObject(classID,TYPE,"entityListParticle",nil,{posX,posY,8,8},TYPE=="fireball_L" and -6 or 6,-0.5)
+        self:initObject(classID,TYPE,"particle",nil,{posX,posY,8,8},TYPE=="fireball_L" and -6 or 6,-0.5)
         self.timer=false self.despawnable=true self.status=((math.ceil((framesPassed/2)))%4)+1
         self.doesBounce=7 self.isFireball=true self.disableStarPoints=true self.interactSpring=false
     end
@@ -3603,15 +3603,15 @@ objFireball=class(objAPI)
 objBumpedBlock=class(objAPI)
 
     function objBumpedBlock:create(blockX,blockY,TYPE,replaceWith) --sorta forgot why i made this specifically have its own create function
-        local classID="bumpedBlock"..#entityLists.entityListOuter+#entityLists.entityListInner+1+framesPassed+math.random(1,99999) --assign random ID
-        table.insert(entityLists.entityListOuter,tostring(classID))
+        local classID="bumpedBlock"..#entityLists.outer+#entityLists.inner+1+framesPassed+math.random(1,99999) --assign random ID
+        table.insert(entityLists.outer,tostring(classID))
         _G[classID]=objBumpedBlock() _G[classID].initObject=objAPI.initObject _G[classID]:setup(classID,blockX,blockY,TYPE,replaceWith)
     end
 
     function objBumpedBlock:setup(classID,blockX,blockY,TYPE,replaceWith) --eg (23,6,"UsedBlock",false)
         local v,texture=plot2pixel(blockX,blockY),blockIndex[replaceWith]["texture"][1]
         if blockIndex[replaceWith]["theme"][plot2theme(blockX)]~=nil then texture=blockIndex[replaceWith]["theme"][plot2theme(blockX)][1] end
-        self:initObject(classID,texture,"entityListOuter",nil,{v[1],v[2]},true,0)
+        self:initObject(classID,texture,"outer",nil,{v[1],v[2]},true,0)
         self.yA=self.y self.replaceWith={blockX,blockY,replaceWith} self.interactSpring=false
         self.animCount=0 self.despawnable=true plot2place(99,blockX,blockY) --barrier
         self.disableStarPoints=true
@@ -3639,7 +3639,7 @@ objBumpedBlock=class(objAPI)
 objMultiCoinBlock=class(objAPI)
         
     function objMultiCoinBlock:setup(classID,posX,posY,TYPE,despawnable,arg1,arg2)
-        self:initObject(classID,TYPE,"entityListBackground",nil,{posX,posY},true,0)
+        self:initObject(classID,TYPE,"background",nil,{posX,posY},true,0)
         self.despawnable=false self.GLOBAL=true self.timer=sTimer(100) self.interactSpring=false self.disableStarPoints=true
         objAPI:createObj("coin",self.x,self.y,true)
     end
@@ -3648,8 +3648,8 @@ objMultiCoinBlock=class(objAPI)
         if cTimer(self.timer)<=0 then objAPI:destroy(self.classID,self.LEVEL)
         elseif cTimer(self.timer)==1 then --start ending the multi coin period
             if (pixel2ID(self.x+16,self.y,true)~=99) then pixel2place(tonumber(splitByChar(self.TYPE,"_")[2]),self.x+16,self.y,true) end --get rid of the infinite coin block at all costs
-            for i=1,#entityLists.entityListOuter do --now THIS is a stupid workaround to a problem i caused, finds the bumped block animation and changes what it replaces
-                local classID=_G[entityListOuter[i]].classID
+            for i=1,#entityLists.outer do --now THIS is a stupid workaround to a problem i caused, finds the bumped block animation and changes what it replaces
+                local classID=_G[outer[i]].classID
                 if string.sub(classID,1,11)=="bumpedBlock" and _G[classID].x==self.x and _G[classID].y==self.y then
                     _G[classID].replaceWith[3]=tonumber(tonumber(splitByChar(self.TYPE,"_")[2]))
     end end end end
@@ -3663,9 +3663,9 @@ objBrickParticle=class(objAPI)
 
 
     function objBrickParticle:setup(classID,posX,posY,TYPE,despawnable,thrustX,thrustY)
-        self:initObject(classID,TYPE,"entityListParticle",nil,{posX,posY},thrustX*0.4,math.abs(thrustY*8))
+        self:initObject(classID,TYPE,"particle",nil,{posX,posY},thrustX*0.4,math.abs(thrustY*8))
         self.THEME=(pixel2theme(self.x+1,true)==1) and "_underground" or (pixel2theme(self.x+1,true)==3) and "_castle" or ""
-        self.animIndex=#entityLists.entityListParticle%4 self.delay=true self.status=((math.ceil((playStage.framesPassed/3)+self.animIndex))%4)+1
+        self.animIndex=#entityLists.particle%4 self.delay=true self.status=((math.ceil((playStage.framesPassed/3)+self.animIndex))%4)+1
         self.xAnimTimer=playStage.framesPassed+15 self.GLOBAL=true self.interactSpring=false self.disableStarPoints=true
     end
 
@@ -3689,7 +3689,7 @@ objBrickParticle=class(objAPI)
 objScoreParticle=class(objAPI)
 
     function objScoreParticle:setup(classID,posX,posY,TYPE,despawnable,arg1,arg2)
-        self:initObject(classID,arg1,"entityListParticle",nil,{posX-playStage.cameraOffset,posY+8},true,0)
+        self:initObject(classID,arg1,"particle",nil,{posX-playStage.cameraOffset,posY+8},true,0)
         self.animLimit=sTimer(12) self.GLOBAL=true self.interactSpring=false self.disableStarPoints=true
     end
 
@@ -3708,7 +3708,7 @@ objScoreParticle=class(objAPI)
 objCoinAnim=class(objAPI)
 
     function objCoinAnim:setup(classID,posX,posY,TYPE,despawnable,arg1,arg2)
-        self:initObject(classID,TYPE,"entityListOuter",nil,{posX,posY},true,0) self.disableStarPoints=true
+        self:initObject(classID,TYPE,"outer",nil,{posX,posY},true,0) self.disableStarPoints=true
         self.yA=self.y self.status=1 self.animCount=0 objAPI:addStats("coins",1) self.interactSpring=false
     end
 
@@ -3755,10 +3755,10 @@ playStage=class()
 
     function playStage:init()
         entityLists={ --todo: rename to entityList
-            entityListBackground={}, --todo: rename to just background
-            entityListInner={},
-            entityListOuter={},
-            entityListParticle={},
+            background={}, --todo: rename to just background
+            inner={},
+            outer={},
+            particle={},
         }
         currentLevel={}
         playStage.active=false
@@ -4147,22 +4147,22 @@ playStage=class()
 
             Profiler:start("playStage:drawBackground", true)
             playStage:drawBackground(gc)
-            Profiler:start("playStage:objDraw entityListBackground", true)
-            playStage:objDraw(gc,{entityLists.entityListBackground})
+            Profiler:start("playStage:objDraw background", true)
+            playStage:objDraw(gc,{entityLists.background})
             if mario.pipe then
                 Profiler:start("mario:draw", true)
                 mario:draw(gc)
             end
             Profiler:start("playStage:drawTerrain", true)
             playStage:drawTerrain(gc)
-            Profiler:start("playStage:objDraw entityListInner entityListOuter", true)
-            playStage:objDraw(gc,{entityLists.entityListInner,entityLists.entityListOuter})
+            Profiler:start("playStage:objDraw inner outer", true)
+            playStage:objDraw(gc,{entityLists.inner,entityLists.outer})
             if not mario.pipe then
                 Profiler:start("mario:draw", true)
                 mario:draw(gc)
             end
-            Profiler:start("playStage:objDraw entityListParticle", true)
-            playStage:objDraw(gc,{entityLists.entityListParticle})
+            Profiler:start("playStage:objDraw particle", true)
+            playStage:objDraw(gc,{entityLists.particle})
             if playStage.transition2 then
                 Profiler:start("playStage:drawCircleTransition", true)
                 playStage:drawCircleTransition(gc,unpack(playStage.transition2))
@@ -4201,7 +4201,7 @@ playStage=class()
                 end
                 gc:drawString("fps: "..tostring(fps).." select: "..ID..name.." velX: "..mario.vx.." velY: "..mario.vy, 0, 17, top)
                 
-                gc:drawString("("..(highlightedx-1)..": "..(13-highlightedy)..") despook: "..despook.." entities: "..#entityLists.entityListOuter+#entityLists.entityListParticle+#entityLists.entityListInner+#entityLists.entityListBackground, 0, 32, top)
+                gc:drawString("("..(highlightedx-1)..": "..(13-highlightedy)..") despook: "..despook.." entities: "..#entityLists.outer+#entityLists.particle+#entityLists.inner+#entityLists.background, 0, 32, top)
                 gc:drawString("blockX "..highlightedx.." blockY "..highlightedy.." id: "..plot2ID(highlightedx,highlightedy).." x"..mouse.x.."y"..(mouse.y-8).." mX: "..mario.x.." mY: "..mario.y, 0, 48, top)
                 --gc:drawString("("..(highlightedx-1)..": "..(13-highlightedy)..") id: "..plot2ID(highlightedx,highlightedy), 0, 48, top) --this is for translating GreatEd maps
 
