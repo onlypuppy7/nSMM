@@ -1084,7 +1084,7 @@ despook=0
         local ID=pixel2ID(x,y,Global)
         if type(ID)=='number' then
             if ID<0 then ID=0 end
-            return blockIndex[ID][tostring(checkFor)]
+            return blockIndex[ID][checkFor]
     end end
 
     function pixel2solid(x,y,Global) --semi useless function to remove redundant args, returns state of solid
@@ -4669,7 +4669,7 @@ editor=class()
             end local containing=blockIndex[blockID]["containing"]
             if containing and string.sub(containing,1,5)~="event" then
                 if string.sub(containing,1,9)=="multicoin" then containing="multicoin" end
-                gc:drawImage(texs["icon_"..tostring(containing)],x,y) --texs.icon_star
+                gc:drawImage(texs["icon_"..containing],x,y) --texs.icon_star
             end
         elseif blockID~=nil then
             local TYPE=objAPI:type2class(blockID)
