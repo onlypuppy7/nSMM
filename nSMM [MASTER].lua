@@ -24,6 +24,8 @@ despook=0
     texs={}
 
     function loadTextures(option)
+        local startMem=collectgarbage("count")
+
         if option=="tile" then --TILE TEXTURES
             texs.Barrier=image.new("\016\000\000\000\016\000\000\000\000\000\000\000 \000\000\000\016\000\001\000\196X\196X\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196X\196X\196X\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196X\196\216\196\216\196\216\196\216\196X\196X\196X\196X\196X\196X\196X\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196X\196X\196X\196X\196X\196X\196X\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196X\196X\196X\196X\196X\196X\196X\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196X\196X\196X\196X\196X\196X\196\216\196\216\196\216\196\216\196\216\196X\196\216\196\216\196\216\196\216\196X\196X\196X\196X\196X\196\216\196\216\196\216\196\216\196\216\196X\196X\196\216\196\216\196\216\196\216\196X\196X\196X\196X\196\216\196\216\196\216\196\216\196\216\196X\196X\196X\196\216\196\216\196\216\196\216\196X\196X\196X\196\216\196\216\196\216\196\216\196\216\196X\196X\196X\196X\196\216\196\216\196\216\196\216\196X\196X\196\216\196\216\196\216\196\216\196\216\196X\196X\196X\196X\196X\196\216\196\216\196\216\196\216\196X\196\216\196\216\196\216\196\216\196\216\196X\196X\196X\196X\196X\196X\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196X\196X\196X\196X\196X\196X\196X\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196X\196X\196X\196X\196X\196X\196X\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196X\196X\196X\196X\196X\196X\196X\196\216\196\216\196\216\196\216\196X\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196X\196X\196X\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196X\196X")
             string2image("Air0",false,"\016\000\000\000\016\000\000\000\000\000\000\000 \000\000\000\016\000\001\000\191\198\191\198\191\198\191\198\191\198\191\198\191\198\191\198\191\198\191\198\191\198\191\198\191\198\191\198\191\198\191\198\191\198\127\190\127\190\127\190\127\190\127\190\127\190\127\190\031\178\031\178\031\178\031\178\031\178\031\178\031\178\191\198\191\198\127\190\127\190\127\190\127\190\127\190\127\190\127\190\031\178\031\178\031\178\031\178\031\178\031\178\031\178\191\198\191\198\127\190\127\190\127\190\127\190\127\190\127\190\127\190\031\178\031\178\031\178\031\178\031\178\031\178\031\178\191\198\191\198\127\190\127\190\127\190\127\190\127\190\127\190\127\190\031\178\031\178\031\178\031\178\031\178\031\178\031\178\191\198\191\198\127\190\127\190\127\190\127\190\127\190\127\190\127\190\031\178\031\178\031\178\031\178\031\178\031\178\031\178\191\198\191\198\127\190\127\190\127\190\127\190\127\190\127\190\127\190\031\178\031\178\031\178\031\178\031\178\031\178\031\178\191\198\191\198\127\190\127\190\127\190\127\190\127\190\127\190\127\190\031\178\031\178\031\178\031\178\031\178\031\178\031\178\191\198\191\198\031\178\031\178\031\178\031\178\031\178\031\178\031\178\127\190\127\190\127\190\127\190\127\190\127\190\127\190\191\198\191\198\031\178\031\178\031\178\031\178\031\178\031\178\031\178\127\190\127\190\127\190\127\190\127\190\127\190\127\190\191\198\191\198\031\178\031\178\031\178\031\178\031\178\031\178\031\178\127\190\127\190\127\190\127\190\127\190\127\190\127\190\191\198\191\198\031\178\031\178\031\178\031\178\031\178\031\178\031\178\127\190\127\190\127\190\127\190\127\190\127\190\127\190\191\198\191\198\031\178\031\178\031\178\031\178\031\178\031\178\031\178\127\190\127\190\127\190\127\190\127\190\127\190\127\190\191\198\191\198\031\178\031\178\031\178\031\178\031\178\031\178\031\178\127\190\127\190\127\190\127\190\127\190\127\190\127\190\191\198\191\198\031\178\031\178\031\178\031\178\031\178\031\178\031\178\127\190\127\190\127\190\127\190\127\190\127\190\127\190\191\198\191\198\191\198\191\198\191\198\191\198\191\198\191\198\191\198\191\198\191\198\191\198\191\198\191\198\191\198\191\198\191\198",{
@@ -420,7 +422,10 @@ despook=0
             processImage("grow","\016\000\000\000 \000\000\000\000\000\000\000 \000\000\000\016\000\001\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\196\216\196\216\196\216\196\216\196\216\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000d\242\196\216\196\216\196\216\196\216\196\216\196\216\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000d\242d\242\196\216\196\216\196\216\196\216\196\216\196\216\000\000\000\000\000\000\000\000\000\000\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\000\000\000\000\000\000\000\000\000\000\000\000\000\000d\242d\242d\242\160\181d\242d\242\160\181\160\181\160\181\000\000\000\000\000\000\000\000\000\000d\242d\242d\242d\242\160\181\160\181d\242d\242\160\181d\242d\242\160\181\000\000\000\000\000\000d\242d\242d\242d\242d\242d\242d\242d\242\160\181\160\181d\242d\242\160\181\000\000\000\000\000\000d\242d\242d\242d\242\160\181d\242d\242d\242\160\181\160\181d\242d\242\160\181\160\181\000\000\000\000\000\000\160\181\160\181\160\181\160\181\160\181\160\181d\242d\242d\242d\242d\242\160\181\160\181\000\000\000\000\000\000\160\181\160\181\160\181\160\181\160\181d\242d\242d\242d\242d\242\160\181\160\181\160\181\000\000\000\000\000\000\000\000d\242d\242d\242d\242d\242d\242d\242d\242\160\181\160\181\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000d\242d\242d\242d\242d\242\196\216\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\160\181\196\216\160\181\160\181\160\181\160\181\196\216\160\181\000\000\000\000\000\000\000\000\000\000\000\000\000\000\160\181\160\181\196\216\160\181\160\181\160\181\160\181\196\216\160\181\160\181\000\000\000\000\000\000\000\000\000\000\160\181\160\181\160\181\196\216\160\181\160\181\160\181\160\181\196\216\160\181\160\181\160\181\000\000\000\000\000\000\160\181\160\181\160\181\160\181\196\216\160\181\160\181\160\181\160\181\196\216\160\181\160\181\160\181\160\181\000\000d\242d\242\160\181\160\181\196\216d\242\196\216\196\216\196\216\196\216d\242\196\216\160\181\160\181d\242d\242d\242d\242d\242\160\181\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\160\181d\242d\242d\242d\242d\242d\242\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216d\242d\242d\242\000\000d\242\000\000\196\216\196\216\196\216\196\216\000\000\000\000\196\216\196\216\196\216\196\216\000\000d\242\000\000\000\000\000\000\196\216\196\216\196\216\196\216\000\000\000\000\000\000\000\000\196\216\196\216\196\216\196\216\000\000\000\000\000\000\000\000\160\181\160\181\160\181\160\181\000\000\000\000\000\000\000\000\160\181\160\181\160\181\160\181\000\000\000\000\000\000\000\000\160\181\160\181\160\181\160\181\000\000\000\000\000\000\000\000\160\181\160\181\160\181\160\181\000\000\000\000\000\000\160\181\160\181\160\181\160\181\160\181\000\000\000\000\000\000\000\000\160\181\160\181\160\181\160\181\160\181\000\000")
             processImage("crouch","\016\000\000\000 \000\000\000\000\000\000\000 \000\000\000\016\000\001\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\196\216\196\216\196\216\196\216\196\216\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000d\242\196\216\196\216\196\216\196\216\196\216\196\216\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000d\242d\242\196\216\196\216\196\216\196\216\196\216\196\216\000\000\000\000\000\000\000\000\000\000\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\000\000\000\000\000\000\000\000\000\000\000\000\000\000d\242d\242d\242\160\181d\242d\242\160\181\160\181\160\181\000\000\000\000\000\000\000\000\000\000d\242d\242d\242d\242\160\181\160\181d\242d\242\160\181d\242d\242\160\181\000\000\000\000\000\000d\242d\242d\242d\242\160\181d\242d\242d\242\160\181d\242d\242d\242\160\181\160\181\000\000\000\000\000\000\160\181\160\181\160\181\160\181\160\181\160\181d\242d\242d\242d\242d\242\160\181\160\181\000\000\000\000\000\000\160\181\160\181\160\181\160\181\160\181d\242d\242d\242d\242d\242\160\181\196\216\196\216\000\000\000\000\000\000d\242d\242d\242d\242d\242d\242d\242d\242d\242\160\181\196\216\160\181\160\181\160\181\000\000\000\000\160\181\196\216\160\181\160\181d\242d\242d\242\160\181\160\181\160\181\196\216\160\181\160\181\160\181\000\000\000\000\160\181\196\216\160\181\160\181\160\181\160\181\160\181\160\181\160\181\160\181\196\216\160\181\160\181\160\181\160\181\160\181\160\181\196\216\196\216\160\181\160\181\160\181\160\181\160\181\160\181\160\181\196\216\160\181\160\181\160\181\160\181\160\181\160\181\160\181\196\216\196\216\160\181\160\181\160\181\160\181\160\181d\242\196\216\160\181\160\181\160\181\160\181\160\181\160\181\160\181\160\181\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\160\181\160\181\160\181\160\181\160\181\160\181\160\181\160\181\160\181\196\216\196\216\196\216\196\216\196\216\196\216\160\181\160\181\160\181\160\181\160\181\160\181\160\181\160\181d\242d\242d\242\196\216\196\216\196\216\196\216d\242d\242d\242\160\181\160\181\160\181\196\216\160\181d\242d\242d\242d\242\196\216\196\216\196\216\196\216d\242d\242d\242d\242\160\181\196\216\196\216d\242d\242d\242d\242\196\216\196\216\196\216\196\216\196\216\196\216d\242d\242d\242d\242\196\216\000\000\196\216d\242d\242\160\181\000\000\000\000\000\000\000\000\000\000\000\000\160\181d\242d\242\196\216\000\000\000\000\000\000\160\181\160\181\160\181\160\181\000\000\000\000\000\000\000\000\160\181\160\181\160\181\160\181\000\000\000\000\160\181\160\181\160\181\160\181\160\181\160\181\000\000\000\000\000\000\000\000\160\181\160\181\160\181\160\181\160\181\160\181")
             processImage("fire","\016\000\000\000 \000\000\000\000\000\000\000 \000\000\000\016\000\001\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\196\216\196\216\196\216\196\216\196\216\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000c\242\196\216\196\216\196\216\196\216\196\216\196\216\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000c\242c\242\196\216\196\216\196\216\196\216\196\216\196\216\000\000\000\000\000\000\000\000\000\000\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\000\000\000\000\000\000\000\000\000\000\000\000\000\000c\242c\242c\242\160\181c\242c\242\160\181\160\181\160\181\000\000\000\000\000\000\000\000\000\000c\242c\242c\242c\242\160\181\160\181c\242c\242\160\181c\242c\242\160\181\000\000\000\000\000\000c\242c\242c\242c\242c\242c\242c\242c\242\160\181\160\181c\242c\242\160\181\000\000\000\000\000\000c\242c\242c\242c\242\160\181c\242c\242c\242\160\181\160\181c\242c\242\160\181\160\181\000\000\000\000\000\000\160\181\160\181\160\181\160\181\160\181\160\181c\242c\242c\242c\242c\242\160\181\160\181\000\000\000\000c\242c\242c\242c\242\160\181\160\181c\242c\242c\242c\242c\242\160\181\160\181\000\000\000\000\000\000\000\000c\242c\242c\242c\242\160\181\160\181\160\181c\242c\242\160\181\000\000\000\000\000\000\000\000\000\000\000\000\000\000c\242c\242\160\181\160\181\160\181\160\181\160\181\196\216\196\216\160\181\000\000\000\000\000\000\000\000\000\000\000\000\000\000c\242\160\181\160\181\160\181\160\181\160\181\160\181\196\216\196\216\160\181\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\160\181\160\181\160\181\160\181\160\181\160\181\196\216\160\181\000\000\000\000\000\000\000\000\000\000\000\000\000\000\160\181\196\216\160\181\160\181\160\181\160\181\160\181\196\216\160\181\000\000\000\000\000\000\000\000\000\000\000\000\000\000\160\181\196\216\196\216\160\181\160\181\160\181\160\181\196\216\160\181\000\000\000\000\000\000\000\000\000\000\000\000\160\181\160\181\196\216\196\216\196\216\160\181\160\181\196\216\196\216\000\000\000\000\000\000\000\000\000\000\000\000\000\000\160\181\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\000\000\000\000\000\000\000\000\000\000\000\000\000\000\196\216\196\216\196\216c\242\196\216\196\216\196\216\196\216\196\216\000\000\000\000\000\000\000\000\000\000\000\000\000\000\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\000\000\000\000\000\000\000\000\000\000\000\000\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\000\000\000\000\000\000\000\000\000\000\000\000\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\000\000\000\000\000\000\000\000\000\000\000\000\160\181\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\000\000\000\000\000\000\000\000\000\000\196\216\196\216\160\181\196\216\196\216\196\216\196\216\196\216\196\216\196\216\160\181\160\181\160\181\160\181\000\000\000\000\196\216\196\216\196\216\160\181\160\181\196\216\196\216\196\216\196\216\196\216\160\181\160\181\160\181\160\181\000\000\000\000\000\000\196\216\196\216\196\216\196\216\160\181\196\216\196\216\196\216\196\216\160\181\160\181\160\181\160\181\000\000\000\000\000\000\196\216\196\216\196\216\196\216\000\000\000\000\196\216\196\216\196\216\160\181\160\181\160\181\160\181\000\000\000\000\000\000\160\181\160\181\160\181\160\181\000\000\000\000\000\000\000\000\000\000\160\181\160\181\160\181\160\181\000\000\000\000\000\000\160\181\160\181\160\181\160\181\000\000\000\000\000\000\000\000\000\000\000\000\000\000\160\181\160\181\000\000\160\181\160\181\160\181\160\181\160\181\160\181\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\160\181\000\000\160\181\160\181\160\181\160\181\160\181\160\181\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000")
-    end end
+        end
+
+        print("finished loading textures:", option, collectgarbage("count"), "kb used, difference:", collectgarbage("count") - startMem)
+    end
 
     function loadFont()
     --These are just here so they can be used for the loading screen    
@@ -1754,20 +1759,20 @@ objAPI=class() --categories are only roughly representative
         end
 
         function objAPI:createObj(TYPE,posX,posY,despawnable,arg1,arg2)
-            --todo, rename classID to objectID because class makes no sense here
-            local classID=TYPE..objAPI:getObjectCount()+1+framesPassed.."r"..math.random(0,200) --assign random ID
+            --todo, rename objectID to objectID because class makes no sense here
+            local objectID=TYPE..objAPI:getObjectCount()+1+framesPassed.."r"..math.random(0,200) --assign random ID
             local classTYPE local LEVEL
             classTYPE,LEVEL=objAPI:type2class(TYPE)
             local levelObject=entityLists[LEVEL]
             if classTYPE~=false then
-                allEntities[classID]=_G[classTYPE]()  --despawnable also triggers block animation (sometimes) [edit idfk why i made this comment here]
-                table.insert(levelObject,classID)
-                allEntities[classID]:setup(classID,posX,posY,TYPE,despawnable,arg1,arg2)
-            end return classID
+                allEntities[objectID]=_G[classTYPE]()  --despawnable also triggers block animation (sometimes) [edit idfk why i made this comment here]
+                table.insert(levelObject,objectID)
+                allEntities[objectID]:setup(objectID,posX,posY,TYPE,despawnable,arg1,arg2)
+            end return objectID
         end
 
-        function objAPI:initObject(classID,TYPE,LEVEL,hitBox,xywh,vx,vy) --facilitates bringing an object into existence!
-            self.classID=classID
+        function objAPI:initObject(objectID,TYPE,LEVEL,hitBox,xywh,vx,vy) --facilitates bringing an object into existence!
+            self.objectID=objectID
             self.TYPE=TYPE
             self.LEVEL=LEVEL or "inner"
             self.hitBox=hitBox
@@ -1787,16 +1792,16 @@ objAPI=class() --categories are only roughly representative
             table.insert(cleanupListTransfer,{objectName,LEVEL,LEVEL})
         end
     
-        function objAPI:addHitBox(classID,x,y,w,h,TYPE)
-            table.insert(hitBoxList,{classID,x,y,w,h,TYPE})
+        function objAPI:addHitBox(objectID,x,y,w,h,TYPE)
+            table.insert(hitBoxList,{objectID,x,y,w,h,TYPE})
         end
     
-        function objAPI:addPlatform(classID,x,y,w,xVel,yVel)
+        function objAPI:addPlatform(objectID,x,y,w,xVel,yVel)
             local yOffset=0
             if math.abs(yVel)>1 then
                 yOffset=(math.floor(y-4)%2)
             end
-            table.insert(playStage.platformListAdd,{classID,x,y-yOffset,w,xVel,yVel})
+            table.insert(playStage.platformListAdd,{objectID,x,y-yOffset,w,xVel,yVel})
         end
     
         function objAPI:updatePlatforms()
@@ -1808,7 +1813,7 @@ objAPI=class() --categories are only roughly representative
         end
     
         function objAPI:cleanup() --these huge functions relating to every object are very fun :>
-            for iH=1,#hitBoxList do --hitBox aggressor array: {classID,x,y,w,h,type} // hitBox passive array: {w,h,willBeKilled,destroyFireball,xOffset,yOffset}
+            for iH=1,#hitBoxList do --hitBox aggressor array: {objectID,x,y,w,h,type} // hitBox passive array: {w,h,willBeKilled,destroyFireball,xOffset,yOffset}
                 for k in pairs(entityLists) do --do all entity lists
                     local focusedList=entityLists[k]
                     for i=1,#focusedList do --for all entities within the list
@@ -1819,7 +1824,7 @@ objAPI=class() --categories are only roughly representative
                             local hitArea=hitBoxList[iH]
                             hitBox[5],hitBox[6]=hitBox[5] or 0,hitBox[6] or 0
                             -- local pos={entity.x,entity.y} -- V if there is a collision V
-                            local CLASS=entity.classID
+                            local CLASS=entity.objectID
 
                             if hitArea[1]~=CLASS and (checkCollision(hitArea[2],hitArea[3],hitArea[4],hitArea[5],entity.x+2+hitBox[5],entity.y+2+hitBox[6],hitBox[1]-4,hitBox[2]-4)) then
                                 if entity.dead~=true then
@@ -1895,13 +1900,13 @@ objAPI=class() --categories are only roughly representative
             end
             self.y=self.y+self.vy
             if self.y<0 then
-                objAPI:destroy(self.classID,self.LEVEL)
+                objAPI:destroy(self.objectID,self.LEVEL)
             end
         end --NEW code approved
 
     --OBJECT MOVEMENT
         function objAPI:checkForWall(x,y,isMario) -- return true if point is in wall
-            local isMario=isMario or (self.classID=="mario")
+            local isMario=isMario or (self.objectID=="mario")
             return (pixel2solid(x,y,true) and not (isMario and pixel2anything("marioonly",x,y,true))) or (isMario and pixel2anything("entityonly",x,y,true)) --check if x pos in a wall
         end --NEW code approved
 
@@ -1939,7 +1944,7 @@ objAPI=class() --categories are only roughly representative
                         if not (((X+V)>=semisolidPos) and (X<=semisolidPos)) then result={X+V,false} end
                     else result={X+V,false} end return unpack(result)
                 end
-                local X,Y,W,H,V,isMario,LEFT,RIGHT,POWER = self.x,self.y,self.w or 16,self.h or 16,V or self.vx,self.classID=="mario" and true or false,(V<0),(V>0)
+                local X,Y,W,H,V,isMario,LEFT,RIGHT,POWER = self.x,self.y,self.w or 16,self.h or 16,V or self.vx,self.objectID=="mario" and true or false,(V<0),(V>0)
                 local powerLeft,powerRight,wall5,wall6,finalPos
                 local topLeft,wall1     =checkX(X+2,Y+3,V,LEFT)
                 local topRight,wall2    =checkX(X+W-3,Y+3,V,RIGHT)
@@ -1997,7 +2002,7 @@ objAPI=class() --categories are only roughly representative
                     local finalPos=math.min(unpack(pos)) local onFloor=(#pos)~=1
                     return finalPos, onFloor
                 end
-                local X,Y,W,H,V,isMario=self.x,math.floor(self.y),self.w or 16,self.h or 16,math.floor(yVel) or -math.ceil(self.vy),self.classID=="mario" and true or false
+                local X,Y,W,H,V,isMario=self.x,math.floor(self.y),self.w or 16,self.h or 16,math.floor(yVel) or -math.ceil(self.vy),self.objectID=="mario" and true or false
                 local LEFT, floorL=checkY(isMario,self.x+3,Y+H,V,platformCalc)
                 local RIGHT,floorR=checkY(isMario,self.x+W-3,Y+H,V,platformCalc)
                 if W>16 then --prevent falling into a block for wide entities. **only works for 32 in this case**
@@ -2046,7 +2051,7 @@ objAPI=class() --categories are only roughly representative
                             if ((Y+V)<=semisolidPos) and (Y>=semisolidPos) then return rndPos(i),{X,i} end
                     end end return Y+V,false
                 end
-                local X,Y,W,H,V,isMario = self.x,self.y,self.w or 16,self.h or 16,V or self.vy,self.classID=="mario" and true or false
+                local X,Y,W,H,V,isMario = self.x,self.y,self.w or 16,self.h or 16,V or self.vy,self.objectID=="mario" and true or false
                 local offsetY=(isMario and mario.power>0 and not mario.crouch) and -15 or 0
                 local topLeft,topLeftB=checkY(isMario,X+3,Y+offsetY,V)
                 local topRight,topRightB=checkY(isMario,X+W-3,Y+offsetY,V)
@@ -2084,7 +2089,7 @@ objAPI=class() --categories are only roughly representative
     --OBJECT BEHAVIOUR
         function objAPI:checkStuckInWall()
             if self:checkForWall(self.x+8,self.y+8) and not self.dead then --stuck in a block
-                objAPI:destroy(self.classID,self.LEVEL)
+                objAPI:destroy(self.objectID,self.LEVEL)
             end
         end --NEW code approved
 
@@ -2100,7 +2105,7 @@ objAPI=class() --categories are only roughly representative
                     if onStomp[1]=="stomp" then
                         self.status=onStomp[2]
                         self.deathAnimTimer=playStage.framesPassed+10
-                        objAPI:sendToFront(self.classID,self.LEVEL)
+                        objAPI:sendToFront(self.objectID,self.LEVEL)
                     elseif onStomp[1]=="dropkill" then
                         self.vy=0.5
                     elseif onStomp[1]=="powerup" then self:use()
@@ -2119,7 +2124,7 @@ objAPI=class() --categories are only roughly representative
                         end
                     elseif onStomp[1]=="transform" then
                         local vx,newID=self.vx,objAPI:createObj(onStomp[2],self.x,self.y,nil,onStomp[3],onStomp[4])
-                        objAPI:destroy(self.classID,self.LEVEL) self.status=onStomp[5]
+                        objAPI:destroy(self.objectID,self.LEVEL) self.status=onStomp[5]
                         if string.sub(self.TYPE,1,5)=="Pkoop" then allEntities[newID].vx=sign(vx)*2 end 
                     end
                     if currentLevel.enableCoinOnKill then objAPI:createObj("coin",self.x,self.y-16,true) end
@@ -2135,8 +2140,8 @@ objAPI=class() --categories are only roughly representative
                         self.dead=true
                     else mario:powerDownMario() end
                 end
-                table.insert(debugBoxes,{mario.x+1,mario.y-marioSize+1,14,14+marioSize})
-                table.insert(debugBoxes,{self.x+4,self.y+3+bodge,self.hitBox[1]-8,self.hitBox[2]-4})
+                --table.insert(debugBoxes,{mario.x+1,mario.y-marioSize+1,14,14+marioSize})
+                --table.insert(debugBoxes,{self.x+4,self.y+3+bodge,self.hitBox[1]-8,self.hitBox[2]-4})
             end
         end --NEW code approved
 
@@ -2148,7 +2153,7 @@ objAPI=class() --categories are only roughly representative
             end
             if circumstance=="mario" or circumstance=="fireball" then
                 self.vx=(mario.x<self.x) and 2 or -2
-            end objAPI:transferLayer(self.classID,self.LEVEL,"particle")
+            end objAPI:transferLayer(self.objectID,self.LEVEL,"particle")
             self.LEVEL="particle"
         end --NEW code approved
 
@@ -2179,7 +2184,7 @@ objAPI=class() --categories are only roughly representative
         end --TODO rewrite needed ##############
 
         function objAPI:checkFor(CHECK) --cannot be inside aggregatecheckx as has to display changes immediately, otherwise will be a frame late in some instances
-            local X,Y,W,H,isMario,O=self.x,self.y,self.w or 16,self.h or 16,self.classID=="mario",self.vy==0 and 0 or -1
+            local X,Y,W,H,isMario,O=self.x,self.y,self.w or 16,self.h or 16,self.objectID=="mario",self.vy==0 and 0 or -1
             local function doCheck(x,y,isTop,side)
                 if self.canCollectCoins and pixel2anything("coin",x,y,true) then
                     objAPI:addStats("coins",1) pixel2place(0,x,y,true) objAPI:addStats("points",200) end
@@ -2279,7 +2284,7 @@ objAPI=class() --categories are only roughly representative
     end
 
     function Profiler:report()
-        print("=== PROFILER REPORT ===")
+        print("=== PROFILER REPORT ===", collectgarbage("count"), "kb")
         for label, stat in pairs(self.data) do
             local avg = stat.total / math.max(stat.count, 1)
             print(string.format("%s: %d calls, total = %d ms, avg = %.2f ms",
@@ -2311,7 +2316,7 @@ mario=class(objAPI)
 
     function mario:init()
         mario.trail={}
-        self.classID="mario" self.canCollectCoins=true
+        self.objectID="mario" self.canCollectCoins=true
         mario:resetPos()
     end
 
@@ -2793,8 +2798,8 @@ mario=class(objAPI)
 --------------------------
 objMagicOrb=class(objAPI)
 
-    function objMagicOrb:setup(classID,posX,posY,TYPE,despawnable,arg1,arg2)
-        self:initObject(classID,TYPE,"inner",{16,16,false,false},{posX,posY},0,0)
+    function objMagicOrb:setup(objectID,posX,posY,TYPE,despawnable,arg1,arg2)
+        self:initObject(objectID,TYPE,"inner",{16,16,false,false},{posX,posY},0,0)
         self.status=1 self.GLOBAL=true self.animTimer=0 self.isBouncy=true self.allowStarCollision=true
         local v=splitByChar(self.TYPE,"_")
         self.animType=(v[2]=="a0") self.moveType=(v[3]=="m1") --i think the animtype is reversed, just roll with it tbh
@@ -2823,7 +2828,7 @@ objMagicOrb=class(objAPI)
                 if not gui.PROMPT then
                     self.animTimer=self.animTimer+1
                     self.status=((math.ceil((self.animTimer/5)))%5)+1
-                    if self.animTimer>=20 then objAPI:destroy(self.classID,self.LEVEL) playStage.wait=false end
+                    if self.animTimer>=20 then objAPI:destroy(self.objectID,self.LEVEL) playStage.wait=false end
                 end
             else
                 self.status=((math.ceil((playStage.framesPassed/4)))%4)+1
@@ -2844,8 +2849,8 @@ objMagicOrb=class(objAPI)
 --------------------------
 objFlagpole=class(objAPI)
 
-    function objFlagpole:setup(classID,posX,posY,TYPE,despawnable,arg1,arg2)
-        self:initObject(classID,TYPE,"background",nil,{posX,posY},0,0)
+    function objFlagpole:setup(objectID,posX,posY,TYPE,despawnable,arg1,arg2)
+        self:initObject(objectID,TYPE,"background",nil,{posX,posY},0,0)
         self.despawnable=false self.my=0 self.interactSpring=false self.disableStarPoints=true
         local v=pixel2plot(self.x,self.y,true) plot2place(9,(v[1]+1),v[2]) --set hard block base
     end
@@ -2893,10 +2898,10 @@ objFlagpole=class(objAPI)
 --------------------------
 objPlatform=class(objAPI)
 
-    function objPlatform:setup(classID,posX,posY,TYPE,despawnable,arg1,arg2)  --platform_length~vel~MODE~distance eg, platform_3~2~lx~64
+    function objPlatform:setup(objectID,posX,posY,TYPE,despawnable,arg1,arg2)  --platform_length~vel~MODE~distance eg, platform_3~2~lx~64
         local config=splitByChar(string.sub(TYPE,10,#TYPE),"~")
         self.length,self.speed,self.ox,self.oy=config[1],config[2],0,0
-        self:initObject(classID,config[3],"outer",nil,{posX,posY},0,0)
+        self:initObject(objectID,config[3],"outer",nil,{posX,posY},0,0)
         if self.TYPE=="lx" or self.TYPE=="ly" then --loops back and forth on the x/y axis
             self.distance=tonumber(config[4])
             if self.distance<0 then self.distance=math.abs(self.distance) self.speed=-self.speed end
@@ -2910,7 +2915,7 @@ objPlatform=class(objAPI)
     end
 
     function objPlatform:logic() --handle both movement and animation
-        if ((self.y<=-16) or( self.y>=204) or (self.x<=-(self.length*16)) or (self.x>=16*currentLevel.END)) and self.mode~="r" then objAPI:destroy(self.classID,self.LEVEL) return end --despawn if needed
+        if ((self.y<=-16) or( self.y>=204) or (self.x<=-(self.length*16)) or (self.x>=16*currentLevel.END)) and self.mode~="r" then objAPI:destroy(self.objectID,self.LEVEL) return end --despawn if needed
         self.x,self.y=self.x+self.vx,self.y-self.vy --move
         self.ox,self.oy=self.vx,self.vy
     --CHECK IF MARIO COLLIDED
@@ -2938,7 +2943,7 @@ objPlatform=class(objAPI)
                 if self.y<=-18 and self.sort=="u" then      self.y=206
                 elseif self.y>=206 and self.sort=="d" then  self.y=-18 end
         end end
-        objAPI:addPlatform(self.classID,self.x,self.y,self.length*16,self.vx,self.vy) --update the platform
+        objAPI:addPlatform(self.objectID,self.x,self.y,self.length*16,self.vx,self.vy) --update the platform
     end
 
     function objPlatform:draw(gc,x,y,TYPE,isEditor,isIcon)
@@ -2971,8 +2976,8 @@ objPlatform=class(objAPI)
 --------------------------
 objGoomba=class(objAPI)
 
-    function objGoomba:setup(classID,posX,posY,TYPE,despawnable,arg1,arg2) --eg ("goomba77215",64,64,"goomba")
-        self:initObject(classID,TYPE,"inner",{16,16,true,true},{posX,posY},true,0)
+    function objGoomba:setup(objectID,posX,posY,TYPE,despawnable,arg1,arg2) --eg ("goomba77215",64,64,"goomba")
+        self:initObject(objectID,TYPE,"inner",{16,16,true,true},{posX,posY},true,0)
         self.status=1 self.despawnable=false --for now, unless pipe spawning added
         self.turnAround=true
     end
@@ -2991,7 +2996,7 @@ objGoomba=class(objAPI)
             self:setNewPlatformV() self:checkFor()
         elseif self.status==4 then self:animateDeathFlyOffscreen() --fireball/flower
         elseif self.status==3 and (self.deathAnimTimer<playStage.framesPassed) then --stomped
-            objAPI:destroy(self.classID,self.LEVEL)
+            objAPI:destroy(self.objectID,self.LEVEL)
         end
     end
     
@@ -3008,8 +3013,8 @@ objGoomba=class(objAPI)
 --------------------------
 objPiranhaPlant=class(objAPI)
 
-    function objPiranhaPlant:setup(classID,posX,posY,TYPE,despawnable,arg1,arg2) --eg ("piranhaplant_1r2923",64,64,"piranhaplant_1",true)
-        self:initObject(classID,TYPE,"background",nil,{posX,posY},0,0)
+    function objPiranhaPlant:setup(objectID,posX,posY,TYPE,despawnable,arg1,arg2) --eg ("piranhaplant_1r2923",64,64,"piranhaplant_1",true)
+        self:initObject(objectID,TYPE,"background",nil,{posX,posY},0,0)
         self.status=1 self.despawnable=false self.interactSpring=false
         self.moveTimer=50 --how far into the rising thing it is
         self.riseTimer=5 --frames to wait before rising
@@ -3083,12 +3088,12 @@ objPiranhaPlant=class(objAPI)
 --------------------------
 objBulletBill=class(objAPI)
 
-    function objBulletBill:setup(classID,posX,posY,TYPE,despawnable,fromBlaster,arg2) --eg ("bullet_L8173831",64,64,"bullet_L",true)
-        self:initObject(classID,TYPE,fromBlaster and "inner" or "outer",{16,16,false,true},{posX,posY},true,0)
+    function objBulletBill:setup(objectID,posX,posY,TYPE,despawnable,fromBlaster,arg2) --eg ("bullet_L8173831",64,64,"bullet_L",true)
+        self:initObject(objectID,TYPE,fromBlaster and "inner" or "outer",{16,16,false,true},{posX,posY},true,0)
         self.status=1 self.despawnable=true self.interactSpring=false self.disableStarPoints=true
         self.vx=(self.TYPE=="bullet_L") and -3 or 3
         self.timer=fromBlaster and sTimer(5) or false
-        if not fromBlaster then objAPI:transferLayer(self.classID,"inner","outer") end
+        if not fromBlaster then objAPI:transferLayer(self.objectID,"inner","outer") end
     end
 
     function objBulletBill:logic() --handle both movement and animation
@@ -3100,7 +3105,7 @@ objBulletBill=class(objAPI)
         end
     --LAYER STUFF
         if self.timer and gTimer(self.timer) then
-            objAPI:transferLayer(self.classID,self.LEVEL,"outer")
+            objAPI:transferLayer(self.objectID,self.LEVEL,"outer")
             self.LEVEL="outer"
             self.timer=false
         end
@@ -3120,8 +3125,8 @@ objBulletBill=class(objAPI)
 --------------------------
 objBlaster=class(objAPI)
 
-    function objBlaster:setup(classID,posX,posY,TYPE,despawnable,arg1,arg2) --possible types: blaster_L blaster_R blaster_LR
-        self:initObject(classID,TYPE,"inner",nil,{posX,posY},true,0)
+    function objBlaster:setup(objectID,posX,posY,TYPE,despawnable,arg1,arg2) --possible types: blaster_L blaster_R blaster_LR
+        self:initObject(objectID,TYPE,"inner",nil,{posX,posY},true,0)
         self.despawnable=false self.timer=sTimer(30) self.interactSpring=false self.disableStarPoints=true
         local v=pixel2plot(self.x,self.y,true) plot2place(99,(v[1]+1),v[2]) --make block solid
     end
@@ -3131,12 +3136,12 @@ objBlaster=class(objAPI)
             if (math.abs(mario.x-self.x))>=48 then --mario distance
                 if mario.x<self.x and (self.TYPE=="blaster_L" or self.TYPE=="blaster_LR") and pixel2solid(self.x-8,self.y+8,true)==false then --shoot left
                     objAPI:createObj("bullet_L",self.x,self.y,nil,true)
-                    objAPI:sendToFront(self.classID,self.LEVEL)
+                    objAPI:sendToFront(self.objectID,self.LEVEL)
                     self.timer=sTimer(60)
                 elseif mario.x>self.x and (self.TYPE=="blaster_R" or self.TYPE=="blaster_LR") and pixel2solid(self.x+20,self.y+8,true)==false then --shoot right
                     self.timer=sTimer(60)
                     objAPI:createObj("bullet_R",self.x,self.y,nil,true)
-                    objAPI:sendToFront(self.classID,self.LEVEL)
+                    objAPI:sendToFront(self.objectID,self.LEVEL)
     end end end end
 
     function objBlaster:draw(gc,x,y,TYPE,isEditor,isIcon)
@@ -3152,11 +3157,11 @@ objBlaster=class(objAPI)
 --------------------------
 objEvent=class(objAPI)
 
-    function objEvent:setup(classID,posX,posY,TYPE,despawnable,arg1,arg2) --possible types: blaster_L blaster_R blaster_LR
-        self:initObject(classID,TYPE,"inner",nil,{posX,posY},true,0)
+    function objEvent:setup(objectID,posX,posY,TYPE,despawnable,arg1,arg2) --possible types: blaster_L blaster_R blaster_LR
+        self:initObject(objectID,TYPE,"inner",nil,{posX,posY},true,0)
         local eventDetails=splitByChar(TYPE,"_")
         playStage.events[eventDetails[2]]=eventDetails[3]
-        objAPI:destroy(classID,"inner")
+        objAPI:destroy(objectID,"inner")
     end
 
     function objEvent:logic()
@@ -3170,8 +3175,8 @@ objEvent=class(objAPI)
 --------------------------
 objKoopa=class(objAPI)
 
-    function objKoopa:setup(classID,posX,posY,TYPE,despawnable,arg1,arg2)
-        self:initObject(classID,TYPE,"inner",{16,16,true,true},{posX,posY},self.vx or true,0)
+    function objKoopa:setup(objectID,posX,posY,TYPE,despawnable,arg1,arg2)
+        self:initObject(objectID,TYPE,"inner",{16,16,true,true},{posX,posY},self.vx or true,0)
         self.status=1 self.despawnable=false --for now, unless pipe spawning added
         self.turnAround=true
         self.noFall=(self.TYPE=="koopa_R")
@@ -3218,8 +3223,8 @@ objKoopa=class(objAPI)
 --------------------------
 objKoopaPara=class(objAPI)
 
-    function objKoopaPara:setup(classID,posX,posY,TYPE,despawnable,arg1,arg2)
-        self:initObject(classID,TYPE,"inner",{16,16,true,true},{posX,posY},true,0)
+    function objKoopaPara:setup(objectID,posX,posY,TYPE,despawnable,arg1,arg2)
+        self:initObject(objectID,TYPE,"inner",{16,16,true,true},{posX,posY},true,0)
         self.status=1 self.despawnable=false --for now, unless pipe spawning added
         self.turnAround=true self.doesBounce=(self.TYPE=="Pkoopa_G")
         local config=splitByChar(self.TYPE,"_") self.facing="L_"
@@ -3284,8 +3289,8 @@ objKoopaPara=class(objAPI)
 --------------------------
 objShell=class(objAPI)
 
-    function objShell:setup(classID,posX,posY,TYPE,despawnable,arg1,arg2) --eg ("shell_g77215",64,64,"shell_g",-4,false)
-        self:initObject(classID,string.sub(TYPE,1,7),"inner",{16,16,true,true},{posX,posY},arg1 or 0,0)
+    function objShell:setup(objectID,posX,posY,TYPE,despawnable,arg1,arg2) --eg ("shell_g77215",64,64,"shell_g",-4,false)
+        self:initObject(objectID,string.sub(TYPE,1,7),"inner",{16,16,true,true},{posX,posY},arg1 or 0,0)
         self.status=1 self.despawnable=false self.vx=tonumber(splitByChar(TYPE,"_")[3] or self.vx)
         self.koopaTimer=arg2 and playStage.framesPassed+200 or false
         self.fromKoopa=arg2 or false self.hitTimer=0 self.hitCount=0
@@ -3297,7 +3302,7 @@ objShell=class(objAPI)
         if not self.dead then
     --MARIO COLLISION, SHELL BOUNDARY, X AXIS, Y AXIS + PLATFORMS
             if self.hitTimer-playStage.framesPassed<=0 then self:checkMarioCollision({"shell"},true) end
-            if self.vx~=0 then objAPI:addHitBox(self.classID,self.x,self.y,16,16,"shell") self.canCollectCoins=true
+            if self.vx~=0 then objAPI:addHitBox(self.objectID,self.x,self.y,16,16,"shell") self.canCollectCoins=true
             else self.canCollectCoins=false end
             self:aggregateCheckX(self.px,true)
             self:aggregateCheckX(self.vx)
@@ -3311,7 +3316,7 @@ objShell=class(objAPI)
                 elseif self.fromKoopa then
                     if self.koopaTimer<playStage.framesPassed then
                         objAPI:createObj("koopa"..string.sub(self.TYPE,6,8),self.x,self.y)
-                        objAPI:destroy(self.classID,self.LEVEL) self.status=0
+                        objAPI:destroy(self.objectID,self.LEVEL) self.status=0
                     elseif (self.koopaTimer-7<playStage.framesPassed) then self.status=2
                     elseif (self.koopaTimer-45<playStage.framesPassed) then
                         local animOption=((math.ceil((playStage.framesPassed)))%4)
@@ -3358,8 +3363,8 @@ objShell=class(objAPI)
 --------------------------
 objBowser=class(objAPI)
 
-    function objBowser:setup(classID,posX,posY,TYPE,despawnable,arg1,arg2) --eg ("goomba77215",64,64,"goomba")
-        self:initObject(classID,TYPE,"inner",{32,32,true,true,0,-16},{posX,posY,32},1,0)
+    function objBowser:setup(objectID,posX,posY,TYPE,despawnable,arg1,arg2) --eg ("goomba77215",64,64,"goomba")
+        self:initObject(objectID,TYPE,"inner",{32,32,true,true,0,-16},{posX,posY,32},1,0)
         self.status=1 self.despawnable=false
         self.turnAround=true self.hp=5 self.destroyShell=true
         self.jumpCountdown=-1
@@ -3391,9 +3396,9 @@ objBowser=class(objAPI)
                     self.turnCountdown=math.random(100,280)
             end end
             if self.vy==0 then self.lastY=pixel2snapgrid(0,self.y,16,16,false)[2] end
-            table.insert(debugBoxes,{self.x-16,self.lastY,24,16})
-            table.insert(debugBoxes,{self.x-16,self.lastY-16,24,16})
-            table.insert(debugBoxes,{self.x-16,self.lastY-16-16,24,16})
+            --table.insert(debugBoxes,{self.x-16,self.lastY,24,16})
+            --table.insert(debugBoxes,{self.x-16,self.lastY-16,24,16})
+            --table.insert(debugBoxes,{self.x-16,self.lastY-16-16,24,16})
     --ANIMATION, MARIO COLLISION, X AXIS, Y AXIS + PLATFORMS
             self:checkMarioCollision({false},true,-16)
             self:aggregateCheckX(self.px,true)
@@ -3454,8 +3459,8 @@ objBowser=class(objAPI)
 --------------------------
 objBowserFlame=class(objAPI)
 
-    function objBowserFlame:setup(classID,posX,posY,TYPE,despawnable,moveToY,arg2)
-        self:initObject(classID,TYPE,"inner",{16,4,false,true},{posX,round(posY+4)},true,0)
+    function objBowserFlame:setup(objectID,posX,posY,TYPE,despawnable,moveToY,arg2)
+        self:initObject(objectID,TYPE,"inner",{16,4,false,true},{posX,round(posY+4)},true,0)
         self.status=1 self.despawnable=true self.interactSpring=false
         self.vx=(self.TYPE=="flame_L") and -3 or 3
         self.moveToY=moveToY and round(moveToY+4) or self.y
@@ -3486,8 +3491,8 @@ objBowserFlame=class(objAPI)
 --------------------------
 objPowerUp=class(objAPI)
 
-    function objPowerUp:setup(classID,posX,posY,TYPE,despawnable,arg1,arg2) --eg ("mushroom37253",64,16,"mushroom",true)
-        self:initObject(classID,TYPE,"inner",{16,16,false,true},{posX,posY},true,0)
+    function objPowerUp:setup(objectID,posX,posY,TYPE,despawnable,arg1,arg2) --eg ("mushroom37253",64,16,"mushroom",true)
+        self:initObject(objectID,TYPE,"inner",{16,16,false,true},{posX,posY},true,0)
         if string.sub(TYPE,1,1)=="P" then
             if mario.power==0 then self.TYPE="mushroom"
             elseif mario.power>0 then self.TYPE="fireflower" end
@@ -3500,7 +3505,7 @@ objPowerUp=class(objAPI)
         self.doesBounce=(self.TYPE=="star") self.turnAround=true self.allowStarCollision=true
     end
 
-    function objPowerUp:use() objAPI:destroy(self.classID,self.LEVEL)
+    function objPowerUp:use() objAPI:destroy(self.objectID,self.LEVEL)
         if self.TYPE=="mushroom1up" then objAPI:addStats("1up",1,self.x,self.y)
         else    if self.TYPE=="mushroom" then       mario:powerUpMario(1)
                 elseif self.TYPE=="fireflower" then mario:powerUpMario(2)
@@ -3542,8 +3547,8 @@ objPowerUp=class(objAPI)
 --------------------------
 objSpring=class(objAPI)
 
-    function objSpring:setup(classID,posX,posY,TYPE,despawnable,arg1,arg2)
-        self:initObject(classID,TYPE,"inner",{16,16,false,false},{posX,posY},0,0)
+    function objSpring:setup(objectID,posX,posY,TYPE,despawnable,arg1,arg2)
+        self:initObject(objectID,TYPE,"inner",{16,16,false,false},{posX,posY},0,0)
         self.status=1 self.GLOBAL=true self.springData={}
         if self.TYPE=="spring_O" then     self.bounceHeight=16
         elseif self.TYPE=="spring_B" then self.bounceHeight=8
@@ -3573,8 +3578,8 @@ objSpring=class(objAPI)
             springData[1]=springData[1]+1
             if springData[1]==2        then self.status=3 entity.vy=0 entity.spring=true --fixes softlock when mario has cleared a level while bouncing on springs
             elseif springData[1]==4    then self.status=2
-                entity.vy=(entity.classID=="mario" and input.stor.up>-8) and springData[5] or springData[4]
-                entity.vx=entity.classID=="mario" and 0 or springData[3]
+                entity.vy=(entity.objectID=="mario" and input.stor.up>-8) and springData[5] or springData[4]
+                entity.vx=entity.objectID=="mario" and 0 or springData[3]
                 entity.spring=false
             elseif springData[1]==6    then self.status=1 table.remove(self.springData,i)
             end
@@ -3605,8 +3610,8 @@ objSpring=class(objAPI)
 --------------------------
 objFireball=class(objAPI)
 
-    function objFireball:setup(classID,posX,posY,TYPE,despawnable,arg1,arg2)
-        self:initObject(classID,TYPE,"particle",nil,{posX,posY,8,8},TYPE=="fireball_L" and -6 or 6,-0.5)
+    function objFireball:setup(objectID,posX,posY,TYPE,despawnable,arg1,arg2)
+        self:initObject(objectID,TYPE,"particle",nil,{posX,posY,8,8},TYPE=="fireball_L" and -6 or 6,-0.5)
         self.timer=false self.despawnable=true self.status=((math.ceil((framesPassed/2)))%4)+1
         self.doesBounce=7 self.isFireball=true self.disableStarPoints=true self.interactSpring=false
     end
@@ -3620,7 +3625,7 @@ objFireball=class(objAPI)
 
     function objFireball:logic()
         if not self.dead then
-            objAPI:addHitBox(self.classID,self.x,self.y,12,12,"fireball")
+            objAPI:addHitBox(self.objectID,self.x,self.y,12,12,"fireball")
     --X AXIS, Y AXIS + PLATFORMS
             self:aggregateCheckX(self.px,true)
             self:aggregateCheckX(self.vx)
@@ -3630,7 +3635,7 @@ objFireball=class(objAPI)
             self:setNewPlatformV() self:checkFor()
     --DEAD
         else self.timer=self.timer+1
-            if self.timer>=(flashingDelay*3)+1 then objAPI:destroy(self.classID,self.LEVEL) return
+            if self.timer>=(flashingDelay*3)+1 then objAPI:destroy(self.objectID,self.LEVEL) return
         end end
     --ANIMATION
         if not self.dead then self.status=((math.ceil((playStage.framesPassed/2)))%4)+1
@@ -3648,15 +3653,15 @@ objFireball=class(objAPI)
 objBumpedBlock=class(objAPI)
 
     function objBumpedBlock:create(blockX,blockY,TYPE,replaceWith) --sorta forgot why i made this specifically have its own create function
-        local classID="bumpedBlock"..#entityLists.outer+#entityLists.inner+1+framesPassed+math.random(1,99999) --assign random ID
-        table.insert(entityLists.outer,tostring(classID))
-        allEntities[classID]=objBumpedBlock() allEntities[classID].initObject=objAPI.initObject allEntities[classID]:setup(classID,blockX,blockY,TYPE,replaceWith)
+        local objectID="bumpedBlock"..#entityLists.outer+#entityLists.inner+1+framesPassed+math.random(1,99999) --assign random ID
+        table.insert(entityLists.outer,tostring(objectID))
+        allEntities[objectID]=objBumpedBlock() allEntities[objectID].initObject=objAPI.initObject allEntities[objectID]:setup(objectID,blockX,blockY,TYPE,replaceWith)
     end
 
-    function objBumpedBlock:setup(classID,blockX,blockY,TYPE,replaceWith) --eg (23,6,"UsedBlock",false)
+    function objBumpedBlock:setup(objectID,blockX,blockY,TYPE,replaceWith) --eg (23,6,"UsedBlock",false)
         local v,texture=plot2pixel(blockX,blockY),blockIndex[replaceWith]["texture"][1]
         if blockIndex[replaceWith]["theme"][plot2theme(blockX)]~=nil then texture=blockIndex[replaceWith]["theme"][plot2theme(blockX)][1] end
-        self:initObject(classID,texture,"outer",nil,{v[1],v[2]},true,0)
+        self:initObject(objectID,texture,"outer",nil,{v[1],v[2]},true,0)
         self.yA=self.y self.replaceWith={blockX,blockY,replaceWith} self.interactSpring=false
         self.animCount=0 self.despawnable=true plot2place(99,blockX,blockY) --barrier
         self.disableStarPoints=true
@@ -3664,12 +3669,12 @@ objBumpedBlock=class(objAPI)
 
     function objBumpedBlock:logic()
         if self.animCount<3 then
-            objAPI:sendToFront(self.classID,self.LEVEL)
+            objAPI:sendToFront(self.objectID,self.LEVEL)
             objAPI:addHitBox(nil,self.x+1,self.y-16,14,16,"block")
         end
         if self.animCount<=4 then self.animCount=self.animCount+1
             self.yA=self.y-round(((math.sin((self.animCount*30)/57.296))*8),0) --math..?
-        else objAPI:destroy(self.classID,self.LEVEL)
+        else objAPI:destroy(self.objectID,self.LEVEL)
             plot2place(self.replaceWith[3],self.replaceWith[1],self.replaceWith[2])
         end
     end
@@ -3683,20 +3688,20 @@ objBumpedBlock=class(objAPI)
 --------------------------
 objMultiCoinBlock=class(objAPI)
         
-    function objMultiCoinBlock:setup(classID,posX,posY,TYPE,despawnable,arg1,arg2)
-        self:initObject(classID,TYPE,"background",nil,{posX,posY},true,0)
+    function objMultiCoinBlock:setup(objectID,posX,posY,TYPE,despawnable,arg1,arg2)
+        self:initObject(objectID,TYPE,"background",nil,{posX,posY},true,0)
         self.despawnable=false self.GLOBAL=true self.timer=sTimer(100) self.interactSpring=false self.disableStarPoints=true
         objAPI:createObj("coin",self.x,self.y,true)
     end
 
     function objMultiCoinBlock:logic()
-        if cTimer(self.timer)<=0 then objAPI:destroy(self.classID,self.LEVEL)
+        if cTimer(self.timer)<=0 then objAPI:destroy(self.objectID,self.LEVEL)
         elseif cTimer(self.timer)==1 then --start ending the multi coin period
             if (pixel2ID(self.x+16,self.y,true)~=99) then pixel2place(tonumber(splitByChar(self.TYPE,"_")[2]),self.x+16,self.y,true) end --get rid of the infinite coin block at all costs
             for i=1,#entityLists.outer do --now THIS is a stupid workaround to a problem i caused, finds the bumped block animation and changes what it replaces
-                local classID=entityLists.outer[i]
-                if string.sub(classID,1,11)=="bumpedBlock" and allEntities[classID].x==self.x and allEntities[classID].y==self.y then
-                    allEntities[classID].replaceWith[3]=tonumber(splitByChar(self.TYPE,"_")[2])
+                local objectID=entityLists.outer[i]
+                if string.sub(objectID,1,11)=="bumpedBlock" and allEntities[objectID].x==self.x and allEntities[objectID].y==self.y then
+                    allEntities[objectID].replaceWith[3]=tonumber(splitByChar(self.TYPE,"_")[2])
     end end end end
 
     function objMultiCoinBlock:draw(gc,x,y,TYPE,isEditor,isIcon) end -- ...nothing to draw
@@ -3707,8 +3712,8 @@ objMultiCoinBlock=class(objAPI)
 objBrickParticle=class(objAPI)
 
 
-    function objBrickParticle:setup(classID,posX,posY,TYPE,despawnable,thrustX,thrustY)
-        self:initObject(classID,TYPE,"particle",nil,{posX,posY},thrustX*0.4,math.abs(thrustY*8))
+    function objBrickParticle:setup(objectID,posX,posY,TYPE,despawnable,thrustX,thrustY)
+        self:initObject(objectID,TYPE,"particle",nil,{posX,posY},thrustX*0.4,math.abs(thrustY*8))
         self.THEME=(pixel2theme(self.x+1,true)==1) and "_underground" or (pixel2theme(self.x+1,true)==3) and "_castle" or ""
         self.animIndex=#entityLists.particle%4 self.delay=true self.status=((math.ceil((playStage.framesPassed/3)+self.animIndex))%4)+1
         self.xAnimTimer=playStage.framesPassed+15 self.GLOBAL=true self.interactSpring=false self.disableStarPoints=true
@@ -3720,7 +3725,7 @@ objBrickParticle=class(objAPI)
         if self.delay==true then self.delay=false return end --initial frame
     --X AXIS,Y AXIS
         if self.xAnimTimer>playStage.framesPassed then self.x=self.x+self.vx end
-        if self.y>216 then objAPI:destroy(self.classID,self.LEVEL) return
+        if self.y>216 then objAPI:destroy(self.objectID,self.LEVEL) return
         else self.vy=(self.vy<0) and (self.vy-0.6) or (self.vy<0.7) and -0.5 or self.vy*0.4
         end self.y=self.y-(self.vy*0.8)
     end
@@ -3733,13 +3738,13 @@ objBrickParticle=class(objAPI)
 --------------------------
 objScoreParticle=class(objAPI)
 
-    function objScoreParticle:setup(classID,posX,posY,TYPE,despawnable,arg1,arg2)
-        self:initObject(classID,arg1,"particle",nil,{posX-playStage.cameraOffset,posY+8},true,0)
+    function objScoreParticle:setup(objectID,posX,posY,TYPE,despawnable,arg1,arg2)
+        self:initObject(objectID,arg1,"particle",nil,{posX-playStage.cameraOffset,posY+8},true,0)
         self.animLimit=sTimer(12) self.GLOBAL=true self.interactSpring=false self.disableStarPoints=true
     end
 
     function objScoreParticle:logic() 
-        if gTimer(self.animLimit) then objAPI:destroy(self.classID,self.LEVEL)
+        if gTimer(self.animLimit) then objAPI:destroy(self.objectID,self.LEVEL)
         else self.y=self.y-3
     end end
 
@@ -3752,8 +3757,8 @@ objScoreParticle=class(objAPI)
 --------------------------
 objCoinAnim=class(objAPI)
 
-    function objCoinAnim:setup(classID,posX,posY,TYPE,despawnable,arg1,arg2)
-        self:initObject(classID,TYPE,"outer",nil,{posX,posY},true,0) self.disableStarPoints=true
+    function objCoinAnim:setup(objectID,posX,posY,TYPE,despawnable,arg1,arg2)
+        self:initObject(objectID,TYPE,"outer",nil,{posX,posY},true,0) self.disableStarPoints=true
         self.yA=self.y self.status=1 self.animCount=0 objAPI:addStats("coins",1) self.interactSpring=false
     end
 
@@ -3761,7 +3766,7 @@ objCoinAnim=class(objAPI)
         if self.animCount<16 then self.animCount=self.animCount+1
             self.yA=self.y-(math.sin((self.animCount*9)/57.296))*64
             self.status=((math.ceil((playStage.framesPassed/3)))%4)+1
-        else objAPI:destroy(self.classID,self.LEVEL) objAPI:addStats("points",200,self.x,self.yA) end
+        else objAPI:destroy(self.objectID,self.LEVEL) objAPI:addStats("points",200,self.x,self.yA) end
         if self.animCount==16 then self.drawCondition=true end
     end
 
@@ -4134,7 +4139,7 @@ playStage=class()
                     if entity~=nil then --if entity exists
                         if ((entity.y)>212) then
                             -- print("offscreen y",entity.TYPE)
-                            objAPI:destroy(entity.classID,entity.LEVEL)
+                            objAPI:destroy(entity.objectID,entity.LEVEL)
                         elseif (((entity.x) > (spawnOffsets[1])) and ((entity.x) < (spawnOffsets[2]))) or (entity.GLOBAL==true) or currentLevel.enableGlobalEntities==true then --if in view distance
                             entity:logic()
                             -- print("logic",entity.TYPE)
@@ -4142,7 +4147,7 @@ playStage=class()
                             -- print("despawn1",entity.TYPE)
                             if entity.x<-16 or (entity.x < spawnOffsets[1]+8) or ((entity.x) > spawnOffsets[2]-8) then
                                 -- print("despawn2",entity.TYPE)
-                                objAPI:destroy(entity.classID,entity.LEVEL) end
+                                objAPI:destroy(entity.objectID,entity.LEVEL) end
                         end
                     else table.remove(focusedList,i) end --get rid of blank entities that may occur as a result of overloading, NOT a substantial issue
     end end end end
@@ -4248,10 +4253,11 @@ playStage=class()
                 if blockIndex[ID]~=nil then
                     name=(" ("..blockIndex[ID]["name"]..") ")
                 end
-                gc:drawString("fps: "..tostring(fps).." select: "..ID..name.." velX: "..mario.vx.." velY: "..mario.vy, 0, 17, top)
+                gc:drawString("fps: "..tostring(fps).." select: "..ID..name.." velX: "..mario.vx.." velY: "..mario.vy, 0, 16, top)
                 
                 gc:drawString("("..(highlightedx-1)..": "..(13-highlightedy)..") despook: "..despook.." entities: "..objAPI:getObjectCount(), 0, 32, top)
                 gc:drawString("blockX "..highlightedx.." blockY "..highlightedy.." id: "..plot2ID(highlightedx,highlightedy).." x"..mouse.x.."y"..(mouse.y-8).." mX: "..mario.x.." mY: "..mario.y, 0, 48, top)
+                gc:drawString("mem "..collectgarbage("count"), 0, 48+16, top)
                 --gc:drawString("("..(highlightedx-1)..": "..(13-highlightedy)..") id: "..plot2ID(highlightedx,highlightedy), 0, 48, top) --this is for translating GreatEd maps
 
                 for i=1,#debugBoxes do
@@ -6181,10 +6187,15 @@ gui=class()
             print("FPS: " .. fps)
             Profiler:report()
         end
+
+        if framesPassed % 60 == 0 then
+            collectgarbage()
+            print("collectgarbage() called, memory usage: " .. collectgarbage("count") .. "kb")
+        end
     end
 
 --------------------------
 ---------START-UP---------
 --------------------------
     switchTimer(true)
-    print("Running!",versText)
+    print("Running!",versText,"start memory:",collectgarbage("count"),"kb")
