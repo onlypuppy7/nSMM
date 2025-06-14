@@ -1754,6 +1754,7 @@ objAPI=class() --categories are only roughly representative
         end
 
         function objAPI:createObj(TYPE,posX,posY,despawnable,arg1,arg2)
+            --todo, rename classID to objectID because class makes no sense here
             local classID=TYPE..objAPI:getObjectCount()+1+framesPassed.."r"..math.random(0,200) --assign random ID
             local classTYPE local LEVEL
             classTYPE,LEVEL=objAPI:type2class(TYPE)
@@ -3797,8 +3798,8 @@ playStage=class()
     end
 
     function playStage:init()
-        entityLists={ --todo: rename to entityList
-            background={}, --todo: rename to just background
+        entityLists={
+            background={},
             inner={},
             outer={},
             particle={},
