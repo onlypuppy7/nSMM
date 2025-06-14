@@ -840,6 +840,16 @@ despook=0
         end return t1
     end
 
+    function mergeMultiple(...) --merge multiple tables
+        local t1={}
+        for i=1,select("#",...) do
+            local t2=select(i,...)
+            if type(t2)=="table" then
+                t1=merge(t1,t2)
+            else error("Argument "..i.." is not a table") end
+        end return t1
+    end
+
     function checkTableValues(table, checkFor) --arg1: table of booleans arg2: boolean to look for. returns true if all are the same as checkFor
         for _, v in pairs(table) do
             if checkFor then if not v then return false end
@@ -1043,11 +1053,8 @@ despook=0
     -- end
 
     function plot2ID(searchX,searchY,EDITOR) --returns ID when given *CO-ORDINATES*
-        local ID
-        local key=plot2key(searchX,searchY)
-        if EDITOR then ID=currentLevel.xy[key]
-        else
-            ID=currentLevel.xy[key]
+        local ID=currentLevel.get(searchX,searchY)
+        if not EDITOR then
             if ID and blockIndex[ID] and blockIndex[ID].eventswitch and blockIndex[ID].eventswitch[1]~=false then
                 if playStage.events[blockIndex[ID].eventswitch[1]] == blockIndex[ID].eventswitch[2] then
                     ID=blockIndex[ID].eventswitch[3]
@@ -1110,8 +1117,7 @@ despook=0
         plot2place(ID,POS[1],POS[2])
     end
     function plot2place(ID,x,y)
-        local key=plot2key(x,y)
-        currentLevel.xy[key]=ID
+        currentLevel.set(x,y,ID)
     end
 
     function plot2theme(x,EDITOR)
@@ -1189,7 +1195,7 @@ despook=0
         for y=1,15 do -- y axis, bottom to top, in a column... 14th row initiates theme processing... 15th initiates finalisation
             for x=1,levelData.END do -- x axis, left to right, horizontally per row
                 i=i+1
-                local ID=levelData.xy[plot2key(x,y)] or 0 --get ID of block at x,y
+                local ID=levelData.get(x,y) or 0 --get ID of block at x,y
                 if y==14 then ID=levelData.t[x] or 0 end --at the end, start processing of themes
                 if ID==currentBlock[1] then -- same as last block
                     currentBlock[2]=currentBlock[2]+1
@@ -1276,8 +1282,21 @@ despook=0
                 elseif attribute=="i" then levelData.showCeilingBlock=true
             end end
         end
+
         levelData.xy={}
         levelData.t={}
+        levelData.get=function(x,y) --get function for xy table
+            local key=plot2key(x,y)
+            return levelData.xy[key] or 0
+        end
+        levelData.set=function(x,y,ID) --set function for xy table
+            local key=plot2key(x,y)
+            -- if ID==0 then levelData.xy[key]=nil --delete if possible
+            -- else
+                levelData.xy[key]=ID
+            -- end
+        end
+
         for i=2,#levelDataTable do
             local data=splitByChar(levelDataTable[i],"*")
             if string.sub(levelDataTable[i],1,1)=="*" then table.insert(data,1,nil) end
@@ -1286,12 +1305,13 @@ despook=0
             for i2=1,data[2] do
                 levelPos=levelPos+1
                 if levelPos<=levelData.END*13 then
-                    levelData.xy[plot2key(((levelPos-1)%levelData.END)+1+offsetX, math.ceil(levelPos/levelData.END)+offsetY)]=data[1]
+                    levelData.set(((levelPos-1)%levelData.END)+1+offsetX, math.ceil(levelPos/levelData.END)+offsetY, data[1])
                 else
                     levelData.t[((levelPos-1)%levelData.END)+1+offsetX]=data[1]
                 end
             end
         end
+
         return levelData
     end
 
@@ -1837,6 +1857,7 @@ objAPI=class() --categories are only roughly representative
                         table.insert(newLevelObject,objectName)
                         break
             end end end
+
             cleanupListDestroy={}
             cleanupListTransfer={}
             hitBoxList={}
@@ -3753,7 +3774,6 @@ objCoinAnim=class(objAPI)
 playStage=class()
     --math.ceil(playStage.cameraOffset/16),math.ceil((320+playStage.cameraOffset)/16)
 
-
     function playStage:generate(LEVELSTRING,transition,EDITOR)
         gui:clear() editor.active=false
         mario.trail={}
@@ -3783,6 +3803,7 @@ playStage=class()
             outer={},
             particle={},
         }
+        allEntities={}
         currentLevel={}
         playStage.active=false
         playStage.wait=false
@@ -3795,7 +3816,8 @@ playStage=class()
             entityLists[k] = {}
         end
         allEntities={}
-        cleanupListDestroy={} cleanupListTransfer={}
+        cleanupListDestroy={}
+        cleanupListTransfer={}
         hitBoxList={}
         playStage.platformList={}
         playStage.platformListAdd={}
@@ -3809,7 +3831,7 @@ playStage=class()
             elseif chr=="6" then         playStage:handleInput("right")
             elseif chr=="5" then         playStage:handleInput("up")
             elseif chr=="restart" then   playStage:generate(permLevel)
-            elseif chr=="edit" and currentLevel.xy[plot2key(1,1)]~=nil then
+            elseif chr=="edit" and currentLevel.get(1,1)~=nil then
                 local fileSTOR=editor.file
                 editor:generate(permLevel)
                 editor.active=true editor.file=fileSTOR playStage.active=false
@@ -3827,7 +3849,7 @@ playStage=class()
                     mario.x=mario.x+1
                 elseif chr=="0" then
                     mario:powerDownMario()
-                elseif chr=="r" and currentLevel.xy[plot2key(1,1)]~=nil then playStage:randomise()
+                elseif chr=="r" and currentLevel.get(1,1)~=nil then playStage:randomise()
                 elseif chr=="f" then frameByFrame=not frameByFrame
                 elseif chr=="y" then mario.x=73*16
                 elseif chr=="d" then
@@ -3876,7 +3898,7 @@ playStage=class()
         function playStage:mouseDown()
             if debug then
                 local placeXY=pixel2plot(mouse.x,mouse.y-8)
-                currentLevel.xy[plot2key(placeXY[1], placeXY[2])]=blockSelectionListTEMP[(blockSelectionTEMP%(#blockSelectionListTEMP))+1]
+                currentLevel.set(placeXY[1], placeXY[2], blockSelectionListTEMP[(blockSelectionTEMP%(#blockSelectionListTEMP))+1])
             end
             if playStage.EDITOR and checkCollision(mouse.x,mouse.y,1,1,4,178,40,30) then
                 playStage:charIn("edit")
@@ -3885,7 +3907,7 @@ playStage=class()
         function playStage:rightMouseDown()
             if debug then
                 local placeXY=pixel2plot(mouse.x,mouse.y-8)
-                currentLevel.xy[plot2key(placeXY[1], placeXY[2])]=0
+                currentLevel.set(placeXY[1], placeXY[2], 0)
             end
         end
 
@@ -3961,9 +3983,8 @@ playStage=class()
                     height=maxHeight
                 end end
                 for y=1,levelHeight do
-                    local key=plot2key(x,y)
-                    if y<=height then level.xy[key]=1
-                    elseif level.xy[key]==nil then level.xy[key]=0
+                    if y<=height then level.set(x,y,1)
+                    elseif level.get(x,y)==nil then level.set(x,y,0)
                 end end lastHeight=height
         --PIT SPAWNING
                 if math.random()<pitFrequency and x>6 then x=x+math.random(2,4)
@@ -3972,7 +3993,7 @@ playStage=class()
                 if lastRow<=0 and blockFrequency>math.random() then
                     local blockY=0
                     for y=1,levelHeight do
-                        if level.xy[plot2key(x,y)]==0 then
+                        if level.get(x,y)==0 then
                             blockY=y break
                     end end
                     local rowLength=math.random(1,4)
@@ -3982,7 +4003,7 @@ playStage=class()
                             if blockProb<=block[2] then chosenBlock=block[1] break
                             else blockProb=blockProb-block[2]
                             end end
-                        level.xy[plot2key(x2,blockY+4)]=chosenBlock
+                        level.set(x2,blockY+4,chosenBlock)
                     end
                     lastRow=rowLength+4
                 end lastRow=lastRow-1
@@ -3993,9 +4014,9 @@ playStage=class()
                         if enemyProb<=enemy[2] then
                             local enemyX,enemyY=x,0
                             for y=1,levelHeight do
-                                if level.xy[plot2key(x,y)]==0 then
+                                if level.get(x,y)==0 then
                                     enemyY=y break
-                            end end level.xy[plot2key(enemyX,(enemyY+math.random(0,enemy[3] or 0)))]=enemy[1] break
+                            end end level.set(enemyX,(enemyY+math.random(0,enemy[3] or 0)),enemy[1]) break
                         else enemyProb=enemyProb-enemy[2]
                 end end end
                 x=x+1
@@ -4006,7 +4027,7 @@ playStage=class()
         
         local starts=plot2pixel(3,5)
         level.startX=starts[1] level.startY=starts[2] 
-        level.xy[plot2key(2,5)]=0 level.TIME=500 level.END=levelWidth
+        level.set(2,5,0) level.TIME=500 level.END=levelWidth
         playStage:generate(level2string(level))
     end
 
@@ -4499,7 +4520,7 @@ editor=class()
                     editor.selectedID=ID
                 end
             elseif editor.platformSelect then
-                local ID=currentLevel.xy[plot2key(editor.platformSelect[1],editor.platformSelect[2])]
+                local ID=currentLevel.get(editor.platformSelect[1],editor.platformSelect[2])
                 local mode=splitByChar(string.sub(ID,10,#ID),"~")[3]
                 if string.sub(mode,1,1)=="l" and editor.platformSelect[3]~=true then
                     editor.platformSelect[3]=true
@@ -4602,7 +4623,7 @@ editor=class()
             editor.select=false
             editor.select2=false
         elseif editor.platformSelect then
-            currentLevel.xy[plot2key(editor.platformSelect[1],editor.platformSelect[2])]=0
+            currentLevel.set(editor.platformSelect[1],editor.platformSelect[2],0)
             editor.platformSelect=false
         elseif editor.eyedropperMode or editor.eraseMode or editor.playMode or editor.displayedGroup then
             editor.eyedropperMode=false
@@ -4690,7 +4711,7 @@ editor=class()
             local TYPE=objAPI:type2class(blockID)
             if TYPE~=false then
                 if ICON then y=y-8 x=x+editor.cameraOffset end
-                obj=allEntities[TYPE]
+                obj=_G[TYPE]
                 if ICON then gc:clipRect("set",x-editor.cameraOffset,y+8,16,16) end
                 obj:draw(gc,x-editor.cameraOffset,y+8,blockID,true,ICON) --(gc,x,y,TYPE,isEditor,isIcon)
                 gc:clipRect("reset")
@@ -4789,10 +4810,9 @@ editor=class()
 
     function editor:placeTile(ID,plotX,plotY)
         if ID~=nil then
-            local key=plot2key(plotX,plotY)
             if string.sub(ID,1,11)=="platform_0~" then
                 editor.platformSelect={plotX,plotY}
-                currentLevel.xy[key]="platform_1"..string.sub(ID,11,#ID)
+                currentLevel.set(plotX,plotY,"platform_1"..string.sub(ID,11,#ID))
             elseif string.sub(ID,1,5)=="theme" then --for themes
                 currentLevel.t[plotX]=tonumber(string.sub(ID,6,#ID))
             elseif string.sub(ID,1,4)=="warp" then --for warps
@@ -4820,7 +4840,7 @@ editor=class()
                 currentLevel.startX=starts[1]+1 currentLevel.startY=starts[2]
                 editor.selectedID=nil
             else
-                currentLevel.xy[key]=ID
+                currentLevel.set(plotX,plotY,ID)
             end
         end
     end
@@ -5103,21 +5123,21 @@ editor=class()
                     end
                 end
             elseif editor.platformSelect then cursor.set("animate")
-                local key=plot2key(editor.platformSelect[1],editor.platformSelect[2])
+                local x=editor.highlightedTile[1] local y=editor.highlightedTile[2]
                 if editor.platformSelect[3]~=true then
                     local length=editor.highlightedTile[1]-editor.platformSelect[1]+1
                     if length>0 then
-                        currentLevel.xy[key]="platform_"..tostring(length)..string.sub(editor.selectedID,11,#editor.selectedID)
+                        currentLevel.set(x,y,"platform_"..tostring(length)..string.sub(editor.selectedID,11,#editor.selectedID))
                     end
                 else
-                    local ID=currentLevel.xy[key]
+                    local ID=currentLevel.get(x,y)
                     local config=splitByChar(string.sub(ID,10,#ID),"~") local distance
                     if config[3]=="lx" then
                         distance=tostring(editor.highlightedTile[1]-editor.platformSelect[1])*16
                     else
                         distance=tostring(editor.highlightedTile[2]-editor.platformSelect[2])*16
                     end
-                    currentLevel.xy[key]="platform_"..config[1].."~"..config[2].."~"..config[3].."~"..distance
+                    currentLevel.set(x,y,"platform_"..config[1].."~"..config[2].."~"..config[3].."~"..distance)
                 end
             elseif editor.eraseMode==true then cursor.set("clear")
             elseif editor.eyedropperMode==true then cursor.set("crosshair")
@@ -5479,9 +5499,20 @@ titleScreen=class()
         local courseWorldScreen =string2level("<20-v5-5~5-!-500>,*15,11*12,*2,87*12,*81,74,75*3,76,*8,74,75*2,76,*3,71,72*3,73,*2,74,75,76,*3,71,72*2,73,*A,71,72,73,*17,*15",20,14)
         local campaignScreen    =string2level("<20-v5-5~5-!-500>,1*14,9,*12,9*2,*12,9*2,*12,9*2,*12,9*2,*12,9*2,*12,9*2,*12,9*2,*12,9*2,*12,9*2,*D,46,50*5,9,*8,43,42,*3,47,52,53,51*3,9*9,48,49,9*4,48,49,9*3,1*14",20,-13)
         local endlessScreen     =string2level("<20-v5-5~5-!-500>,1*14,9,*12,9*2,*12,9*2,*12,9*2,*12,9*2,*12,9*2,*12,9*2,*12,9*2,*12,9*2,*12,9,50,45,*11,9,51,44,*11,9*15,1*14",40,-13)
-        currentLevel=merge(mainScreen,merge(localScreen,merge(courseWorldScreen,merge(campaignScreen,merge(endlessScreen,merge(optionsScreen,playScreen)))))) --yeah, i know. not very pretty
-        for i=-21,21 do currentLevel.xy[plot2key(i,14)]=9 end
-        for i=21,60 do currentLevel.xy[plot2key(i,-13)]=1 end
+        
+        currentLevel=mainScreen
+        currentLevel.xy=mergeMultiple(
+            mainScreen.xy,
+            localScreen.xy,
+            courseWorldScreen.xy,
+            campaignScreen.xy,
+            endlessScreen.xy,
+            optionsScreen.xy,
+            playScreen.xy
+        )
+        
+        for i=-21,21 do currentLevel.set(i,14,9) end
+        for i=21,60 do currentLevel.set(i,-13,1) end
     end
 
     function titleScreen:charIn(chr)
