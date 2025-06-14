@@ -1,4 +1,6 @@
-![Discord Shield](https://discordapp.com/api/guilds/993588037579702322/widget.png?style=shield)
+### Discord Server: https://dsc.gg/ti-nsmm
+[![Discord Shield](https://discordapp.com/api/guilds/993588037579702322/widget.png?style=shield)](https://dsc.gg/ti-nsmm)
+
 # nSMM
 Repository for nSMM with development resources and assets.
 
