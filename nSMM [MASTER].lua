@@ -1525,6 +1525,8 @@ addBlock=class()
         if props["kill"]== nil then           props["kill"]=false end           --kills mario (lava)
         if props["ceiling"]== nil then        props["ceiling"]=false end        --cannot be jumped over when on y=13
         if props["eventswitch"]== nil then    props["eventswitch"]={false} end  --switch block with another when event conditions are met. args: 1. the event name, 2. the event state, 3. the new block ID
+        if props["pushV"]== nil then          props["pushV"]=0 end              --will push things in the X direction when stood on, eg conveyor belts
+        if props["animSpeed"]== nil then      props["animSpeed"]=4 end          --animation speed, default is 4 frames per animation frame
     end
 
     function addBlock:attribute(property,val) --eg semisolid, containing, bumpable,
@@ -1858,44 +1860,45 @@ addBlock=class()
 
         --al, ar, a2, a1 (l, r (slow, false))
     addBlock(154,"Conveyor Belt - 1 (Left, Slow)",true,{"Conveyor_L_1","Conveyor_L_2","Conveyor_L_3","Conveyor_L_4"})
-        addBlock:attribute("conveyor",-2)
+        addBlock:attribute("pushV",-1)
         addBlock:attribute("icon","icon_al") 
     addBlock(155,"Conveyor Belt - 2 (Left, Slow)",true,{"Conveyor_M_1","Conveyor_M_2","Conveyor_M_3","Conveyor_M_4"})
-        addBlock:attribute("conveyor",-2)
+        addBlock:attribute("pushV",-1)
         addBlock:attribute("icon","icon_al") 
     addBlock(156,"Conveyor Belt - 3 (Left, Slow)",true,{"Conveyor_R_1","Conveyor_R_2","Conveyor_R_3","Conveyor_R_4"})
-        addBlock:attribute("conveyor",-2)
+        addBlock:attribute("pushV",-1)
         addBlock:attribute("icon","icon_al") 
     addBlock(157,"Conveyor Belt - 1 (Right, Slow)",true,{"Conveyor_L_4","Conveyor_L_3","Conveyor_L_2","Conveyor_L_1"})
-        addBlock:attribute("conveyor",2)
+        addBlock:attribute("pushV",1)
         addBlock:attribute("icon","icon_ar") 
     addBlock(158,"Conveyor Belt - 2 (Right, Slow)",true,{"Conveyor_M_4","Conveyor_M_3","Conveyor_M_2","Conveyor_M_1"})
-        addBlock:attribute("conveyor",2)
+        addBlock:attribute("pushV",1)
         addBlock:attribute("icon","icon_ar") 
     addBlock(159,"Conveyor Belt - 3 (Right, Slow)",true,{"Conveyor_R_4","Conveyor_R_3","Conveyor_R_2","Conveyor_R_1"})
-        addBlock:attribute("conveyor",2)
+        addBlock:attribute("pushV",1)
         addBlock:attribute("icon","icon_ar") 
     addBlock(160,"Conveyor Belt - 1 (Left, Fast)",true,{"Conveyor_L_1","Conveyor_L_2","Conveyor_L_3","Conveyor_L_4"})
-        addBlock:attribute("conveyor",-4)
+        addBlock:attribute("pushV",-3)
         addBlock:attribute("icon","icon_a2") 
         addBlock:attribute("animSpeed",2) 
     addBlock(161,"Conveyor Belt - 2 (Left, Fast)",true,{"Conveyor_M_1","Conveyor_M_2","Conveyor_M_3","Conveyor_M_4"})
-        addBlock:attribute("conveyor",-4)
+        addBlock:attribute("pushV",-3)
         addBlock:attribute("icon","icon_a2")
         addBlock:attribute("animSpeed",2)
     addBlock(162,"Conveyor Belt - 3 (Left, Fast)",true,{"Conveyor_R_1","Conveyor_R_2","Conveyor_R_3","Conveyor_R_4"})
-        addBlock:attribute("conveyor",-4)
+        addBlock:attribute("pushV",-3)
         addBlock:attribute("icon","icon_a2")
+        addBlock:attribute("animSpeed",2) 
     addBlock(163,"Conveyor Belt - 1 (Right, Fast)",true,{"Conveyor_L_4","Conveyor_L_3","Conveyor_L_2","Conveyor_L_1"})
-        addBlock:attribute("conveyor",4)
+        addBlock:attribute("pushV",3)
         addBlock:attribute("icon","icon_a1") 
         addBlock:attribute("animSpeed",2) 
     addBlock(164,"Conveyor Belt - 2 (Right, Fast)",true,{"Conveyor_M_4","Conveyor_M_3","Conveyor_M_2","Conveyor_M_1"})
-        addBlock:attribute("conveyor",4)
+        addBlock:attribute("pushV",3)
         addBlock:attribute("icon","icon_a1") 
         addBlock:attribute("animSpeed",2) 
     addBlock(165,"Conveyor Belt - 3 (Right, Fast)",true,{"Conveyor_R_4","Conveyor_R_3","Conveyor_R_2","Conveyor_R_1"})
-        addBlock:attribute("conveyor",4)
+        addBlock:attribute("pushV",3)
         addBlock:attribute("icon","icon_a1") 
         addBlock:attribute("animSpeed",2) 
 
@@ -2026,12 +2029,28 @@ objAPI=class() --categories are only roughly representative
             cleanupListTransfer={}
             hitBoxList={}
         end
+
+        function objAPI:getBlockStandingOn() --returns the block that the entity is standing on, if any
+            -- return tostring(self.x)..tostring(self.y)..tostring(self.w)..tostring(self.h)
+            local blockID=pixel2ID(self.x+(self.w/2),self.y+self.h,true) --check the center of the bottom of the entity
+            return blockID and blockIndex[blockID] or false
+        end
         
-        function objAPI:setNewPlatformV()
+        function objAPI:setNewPushV()
+            local px,py=0,0
             if not self.spring then --a somewhat embarrasing solution...
                 local platformVel=objAPI:platformCheck(self.x,self.y)
-                self.px=platformVel[1]  self.py=platformVel[2]
-        end end
+                if platformVel then
+                    px,py=platformVel[1],platformVel[2]
+                end
+            end
+            local blockStandingOn=self:getBlockStandingOn()
+            if blockStandingOn and blockStandingOn.pushV then
+                px=px+blockStandingOn.pushV
+            end
+            self.px=px
+            self.py=py
+        end
 
         function objAPI:addStats(type,value,x,y,fromFlagpole)
             if type=="points" then
@@ -2346,7 +2365,8 @@ objAPI=class() --categories are only roughly representative
             local X,Y,W,H,isMario,O=self.x,self.y,self.w or 16,self.h or 16,self.objectID=="mario",self.vy==0 and 0 or -1
             local function doCheck(x,y,isTop,side)
                 if self.canCollectCoins and pixel2anything("coin",x,y,true) then
-                    objAPI:addStats("coins",1) pixel2place(0,x,y,true) objAPI:addStats("points",200) end
+                    objAPI:addStats("coins",1) pixel2place(0,x,y,true) objAPI:addStats("points",200)
+                end
                 if isMario then 
                     if pixel2anything("damage",x,y,true) and (not (mario.starTimer>playStage.framesPassed)) then
                         if ((self:gravityCheck(self.vy,true,true) and not isTop) or mario.vy==-0.61 or mario.vx~=0) then --inputs are so that if mario jumps on the pixel that the spike is, it will not hurt him unless he is walking/jumping into it.
@@ -2588,8 +2608,9 @@ mario=class(objAPI)
         mario.dead=false
         mario.powerAnimTimer=0
         mario.dir="R"
-        mario.crouch=false 
+        mario.crouch=false
         mario.x=level.current.startX mario.y=level.current.startY
+        mario.w=16 mario.h=16
         mario.vx=0 mario.vy=0
         mario.status="idle"
         mario.power=0 mario.skipAnim=false
@@ -2696,8 +2717,7 @@ mario=class(objAPI)
     --OTHER (death plane)
         self:checkFor()
         if mario.y>216 then mario:kill() end
-        local platformVel=objAPI:platformCheck(self.x,self.y)
-        mario.px=tonumber(platformVel[1])  mario.py=tonumber(platformVel[2])
+        mario:setNewPushV()
     end
 
     function mario:calculateAnim(calculateAnimForce) --handles mario's visuals (walk cycles, animations etc)
@@ -3078,7 +3098,7 @@ objMagicOrb=class(objAPI)
                 self:calculateAccelerationY()
                 if self.py<=0 then self:gravityCheck(-self.py,true) else self:bumpCheck(-self.py) end
                 if self.vy<=0 then self:gravityCheck(-self.vy)      else self:bumpCheck(-self.vy)      end
-                self:setNewPlatformV() self:checkFor()
+                self:setNewPushV() self:checkFor()
     end end end
 
     function objMagicOrb:hit()
@@ -3257,7 +3277,7 @@ objGoomba=class(objAPI)
             self:calculateAccelerationY()
             if self.py<=0 then self:gravityCheck(-self.py,true) else self:bumpCheck(-self.py)      end
             if self.vy<=0 then self:gravityCheck(-self.vy)      else self:bumpCheck(-self.vy)      end
-            self:setNewPlatformV() self:checkFor()
+            self:setNewPushV() self:checkFor()
         elseif self.status==4 then self:animateDeathFlyOffscreen() --fireball/flower
         elseif self.status==3 and (self.deathAnimTimer<playStage.framesPassed) then --stomped
             objAPI:destroy(self.objectID,self.LEVEL)
@@ -3457,7 +3477,7 @@ objKoopa=class(objAPI)
             self:calculateAccelerationY()
             if self.py<=0 then self:gravityCheck(-self.py,true) else self:bumpCheck(-self.py)      end
             if self.vy<=0 then self:gravityCheck(-self.vy)      else self:bumpCheck(-self.vy)      end
-            self:setNewPlatformV() self:checkFor()
+            self:setNewPushV() self:checkFor()
         elseif self.status==3 then self:animateDeathFlyOffscreen() --fireball/flower
         end
     end
@@ -3509,7 +3529,7 @@ objKoopaPara=class(objAPI)
                 self:aggregateCheckX(self.px,true)
                 self:calculateAccelerationY()
                 if self.py<=0 then self:gravityCheck(-self.py,true) else self:bumpCheck(-self.py) end
-                self:setNewPlatformV() self:checkFor()
+                self:setNewPushV() self:checkFor()
                 self.facing=(self.vx>0) and "R_" or "L_"
             else --flying koopa
                 local function calc(top,HV) return math.round((math.sin(((self.count-(HV and 17 or 0))*(180/(HV or 44)))/57.296))*top) end --44 is the total frames of the loop
@@ -3576,7 +3596,7 @@ objShell=class(objAPI)
             self:calculateAccelerationY()
             if self.py<=0 then self:gravityCheck(-self.py,true) else self:bumpCheck(-self.py)      end
             if self.vy<=0 then self:gravityCheck(-self.vy)      else self:bumpCheck(-self.vy)      end
-            self:setNewPlatformV() self:checkFor()
+            self:setNewPushV() self:checkFor()
     --ANIMATION
             if not self.dead then
                 if self.koopaTimer==false then self.status=1
@@ -3679,7 +3699,7 @@ objBowser=class(objAPI)
             self:calculateAccelerationY(1.03,-4.5)
             if self.py<=0 then self:gravityCheck(-self.py,true) else self:bumpCheck(-self.py)      end
             if self.vy<=0 then self:gravityCheck(-self.vy)      else self:bumpCheck(-self.vy)      end
-            self:setNewPlatformV() self:checkFor()
+            self:setNewPushV() self:checkFor()
             self.facing=(mario.x>self.x) and "R" or "L"
         elseif self.status==3 then self:animateDeathFlyOffscreen() --fireball/flower
         end
@@ -3791,7 +3811,7 @@ objPowerUp=class(objAPI)
             self:calculateAccelerationY()
             if self.py<=0 then self:gravityCheck(-self.py,true) else self:bumpCheck(-self.py)      end
             if self.vy<=0 then self:gravityCheck(-self.vy)      else self:bumpCheck(-self.vy)      end
-            self:setNewPlatformV() self:checkFor()
+            self:setNewPushV() self:checkFor()
     --ANIMATION
         else self.y=self.y-4 --rise from block
         end
@@ -3859,7 +3879,7 @@ objSpring=class(objAPI)
         self:calculateAccelerationY()
         if self.py<=0 then self:gravityCheck(-self.py,true) else self:bumpCheck(-self.py) end
         if self.vy<=0 then self:gravityCheck(-self.vy)      else self:bumpCheck(-self.vy) end
-        self:setNewPlatformV() self:checkFor()
+        self:setNewPushV() self:checkFor()
     end
 
     function objSpring:hit(circumstance)
@@ -3900,7 +3920,7 @@ objFireball=class(objAPI)
             self:calculateAccelerationY(0.85)
             if self.py<=0 then self:gravityCheck(-self.py,true) else self:bumpCheck(-self.py)      end
             if self.vy<=0 then self:gravityCheck(-self.vy)      else self:bumpCheck(-self.vy)      end
-            self:setNewPlatformV() self:checkFor()
+            self:setNewPushV() self:checkFor()
     --DEAD
         else self.timer=self.timer+1
             if self.timer>=(flashingDelay*3)+1 then objAPI:destroy(self.objectID,self.LEVEL) return
