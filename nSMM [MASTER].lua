@@ -549,6 +549,10 @@ despook=0
             x=0,
             y=0,
         }
+        level={
+            current={},
+            perm="",
+        }
         framesPassed=1
         blockSelectionTEMP=1
         blockSelectionListTEMP={0,1,2,3,4,5,6,7,8,9,10,20,21,22,23,24,28,29,30,31,32,33,34,35,36,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,99,100,101,102,103,104,"mushroom","mushroom1up","fireflower","Pfireflower","star","goomba","koopa_G","koopa_R","shell_G","shell_R","bullet_L","bullet_R","blaster_L","blaster_R","blaster_LR","fireball_L","fireball_R","piranhaplant_1","piranhaplant_2","piranhaplant_3","piranhaplant_4","platform_3~1~lx~64","platform_3~1~ly~64","platform_3~1~al","platform_3~1~ar","platform_3~1~au","platform_3~1~ad","platform_3~1~fu","platform_3~1~fd","platform_3~1~fl","platform_3~1~fr","platform_3~2~ru","platform_3~2~rd"}
@@ -603,9 +607,9 @@ despook=0
             flagp = {"objFlagpole",      "background"},
             magic = {"objMagicOrb",      "inner"},
             sprin = {"objSpring",        "inner"},
-            event = {"objEvent",         "inner"}
+            event = {"objEvent",         "inner"},
         }
-        nameIndex={
+        nameIndex={ --this is mainly cope for not having an entity index like the block index
             ["goomba"] =         "Goomba",
             ["koopa_G"] =        "Koopa Troopa (Green)",
             ["koopa_R"] =        "Koopa Troopa (Red)",
@@ -679,6 +683,7 @@ despook=0
             ["spring_O"]       = "Spring (Regular)",
             ["spring_L"]       = "Spring (Big)",
             ["spring_S"]       = "Spring (Small)",
+            ["bowser"]         = "Bowser",
         }
 
         if platform.hw()==7 then
@@ -884,16 +889,23 @@ despook=0
 
     function string2image(name,flipImage,string,recolour) --recolour={{{"\000\000","\100\100","newname"},more colour swaps},etc}
         local function toInt(v) return string.byte(v) end --if flipping, assumes input string is facing left
-        local function substitute(input,lookFor,replaceWith)
-            local output,len,patLen,repLen,i="",#input,#lookFor,#replaceWith,1
-            while i<=len do
-                local pair=string.sub(input,i,i+1)
-                if pair==lookFor then i=i+patLen
-                    output=output..replaceWith
-                else i=i+2
-                    output=output..pair
+        local function toPairs(str)
+            local t = {}
+            for i = 1, #str, 2 do
+                t[#t+1] = string.sub(str, i, i+1)
+            end
+            return t
+        end
+        local function substitute(body, lookFor, replaceWith)
+            local pairs = toPairs(body)
+            for i = 1, #pairs do
+                if pairs[i] == lookFor then
+                    pairs[i] = replaceWith
                 end
-        end return output end         
+            end
+            return table.concat(pairs)
+        end
+
         for flip=0,(flipImage and 1 or 0) do
             if flip==1 then name=flipImage
                 local function flipImage(img)
@@ -1050,15 +1062,16 @@ despook=0
         return ((x - 1) * height) + y
     end
 
-    -- function key2plot(key) --unused right now
-    --     local height = 13
-    --     local x = (key - 1) % height + 1
-    --     local y = math.floor((key - 1) / height) + 1
-    --     return {x, y}
-    -- end
+    function key2plot(key)
+        local height = 14 * 3 --i doubt this will ever be variable but just in case, i guess
+
+        local x = math.floor((key - 1) / height) + 1
+        local y = ((key - 1) % height) + 1
+        return {x, y}
+    end
 
     function plot2ID(searchX,searchY,EDITOR) --returns ID when given *CO-ORDINATES*
-        local ID=currentLevel.get(searchX,searchY)
+        local ID=level.current.get(searchX,searchY)
         if not EDITOR then
             if ID and blockIndex[ID] and blockIndex[ID].eventswitch and blockIndex[ID].eventswitch[1]~=false then
                 if playStage.events[blockIndex[ID].eventswitch[1]] == blockIndex[ID].eventswitch[2] then
@@ -1122,14 +1135,14 @@ despook=0
         plot2place(ID,POS[1],POS[2])
     end
     function plot2place(ID,x,y)
-        currentLevel.set(x,y,ID)
+        level.current.set(x,y,ID)
     end
 
     function plot2theme(x,EDITOR)
-        return currentLevel.t[x]
+        return level.current.t[x]
     end
     function pixel2theme(x,Global)
-        return currentLevel.t[pixel2plot(x,150,Global)[1]]
+        return level.current.t[pixel2plot(x,150,Global)[1]]
     end
 
     function pixel2grid(x,y,w,h,Global) --editor only(?)
@@ -1765,7 +1778,7 @@ objAPI=class() --categories are only roughly representative
             classTYPE,LEVEL=objAPI:type2class(TYPE)
             local levelObject=entityLists[LEVEL]
             if classTYPE~=false then
-                allEntities[objectID]=_G[classTYPE]()  --despawnable also triggers block animation (sometimes) [edit idfk why i made this comment here]
+                allEntities[objectID]=entityClasses[classTYPE]()  --despawnable also triggers block animation (sometimes) [edit idfk why i made this comment here]
                 table.insert(levelObject,objectID)
                 allEntities[objectID]:setup(objectID,posX,posY,TYPE,despawnable,arg1,arg2)
             end return objectID
@@ -1848,7 +1861,7 @@ objAPI=class() --categories are only roughly representative
                 for i2=1,#levelObject do
                     if levelObject[i2]==objectName then
                         table.remove(levelObject,i2)
-                        allEntities[objectName]=nil
+                        allEntities[objectName]={}
                         break
             end end end
             for i=1,#cleanupListTransfer do
@@ -2114,7 +2127,7 @@ objAPI=class() --categories are only roughly representative
                         local shakeCondition=self.koopaTimer and (self.koopaTimer-45<playStage.framesPassed)
                         if self.vx==0 and not shakeCondition then --NOT shaking (about to turn into koopa)
                             self.koopaTimer=false
-                            if currentLevel.enableShellBouncing==true then mario.vtempY=8 end
+                            if level.current.enableShellBouncing==true then mario.vtempY=8 end
                             objAPI:addStats("points",400,self.x,self.y)
                             self.vx=(self.x>mario.x) and 4 or -4
                         else self.vx=0 --shaking or moving, outcome is the same either way
@@ -2127,7 +2140,7 @@ objAPI=class() --categories are only roughly representative
                         objAPI:destroy(self.objectID,self.LEVEL) self.status=onStomp[5]
                         if string.sub(self.TYPE,1,5)=="Pkoop" then allEntities[newID].vx=sign(vx)*2 end 
                     end
-                    if currentLevel.enableCoinOnKill then objAPI:createObj("coin",self.x,self.y-16,true) end
+                    if level.current.enableCoinOnKill then objAPI:createObj("coin",self.x,self.y-16,true) end
                 elseif checkCollision(mario.x+1,mario.y-marioSize+1,14,14+marioSize,self.x+4,self.y+3+bodge,self.hitBox[1]-8,self.hitBox[2]-4) then --hit mario (side)
                     if onStomp[1]=="shell" and self.vx==0 then
                         self.hitTimer=playStage.framesPassed+8 --avoid instakill after kicking shell or double hits
@@ -2147,7 +2160,7 @@ objAPI=class() --categories are only roughly representative
 
         function objAPI:handleHitDefault(circumstance,newStatus,newTYPE) --works for most enemies
             self.vy=-11 self.dead=true self.status=newStatus self.TYPE=newTYPE or self.TYPE
-            if currentLevel.enableCoinOnKill then objAPI:createObj("coin",self.x,self.y-16,true) end
+            if level.current.enableCoinOnKill then objAPI:createObj("coin",self.x,self.y-16,true) end
             if circumstance=="fireball" or circumstance=="block" then
                 objAPI:addStats("points","100",self.x,self.y)
             end
@@ -2235,7 +2248,7 @@ objAPI=class() --categories are only roughly representative
         end
 
 ---------------------------
----------PROFILER----------
+---PROFILER+OPTIMISATION---
 ---------------------------
 
     Profiler = {}
@@ -2243,8 +2256,7 @@ objAPI=class() --categories are only roughly representative
 
     function Profiler.new()
         local self = setmetatable({}, Profiler)
-        self.data = {}
-        self.current = nil  -- track the currently running label
+        self:reset()
         return self
     end
 
@@ -2284,7 +2296,8 @@ objAPI=class() --categories are only roughly representative
     end
 
     function Profiler:report()
-        print("=== PROFILER REPORT ===", collectgarbage("count"), "kb")
+        local timeTaken = timer.getMilliSecCounter() - self.lastTime
+        print("=== PROFILER REPORT ===", collectgarbage("count"), "kb", timeTaken, "ms")
         for label, stat in pairs(self.data) do
             local avg = stat.total / math.max(stat.count, 1)
             print(string.format("%s: %d calls, total = %d ms, avg = %.2f ms",
@@ -2296,6 +2309,7 @@ objAPI=class() --categories are only roughly representative
     function Profiler:reset()
         self.data = {}
         self.current = nil
+        self.lastTime = timer.getMilliSecCounter()
     end
 
     function Profiler:wrap(label, func)
@@ -2308,6 +2322,68 @@ objAPI=class() --categories are only roughly representative
     end
 
     Profiler = Profiler.new()
+
+    local function hookFunctions(libName, lib)
+        local function hook(v, funcName)
+            print("Hooking function: " .. funcName)
+            return function(...)
+                Profiler:start(funcName)
+                Profiler:stop(funcName)
+                -- if funcName == "string.match" then --crash to show debugger
+                --     error("Debugging call")
+                -- end
+                return v(...)
+            end
+        end
+
+        if type(lib) == "table" then
+            for k, v in pairs(lib) do
+                local funcName = libName .. "." .. k
+                if type(v) == "function" then
+                    lib[k] = hook(v, funcName)
+                elseif type(v) == "table" then
+                    hookFunctions(libName .. "." .. k, v) -- recursive hook for nested tables
+                end
+            end
+        elseif type(lib) == "function" then -- if the library is a function, we can wrap it directly
+            lib = hook(lib, libName)
+        end
+    end
+
+    hookFunctions("string", string)
+    hookFunctions("table", table)
+    hookFunctions("math", math)
+
+    hookFunctions("unpack", unpack)
+    hookFunctions("collectgarbage", collectgarbage)
+    hookFunctions("print", print)
+    hookFunctions("error", error)
+    hookFunctions("type", type)
+    hookFunctions("pairs", pairs)
+    hookFunctions("ipairs", ipairs)
+    hookFunctions("next", next)
+    hookFunctions("tostring", tostring)
+    hookFunctions("tonumber", tonumber)
+    hookFunctions("assert", assert)
+    hookFunctions("require", require)
+    hookFunctions("pcall", pcall)
+    hookFunctions("xpcall", xpcall)
+
+    function destroyObject(obj, setTo)
+        setTo=setTo or nil
+        --iterate over the object and set all its fields to nil
+        if type(obj) == "table" then
+            for k in pairs(obj) do
+                local value = obj[k]
+                if type(value) == "table" then
+                    destroyObject(value)
+                else
+                    obj[k] = nil
+                end
+            end
+        end
+        return setTo or nil --return nil or the value to set the object to
+    end
 
 ---------------------------
 ---MARIO CLASS FUNCTIONS---
@@ -2328,7 +2404,7 @@ mario=class(objAPI)
         mario.powerAnimTimer=0
         mario.dir="R"
         mario.crouch=false 
-        mario.x=currentLevel.startX mario.y=currentLevel.startY
+        mario.x=level.current.startX mario.y=level.current.startY
         mario.vx=0 mario.vy=0
         mario.status="idle"
         mario.power=0 mario.skipAnim=false
@@ -2353,7 +2429,7 @@ mario=class(objAPI)
 
     function mario:calculateInput() --turns inputs into velocity (or crouch/fireball)
         local topSpeed=7
-        if currentLevel.autoMove=="w" then topSpeed=3.5 end
+        if level.current.autoMove=="w" then topSpeed=3.5 end
     --X movement
         if mario.power~=0 and (input.down==1) and mario.vy==0 then
             mario.crouch=true mario.actionAnimTimer=0
@@ -2420,11 +2496,11 @@ mario=class(objAPI)
     --X handling
         self:aggregateCheckX(mario.px,true) --check & confirm platform's velocity
         self:aggregateCheckX(mario.vx) --check & confirm mario's velocity
-        if (mario.x<0) or (((mario.x)<playStage.cameraOffset-2) and (currentLevel.autoScroll or currentLevel.disableBackScrolling)) then --left side
+        if (mario.x<0) or (((mario.x)<playStage.cameraOffset-2) and (level.current.autoScroll or level.current.disableBackScrolling)) then --left side
             mario.x=playStage.cameraOffset-2 if mario.vx<0 then mario.vx=0 end
             if self:multiWallCheck({{13,1},{13,15}}) then mario:kill() end
             if (mario.power>0 and not mario.crouch) and self:multiWallCheck({{13,-13} or nil}) then mario:kill() end
-        elseif (mario.x>(playStage.levelWidth-13)) or (((mario.x)-playStage.cameraOffset>305) and (currentLevel.autoScroll)) then --right side
+        elseif (mario.x>(playStage.levelWidth-13)) or (((mario.x)-playStage.cameraOffset>305) and (level.current.autoScroll)) then --right side
             mario.x=305+math.ceil(playStage.cameraOffset) if mario.vx>0 then mario.vx=0 end
             if self:multiWallCheck({{2,1},{2,15},(mario.power>0) and {2,-13} or nil}) then mario:kill() end
             if (mario.power>0 and not mario.crouch) and self:multiWallCheck({{2,-13} or nil}) then mario:kill() end
@@ -2522,7 +2598,7 @@ mario=class(objAPI)
                 if mario.clearedTimer==true then
                     if mario.vy==0 then
                         mario.clearedTimer=playStage.framesPassed+31
-                        currentLevel.autoMove="w"
+                        level.current.autoMove="w"
                         if mario.skipAnim then mario:kill()
                         else mario.dir="R" end
                     end
@@ -2559,7 +2635,7 @@ mario=class(objAPI)
                 {"x",0,0,0,0,"R"} --teleport (exit)
             }
             local function limit(num,lim) if num>lim then num=lim end return num end
-            local TYPE=currentLevel.pipeData[mario.pipe[1]][mario.pipe[2]][3]
+            local TYPE=level.current.pipeData[mario.pipe[1]][mario.pipe[2]][3]
             pipeActions=pipeActions[TYPE]
             mario.pipe[5]=mario.pipe[5]+1 --timer
             local pipeTime=mario.pipe[5]
@@ -2574,14 +2650,16 @@ mario=class(objAPI)
                 mario.pipe[2]=mario.pipe[3] --could have just done 3-value here tbh, too late. cant be bothered
             elseif pipeTime==28 then --perform any mid-transition calculation
                 mario.pipe[6]=7.5
-                local pipeX,pipeY=(currentLevel.pipeData[mario.pipe[1]][mario.pipe[2]][1]-1)*16,212-16*currentLevel.pipeData[mario.pipe[1]][mario.pipe[2]][2]
+                local pipeX,pipeY=(level.current.pipeData[mario.pipe[1]][mario.pipe[2]][1]-1)*16,212-16*level.current.pipeData[mario.pipe[1]][mario.pipe[2]][2]
                 -- print(pipeX,pipeY,"|",TYPE)
                 mario.vx=0 mario.vy=0
                 mario.dir=pipeActions[6]
                 mario:teleport(pipeX+pipeActions[4],pipeY+pipeActions[5])
-                for i=1,#currentLevel.loadedObjects do
-                    plot2place(unpack(currentLevel.loadedObjects[i]))
-                end currentLevel.loadedObjects={} playStage:clearEntities()
+                for i=1,#level.current.loadedObjects do
+                    plot2place(unpack(level.current.loadedObjects[i]))
+                end
+                level.current.loadedObjects={}
+                playStage:clearEntities()
                 -- mario[pipeActions[1]]=mario[pipeActions[1]]+pipeActions[2]*11
             elseif pipeTime<=39 then --zoom small out again
                 mario[pipeActions[1]]=mario[pipeActions[1]]-pipeActions[2]
@@ -2662,7 +2740,7 @@ mario=class(objAPI)
 
     function mario:kill()
         if mario.clear then
-            currentLevel.autoMove=nil mario.clear="count"
+            level.current.autoMove=nil mario.clear="count"
             if mario.vy==0 then mario.status="idle" self.vx=0
                 if not mario.skipAnim then mario.dir="L" end
             end
@@ -2685,14 +2763,14 @@ mario=class(objAPI)
         playStage.cameraOffset=mario.x-151
         playStage.cameraBias=30
         playStage.wait=false
-        for i=#currentLevel.scrollStopL,1,-1 do
-            if ((mario.x+8)>currentLevel.scrollStopL[i]) then
-                searchL=(currentLevel.scrollStopL[i]+122)-mario.x
+        for i=#level.current.scrollStopL,1,-1 do
+            if ((mario.x+8)>level.current.scrollStopL[i]) then
+                searchL=(level.current.scrollStopL[i]+122)-mario.x
                 -- if searchL>159 then searchL=x end
                 break
         end end
-        for i=1,#currentLevel.scrollStopR do
-            if ((mario.x+8)<currentLevel.scrollStopR[i]) then
+        for i=1,#level.current.scrollStopR do
+            if ((mario.x+8)<level.current.scrollStopR[i]) then
                 searchR=((8/7)*mario.x)-(1318/7)
                 break
         end end
@@ -2706,10 +2784,10 @@ mario=class(objAPI)
 
     function mario:pipeCheck() --print("000000000000")
         if (not (playStage.wait or mario.dead or mario.powerDown or mario.powerUp or mario.clear)) and (mario.vy==0 and (input.down or mario.vx==0)) then --this is starting to become a mess, lol. perhaps more hindsight would be better......
-            local success=false print(self:gravityCheck(self.vy,true,true))
+            local success=false --print(self:gravityCheck(self.vy,true,true))
             local function rndPos(v,n) n=n or 16 return math.floor((v+(n/2))/n)*n end
-            for pipeID=1,#currentLevel.pipeData do --cycle thru all pipes
-                local pipe=currentLevel.pipeData[pipeID] --less typing
+            for pipeID=1,#level.current.pipeData do --cycle thru all pipes
+                local pipe=level.current.pipeData[pipeID] --less typing
                 for i=1,2 do --entrance, exit
                     local TYPE=pipe[i][3]
                     local x,y=(pipe[i][1]-1)*16,212-16*(pipe[i][2])
@@ -2915,7 +2993,7 @@ objPlatform=class(objAPI)
     end
 
     function objPlatform:logic() --handle both movement and animation
-        if ((self.y<=-16) or( self.y>=204) or (self.x<=-(self.length*16)) or (self.x>=16*currentLevel.END)) and self.mode~="r" then objAPI:destroy(self.objectID,self.LEVEL) return end --despawn if needed
+        if ((self.y<=-16) or( self.y>=204) or (self.x<=-(self.length*16)) or (self.x>=16*level.current.END)) and self.mode~="r" then objAPI:destroy(self.objectID,self.LEVEL) return end --despawn if needed
         self.x,self.y=self.x+self.vx,self.y-self.vy --move
         self.ox,self.oy=self.vx,self.vy
     --CHECK IF MARIO COLLIDED
@@ -3501,7 +3579,7 @@ objPowerUp=class(objAPI)
         self.despawnable=despawnable
         if despawnable==true then self.blockTimer=playStage.framesPassed+(4-1) self.y=self.y-4
         else self.blockTimer=playStage.framesPassed end
-        self.vx=(self.TYPE=="fireflower") and 0 or (currentLevel.allowBidirectionalSpawning==true and (mario.x<self.x)) and -2 or 2
+        self.vx=(self.TYPE=="fireflower") and 0 or (level.current.allowBidirectionalSpawning==true and (mario.x<self.x)) and -2 or 2
         self.doesBounce=(self.TYPE=="star") self.turnAround=true self.allowStarCollision=true
     end
 
@@ -3533,7 +3611,7 @@ objPowerUp=class(objAPI)
 
     function objPowerUp:hit(circumstance)
         if self.blockTimer<playStage.framesPassed then
-            if (circumstance=="block" and self.vy<=0) or (currentLevel.enablePowerUpBouncing and circumstance~="block") then
+            if (circumstance=="block" and self.vy<=0) or (level.current.enablePowerUpBouncing and circumstance~="block") then
                 self.vy=10
     end end end
 
@@ -3790,7 +3868,7 @@ playStage=class()
         playStage.framesPassedBlock=0
         playStage.SCORE=0
         playStage.coinCount=0
-        permLevel=LEVELSTRING
+        level.perm=LEVELSTRING
         playStage.load=0
         playStage.transition=0 playStage.transition2=false
         playStage.EDITOR=EDITOR
@@ -3810,7 +3888,7 @@ playStage=class()
             particle={},
         }
         allEntities={}
-        currentLevel={}
+        level.current=destroyObject(level.current,{})
         playStage.active=false
         playStage.wait=false
         playStage.events={}
@@ -3836,10 +3914,10 @@ playStage=class()
             elseif chr=="4" then         playStage:handleInput("left")
             elseif chr=="6" then         playStage:handleInput("right")
             elseif chr=="5" then         playStage:handleInput("up")
-            elseif chr=="restart" then   playStage:generate(permLevel)
-            elseif chr=="edit" and currentLevel.get(1,1)~=nil then
+            elseif chr=="restart" then   playStage:generate(level.perm)
+            elseif chr=="edit" and level.current.get(1,1)~=nil then
                 local fileSTOR=editor.file
-                editor:generate(permLevel)
+                editor:generate(level.perm)
                 editor.active=true editor.file=fileSTOR playStage.active=false
                 editor.cameraOffset=math.floor(playStage.cameraOffset/20)*20
             end
@@ -3855,7 +3933,7 @@ playStage=class()
                     mario.x=mario.x+1
                 elseif chr=="0" then
                     mario:powerDownMario()
-                elseif chr=="r" and currentLevel.get(1,1)~=nil then playStage:randomise()
+                elseif chr=="r" and level.current.get(1,1)~=nil then playStage:randomise()
                 elseif chr=="f" then frameByFrame=not frameByFrame
                 elseif chr=="y" then mario.x=73*16
                 elseif chr=="d" then
@@ -3865,9 +3943,9 @@ playStage=class()
                 elseif chr=="v" then
                     on.mouseDown()
                 elseif chr=="c" then
-                    print(permLevel)
+                    print(level.perm)
                 elseif chr=="s" then
-                    clipboard.addText(permLevel)
+                    clipboard.addText(level.perm)
                 elseif chr=="l" then
                     local PASTE=clipboard.getText()
                     if string.sub(PASTE,1,1)=="<" then --very crude for now
@@ -3904,7 +3982,7 @@ playStage=class()
         function playStage:mouseDown()
             if debug then
                 local placeXY=pixel2plot(mouse.x,mouse.y-8)
-                currentLevel.set(placeXY[1], placeXY[2], blockSelectionListTEMP[(blockSelectionTEMP%(#blockSelectionListTEMP))+1])
+                level.current.set(placeXY[1], placeXY[2], blockSelectionListTEMP[(blockSelectionTEMP%(#blockSelectionListTEMP))+1])
             end
             if playStage.EDITOR and checkCollision(mouse.x,mouse.y,1,1,4,178,40,30) then
                 playStage:charIn("edit")
@@ -3913,7 +3991,7 @@ playStage=class()
         function playStage:rightMouseDown()
             if debug then
                 local placeXY=pixel2plot(mouse.x,mouse.y-8)
-                currentLevel.set(placeXY[1], placeXY[2], 0)
+                level.current.set(placeXY[1], placeXY[2], 0)
             end
         end
 
@@ -3930,7 +4008,7 @@ playStage=class()
             if     INPUT=="down" and not mario.clear then   input.stor.down=8
             elseif INPUT=="up" and not mario.clear then     input.stor.up=2
             elseif INPUT=="action" and not mario.clear then input.stor.action=2
-            elseif not currentLevel.autoMove then           input.stor[INPUT]=6
+            elseif not level.current.autoMove then           input.stor[INPUT]=6
             end
         else
             input.stor.up=input.stor.up-1
@@ -3939,7 +4017,7 @@ playStage=class()
             input.stor.right=input.stor.right-1
             input.stor.action=input.stor.action-1
             
-            if currentLevel.autoMove then input.left=0 input.right=1
+            if level.current.autoMove then input.left=0 input.right=1
             else
                 if input.stor.left>0 then input.left=1 else input.left=0 end
                 if input.stor.right>0 then input.right=1 else input.right=0 end
@@ -4047,14 +4125,14 @@ playStage=class()
                     if blockIndex[blockID]["theme"][THEME]~=nil then
                         local frameForAnim=(math.floor((playStage.framesPassedBlock/4)%#blockIndex[blockID]["theme"][THEME]))+1 --(support for animations)
                         gc:drawImage(texs[blockIndex[blockID]["theme"][THEME][frameForAnim]], ((i2-1)*16)-playStage.cameraOffset, 212-16*(i)+8)
-                        if i==13 and blockIndex[blockID]["ceiling"] and currentLevel.showCeilingBlock then gc:drawImage(texs[blockIndex[blockID]["theme"][THEME][frameForAnim]], ((i2-1)*16)-playStage.cameraOffset, 212-16*(i+1)+8) end --draw a block above the blocks to denote that mario cannot jump over it
+                        if i==13 and blockIndex[blockID]["ceiling"] and level.current.showCeilingBlock then gc:drawImage(texs[blockIndex[blockID]["theme"][THEME][frameForAnim]], ((i2-1)*16)-playStage.cameraOffset, 212-16*(i+1)+8) end --draw a block above the blocks to denote that mario cannot jump over it
                 elseif blockIndex[blockID]["texture"][1]~=nil then
                         local frameForAnim=(math.floor((playStage.framesPassedBlock/4)%#blockIndex[blockID]["texture"]))+1 --(support for animations)
                         gc:drawImage(texs[blockIndex[blockID]["texture"][frameForAnim]], ((i2-1)*16)-playStage.cameraOffset, 212-16*(i)+8)
-                        if i==13 and blockIndex[blockID]["ceiling"] and currentLevel.showCeilingBlock then gc:drawImage(texs[blockIndex[blockID]["texture"][frameForAnim]], ((i2-1)*16)-playStage.cameraOffset, 212-16*(i+1)+8) end --draw a block above the blocks to denote that mario cannot jump over it
+                        if i==13 and blockIndex[blockID]["ceiling"] and level.current.showCeilingBlock then gc:drawImage(texs[blockIndex[blockID]["texture"][frameForAnim]], ((i2-1)*16)-playStage.cameraOffset, 212-16*(i+1)+8) end --draw a block above the blocks to denote that mario cannot jump over it
                     end --^^^ CAUTION so far no animated blocks are ceiling ones.. if they are then this will cease to work!
                 else --load the object
-                    table.insert(currentLevel.loadedObjects,{blockID,i2,i}) --to load back if there's a pipe transition
+                    table.insert(level.current.loadedObjects,{blockID,i2,i}) --to load back if there's a pipe transition
                     plot2place(0,i2,i) --blank it out
                     objAPI:createObj(blockID,(i2-1)*16,212-16*(i),false)
     end end end end
@@ -4075,7 +4153,7 @@ playStage=class()
         end
         playStage.framesPassedBlock=playStage.framesPassedBlock+1
         if not mario.dead and not mario.clear then
-            playStage.TIME=currentLevel.TIME-(math.floor(playStage.framesPassed/18))
+            playStage.TIME=level.current.TIME-(math.floor(playStage.framesPassed/18))
             if playStage.TIME<=0 then mario:kill() end
         end
     end
@@ -4083,16 +4161,16 @@ playStage=class()
     function playStage:scrollCamera(force)
         if (not (mario.clear or mario.dead)) then
             playStage.cameraTargetOffset=playStage.cameraOffset
-            if currentLevel.autoScroll then
+            if level.current.autoScroll then
                 if playStage.cameraOffset>=playStage.levelWidth-318 then
                     playStage.cameraOffset=playStage.levelWidth-318
                 elseif not (playStage.wait or gui.PROMPT) and playStage.cameraOffset~=playStage.levelWidth-318 then
-                    playStage.cameraOffset=playStage.cameraOffset+currentLevel.autoScroll
+                    playStage.cameraOffset=playStage.cameraOffset+level.current.autoScroll
                 end
             elseif (playStage.wait==false) and (not mario.powerUp) then
                 local biasBoundary=48 --distance from centre (159) that mario has to travel to change the bias direction
                 if mario.x>159 then --if progressed past initial screen centre
-                    if not (currentLevel.disableBackScrolling==true and ((mario.x+8-159+math.abs(playStage.cameraBias))<playStage.cameraOffset)) then
+                    if not (level.current.disableBackScrolling==true and ((mario.x+8-159+math.abs(playStage.cameraBias))<playStage.cameraOffset)) then
                         if (mario.x-playStage.cameraOffset+8)>159+biasBoundary and (mario.vx>=1 or mario.vx==0) then --passed right side boundary
                             playStage.cameraBias=math.abs(playStage.cameraBias)
                         elseif (mario.x-playStage.cameraOffset+8)<159-biasBoundary and (mario.vx<=-1 or mario.vx==0) then --passed left side boundary
@@ -4104,7 +4182,7 @@ playStage=class()
                             playStage.cameraTargetOffset=mario.x+8-159+playStage.cameraBias
                         end
                     end
-                elseif currentLevel.disableBackScrolling~=true then
+                elseif level.current.disableBackScrolling~=true then
                     playStage.cameraTargetOffset=0
                 end
             end
@@ -4117,35 +4195,42 @@ playStage=class()
             end return #list+(bodge or 0) --i'm really sorry for this
         end
         -- local posLeft,posRight=0,playStage.levelWidth-318 --never scroll past these
-        local posLeft=currentLevel.scrollStopL[math.max(math.min(posInList(currentLevel.scrollStopL,mario.x+3,1),posInList(currentLevel.scrollStopL,playStage.cameraOffset,1)),posInList(currentLevel.scrollStopL,playStage.cameraTargetOffset,1))-1]
-        local posRight=currentLevel.scrollStopR[math.max(math.min(posInList(currentLevel.scrollStopR,playStage.cameraTargetOffset),posInList(currentLevel.scrollStopR,playStage.cameraOffset)),posInList(currentLevel.scrollStopR,mario.x-306))] --this is held together with post it note glue
+        local posLeft=level.current.scrollStopL[math.max(math.min(posInList(level.current.scrollStopL,mario.x+3,1),posInList(level.current.scrollStopL,playStage.cameraOffset,1)),posInList(level.current.scrollStopL,playStage.cameraTargetOffset,1))-1]
+        local posRight=level.current.scrollStopR[math.max(math.min(posInList(level.current.scrollStopR,playStage.cameraTargetOffset),posInList(level.current.scrollStopR,playStage.cameraOffset)),posInList(level.current.scrollStopR,mario.x-306))] --this is held together with post it note glue
         playStage.cameraTargetOffset=math.max(posLeft,math.min(playStage.cameraTargetOffset,posRight)) --clamp values to scroll stops --CONSIDER THIS FOR SCROLL STOP
         --smooth scrolling
         local lerpFactor=(mario.clear or mario.dead) and 0.25 or force or 0.15 --the lerpFactor (scrolling smoothness (higher=smoother))
         playStage.cameraOffset=round(playStage.cameraOffset+(playStage.cameraTargetOffset-playStage.cameraOffset)*lerpFactor,4)
         playStage.cameraOffset=math.max(0,math.min(playStage.cameraOffset,playStage.levelWidth-318)) --clamp values to level borders --CONSIDER THIS FOR SCROLL STOP
-        if currentLevel.autoMove and playStage.cameraOffset>=playStage.levelWidth-318 then
-            currentLevel.autoMove=nil
+        if level.current.autoMove and playStage.cameraOffset>=playStage.levelWidth-318 then
+            level.current.autoMove=nil
         end
+    end
+
+    function playStage:getSpawnOffsets()
+        --view distance plus 3 blocks
+        local spawnOffsetX=math.ceil(playStage.cameraOffset/16)*16-48 --left side
+        local spawnOffsetY=math.ceil((screenWidth+playStage.cameraOffset)/16)*16+48 --right side
+        return spawnOffsetX,spawnOffsetY
     end
 
     function playStage:objLogic()
         if not playStage.wait and not mario.powerUp then
-            local spawnOffsets={(math.ceil(playStage.cameraOffset/16)*16)-48,((math.ceil(screenWidth+playStage.cameraOffset)/16)*16)+48} --view distance plus 3 blocks
+            local spawnOffsetX,spawnOffsetY=playStage:getSpawnOffsets() --get the view distance
             for k in pairs(entityLists) do
                 local focusedList=entityLists[k]
                 for i=1,#focusedList do --for all entities within the list
                     local entity=allEntities[focusedList[i]]
-                    if entity~=nil then --if entity exists
+                    if entity~=nil and entity.objectID then --if entity exists
                         if ((entity.y)>212) then
                             -- print("offscreen y",entity.TYPE)
                             objAPI:destroy(entity.objectID,entity.LEVEL)
-                        elseif (((entity.x) > (spawnOffsets[1])) and ((entity.x) < (spawnOffsets[2]))) or (entity.GLOBAL==true) or currentLevel.enableGlobalEntities==true then --if in view distance
+                        elseif (((entity.x) > (spawnOffsetX)) and ((entity.x) < (spawnOffsetY))) or (entity.GLOBAL==true) or level.current.enableGlobalEntities==true then --if in view distance
                             entity:logic()
                             -- print("logic",entity.TYPE)
                         elseif entity.despawnable then
                             -- print("despawn1",entity.TYPE)
-                            if entity.x<-16 or (entity.x < spawnOffsets[1]+8) or ((entity.x) > spawnOffsets[2]-8) then
+                            if entity.x<-16 or (entity.x < spawnOffsetX+8) or ((entity.x) > spawnOffsetY-8) then
                                 -- print("despawn2",entity.TYPE)
                                 objAPI:destroy(entity.objectID,entity.LEVEL) end
                         end
@@ -4153,14 +4238,14 @@ playStage=class()
     end end end end
 
     function playStage:objDraw(gc,entityLists)
-        local spawnOffsets={(math.ceil(playStage.cameraOffset/16)*16)-48,((math.ceil(screenWidth+playStage.cameraOffset)/16)*16)+48} --view distance plus 3 blocks
+        local spawnOffsetX,spawnOffsetY=playStage:getSpawnOffsets() --get the view distance
         for k in pairs(entityLists) do
             local focusedList=entityLists[k]
             for i=1,#focusedList do
                 local entity=allEntities[focusedList[i]]
                 -- print(entity)
-                if entity~=nil then
-                    if (not ((entity.x) < (spawnOffsets[1])) and not ((entity.x) > (spawnOffsets[2]))) or entity.GLOBAL==true then
+                if entity~=nil and entity.objectID then
+                    if (not ((entity.x) < (spawnOffsetX)) and not ((entity.x) > (spawnOffsetY))) or entity.GLOBAL==true then
                         local obj=allEntities[focusedList[i]]
                         obj:draw(gc,obj.x-playStage.cameraOffset,obj.y+8,obj.TYPE,false,false) --:draw(gc,x,y,TYPE,isEditor,isIcon)
     end end end end end
@@ -4295,7 +4380,7 @@ playStage=class()
             gc:setColorRGB(0,0,0)
             gc:fillRect(0,0,screenWidth,screenHeight)
             if playStage.load==1 then
-                currentLevel=string2level(permLevel)
+                level.current=string2level(level.perm)
                 mario:resetPos()
                 playStage.cameraOffset=(mario.x<96) and 0 or mario.x-96
                 if type(playStage.EDITOR)=="table" then
@@ -4303,7 +4388,7 @@ playStage=class()
                     mario.iFrames=playStage.framesPassed+40
                     playStage.cameraOffset=editor.cameraOffset
                 end playStage.cameraTargetOffset=playStage.cameraOffset
-                playStage.levelWidth=((currentLevel.END)*16)
+                playStage.levelWidth=((level.current.END)*16)
                 playStage:levelLogic()
                 mario:logic() mario:teleport(mario.x,mario.y)
             end
@@ -4490,7 +4575,7 @@ editor=class()
                 elseif chr=="o" then toolpaletteSelection("File","Open")
                 elseif chr=="play" then
                     switchTimer(true)
-                    playStage:generate(level2string(currentLevel),false,true)
+                    playStage:generate(level2string(level.current),false,true)
                     playStage.active=true
                 end
             end
@@ -4519,7 +4604,7 @@ editor=class()
             if editor.eraseMode then TILE=0 end
             if editor.playMode==true then
                 local pos=pixel2snapgrid(editor.mouseTile.x+editor.cameraOffset,editor.mouseTile.y-8,editor.selectionSize[1],editor.selectionSize[2])
-                playStage:generate(level2string(currentLevel),false,pos)
+                playStage:generate(level2string(level.current),false,pos)
                 playStage.active=true
             elseif editor.eyedropperMode==true then
                 local ID=pixel2ID(mouse.x,mouse.y-8,nil,true)
@@ -4527,7 +4612,7 @@ editor=class()
                     editor.selectedID=ID
                 end
             elseif editor.platformSelect then
-                local ID=currentLevel.get(editor.platformSelect[1],editor.platformSelect[2])
+                local ID=level.current.get(editor.platformSelect[1],editor.platformSelect[2])
                 local mode=splitByChar(string.sub(ID,10,#ID),"~")[3]
                 if string.sub(mode,1,1)=="l" and editor.platformSelect[3]~=true then
                     editor.platformSelect[3]=true
@@ -4577,7 +4662,7 @@ editor=class()
             end
         elseif editor.highlightedArea=="pipes" then
             local group={"MANAGE WARPS", "texture"}
-            for i=1,#currentLevel.pipeData do
+            for i=1,#level.current.pipeData do
                 table.insert(group,"warp_"..i.."_edit")
             end table.insert(group,"newwarp")
             editor:setDisplayedGroup(group)
@@ -4630,7 +4715,7 @@ editor=class()
             editor.select=false
             editor.select2=false
         elseif editor.platformSelect then
-            currentLevel.set(editor.platformSelect[1],editor.platformSelect[2],0)
+            level.current.set(editor.platformSelect[1],editor.platformSelect[2],0)
             editor.platformSelect=false
         elseif editor.eyedropperMode or editor.eraseMode or editor.playMode or editor.displayedGroup then
             editor.eyedropperMode=false
@@ -4678,14 +4763,14 @@ editor=class()
                 editor.selectedID=ID
                 editor:setDisplayedGroup(false)
             elseif action=="5" then --placed both exit and entrance for a new pipe
-               table.insert(currentLevel.pipeData,{unpack(currentLevel.pipeData["n"])})
+               table.insert(level.current.pipeData,{unpack(level.current.pipeData["n"])})
             elseif action=="6" then --delete pipe entirely
                 gui:clear()
                 gui:createPrompt("DELETE PIPE "..pID,{"REALLY DELETE?","THIS CANNOT","BE UNDONE!"},{{"CONFIRM","delwarp_"..pID},{"CANCEL","close"}},true,false)
             elseif action=="7" or action=="8" then --view pos of pipe
                 pID=tonumber(pID)
-                if     action=="7" then editor.cameraOffset=(currentLevel.pipeData[pID][1][1]*16)-159
-                elseif action=="8" then editor.cameraOffset=(currentLevel.pipeData[pID][2][1]*16)-159 end
+                if     action=="7" then editor.cameraOffset=(level.current.pipeData[pID][1][1]*16)-159
+                elseif action=="8" then editor.cameraOffset=(level.current.pipeData[pID][2][1]*16)-159 end
                 editor:setDisplayedGroup(false)
             elseif action=="9" or action=="10" then --disable entering (TODO unimplemented in level string)
             end
@@ -4718,7 +4803,7 @@ editor=class()
             local TYPE=objAPI:type2class(blockID)
             if TYPE~=false then
                 if ICON then y=y-8 x=x+editor.cameraOffset end
-                obj=_G[TYPE]
+                obj=entityClasses[TYPE]
                 if ICON then gc:clipRect("set",x-editor.cameraOffset,y+8,16,16) end
                 obj:draw(gc,x-editor.cameraOffset,y+8,blockID,true,ICON) --(gc,x,y,TYPE,isEditor,isIcon)
                 gc:clipRect("reset")
@@ -4795,59 +4880,59 @@ editor=class()
                 local blockID=plot2ID(i2,i,true)
                 if type(blockID)=='number' and blockID>=0 then --its a tile
                     editor:drawTile(gc,blockID,((i2-1)*16)-editor.cameraOffset, 212-16*(i)+8,THEME)
-                    if i==13 and blockIndex[blockID]["ceiling"] then editor:drawTile(gc,currentLevel.showCeilingBlock and blockID or 99,((i2-1)*16)-editor.cameraOffset, 212-16*(i+1)+8,THEME) end --draw a barrier above the blocks to denote that mario cannot jump over it
+                    if i==13 and blockIndex[blockID]["ceiling"] then editor:drawTile(gc,level.current.showCeilingBlock and blockID or 99,((i2-1)*16)-editor.cameraOffset, 212-16*(i+1)+8,THEME) end --draw a barrier above the blocks to denote that mario cannot jump over it
                 else --its an object
                     table.insert(objectList,{(i2-1)*16,212-16*(i),blockID}) --x,y,ID
         end end end
         for i=1,#objectList do
             editor:drawTile(gc,objectList[i][3],objectList[i][1],objectList[i][2])
         end
-        for i=1,#currentLevel.pipeData do
-            editor:drawPipe(gc,i,currentLevel.pipeData[i][1][1],currentLevel.pipeData[i][1][2],"entrance",currentLevel.pipeData[i][1][3])
-            editor:drawPipe(gc,i,currentLevel.pipeData[i][2][1],currentLevel.pipeData[i][2][2],"exit",currentLevel.pipeData[i][2][3])
+        for i=1,#level.current.pipeData do
+            editor:drawPipe(gc,i,level.current.pipeData[i][1][1],level.current.pipeData[i][1][2],"entrance",level.current.pipeData[i][1][3])
+            editor:drawPipe(gc,i,level.current.pipeData[i][2][1],level.current.pipeData[i][2][2],"exit",level.current.pipeData[i][2][3])
         end gc:setPen("thin","dashed") --for scroll stops
-        for i=2,#currentLevel.scrollStopL do --skip out 0 (start)
-            editor:drawScrollStop(gc,false,currentLevel.scrollStopL[i])
+        for i=2,#level.current.scrollStopL do --skip out 0 (start)
+            editor:drawScrollStop(gc,false,level.current.scrollStopL[i])
         end
-        for i=1,(#currentLevel.scrollStopR-1) do --skip out last (end)
-            editor:drawScrollStop(gc,true,currentLevel.scrollStopR[i])
+        for i=1,(#level.current.scrollStopR-1) do --skip out last (end)
+            editor:drawScrollStop(gc,true,level.current.scrollStopR[i])
         end
-        gc:drawImage(texs.icon_start,currentLevel.startX-editor.cameraOffset+1,currentLevel.startY+7)
+        gc:drawImage(texs.icon_start,level.current.startX-editor.cameraOffset+1,level.current.startY+7)
     end
 
     function editor:placeTile(ID,plotX,plotY)
         if ID~=nil then
             if string.sub(ID,1,11)=="platform_0~" then
                 editor.platformSelect={plotX,plotY}
-                currentLevel.set(plotX,plotY,"platform_1"..string.sub(ID,11,#ID))
+                level.current.set(plotX,plotY,"platform_1"..string.sub(ID,11,#ID))
             elseif string.sub(ID,1,5)=="theme" then --for themes
-                currentLevel.t[plotX]=tonumber(string.sub(ID,6,#ID))
+                level.current.t[plotX]=tonumber(string.sub(ID,6,#ID))
             elseif string.sub(ID,1,4)=="warp" then --for warps
                 local ID=splitByChar(editor.selectedID,"_")
                 local ID,action,option=ID[2],tonumber(ID[3]),ID[4] --action (before) '2'=entr '4'=exit
                 ID=isInteger(ID) and tonumber(ID) or ID
-                if currentLevel.pipeData[ID]==nil then currentLevel.pipeData[ID]={} end --IMPORTANT: this should ONLY happen for when the ID is 'n' (new)!!!
-                currentLevel.pipeData[ID][action/2]={plotX,plotY,tonumber(option)}
+                if level.current.pipeData[ID]==nil then level.current.pipeData[ID]={} end --IMPORTANT: this should ONLY happen for when the ID is 'n' (new)!!!
+                level.current.pipeData[ID][action/2]={plotX,plotY,tonumber(option)}
                 if ID=="n" then editor:selectID("warp_n_"..(action+1)) end
             elseif string.sub(ID,1,6)=="scroll" then --for scroll stops
-                if (plotX>1) and (plotX<currentLevel.END) then --avoid overwriting the default values.. i think
+                if (plotX>1) and (plotX<level.current.END) then --avoid overwriting the default values.. i think
                     local function removeInstances(tbl,val) local newTbl={}
                         for i=1,#tbl do if tbl[i]~=val then table.insert(newTbl,tbl[i]) end
                         end return newTbl
                     end
                     local valueL,valueR=(plotX-1)*16,(plotX*16)-318
-                    currentLevel.scrollStopL=removeInstances(currentLevel.scrollStopL,valueL)
-                    currentLevel.scrollStopR=removeInstances(currentLevel.scrollStopR,valueR)
-                    if ID=="scrollStopL"     then table.insert(currentLevel.scrollStopL,valueL)
-                    elseif ID=="scrollStopR" then table.insert(currentLevel.scrollStopR,valueR) end
-                    table.sort(currentLevel.scrollStopL) table.sort(currentLevel.scrollStopR)
+                    level.current.scrollStopL=removeInstances(level.current.scrollStopL,valueL)
+                    level.current.scrollStopR=removeInstances(level.current.scrollStopR,valueR)
+                    if ID=="scrollStopL"     then table.insert(level.current.scrollStopL,valueL)
+                    elseif ID=="scrollStopR" then table.insert(level.current.scrollStopR,valueR) end
+                    table.sort(level.current.scrollStopL) table.sort(level.current.scrollStopR)
                 end
             elseif ID=="mario" then
                 local starts=plot2pixel(plotX,plotY)
-                currentLevel.startX=starts[1]+1 currentLevel.startY=starts[2]
+                level.current.startX=starts[1]+1 level.current.startY=starts[2]
                 editor.selectedID=nil
             else
-                currentLevel.set(plotX,plotY,ID)
+                level.current.set(plotX,plotY,ID)
             end
         end
     end
@@ -5134,17 +5219,17 @@ editor=class()
                 if editor.platformSelect[3]~=true then
                     local length=editor.highlightedTile[1]-editor.platformSelect[1]+1
                     if length>0 then
-                        currentLevel.set(x,y,"platform_"..tostring(length)..string.sub(editor.selectedID,11,#editor.selectedID))
+                        level.current.set(x,y,"platform_"..tostring(length)..string.sub(editor.selectedID,11,#editor.selectedID))
                     end
                 else
-                    local ID=currentLevel.get(x,y)
+                    local ID=level.current.get(x,y)
                     local config=splitByChar(string.sub(ID,10,#ID),"~") local distance
                     if config[3]=="lx" then
                         distance=tostring(editor.highlightedTile[1]-editor.platformSelect[1])*16
                     else
                         distance=tostring(editor.highlightedTile[2]-editor.platformSelect[2])*16
                     end
-                    currentLevel.set(x,y,"platform_"..config[1].."~"..config[2].."~"..config[3].."~"..distance)
+                    level.current.set(x,y,"platform_"..config[1].."~"..config[2].."~"..config[3].."~"..distance)
                 end
             elseif editor.eraseMode==true then cursor.set("clear")
             elseif editor.eyedropperMode==true then cursor.set("crosshair")
@@ -5165,7 +5250,7 @@ editor=class()
             end
         end
         if editor.cameraOffset<0 then editor.cameraOffset=0 end
-        if editor.cameraOffset>((currentLevel.END-20)*16) then editor.cameraOffset=((currentLevel.END-20)*16)+2 end
+        if editor.cameraOffset>((level.current.END-20)*16) then editor.cameraOffset=((level.current.END-20)*16)+2 end
         if editor.enableAutoSave then
             if not editor.lastAutoSave then editor.lastAutoSave = 0 end
             if (framesPassed - editor.lastAutoSave) > 1000 then
@@ -5182,7 +5267,7 @@ editor=class()
     function editor:generate(LEVELSTRING)
         print("Generating level from string...")
         gui:clear()
-        permLevel=LEVELSTRING
+        level.perm=LEVELSTRING
         editor.LOAD=0 editor.file=false
         editor.cameraOffset=0 editor.notification=false
         editor.select=false
@@ -5218,36 +5303,36 @@ editor=class()
                     break
             end end
             if type(modifier)~="table" then --one has been located
-                if currentLevel[modifier]==nil then currentLevel[modifier]=true
-                else currentLevel[modifier]=nil
+                if level.current[modifier]==nil then level.current[modifier]=true
+                else level.current[modifier]=nil
             end end
         elseif group=="Autoscroll" then
             if string.sub(option,12,12)~="" then
-                currentLevel.autoScroll=string.sub(option,12,12)
-            else currentLevel.autoScroll=nil
+                level.current.autoScroll=string.sub(option,12,12)
+            else level.current.autoScroll=nil
             end
         elseif group=="▶Automove" then
             if string.sub(option,-13)=="Walking Speed" then
-                currentLevel.autoMove="w"
+                level.current.autoMove="w"
             elseif string.sub(option,-13)=="Running Speed" then
-                currentLevel.autoMove="r"
-            else currentLevel.autoMove=nil
+                level.current.autoMove="r"
+            else level.current.autoMove=nil
             end
         elseif group=="⇥Length" then
             if string.sub(option,1,14)=="Current Length" then
                 gui:createPrompt("SET LEVEL LENGTH",{"TYPE THE VALUE TO SET","THE LEVEL LENGTH TO!"},4,"length",false)
             else
-                currentLevel.END=currentLevel.END+tonumber(option)
-                if currentLevel.END<=20 then currentLevel.END=20 end
-                currentLevel=copyLevel(currentLevel)
+                level.current.END=level.current.END+tonumber(option)
+                if level.current.END<=20 then level.current.END=20 end
+                level.current=copyLevel(level.current)
             end
         elseif group=="Time" then
             if string.sub(option,1,18)=="Current Time Limit" then
                 gui:createPrompt("SET TIME LIMIT",{"TYPE THE VALUE TO SET","THE TIME LIMIT TO!"},3,"time",false)
             else
-                currentLevel.TIME=currentLevel.TIME+tonumber(option)
-                if currentLevel.TIME<=5 then currentLevel.TIME=5
-                elseif currentLevel.TIME>=999 then currentLevel.TIME=999
+                level.current.TIME=level.current.TIME+tonumber(option)
+                if level.current.TIME<=5 then level.current.TIME=5
+                elseif level.current.TIME>=999 then level.current.TIME=999
             end end
         elseif group=="File" then
             if string.sub(option,1,4)=="Name" then
@@ -5259,7 +5344,7 @@ editor=class()
             elseif option=="Save As" then gui:click("editor_saveas")
             elseif option=="Close File" then gui:click("editor_close")
             elseif option=="Copy to Clipboard" then
-                clipboard.addText(level2string(currentLevel))
+                clipboard.addText(level2string(level.current))
                 gui:createPrompt("DONE!",{"LEVEL COPIED","TO CLIPBOARD!"},{{"OK","close"}},nil,nil,false)
             elseif option=="Load from Clipboard" then
                 local PASTE=clipboard.getText() or "err"
@@ -5290,32 +5375,32 @@ editor=class()
         local eSC="[   ]" if editor.enableShowCoords==true               then eSC="[✓]" end
         local sUC="[   ]" if editor.enableSMBUtility==true               then sUC="[✓]" end
 
-        local dBS="[   ]" if currentLevel.disableBackScrolling==true        then dBS="[✓]" end
-        local aBS="[   ]" if currentLevel.allowBidirectionalSpawning==true  then aBS="[✓]" end
-        local eGE="[   ]" if currentLevel.enableGlobalEntities==true        then eGE="[✓]" end
-        local eSB="[   ]" if currentLevel.enableShellBouncing==true         then eSB="[✓]" end
-        local eCK="[   ]" if currentLevel.enableCoinOnKill==true            then eCK="[✓]" end
-        local ePB="[   ]" if currentLevel.enablePowerUpBouncing==true       then ePB="[✓]" end
-        local sCB="[   ]" if currentLevel.showCeilingBlock==true            then sCB="[✓]" end
+        local dBS="[   ]" if level.current.disableBackScrolling==true        then dBS="[✓]" end
+        local aBS="[   ]" if level.current.allowBidirectionalSpawning==true  then aBS="[✓]" end
+        local eGE="[   ]" if level.current.enableGlobalEntities==true        then eGE="[✓]" end
+        local eSB="[   ]" if level.current.enableShellBouncing==true         then eSB="[✓]" end
+        local eCK="[   ]" if level.current.enableCoinOnKill==true            then eCK="[✓]" end
+        local ePB="[   ]" if level.current.enablePowerUpBouncing==true       then ePB="[✓]" end
+        local sCB="[   ]" if level.current.showCeilingBlock==true            then sCB="[✓]" end
 
         local aSc={"[   ]","[   ]","[   ]","[   ]","[   ]","[   ]"} -- aSc: autoScroll
-        if      currentLevel.autoScroll==nil   then aSc[1]="[✓]"
-        elseif  currentLevel.autoScroll=="1"   then aSc[2]="[✓]"
-        elseif  currentLevel.autoScroll=="2"   then aSc[3]="[✓]"
-        elseif  currentLevel.autoScroll=="3"   then aSc[4]="[✓]"
-        elseif  currentLevel.autoScroll=="4"   then aSc[5]="[✓]"
-        elseif  currentLevel.autoScroll=="5"   then aSc[6]="[✓]"
+        if      level.current.autoScroll==nil   then aSc[1]="[✓]"
+        elseif  level.current.autoScroll=="1"   then aSc[2]="[✓]"
+        elseif  level.current.autoScroll=="2"   then aSc[3]="[✓]"
+        elseif  level.current.autoScroll=="3"   then aSc[4]="[✓]"
+        elseif  level.current.autoScroll=="4"   then aSc[5]="[✓]"
+        elseif  level.current.autoScroll=="5"   then aSc[6]="[✓]"
         end
 
         local aMv={"[   ]","[   ]","[   ]"} -- aMv: autoMove
-        if      currentLevel.autoMove==nil then aMv[1]="[✓]"
-        elseif  currentLevel.autoMove=="w" then aMv[2]="[✓]"
-        elseif  currentLevel.autoMove=="r" then aMv[3]="[✓]"
+        if      level.current.autoMove==nil then aMv[1]="[✓]"
+        elseif  level.current.autoMove=="w" then aMv[2]="[✓]"
+        elseif  level.current.autoMove=="r" then aMv[3]="[✓]"
         end
 
         local menu = {
             {"File",
-                {"Name: "..string.upper(currentLevel.courseName), toolpaletteSelection},
+                {"Name: "..string.upper(level.current.courseName), toolpaletteSelection},
                 "-",
                 {"New", toolpaletteSelection},
                 {"Open", toolpaletteSelection},
@@ -5358,7 +5443,7 @@ editor=class()
                 {aMv[3].."Running Speed", toolpaletteSelection},
             },
             {"⇥Length",
-                {"Current Length: "..currentLevel.END, toolpaletteSelection},
+                {"Current Length: "..level.current.END, toolpaletteSelection},
                 "-",
                 {"+5", toolpaletteSelection},
                 {"+10", toolpaletteSelection},
@@ -5373,7 +5458,7 @@ editor=class()
                 {"-200", toolpaletteSelection},
             },
             {"Time",
-                {"Current Time Limit: "..currentLevel.TIME, toolpaletteSelection},
+                {"Current Time Limit: "..level.current.TIME, toolpaletteSelection},
                 "-",
                 {"+5", toolpaletteSelection},
                 {"+10", toolpaletteSelection},
@@ -5393,20 +5478,20 @@ editor=class()
             if not editor.enableShowCoords then
                 toolpalette.enable("Editor Settings",(editor.enableSMBUtility and "[✓]" or "[   ]").."SMB Utility Co-ords",false)
             end
-            if currentLevel.TIME<=10 then
+            if level.current.TIME<=10 then
                 toolpalette.enable("Time","-5",false)
                 toolpalette.enable("Time","-10",false)
                 toolpalette.enable("Time","-50",false)
                 toolpalette.enable("Time","-100",false)
                 toolpalette.enable("Time","-200",false)
-            elseif currentLevel.TIME>=999 then
+            elseif level.current.TIME>=999 then
                 toolpalette.enable("Time","+5",false)
                 toolpalette.enable("Time","+10",false)
                 toolpalette.enable("Time","+50",false)
                 toolpalette.enable("Time","+100",false)
                 toolpalette.enable("Time","+200",false)
             end
-            if currentLevel.END<=20 then
+            if level.current.END<=20 then
                 toolpalette.enable("⇥Length","-5",false)
                 toolpalette.enable("⇥Length","-10",false)
                 toolpalette.enable("⇥Length","-50",false)
@@ -5429,7 +5514,7 @@ editor=class()
                 gc:setColorRGB(0,0,0)
                 gc:fillRect(0,0,screenWidth,screenHeight)
                 if editor.LOAD==1 then
-                    currentLevel=string2level(permLevel)
+                    level.current=string2level(level.perm)
                 end
                 drawFont(gc,"LOADING LEVEL FOR EDITING...",nil,nil,"centre",0)
                 editor.LOAD=editor.LOAD+1
@@ -5507,8 +5592,8 @@ titleScreen=class()
         local campaignScreen    =string2level("<20-v5-5~5-!-500>,1*14,9,*12,9*2,*12,9*2,*12,9*2,*12,9*2,*12,9*2,*12,9*2,*12,9*2,*12,9*2,*12,9*2,*D,46,50*5,9,*8,43,42,*3,47,52,53,51*3,9*9,48,49,9*4,48,49,9*3,1*14",20,-13)
         local endlessScreen     =string2level("<20-v5-5~5-!-500>,1*14,9,*12,9*2,*12,9*2,*12,9*2,*12,9*2,*12,9*2,*12,9*2,*12,9*2,*12,9*2,*12,9,50,45,*11,9,51,44,*11,9*15,1*14",40,-13)
         
-        currentLevel=mainScreen
-        currentLevel.xy=mergeMultiple(
+        level.current=mainScreen
+        level.current.xy=mergeMultiple(
             mainScreen.xy,
             localScreen.xy,
             courseWorldScreen.xy,
@@ -5518,8 +5603,8 @@ titleScreen=class()
             playScreen.xy
         )
         
-        for i=-21,21 do currentLevel.set(i,14,9) end
-        for i=21,60 do currentLevel.set(i,-13,1) end
+        for i=-21,21 do level.current.set(i,14,9) end
+        for i=21,60 do level.current.set(i,-13,1) end
     end
 
     function titleScreen:charIn(chr)
@@ -5885,12 +5970,12 @@ gui=class()
             elseif action=="editor_close" and editor.file then editor.notification={"CLOSED SLOT "..editor.file.."!"}
                 editor.file=false editor:updateToolpalette()
             elseif action=="coursename" then
-                currentLevel.courseName=gui.input or "my course"
+                level.current.courseName=gui.input or "my course"
                 editor:updateToolpalette()
             elseif action=="time" and isInteger(gui.input) then
-                toolpaletteSelection("Time",tonumber(gui.input)-currentLevel.TIME)
+                toolpaletteSelection("Time",tonumber(gui.input)-level.current.TIME)
             elseif action=="length" and isInteger(gui.input) then
-                toolpaletteSelection("⇥Length",tonumber(gui.input)-currentLevel.END)
+                toolpaletteSelection("⇥Length",tonumber(gui.input)-level.current.END)
             elseif action=="author" then
                 var.store("author",gui.input) username=gui.input
             elseif string.sub(action,1,2)=="ll" then
@@ -5943,7 +6028,7 @@ gui=class()
                     else gui:click(table.concat(action,"_"))
                     end
                 elseif action[2]=="saveconfirm" then
-                    gui:writeLevel(action[3],action[4],level2string(currentLevel)) gui:clear() editor.levelList=false
+                    gui:writeLevel(action[3],action[4],level2string(level.current)) gui:clear() editor.levelList=false
                     editor.file=(action[4]=="levelListLocal") and action[3] or nil editor.notification={"SAVED TO SLOT "..action[3].."!"} editor:updateToolpalette()
                 elseif action[2]=="close" then
                     gui:clear() editor.levelList=false
@@ -6005,7 +6090,7 @@ gui=class()
                 for i=1,#vars do del(vars[i]) end username=""
                 gui:clearPrompt() titleScreen:init()
             elseif string.sub(action,1,7)=="delwarp" then
-                table.remove(currentLevel.pipeData,tonumber(splitByChar(action,"_")[2]))
+                table.remove(level.current.pipeData,tonumber(splitByChar(action,"_")[2]))
                 editor:setDisplayedGroup(false) gui:clearPrompt()
             elseif action=="enterauthor" then
                 gui:createPrompt("ENTER NEW AUTHOR",{"TYPE BELOW TO SET A","NEW AUTHOR NAME TO BE","ASSOCIATED WITH YOUR","LEVELS AND PRESS ENTER"},12,"author",false)
@@ -6139,6 +6224,12 @@ gui=class()
                 gc:fillRect(121,194,77*0.16,7)
                 gc:drawImage(texs.R0walk3,151,170)
                 drawFont(gc,"LOADING nSMM - TILES", nil, nil,"centre",0)
+                entityClasses={}
+                for className,object in pairs(_G) do
+                    if type(object)=="table" and string.sub(className,1,3)=="obj" then
+                        entityClasses[className]=object
+                    end
+                end
             elseif framesPassed==3 then
                 loadTextures("tile")
                 gc:fillRect(121,194,77*0.32,7)
@@ -6188,7 +6279,7 @@ gui=class()
             Profiler:report()
         end
 
-        if framesPassed % 60 == 0 then
+        if framesPassed % 100 == 0 then
             collectgarbage()
             print("collectgarbage() called, memory usage: " .. collectgarbage("count") .. "kb")
         end
