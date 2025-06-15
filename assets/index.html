@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>TI-Image Converter</title>
+  <style>
+    body { font-family: sans-serif; max-width: 700px; margin: auto; padding: 1em; }
+    label { display: block; margin-top: 1em; }
+    input[type="number"] { width: 60px; }
+    textarea { width: 100%; height: 300px; margin-top: 1em; font-family: monospace; }
+  </style>
+</head>
+<body>
+  <h1>TI-Image Converter (RGB5551)</h1>
+  
+  <label>
+    Image Prefix:
+    <input type="text" id="prefix" placeholder="e.g. texs." value="texs.">
+  </label>
+
+  <label>
+    Transparency threshold (0–255):
+    <input type="number" id="alphaThreshold" value="128" min="0" max="255">
+  </label>
+
+  <label>
+    Force Resize:
+    <input type="checkbox" id="resizeToggle">
+    Width: <input type="number" id="resizeWidth" value="16" min="1">
+    Height: <input type="number" id="resizeHeight" value="16" min="1">
+  </label>
+
+  <label>
+    Pad escape numbers (e.g. \5 → \005):
+    <input type="checkbox" id="padEscapeNumbers" checked>
+  </label>
+
+  <label>
+    Select image(s):
+    <input type="file" id="fileInput" multiple accept="image/*">
+    <button onclick="doConvert()">Convert</button>
+  </label>
+
+  <textarea id="output" readonly>Output will appear here...</textarea>
+  <button onclick="copyOutput()">Copy</button>
+  <button onclick="downloadOutput()">Download .txt</button>
+
+  <script>
+    function rgbToTIColor(r, g, b, a, threshold) {
+      const alpha = (a >= threshold) ? 1 : 0;
+      const r5 = (r * 31 / 255) | 0;
+      const g5 = (g * 31 / 255) | 0;
+      const b5 = (b * 31 / 255) | 0;
+
+      const color16 = (alpha << 15) | (r5 << 10) | (g5 << 5) | b5;
+      return [color16 & 0xFF, (color16 >> 8) & 0xFF];
+    }
+
+    function byteToEscape(byte, pad) {
+      if (byte >= 32 && byte <= 126 && byte !== 92) {
+        return String.fromCharCode(byte);
+      }
+      return "\\" + (pad ? byte.toString().padStart(3, '0') : byte);
+    }
+
+    function buildHeader(width, height) {
+      const stride = width * 2;
+      const header = new Uint8Array(20);
+      const dv = new DataView(header.buffer);
+
+      dv.setUint32(0, width, true);
+      dv.setUint32(4, height, true);
+      header[8] = 0;
+      header[9] = 0;
+      dv.setUint16(10, 0, true);
+      dv.setUint32(12, stride, true);
+      dv.setUint16(16, 16, true);
+      dv.setUint16(18, 1, true);
+
+      return header;
+    }
+
+    async function processImage(file, options) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        const url = URL.createObjectURL(file);
+
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          canvas.width = options.resize ? options.resizeWidth : img.width;
+          canvas.height = options.resize ? options.resizeHeight : img.height;
+
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+          const header = buildHeader(canvas.width, canvas.height);
+          const pixels = [];
+
+          for (let i = 0; i < imageData.length; i += 4) {
+            const [r, g, b, a] = imageData.slice(i, i + 4);
+            pixels.push(...rgbToTIColor(r, g, b, a, options.alphaThreshold));
+          }
+
+          const fullData = [...header, ...pixels];
+          const escaped = fullData.map(b => byteToEscape(b, options.padNumbers)).join('');
+
+          const baseName = file.name.replace(/\.[^/.]+$/, "");
+          const prefix = options.prefix || "";
+          const declaration = `${prefix}${baseName}`;
+          resolve(`${declaration}=image.new("${escaped}")`);
+
+          URL.revokeObjectURL(url);
+        };
+
+        img.src = url;
+      });
+    }
+
+    async function doConvert(){
+      const files = Array.from(document.getElementById("fileInput").files);
+      const output = document.getElementById("output");
+
+      const options = {
+        prefix: document.getElementById("prefix").value,
+        alphaThreshold: parseInt(document.getElementById("alphaThreshold").value),
+        resize: document.getElementById("resizeToggle").checked,
+        resizeWidth: parseInt(document.getElementById("resizeWidth").value),
+        resizeHeight: parseInt(document.getElementById("resizeHeight").value),
+        padNumbers: document.getElementById("padEscapeNumbers").checked
+      };
+
+      output.value = "Processing...\n";
+      const results = await Promise.all(files.map(file => processImage(file, options)));
+      output.value = results.join("\n");
+    }
+
+    function downloadOutput() {
+      const text = document.getElementById("output").value;
+      const blob = new Blob([text], { type: "text/plain" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "ti-images.txt";
+      a.click();
+    }
+
+    function copyOutput() {
+      const output = document.getElementById("output");
+      output.select();
+      document.execCommand("copy");
+    }
+
+    document.getElementById("fileInput").addEventListener("change", async (e) => {
+        await doConvert();
+    });
+  </script>
+</body>
+</html>
