@@ -1424,16 +1424,17 @@ despook=0
 -------BLOCK INDEX--------
 --------------------------
 addBlock=class()
+
     function addBlock:init(id,name,solid,textureID) --textureID can also be a list, eg {1,1,1,1,2,3} for an animation sequence
-        lastAdded=id
         --print(id,name,solid,#textureID)
-        self.id=id
-        blockIndex[self.id]={["solid"]=solid,["name"]=name,["texture"]=textureID}
+        lastAdded=id
+        blockIndex[lastAdded]={["solid"]=solid,["name"]=name,["texture"]=textureID}
         --set default
-        local props = blockIndex[self.id]
+        local props = blockIndex[lastAdded]
 
         if props["semisolid"]== nil then      props["semisolid"]=false end      --semisolid (mario must be above the top eg mushrooms): in arrangement NESW (north,east,south,west) where a 1 represents that it is solid on that side and 0 means the side is passable
         if props["containing"]== nil then     props["containing"]=false end     --contains coins, powerup, vine or star
+        if props["icon"]== nil then           props["icon"]=false end           --an icon to draw in the editor, string or table defining the offset of the icon, eg {"Coin",0,0}
         if props["bumpable"]== nil then       props["bumpable"]={false} end     --ie moves when hit (bricks, question marks), second arg for texture to display during animation (if true uses first frame), third arg for what to replace it with once animation finished
         if props["breakable"]== nil then      props["breakable"]=false end      --creates brick particles and disappears if super or fire mario
         if props["entityonly"]== nil then     props["entityonly"]=false end     --only entities can pass through
@@ -1480,6 +1481,7 @@ addBlock=class()
         addBlock:addThemeTexture(1,{"MysteryBox0Underground","MysteryBox0Underground","MysteryBox0Underground","MysteryBox1Underground","MysteryBox2Underground","MysteryBox1Underground"})
         addBlock:addThemeTexture(3,{"MysteryBox0Castle","MysteryBox0Castle","MysteryBox0Castle","MysteryBox1Castle","MysteryBox2Castle","MysteryBox1Castle"})
         addBlock:attribute("containing","coin")
+        addBlock:attribute("icon","icon_coin")
         addBlock:attribute("bumpable",{true,"EmptyBlock",5})
     addBlock(3,"Brick",true,{"Brick"})
         addBlock:addThemeTexture(1,{"BrickUnderground"})
@@ -1504,6 +1506,7 @@ addBlock=class()
     addBlock(10,"Invisible Block (Coin)",false,{nil})
         addBlock:attribute("invisiblock",true)
         addBlock:attribute("containing","coin")
+        addBlock:attribute("icon","icon_coin")
         addBlock:attribute("bumpable",{true,"EmptyBlock",5})
         addBlock:attribute("editor",1338)
     addBlock(11,"Cloud Block",false,{"Cloud"})
@@ -1527,36 +1530,43 @@ addBlock=class()
         addBlock:addThemeTexture(1,{"MysteryBox0Underground","MysteryBox0Underground","MysteryBox0Underground","MysteryBox1Underground","MysteryBox2Underground","MysteryBox1Underground"})
         addBlock:addThemeTexture(3,{"MysteryBox0Castle","MysteryBox0Castle","MysteryBox0Castle","MysteryBox1Castle","MysteryBox2Castle","MysteryBox1Castle"})
         addBlock:attribute("containing","mushroom")
+        addBlock:attribute("icon","icon_mushroom")
         addBlock:attribute("bumpable",{true,"EmptyBlock",5})
     addBlock(21,"Mystery Box (Fireflower)",true,{"MysteryBox0","MysteryBox0","MysteryBox0","MysteryBox1","MysteryBox2","MysteryBox1"})
         addBlock:addThemeTexture(1,{"MysteryBox0Underground","MysteryBox0Underground","MysteryBox0Underground","MysteryBox1Underground","MysteryBox2Underground","MysteryBox1Underground"})
         addBlock:addThemeTexture(3,{"MysteryBox0Castle","MysteryBox0Castle","MysteryBox0Castle","MysteryBox1Castle","MysteryBox2Castle","MysteryBox1Castle"})
         addBlock:attribute("containing","fireflower")
+        addBlock:attribute("icon","icon_fireflower")
         addBlock:attribute("bumpable",{true,"EmptyBlock",5})
     addBlock(22,"Mystery Box (Progressive)",true,{"MysteryBox0","MysteryBox0","MysteryBox0","MysteryBox1","MysteryBox2","MysteryBox1"})
         addBlock:addThemeTexture(1,{"MysteryBox0Underground","MysteryBox0Underground","MysteryBox0Underground","MysteryBox1Underground","MysteryBox2Underground","MysteryBox1Underground"})
         addBlock:addThemeTexture(3,{"MysteryBox0Castle","MysteryBox0Castle","MysteryBox0Castle","MysteryBox1Castle","MysteryBox2Castle","MysteryBox1Castle"})
         addBlock:attribute("containing","Pfireflower")
+        addBlock:attribute("icon","icon_Pfireflower")
         addBlock:attribute("bumpable",{true,"EmptyBlock",5})
     addBlock(23,"Mystery Box (Star)",true,{"MysteryBox0","MysteryBox0","MysteryBox0","MysteryBox1","MysteryBox2","MysteryBox1"})
         addBlock:addThemeTexture(1,{"MysteryBox0Underground","MysteryBox0Underground","MysteryBox0Underground","MysteryBox1Underground","MysteryBox2Underground","MysteryBox1Underground"})
         addBlock:addThemeTexture(3,{"MysteryBox0Castle","MysteryBox0Castle","MysteryBox0Castle","MysteryBox1Castle","MysteryBox2Castle","MysteryBox1Castle"})
         addBlock:attribute("containing","star")
+        addBlock:attribute("icon","icon_star")
         addBlock:attribute("bumpable",{true,"EmptyBlock",5})
     addBlock(24,"Mystery Box (1-Up)",true,{"MysteryBox0","MysteryBox0","MysteryBox0","MysteryBox1","MysteryBox2","MysteryBox1"})
         addBlock:addThemeTexture(1,{"MysteryBox0Underground","MysteryBox0Underground","MysteryBox0Underground","MysteryBox1Underground","MysteryBox2Underground","MysteryBox1Underground"})
         addBlock:addThemeTexture(3,{"MysteryBox0Castle","MysteryBox0Castle","MysteryBox0Castle","MysteryBox1Castle","MysteryBox2Castle","MysteryBox1Castle"})
-        addBlock:attribute("containing","mushroom1up")  --now the theme texture method is seeming a bit dated
+        addBlock:attribute("containing","mushroom1up")
+        addBlock:attribute("icon","icon_mushroom1up")  --now the theme texture method is seeming a bit dated
         addBlock:attribute("bumpable",{true,"EmptyBlock",5})
     addBlock(25,"Mystery Box (Multi-Coin)",true,{"MysteryBox0","MysteryBox0","MysteryBox0","MysteryBox1","MysteryBox2","MysteryBox1"})
         addBlock:addThemeTexture(1,{"MysteryBox0Underground","MysteryBox0Underground","MysteryBox0Underground","MysteryBox1Underground","MysteryBox2Underground","MysteryBox1Underground"})
         addBlock:addThemeTexture(3,{"MysteryBox0Castle","MysteryBox0Castle","MysteryBox0Castle","MysteryBox1Castle","MysteryBox2Castle","MysteryBox1Castle"})
         addBlock:attribute("containing","multicoin_2")
+        addBlock:attribute("icon","icon_multicoin")
         addBlock:attribute("bumpable",{true,"MysteryBox0",26})
     addBlock(26,"Mystery Box (Infinite-Coin)",true,{"MysteryBox0","MysteryBox0","MysteryBox0","MysteryBox1","MysteryBox2","MysteryBox1"})
         addBlock:addThemeTexture(1,{"MysteryBox0Underground","MysteryBox0Underground","MysteryBox0Underground","MysteryBox1Underground","MysteryBox2Underground","MysteryBox1Underground"})
         addBlock:addThemeTexture(3,{"MysteryBox0Castle","MysteryBox0Castle","MysteryBox0Castle","MysteryBox1Castle","MysteryBox2Castle","MysteryBox1Castle"})
         addBlock:attribute("containing","coin")
+        addBlock:attribute("icon","icon_coin")
         addBlock:attribute("bumpable",{true,"MysteryBox0",26})
 
     addBlock(28,"Blaster Body",true,{"BlasterBody"})
@@ -1566,41 +1576,49 @@ addBlock=class()
         addBlock:addThemeTexture(1,{"BrickUnderground"})
         addBlock:addThemeTexture(3,{"BrickCastle"})
         addBlock:attribute("containing","coin")
+        addBlock:attribute("icon","icon_coin")
         addBlock:attribute("bumpable",{true,"EmptyBlock",5})
     addBlock(31,"Brick (Mushroom)",true,{"Brick"})
         addBlock:addThemeTexture(1,{"BrickUnderground"})
         addBlock:addThemeTexture(3,{"BrickCastle"})
         addBlock:attribute("containing","mushroom")
+        addBlock:attribute("icon","icon_mushroom")
         addBlock:attribute("bumpable",{true,"EmptyBlock",5})
     addBlock(32,"Brick (Fireflower)",true,{"Brick"})
         addBlock:addThemeTexture(1,{"BrickUnderground"})
         addBlock:addThemeTexture(3,{"BrickCastle"})
         addBlock:attribute("containing","fireflower")
+        addBlock:attribute("icon","icon_fireflower")
         addBlock:attribute("bumpable",{true,"EmptyBlock",5})
     addBlock(33,"Brick (Progressive)",true,{"Brick"})
         addBlock:addThemeTexture(1,{"BrickUnderground"})
         addBlock:addThemeTexture(3,{"BrickCastle"})
         addBlock:attribute("containing","Pfireflower")
+        addBlock:attribute("icon","icon_Pfireflower")
         addBlock:attribute("bumpable",{true,"EmptyBlock",5})
     addBlock(34,"Brick (Star)",true,{"Brick"})
         addBlock:addThemeTexture(1,{"BrickUnderground"})
         addBlock:addThemeTexture(3,{"BrickCastle"})
         addBlock:attribute("containing","star")
+        addBlock:attribute("icon","icon_star")
         addBlock:attribute("bumpable",{true,"EmptyBlock",5})
     addBlock(35,"Brick (1-Up)",true,{"Brick"})
         addBlock:addThemeTexture(1,{"BrickUnderground"})
         addBlock:addThemeTexture(3,{"BrickCastle"})
         addBlock:attribute("containing","mushroom1up")
+        addBlock:attribute("icon","icon_mushroom1up")
         addBlock:attribute("bumpable",{true,"EmptyBlock",5})
     addBlock(36,"Brick (Multi-Coin)",true,{"Brick"})
         addBlock:addThemeTexture(1,{"BrickUnderground"})
         addBlock:addThemeTexture(3,{"BrickCastle"})
         addBlock:attribute("containing","multicoin_30")
+        addBlock:attribute("icon","icon_multicoin")
         addBlock:attribute("bumpable",{true,"Brick",39})
     addBlock(39,"Brick (Infinite-Coin)",true,{"Brick"})
         addBlock:addThemeTexture(1,{"BrickUnderground"})
         addBlock:addThemeTexture(3,{"BrickCastle"})
         addBlock:attribute("containing","coin")
+        addBlock:attribute("icon","icon_coin")
         addBlock:attribute("bumpable",{true,"Brick",39})
 
     addBlock(40,"Pipe Top - North (L)",true,{"Pipe_Top_NL"})
@@ -1673,26 +1691,31 @@ addBlock=class()
     addBlock(100,"Invisible Block (Mushroom)",false,{nil})
         addBlock:attribute("invisiblock",true)
         addBlock:attribute("containing","mushroom")
+        addBlock:attribute("icon","icon_mushroom")
         addBlock:attribute("bumpable",{true,"EmptyBlock",5})
         addBlock:attribute("editor",1338)
     addBlock(101,"Invisible Block (Fireflower)",false,{nil})
         addBlock:attribute("invisiblock",true)
         addBlock:attribute("containing","fireflower")
+        addBlock:attribute("icon","icon_fireflower")
         addBlock:attribute("bumpable",{true,"EmptyBlock",5})
         addBlock:attribute("editor",1338)
     addBlock(102,"Invisible Block (Progressive)",false,{nil})
         addBlock:attribute("invisiblock",true)
         addBlock:attribute("containing","Pfireflower")
+        addBlock:attribute("icon","icon_Pfireflower")
         addBlock:attribute("bumpable",{true,"EmptyBlock",5})
         addBlock:attribute("editor",1338)
     addBlock(103,"Invisible Block (Star)",false,{nil})
         addBlock:attribute("invisiblock",true)
         addBlock:attribute("containing","star")
+        addBlock:attribute("icon","icon_star")
         addBlock:attribute("bumpable",{true,"EmptyBlock",5})
         addBlock:attribute("editor",1338)
     addBlock(104,"Invisible Block (1-Up)",false,{nil})
         addBlock:attribute("invisiblock",true)
         addBlock:attribute("containing","mushroom1up")
+        addBlock:attribute("icon","icon_mushroom1up")
         addBlock:attribute("bumpable",{true,"EmptyBlock",5})
         addBlock:attribute("editor",1338)
     addBlock(105,"One-Way Gate (Left)",false,{"OneWay_W_1","OneWay_W_2","OneWay_W_3"})
@@ -1712,6 +1735,7 @@ addBlock=class()
     addBlock(112,"Invisible Block (Multi-Coin)",false,{nil})
         addBlock:attribute("invisiblock",true)
         addBlock:attribute("containing","multicoin_2")
+        addBlock:attribute("icon","icon_multicoin")
         addBlock:attribute("bumpable",{true,"MysteryBox0",26})
         addBlock:attribute("editor",1338)
     --decorations part 2
@@ -1747,12 +1771,15 @@ addBlock=class()
         addBlock:attribute("containing","event_onoff_true")
     addBlock(152,"On Block",true,{"OnBlock_1"})
         addBlock:attribute("eventswitch",{"onoff","false",15200})
-    addBlock(15200,"On Block (Inactive)",false,{"OnBlock_2"})
+    addBlock(15200,"On Block (Inactive)",false,{"OnBlock_2"}) --big number bc it wont be in level strings
         addBlock:attribute("eventswitch",{"onoff","true",152})
     addBlock(153,"Off Block",false,{"OffBlock_2"})
         addBlock:attribute("eventswitch",{"onoff","false",15300})
     addBlock(15300,"Off Block (Active)",true,{"OffBlock_1"})
         addBlock:attribute("eventswitch",{"onoff","true",153})
+
+    addBlock(154,"Conveyor Belt - 1 (Left, Slow)",true,{"Ground"})
+        addBlock:attribute("conveyor",true)
 
 --------------------------
 --------OBJECT API--------
@@ -2268,6 +2295,8 @@ objAPI=class() --categories are only roughly representative
     end
 
     function Profiler:start(label, stopThisNext)
+        if not studentSoftware then return end
+
         self:dealWithStoppingPrevious()
 
         if stopThisNext then
@@ -2281,14 +2310,13 @@ objAPI=class() --categories are only roughly representative
     end
 
     function Profiler:stop(label, fromDealWithStoppingPrevious)
+        if not studentSoftware then return end
+
         if not fromDealWithStoppingPrevious then
             self:dealWithStoppingPrevious()
         end
 
         local entry = self.data[label]
-        if not entry or entry.start == 0 then
-            error("Profiler:stop called without matching start for '" .. label .. "'")
-        end
         local duration = timer.getMilliSecCounter() - entry.start
         entry.total = entry.total + duration
         entry.count = entry.count + 1
@@ -2296,6 +2324,8 @@ objAPI=class() --categories are only roughly representative
     end
 
     function Profiler:report()
+        if not studentSoftware then return end
+
         local timeTaken = timer.getMilliSecCounter() - self.lastTime
         print("=== PROFILER REPORT ===", collectgarbage("count"), "kb", timeTaken, "ms")
         for label, stat in pairs(self.data) do
@@ -2350,24 +2380,26 @@ objAPI=class() --categories are only roughly representative
         end
     end
 
-    hookFunctions("string", string)
-    hookFunctions("table", table)
-    hookFunctions("math", math)
+    if studentSoftware then
+        hookFunctions("string", string)
+        hookFunctions("table", table)
+        hookFunctions("math", math)
 
-    hookFunctions("unpack", unpack)
-    hookFunctions("collectgarbage", collectgarbage)
-    hookFunctions("print", print)
-    hookFunctions("error", error)
-    hookFunctions("type", type)
-    hookFunctions("pairs", pairs)
-    hookFunctions("ipairs", ipairs)
-    hookFunctions("next", next)
-    hookFunctions("tostring", tostring)
-    hookFunctions("tonumber", tonumber)
-    hookFunctions("assert", assert)
-    hookFunctions("require", require)
-    hookFunctions("pcall", pcall)
-    hookFunctions("xpcall", xpcall)
+        hookFunctions("unpack", unpack)
+        hookFunctions("collectgarbage", collectgarbage)
+        hookFunctions("print", print)
+        hookFunctions("error", error)
+        hookFunctions("type", type)
+        hookFunctions("pairs", pairs)
+        hookFunctions("ipairs", ipairs)
+        hookFunctions("next", next)
+        hookFunctions("tostring", tostring)
+        hookFunctions("tonumber", tonumber)
+        hookFunctions("assert", assert)
+        hookFunctions("require", require)
+        hookFunctions("pcall", pcall)
+        hookFunctions("xpcall", xpcall)
+    end
 
     function destroyObject(obj, setTo)
         setTo=setTo or nil
@@ -4502,9 +4534,9 @@ editor=class()
         nil, nil, nil, nil, nil, nil, nil}
         editor.groupIndex[11]={"GIZMOS", "spring_O_1",
         nil, nil, nil, nil, nil, nil, nil,
-        nil, nil, nil, nil, nil, nil, nil,
         nil, nil, "spring_O", "spring_B", "spring_R", nil, nil, 
         nil, nil, nil, nil, nil, nil, nil,
+        nil, 154, nil, nil, nil, nil, nil,
         nil, nil, nil, nil, nil, nil, nil}
         editor.groupIndex[12]={"LEVEL CONFIG", "flag",
         nil, nil, nil, nil, nil, nil, nil,
@@ -4785,19 +4817,43 @@ editor=class()
 
     function editor:drawTile(gc,blockID,x,y,THEME,ICON)
         if type(blockID)=='number' then --its a tile
+            local block=blockIndex[blockID]
+
             if blockID<0 then blockID=0 end
             local drawBlock=blockID
-            if blockIndex[blockID]["editor"] then
-                drawBlock=blockIndex[blockID]["editor"]
+            if block["editor"] then
+                drawBlock=block["editor"]
             end
             if blockIndex[drawBlock]["theme"][THEME]~=nil then
                 gc:drawImage(texs[blockIndex[drawBlock]["theme"][THEME][1]],x,y)
             elseif blockIndex[drawBlock]["texture"][1]~=nil then
                 gc:drawImage(texs[blockIndex[drawBlock]["texture"][1]],x,y)
-            end local containing=blockIndex[blockID]["containing"]
-            if containing and string.sub(containing,1,5)~="event" then
-                if string.sub(containing,1,9)=="multicoin" then containing="multicoin" end
-                gc:drawImage(texs["icon_"..containing],x,y) --texs.icon_star
+            end
+            local iconToDraw
+            -- local containing=block["containing"]
+            -- if containing and string.sub(containing,1,5)~="event" then
+            --     if string.sub(containing,1,9)=="multicoin" then containing="multicoin" end
+            --     iconToDraw="icon_"..containing
+            -- end
+
+            local icon=block.icon
+            local iconX=x
+            local iconY=y
+
+            print("icon",icon, block.name)
+
+            if icon then
+                if type(icon)=="table" then
+                    iconToDraw=icon[1]
+                    iconX=icon[2] and iconX+icon[2] or iconX
+                    iconY=icon[3] and iconY+icon[3] or iconY
+                elseif type(icon)=="string" then
+                    iconToDraw=icon
+                end
+            end
+
+            if iconToDraw then
+                gc:drawImage(texs[iconToDraw],iconX,iconY) --texs.icon_star
             end
         elseif blockID~=nil then
             local TYPE=objAPI:type2class(blockID)
@@ -6266,9 +6322,10 @@ gui=class()
                     if notFinal then gui:createPrompt("NOT RELEASE VERSION",{"THIS VERSION IS CURRENTLY","IN DEVELOPMENT. IT MAY", "HAVE THE WRONG VERSION NUMBER","AND UNFINISHED FEATURES!!"},{{"OK","close"}},true,false) end
         end end end
         framesPassed=framesPassed+1 --global framecount
+        
         local calculateFpsPer = 20
 
-        if framesPassed % calculateFpsPer == 0 then
+        if framesPassed % calculateFpsPer == 0 and studentSoftware then
             local currentTime = timer.getMilliSecCounter()
             local delta = currentTime - lastTime
 
