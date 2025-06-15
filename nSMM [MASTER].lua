@@ -1,6 +1,6 @@
 notFinal=true
 --[[
-    RELEASE CHECKLIST: 1.3.1a
+    RELEASE CHECKLIST: 1.4.0a
         # versText
         # versNum
         - rename editor
@@ -17,6 +17,10 @@ despook=0
 
 -- (c) onlypuppy7/chalex0 2025
 --This code has been indented in places where it may not look necessary, this is in order to be able to collapse entire code categories in IDEs such as VSCode. Indents do not affect syntax in Lua :>
+
+--reminder for myself:
+--collapsing all code in VSCode shortcut: Ctrl+K Ctrl+0
+--expanding all code in VSCode shortcut: Ctrl+K Ctrl+J
 
 --------------------------
 -----TEXTURE LIBRARY------
@@ -539,7 +543,6 @@ despook=0
 ----INITIALISING VARS-----
 --------------------------
     function initialiseVARS()
-        base64="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
         defaultCourse="<50-v5-5~3-!-500>,1*7,*2B,1*7,*283"
         username=var.recall("author") or ""
         screenWidth=platform.window:width() screenHeight=platform.window:height()
@@ -754,6 +757,130 @@ despook=0
             },
         }
     end
+    function extendStandard()
+        function math.clamp(x, minVal, maxVal)
+            if x < minVal then return minVal end
+            if x > maxVal then return maxVal end
+            return x
+        end
+
+        function math.choice(t)
+            return t[math.random(#t)]
+        end
+
+        function math.round(x, dp)
+            dp = dp or 0
+            local mult = 10 ^ dp
+            return math.floor(x * mult + 0.5) / mult
+        end
+
+        function string.startsWith(str, prefix)
+            return str:sub(1, #prefix) == prefix
+        end
+
+        function string.endsWith(str, suffix)
+            return suffix == "" or str:sub(-#suffix) == suffix
+        end
+
+        function string.includes(str, substr)
+            return str:find(substr, 1, true) ~= nil
+        end
+
+        function string.split(input, char)
+            local output={}
+            if not input then return output end
+            for str in string.gmatch(input, "([^"..char.."]+)") do
+                table.insert(output, str)
+            end return output
+        end
+
+        function string.trim(str)
+            return str:match("^%s*(.-)%s*$")
+        end
+
+        function string.replaceAll(str, search, replace)
+            local escapedSearch = search:gsub("([^%w])", "%%%1")
+            return (str:gsub(escapedSearch, replace))
+        end
+
+        function string.padStart(str, targetLength, padStr)
+            padStr = padStr or " "
+            local needed = targetLength - #str
+            if needed <= 0 then return str end
+            local repeatCount = math.ceil(needed / #padStr)
+            local padding = padStr:rep(repeatCount):sub(1, needed)
+            return padding .. str
+        end
+
+        function string.padEnd(str, targetLength, padStr)
+            padStr = padStr or " "
+            local needed = targetLength - #str
+            if needed <= 0 then return str end
+            local repeatCount = math.ceil(needed / #padStr)
+            local padding = padStr:rep(repeatCount):sub(1, needed)
+            return str .. padding
+        end
+
+        function string.isEmpty(str)
+            return str == nil or str == ""
+        end
+
+        function string.isAlpha(str) --only letters
+            return not str:match("%W") and not str:match("%d")
+        end
+
+        function string.isNumeric(str) --only numbers
+            return not str:match("%D") and not str:match("%s")
+        end
+
+        function string.isAlphaNumeric(str) --only letters, numbers and spaces
+            return not str:match("%W")
+        end
+
+        function string.isInteger(str) --only integers
+            return not str:match("%D") and not str:match("%s") and not str:match("^%d+%.%d+$")
+        end
+
+        local base64="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+
+        function string.base64ToOctal(base64Char)
+            return string.sub(string.format("%03o",string.find(base64,base64Char)-1),2,3)
+        end
+
+        function string.octalToBase64(octalPair)
+            octalPair=tonumber(octalPair,8)
+            return string.sub(base64,octalPair+1,octalPair+1)
+        end
+
+        getmetatable("").__index = string
+
+        function table.merge(...) --merge multiple tables
+            local function merge(t1,t2)
+                for k,v in pairs(t2 or {}) do
+                    if (type(v)=="table") and (type(t1[k] or false)=="table") then
+                        merge(t1[k],t2[k])
+                    else t1[k]=v end
+                end return t1
+            end
+
+            local t1={}
+            for i=1,select("#",...) do
+                local t2=select(i,...)
+                if type(t2)=="table" then
+                    t1=merge(t1,t2)
+                else error("Argument "..i.." is not a table") end
+            end return t1
+        end
+
+        function table.checkForValue(table, checkFor) --arg1: table of booleans arg2: boolean to look for. returns true if all are the same as checkFor
+            for _, v in pairs(table) do
+                if checkFor then if not v then return false end
+                else             if v then     return false end
+                end
+            end return true
+        end
+    end
+    extendStandard()
     initialiseVARS()
 --------------------------
 ----GENERAL FUNCTIONS-----
@@ -786,11 +913,6 @@ despook=0
         else return (num/math.abs(num))
     end end
 
-    function round(num, dp)
-        local mult = 10^(dp or 0)
-        return math.floor(num * mult + 0.5)/mult
-    end
-
     function timer2rainbow(gc, hue, speed)
         local saturation=0.7 local lightness=0.5
         local chroma = (1 - math.abs(2 * lightness - 1)) * saturation
@@ -807,30 +929,9 @@ despook=0
         local m = lightness - chroma/2
         gc:setColorRGB((r+m)*255,(g+m)*255,(b+m)*255)
     end
-    
-    function splitByChar(input,char)
-        local output={}
-        if not input then return output end
-        for str in string.gmatch(input, "([^"..char.."]+)") do
-            table.insert(output, str)
-        end return output
-    end
-
-    function isInteger(str)
-        return tonumber(str)~=nil and string.find(str,"^%d+$")~=nil
-    end
-
-    function isAlphaNumeric(input) return not (input:match("%W")) end
-
-    function padString(input, length, char) --pads a string with spaces to a certain length
-        char = char or ' '
-        input=tostring(input)
-        local output = string.rep(char, length-#input)..input
-        return output
-    end
 
     function addZeros(input, length)
-        return padString(input, length, '0')
+        return tostring(input):padStart(length, '0')
     end
     
     function toBinary(num,bits)
@@ -840,32 +941,6 @@ despook=0
             t[b] = math.fmod(num, 2)
             num = math.floor((num - t[b]) / 2)
         end return table.concat(t)
-    end
-    
-    function merge(t1,t2) t2=t2 or {} --merge two tables
-        for k,v in pairs(t2) do
-            if (type(v)=="table") and (type(t1[k] or false)=="table") then
-                merge(t1[k],t2[k])
-            else t1[k]=v end
-        end return t1
-    end
-
-    function mergeMultiple(...) --merge multiple tables
-        local t1={}
-        for i=1,select("#",...) do
-            local t2=select(i,...)
-            if type(t2)=="table" then
-                t1=merge(t1,t2)
-            else error("Argument "..i.." is not a table") end
-        end return t1
-    end
-
-    function checkTableValues(table, checkFor) --arg1: table of booleans arg2: boolean to look for. returns true if all are the same as checkFor
-        for _, v in pairs(table) do
-            if checkFor then if not v then return false end
-            else             if v then     return false end
-            end
-        end return true
     end
     
     function rgb2ti(R,G,B,A) --these functions are mostly just here for fun - they cannot actually be used to generate an image on the fly unfortunately. they do return accurate colour codes that can be used to hardcode values though
@@ -933,15 +1008,6 @@ despook=0
             end end
             texs[name]=image.new(string)
     end end
-
-    function octalToBase64(octalPair)
-        octalPair=tonumber(octalPair,8)
-        return string.sub(base64,octalPair+1,octalPair+1)
-    end
-
-    function base64ToOctal(base64Char)
-        return string.sub(string.format("%03o",string.find(base64,base64Char)-1),2,3)
-    end    
 
 --------------------------
 ---------EVENTS-----------
@@ -1192,7 +1258,7 @@ despook=0
         local pipeData="!"
         for i=1,#levelData.pipeData do
             local pipe=levelData.pipeData[i] -- VV there is possibly a better way of doing this, but eh. not worth it
-            pipeData=pipeData..octalToBase64(pipe[1][3]..pipe[2][3]) --add ID
+            pipeData=pipeData..(pipe[1][3]..pipe[2][3]):octalToBase64() --add ID
             pipeData=pipeData..string.upper(string.format("%x",pipe[1][2])) --add y of entrance
             pipeData=pipeData..string.upper(string.format("%x",pipe[1][1])) --add x of entrance
             pipeData=pipeData.."_" --add separator
@@ -1234,9 +1300,9 @@ despook=0
     function string2level(STRING,offsetX,offsetY,dataDepth) -- if offsetX is true, then returns table with only metadata
         offsetX=type(offsetX)=="number" and offsetX or 0 offsetY=offsetY or 0
         local levelDataTable,levelData,levelPos={},{},0
-        levelDataTable=splitByChar(STRING,",")
+        levelDataTable=STRING:split(",")
         local HEADER=string.sub(levelDataTable[1],2,(#levelDataTable[1]-1))
-        HEADER=splitByChar(HEADER,"-")
+        HEADER=HEADER:split("-")
     -- dataDepth: 1 (for levelList)
         levelData.versText=HEADER[6] or "pre v0.9.0"
         levelData.versNum=tonumber(HEADER[7]) or 41
@@ -1246,7 +1312,7 @@ despook=0
         if dataDepth==1 then return {levelData.courseName,levelData.versNum,levelData.versText,levelData.author,levelData.END} end
     -- dataDepth: full (playing level)
         levelData.version=       HEADER[2]
-        local starts=splitByChar(HEADER[3],"~")
+        local starts=HEADER[3]:split("~")
         local stageSettings=     HEADER[4]
         levelData.TIME= tonumber(HEADER[5]) or 500
         starts=plot2pixel(starts[1],starts[2])
@@ -1254,14 +1320,14 @@ despook=0
         levelData.loadedObjects={}
         levelData.pipeData={} -- deal with pipe data
         if HEADER[10] and ((#HEADER[10])>1) then --process pipes
-            local pipes=splitByChar(string.sub(HEADER[10],2,#HEADER[10]),"|")
+            local pipes=(string.sub(HEADER[10],2,#HEADER[10])):split("|")
             -- print(HEADER[10],unpack(pipes))
             for i=1,#pipes do
                 -- print(pipes[i],string.sub(pipes[i],1,1))
-                local types=base64ToOctal(string.sub(pipes[i],1,1))
+                local types=string.sub(pipes[i],1,1):base64ToOctal()
                 types={tonumber(string.sub(types,1,1)),tonumber(string.sub(types,2,2))}
                 -- print(unpack(types))
-                local pos=splitByChar(string.sub(pipes[i],2,#pipes[i]),"_")
+                local pos=(string.sub(pipes[i],2,#pipes[i])):split("_")
                 -- print(string.sub(pos[2],2,#pos[2]))
                 pos[1]={tonumber(string.sub(pos[1],2,#pos[1]),16),tonumber(string.sub(pos[1],1,1),16)}
                 pos[2]={tonumber(string.sub(pos[2],2,#pos[2]),16),tonumber(string.sub(pos[2],1,1),16)}
@@ -1273,11 +1339,11 @@ despook=0
         levelData.scrollStopL={}
         levelData.scrollStopR={}
         if HEADER[11] and ((#HEADER[11])>1) then --process scroll stops
-            local scrollStopData,offset=splitByChar(HEADER[11],"|"),0 -- [1]=left [2]=right
+            local scrollStopData,offset=HEADER[11]:split("|"),0 -- [1]=left [2]=right
             scrollStopData[1]=string.sub(scrollStopData[1],2,#scrollStopData[1])
             local currentScrollStop=levelData.scrollStopL
             for i=1,#scrollStopData do
-                local scrollStopPoints=splitByChar(scrollStopData[i],"_")
+                local scrollStopPoints=scrollStopData[i]:split("_")
                 for i2=1,#scrollStopPoints do
                     table.insert(currentScrollStop,tonumber(scrollStopPoints[i2],16)*16-offset)
                 end
@@ -1296,7 +1362,7 @@ despook=0
                 elseif attribute=="c" then levelData.enableCoinOnKill=true
                 elseif attribute=="p" then levelData.enablePowerUpBouncing=true
                 elseif attribute=="w" or attribute=="r" then levelData.autoMove=attribute
-                elseif isInteger(attribute) then levelData.autoScroll=attribute
+                elseif attribute:isInteger() then levelData.autoScroll=attribute
                 elseif attribute=="i" then levelData.showCeilingBlock=true
             end end
         end
@@ -1316,10 +1382,10 @@ despook=0
         end
 
         for i=2,#levelDataTable do
-            local data=splitByChar(levelDataTable[i],"*")
+            local data=levelDataTable[i]:split("*")
             if string.sub(levelDataTable[i],1,1)=="*" then table.insert(data,1,nil) end
-            data={data[1] or 0,tonumber(data[2] or 1,16)}
-            if isInteger(data[1]) then data[1]=tonumber(data[1]) end
+            data={data[1] or "0",tonumber(data[2] or 1,16)}
+            if data[1]:isInteger() then data[1]=tonumber(data[1]) end
             for i2=1,data[2] do
                 levelPos=levelPos+1
                 if levelPos<=levelData.END*13 then
@@ -1359,7 +1425,7 @@ despook=0
         end
         for i=1,#text do
             local letter,texture=string.sub(text,i,i)
-            if isAlphaNumeric(letter) then
+            if letter:isAlphaNumeric() then
                 texture=texs[FONT.."_"..string.lower(letter)]
             elseif fontLookup[letter]~=nil then
                 texture=texs[FONT.."_"..fontLookup[letter]]
@@ -1778,8 +1844,43 @@ addBlock=class()
     addBlock(15300,"Off Block (Active)",true,{"OffBlock_1"})
         addBlock:attribute("eventswitch",{"onoff","true",153})
 
+        --al, ar, a2, a1 (l, r (slow, false))
     addBlock(154,"Conveyor Belt - 1 (Left, Slow)",true,{"Ground"})
-        addBlock:attribute("conveyor",true)
+        addBlock:attribute("conveyor",-2)
+        addBlock:attribute("icon","icon_al") 
+    addBlock(155,"Conveyor Belt - 2 (Left, Slow)",true,{"Ground"})
+        addBlock:attribute("conveyor",-2)
+        addBlock:attribute("icon","icon_al") 
+    addBlock(156,"Conveyor Belt - 3 (Left, Slow)",true,{"Ground"})
+        addBlock:attribute("conveyor",-2)
+        addBlock:attribute("icon","icon_al") 
+    addBlock(157,"Conveyor Belt - 1 (Right, Slow)",true,{"Ground"})
+        addBlock:attribute("conveyor",2)
+        addBlock:attribute("icon","icon_ar") 
+    addBlock(158,"Conveyor Belt - 2 (Right, Slow)",true,{"Ground"})
+        addBlock:attribute("conveyor",2)
+        addBlock:attribute("icon","icon_ar") 
+    addBlock(159,"Conveyor Belt - 3 (Right, Slow)",true,{"Ground"})
+        addBlock:attribute("conveyor",2)
+        addBlock:attribute("icon","icon_ar") 
+    addBlock(160,"Conveyor Belt - 1 (Left, Fast)",true,{"Ground"})
+        addBlock:attribute("conveyor",-4)
+        addBlock:attribute("icon","icon_a2") 
+    addBlock(161,"Conveyor Belt - 2 (Left, Fast)",true,{"Ground"})
+        addBlock:attribute("conveyor",-4)
+        addBlock:attribute("icon","icon_a2") 
+    addBlock(162,"Conveyor Belt - 3 (Left, Fast)",true,{"Ground"})
+        addBlock:attribute("conveyor",-4)
+        addBlock:attribute("icon","icon_a2") 
+    addBlock(163,"Conveyor Belt - 1 (Right, Fast)",true,{"Ground"})
+        addBlock:attribute("conveyor",4)
+        addBlock:attribute("icon","icon_a1") 
+    addBlock(164,"Conveyor Belt - 2 (Right, Fast)",true,{"Ground"})
+        addBlock:attribute("conveyor",4)
+        addBlock:attribute("icon","icon_a1") 
+    addBlock(165,"Conveyor Belt - 3 (Right, Fast)",true,{"Ground"})
+        addBlock:attribute("conveyor",4)
+        addBlock:attribute("icon","icon_a1") 
 
 --------------------------
 --------OBJECT API--------
@@ -1954,7 +2055,7 @@ objAPI=class() --categories are only roughly representative
             local results,r={},not notRelative and {self.x,self.y} or {0,0}
             for i=1,#v do
                 results[i]=self:checkForWall(v[i][1]+r[1],v[i][2]+r[2])
-            end return checkTableValues(results,true)
+            end return table.checkForValue(results,true)
         end --NEW code approved
 
         function objAPI:calculateAccelerationY(strength,terminalV)
@@ -2011,7 +2112,7 @@ objAPI=class() --categories are only roughly representative
                     end end end
                     if self.isFireball then self:handleFireballHit() end
                     if not platformCalc then
-                        if isMario and round(X,1)==round(finalPos,1) then self.vx=0 --print(X,V,self.vx,finalPos)
+                        if isMario and math.round(X,1)==math.round(finalPos,1) then self.vx=0 --print(X,V,self.vx,finalPos)
                         elseif self.turnAround then self.vx=-self.vx
                 end end end
                 self.x=finalPos
@@ -2217,6 +2318,7 @@ objAPI=class() --categories are only roughly representative
                 objAPI:createObj("brick_piece",pixelXY[1],pixelXY[2]+8,false,-3,2.5) --bottom left
                 objAPI:addHitBox(nil,pixelXY[1]+1,pixelXY[2]-16,14,16,"block")
             end
+            --CRASH on below line: line 2174 attempt to index field '?' (a nil value)
             if yLOC<=12 and blockIndex[plot2ID(xLOC,yLOC+1)].coin==true then --if there is a coin above the bumped block
                 plot2place(0,xLOC,yLOC+1)
                 objAPI:createObj("coin",pixelXY[1],pixelXY[2]-16,true)
@@ -2255,7 +2357,7 @@ objAPI=class() --categories are only roughly representative
                     name=blockIndex[TYPE]["name"]
                 end
             elseif string.sub(TYPE,1,4)=="warp" then
-                local config=splitByChar(TYPE,"_")
+                local config=TYPE:split("_")
                 local ID,action,option=config[2],config[3],config[4]
                 if action=="edit" then name="EDIT WARP "..ID
                 elseif option then name=nameIndex["warp_ID_"..action.."_"..option]
@@ -2265,7 +2367,7 @@ objAPI=class() --categories are only roughly representative
                 if nameIndex[TYPE]~=nil then name=nameIndex[TYPE] end
             else
                 name={} --eg: platform_3~1~lx~64
-                local config=splitByChar(string.sub(TYPE,10,#TYPE),"~")
+                local config=(string.sub(TYPE,10,#TYPE)):split("~")
                 if nameIndex[config[3]]~=nil then name[1]="Platform "..nameIndex[config[3]] end
                 if statusBox==1 then 
                     name[2]="Length: "..config[1]
@@ -2294,19 +2396,25 @@ objAPI=class() --categories are only roughly representative
         end
     end
 
-    function Profiler:start(label, stopThisNext)
+    function Profiler:start(label, stopThisNext, category)
         if not studentSoftware then return end
 
         self:dealWithStoppingPrevious()
 
-        if stopThisNext then
-            self.current = label
+        category = category or "uncategorized"
+
+        if not self.data[category] then
+            self.data[category] = {}
         end
 
-        if not self.data[label] then
-            self.data[label] = { total = 0, count = 0, start = 0 }
+        if not self.data[category][label] then
+            self.data[category][label] = { total = 0, count = 0, start = 0 }
         end
-        self.data[label].start = timer.getMilliSecCounter()
+        self.data[category][label].start = timer.getMilliSecCounter()
+
+        if stopThisNext then
+            self.current = { label = label, category = category }
+        end
     end
 
     function Profiler:stop(label, fromDealWithStoppingPrevious)
@@ -2316,7 +2424,22 @@ objAPI=class() --categories are only roughly representative
             self:dealWithStoppingPrevious()
         end
 
-        local entry = self.data[label]
+        -- find the label in the current or any category
+        local entry
+        if self.current and self.current.label == label then
+            local cat = self.current.category
+            entry = self.data[cat][label]
+        else
+            -- fallback: search categories for label (slow path)
+            for cat, catData in pairs(self.data) do
+                if catData[label] then
+                    entry = catData[label]
+                    break
+                end
+            end
+        end
+        if not entry then return end -- label not found
+
         local duration = timer.getMilliSecCounter() - entry.start
         entry.total = entry.total + duration
         entry.count = entry.count + 1
@@ -2328,11 +2451,23 @@ objAPI=class() --categories are only roughly representative
 
         local timeTaken = timer.getMilliSecCounter() - self.lastTime
         print("=== PROFILER REPORT ===", collectgarbage("count"), "kb", timeTaken, "ms")
-        for label, stat in pairs(self.data) do
-            local avg = stat.total / math.max(stat.count, 1)
-            print(string.format("%s: %d calls, total = %d ms, avg = %.2f ms",
-                label, stat.count, stat.total, avg))
+
+        for category, catData in pairs(self.data) do
+            --add up all calls and total time for the category
+            local totalCalls = 0
+            local totalTime = 0
+            for label, stat in pairs(catData) do
+                totalCalls = totalCalls + stat.count
+                totalTime = totalTime + stat.total
+            end
+            print("### Category:", category, "Total Calls:", totalCalls, "Total Time:", totalTime, "ms")
+            for label, stat in pairs(catData) do
+                local avg = stat.total / math.max(stat.count, 1)
+                print(string.format("  %s: %d calls, total = %d ms, avg = %.2f ms",
+                    label, stat.count, stat.total, avg))
+            end
         end
+
         self:reset()
     end
 
@@ -2342,12 +2477,18 @@ objAPI=class() --categories are only roughly representative
         self.lastTime = timer.getMilliSecCounter()
     end
 
-    function Profiler:wrap(label, func)
+    function Profiler:wrap(label, func, category)
+        if not studentSoftware then return func end
+
+        category = category or "wrapped"
         return function(...)
-            self:start(label)
-            local results = { func(...) }
+            self:start(label, false, category)
+            local result = {func(...)}
             self:stop(label)
-            return table.unpack(results)
+            -- if label == "string.match" then --crash to show debugger
+            --     error("Debugging call")
+            -- end
+            return unpack(result)
         end
     end
 
@@ -2356,14 +2497,9 @@ objAPI=class() --categories are only roughly representative
     local function hookFunctions(libName, lib)
         local function hook(v, funcName)
             print("Hooking function: " .. funcName)
-            return function(...)
-                Profiler:start(funcName)
-                Profiler:stop(funcName)
-                -- if funcName == "string.match" then --crash to show debugger
-                --     error("Debugging call")
-                -- end
-                return v(...)
-            end
+            local category = type(lib) == "table" and libName or "hooked"
+
+            return Profiler:wrap(funcName, v, category)
         end
 
         if type(lib) == "table" then
@@ -2385,7 +2521,7 @@ objAPI=class() --categories are only roughly representative
         hookFunctions("table", table)
         hookFunctions("math", math)
 
-        hookFunctions("unpack", unpack)
+        -- hookFunctions("unpack", unpack)
         hookFunctions("collectgarbage", collectgarbage)
         hookFunctions("print", print)
         hookFunctions("error", error)
@@ -2523,8 +2659,8 @@ mario=class(objAPI)
             mario.vy=mario.vtempY
             mario.vtempY=nil
         end
-        mario.vx=round(mario.vx,2)
-        mario.vy=round(mario.vy,2)
+        mario.vx=math.round(mario.vx,2)
+        mario.vy=math.round(mario.vy,2)
     --X handling
         self:aggregateCheckX(mario.px,true) --check & confirm platform's velocity
         self:aggregateCheckX(mario.vx) --check & confirm mario's velocity
@@ -2911,7 +3047,7 @@ objMagicOrb=class(objAPI)
     function objMagicOrb:setup(objectID,posX,posY,TYPE,despawnable,arg1,arg2)
         self:initObject(objectID,TYPE,"inner",{16,16,false,false},{posX,posY},0,0)
         self.status=1 self.GLOBAL=true self.animTimer=0 self.isBouncy=true self.allowStarCollision=true
-        local v=splitByChar(self.TYPE,"_")
+        local v=self.TYPE:split("_")
         self.animType=(v[2]=="a0") self.moveType=(v[3]=="m1") --i think the animtype is reversed, just roll with it tbh
         self.interactSpring=self.moveType self.disableStarPoints=true
     end
@@ -2946,7 +3082,7 @@ objMagicOrb=class(objAPI)
             end
             if self.status~=5 then gc:drawImage(texs[texture..self.status],x,y) end
         else
-            local v,status=splitByChar(TYPE,"_"),((math.ceil((framesPassed/(8*flashingDelay))))%2)+1
+            local v,status=TYPE:split("_"),((math.ceil((framesPassed/(8*flashingDelay))))%2)+1
             v=(status==1) and v[2] or v[3]
             gc:drawImage(texs.magicorb_1,x,y)
             gc:drawImage(texs["icon_"..v],x,y)
@@ -3009,7 +3145,7 @@ objFlagpole=class(objAPI)
 objPlatform=class(objAPI)
 
     function objPlatform:setup(objectID,posX,posY,TYPE,despawnable,arg1,arg2)  --platform_length~vel~MODE~distance eg, platform_3~2~lx~64
-        local config=splitByChar(string.sub(TYPE,10,#TYPE),"~")
+        local config=(string.sub(TYPE,10,#TYPE)):split("~")
         self.length,self.speed,self.ox,self.oy=config[1],config[2],0,0
         self:initObject(objectID,config[3],"outer",nil,{posX,posY},0,0)
         if self.TYPE=="lx" or self.TYPE=="ly" then --loops back and forth on the x/y axis
@@ -3061,8 +3197,9 @@ objPlatform=class(objAPI)
             for i=1,self.length do
                 gc:drawImage(texs["platform"],x+(i-1)*16,y+self.oy)
             end
-        else 
-            local length,mode=splitByChar(string.sub(TYPE,10,#TYPE),"~")[1],splitByChar(string.sub(TYPE,10,#TYPE),"~")[3]
+        else
+            local params=(string.sub(TYPE,10,#TYPE)):split("~")
+            local length,mode=params[1],params[3]
             length=isIcon and 1 or length
             for i=1,length do
                 gc:drawImage(texs["platform"],x+(i-1)*16,y)
@@ -3072,7 +3209,7 @@ objPlatform=class(objAPI)
             local plotMouse=pixel2plot(mouse.x+editor.cameraOffset,mouse.y-8,true)
             if (editor.platformSelect and editor.platformSelect[3]==true and (plot[1]==editor.platformSelect[1] and plot[2]==editor.platformSelect[2])) or ((not (editor.platformSelect or editor.displayedGroup)) and plot[1]==plotMouse[1] and plot[2]==plotMouse[2]) then
                 timer2rainbow(gc,framesPassed+200,10) gc:setPen("thin","dashed")
-                local distance=tonumber(splitByChar(string.sub(TYPE,10,#TYPE),"~")[4])
+                local distance=tonumber(params[4])
                 if mode=="lx" then
                     gc:drawRect(x+distance,y,length*16,8)
                     gc:drawLine(x,y+4,x+distance,y+4)
@@ -3269,7 +3406,7 @@ objEvent=class(objAPI)
 
     function objEvent:setup(objectID,posX,posY,TYPE,despawnable,arg1,arg2) --possible types: blaster_L blaster_R blaster_LR
         self:initObject(objectID,TYPE,"inner",nil,{posX,posY},true,0)
-        local eventDetails=splitByChar(TYPE,"_")
+        local eventDetails=TYPE:split("_")
         playStage.events[eventDetails[2]]=eventDetails[3]
         objAPI:destroy(objectID,"inner")
     end
@@ -3337,7 +3474,8 @@ objKoopaPara=class(objAPI)
         self:initObject(objectID,TYPE,"inner",{16,16,true,true},{posX,posY},true,0)
         self.status=1 self.despawnable=false --for now, unless pipe spawning added
         self.turnAround=true self.doesBounce=(self.TYPE=="Pkoopa_G")
-        local config=splitByChar(self.TYPE,"_") self.facing="L_"
+        local config=self.TYPE:split("_")
+        self.facing="L_"
         if config[2]=="R" then self.interactSpring=false
             self.count=23 --half of 44, which is the total number of frames, add one for some reason (idk dont ask)
             if config[3]=="V" then      self.config={nil,2.774444}        --vertical (all values are precalculated from the calcHeight.tns tool)
@@ -3357,7 +3495,7 @@ objKoopaPara=class(objAPI)
                 self:setNewPlatformV() self:checkFor()
                 self.facing=(self.vx>0) and "R_" or "L_"
             else --flying koopa
-                local function calc(top,HV) return round((math.sin(((self.count-(HV and 17 or 0))*(180/(HV or 44)))/57.296))*top) end --44 is the total frames of the loop
+                local function calc(top,HV) return math.round((math.sin(((self.count-(HV and 17 or 0))*(180/(HV or 44)))/57.296))*top) end --44 is the total frames of the loop
                 self.vx=(self.config[1]) and -calc(self.config[1]) or 0 --important! value here is inversed so they fly *up* when loaded
                 self.vy=(self.config[2]) and calc(self.config[2],self.config[3]) or 0
                 if self.config[1] then self.facing=(self.count%88)<=44 and "L_" or "R_"
@@ -3380,7 +3518,8 @@ objKoopaPara=class(objAPI)
                 gc:drawImage(texs["L_"..string.sub(TYPE,1,8).."_2"],x,y-11)
             else              gc:drawImage(texs["L_"..string.sub(TYPE,1,8).."_2"],x,y-16) end
             if string.sub(TYPE,1,8)=="Pkoopa_R" then
-                local config,icon=splitByChar(TYPE,"_")[3]
+                local params=TYPE:split("_")
+                local config,icon=params[3]
                 if config=="V"      then icon="ly"
                 elseif config=="H"  then icon="lx"
                 elseif config=="HV" then icon="m1"
@@ -3401,7 +3540,8 @@ objShell=class(objAPI)
 
     function objShell:setup(objectID,posX,posY,TYPE,despawnable,arg1,arg2) --eg ("shell_g77215",64,64,"shell_g",-4,false)
         self:initObject(objectID,string.sub(TYPE,1,7),"inner",{16,16,true,true},{posX,posY},arg1 or 0,0)
-        self.status=1 self.despawnable=false self.vx=tonumber(splitByChar(TYPE,"_")[3] or self.vx)
+        local params=TYPE:split("_")
+        self.status=1 self.despawnable=false self.vx=tonumber(params[3] or self.vx)
         self.koopaTimer=arg2 and playStage.framesPassed+200 or false
         self.fromKoopa=arg2 or false self.hitTimer=0 self.hitCount=0
         self.canHitSide=true self.turnAround=true
@@ -3455,7 +3595,8 @@ objShell=class(objAPI)
     function objShell:draw(gc,x,y,TYPE,isEditor,isIcon)
         if isEditor then
             gc:drawImage(texs[string.sub(TYPE,1,7).."_1"],x,y)--"shell_R_1"
-            local icon=tonumber(splitByChar(TYPE,"_")[3])
+            local config=TYPE:split("_")
+            local icon=tonumber(config[3])
             if     icon==-4 then icon="al"
             elseif icon==4  then icon="ar"
             elseif icon==-6 then icon="a2"
@@ -3570,10 +3711,10 @@ objBowser=class(objAPI)
 objBowserFlame=class(objAPI)
 
     function objBowserFlame:setup(objectID,posX,posY,TYPE,despawnable,moveToY,arg2)
-        self:initObject(objectID,TYPE,"inner",{16,4,false,true},{posX,round(posY+4)},true,0)
+        self:initObject(objectID,TYPE,"inner",{16,4,false,true},{posX,math.round(posY+4)},true,0)
         self.status=1 self.despawnable=true self.interactSpring=false
         self.vx=(self.TYPE=="flame_L") and -3 or 3
-        self.moveToY=moveToY and round(moveToY+4) or self.y
+        self.moveToY=moveToY and math.round(moveToY+4) or self.y
         self.disableStarPoints=true
     end
 
@@ -3783,7 +3924,7 @@ objBumpedBlock=class(objAPI)
             objAPI:addHitBox(nil,self.x+1,self.y-16,14,16,"block")
         end
         if self.animCount<=4 then self.animCount=self.animCount+1
-            self.yA=self.y-round(((math.sin((self.animCount*30)/57.296))*8),0) --math..?
+            self.yA=self.y-math.round(((math.sin((self.animCount*30)/57.296))*8),0) --math..?
         else objAPI:destroy(self.objectID,self.LEVEL)
             plot2place(self.replaceWith[3],self.replaceWith[1],self.replaceWith[2])
         end
@@ -3807,11 +3948,12 @@ objMultiCoinBlock=class(objAPI)
     function objMultiCoinBlock:logic()
         if cTimer(self.timer)<=0 then objAPI:destroy(self.objectID,self.LEVEL)
         elseif cTimer(self.timer)==1 then --start ending the multi coin period
-            if (pixel2ID(self.x+16,self.y,true)~=99) then pixel2place(tonumber(splitByChar(self.TYPE,"_")[2]),self.x+16,self.y,true) end --get rid of the infinite coin block at all costs
+            local config=self.TYPE:split("_")
+            if (pixel2ID(self.x+16,self.y,true)~=99) then pixel2place(tonumber(config[2]),self.x+16,self.y,true) end --get rid of the infinite coin block at all costs
             for i=1,#entityLists.outer do --now THIS is a stupid workaround to a problem i caused, finds the bumped block animation and changes what it replaces
                 local objectID=entityLists.outer[i]
                 if string.sub(objectID,1,11)=="bumpedBlock" and allEntities[objectID].x==self.x and allEntities[objectID].y==self.y then
-                    allEntities[objectID].replaceWith[3]=tonumber(splitByChar(self.TYPE,"_")[2])
+                    allEntities[objectID].replaceWith[3]=tonumber(config[2])
     end end end end
 
     function objMultiCoinBlock:draw(gc,x,y,TYPE,isEditor,isIcon) end -- ...nothing to draw
@@ -4232,7 +4374,7 @@ playStage=class()
         playStage.cameraTargetOffset=math.max(posLeft,math.min(playStage.cameraTargetOffset,posRight)) --clamp values to scroll stops --CONSIDER THIS FOR SCROLL STOP
         --smooth scrolling
         local lerpFactor=(mario.clear or mario.dead) and 0.25 or force or 0.15 --the lerpFactor (scrolling smoothness (higher=smoother))
-        playStage.cameraOffset=round(playStage.cameraOffset+(playStage.cameraTargetOffset-playStage.cameraOffset)*lerpFactor,4)
+        playStage.cameraOffset=math.round(playStage.cameraOffset+(playStage.cameraTargetOffset-playStage.cameraOffset)*lerpFactor,4)
         playStage.cameraOffset=math.max(0,math.min(playStage.cameraOffset,playStage.levelWidth-318)) --clamp values to level borders --CONSIDER THIS FOR SCROLL STOP
         if level.current.autoMove and playStage.cameraOffset>=playStage.levelWidth-318 then
             level.current.autoMove=nil
@@ -4285,7 +4427,7 @@ playStage=class()
     function playStage:paint(gc,runLogic) --all logic/drawing required to play the stage
         if playStage.load>1 then
         --logic
-            Profiler:start("playStage:paint logic")
+            Profiler:start("playStage:paint logic", false, "playStage:paint logic")
             for i=1,runLogic do
                 if playStage.transition<=10 and not gui.PROMPT then
                     if not playStage.wait then
@@ -4295,52 +4437,52 @@ playStage=class()
                     if (not playStage.wait) or mario.pipe then
                         mario.framesPassed=mario.framesPassed+1
                     end
-                    Profiler:start("playStage:levelLogic", true)
+                    Profiler:start("playStage:levelLogic", true, "playStage:paint logic")
                     playStage:levelLogic() --timer etc
-                    Profiler:start("playStage:scrollCamera", true)
+                    Profiler:start("playStage:scrollCamera", true, "playStage:paint logic")
                     playStage:scrollCamera() --scrolling
-                    Profiler:start("playStage:handleInput", true)
+                    Profiler:start("playStage:handleInput", true, "playStage:paint logic")
                     playStage:handleInput() --receive information from keys pressed and parse it
-                    Profiler:start("playStage:objLogic", true)
+                    Profiler:start("playStage:objLogic", true, "playStage:paint logic")
                     playStage:objLogic() --logic for every obj (powerups, enemies etc) except mario
                     -- if playStage.framesPassed%2==0 then --every other frame
-                        Profiler:start("objAPI:cleanup", true)
+                        Profiler:start("objAPI:cleanup", true, "playStage:paint logic")
                         objAPI:cleanup() --transfers layers, destroys queued objects
                     -- end
-                    Profiler:start("mario:logic", true)
+                    Profiler:start("mario:logic", true, "playStage:paint logic")
                     mario:logic()
                 end
             end
             Profiler:stop("playStage:paint logic")
             
         --drawing (terrain and most objs)
-            Profiler:start("playStage:paint drawing")
+            Profiler:start("playStage:paint drawing", false, "playStage:paint drawing")
 
-            Profiler:start("playStage:drawBackground", true)
+            Profiler:start("playStage:drawBackground", true, "playStage:paint drawing")
             playStage:drawBackground(gc)
-            Profiler:start("playStage:objDraw background", true)
+            Profiler:start("playStage:objDraw background", true, "playStage:paint drawing")
             playStage:objDraw(gc,{entityLists.background})
             if mario.pipe then
-                Profiler:start("mario:draw", true)
+                Profiler:start("mario:draw", true, "playStage:paint drawing")
                 mario:draw(gc)
             end
-            Profiler:start("playStage:drawTerrain", true)
+            Profiler:start("playStage:drawTerrain", true, "playStage:paint drawing")
             playStage:drawTerrain(gc)
-            Profiler:start("playStage:objDraw inner outer", true)
+            Profiler:start("playStage:objDraw inner outer", true, "playStage:paint drawing")
             playStage:objDraw(gc,{entityLists.inner,entityLists.outer})
             if not mario.pipe then
-                Profiler:start("mario:draw", true)
+                Profiler:start("mario:draw", true, "playStage:paint drawing")
                 mario:draw(gc)
             end
-            Profiler:start("playStage:objDraw particle", true)
+            Profiler:start("playStage:objDraw particle", true, "playStage:paint drawing")
             playStage:objDraw(gc,{entityLists.particle})
             if playStage.transition2 then
-                Profiler:start("playStage:drawCircleTransition", true)
+                Profiler:start("playStage:drawCircleTransition", true, "playStage:paint drawing")
                 playStage:drawCircleTransition(gc,unpack(playStage.transition2))
             end
         
         --hud (coins= %^&)
-            Profiler:start("playStage:paint HUD", true)
+            Profiler:start("playStage:paint HUD", true, "playStage:paint drawing")
             local frameForAnim=(math.floor((framesPassed/4)%6))+1
             if frameForAnim<4 then frameForAnim="[" elseif frameForAnim==5 then frameForAnim="}" else frameForAnim="{" end
             local hud1=frameForAnim.."+"..addZeros(playStage.coinCount,2)
@@ -4359,7 +4501,7 @@ playStage=class()
 
         --debug stuff
             if debug then --this is very messy and a complete clusterf*ck
-                Profiler:start("playStage:paint debug", true)
+                Profiler:start("playStage:paint debug", true, "playStage:paint drawing")
                 
                 local highlightedx=pixel2plot(mouse.x,mouse.y-8)[1]
                 local highlightedy=pixel2plot(mouse.x,mouse.y-8)[2]
@@ -4399,7 +4541,7 @@ playStage=class()
 
         --transition
             if playStage.transition>0 then
-                Profiler:start("playStage:draw transition", true)
+                Profiler:start("playStage:draw transition", true, "playStage:paint drawing")
 
                 playStage.transition=playStage.transition-1
                 gc:setColorRGB(0,0,0)
@@ -4416,7 +4558,7 @@ playStage=class()
                 mario:resetPos()
                 playStage.cameraOffset=(mario.x<96) and 0 or mario.x-96
                 if type(playStage.EDITOR)=="table" then
-                    mario.x,mario.y=round(playStage.EDITOR[1]/16)*16,round(playStage.EDITOR[2]/16)*16
+                    mario.x,mario.y=math.round(playStage.EDITOR[1]/16)*16,math.round(playStage.EDITOR[2]/16)*16
                     mario.iFrames=playStage.framesPassed+40
                     playStage.cameraOffset=editor.cameraOffset
                 end playStage.cameraTargetOffset=playStage.cameraOffset
@@ -4533,10 +4675,10 @@ editor=class()
         nil, nil, nil, nil, nil, nil, nil,
         nil, nil, nil, nil, nil, nil, nil}
         editor.groupIndex[11]={"GIZMOS", "spring_O_1",
-        nil, nil, nil, nil, nil, nil, nil,
-        nil, nil, "spring_O", "spring_B", "spring_R", nil, nil, 
-        nil, nil, nil, nil, nil, nil, nil,
-        nil, 154, nil, nil, nil, nil, nil,
+        154, 155, 156, nil, "spring_O", "spring_B", "spring_R",
+        157, 158, 159, nil, nil, nil, nil, 
+        160, 161, 162, nil, nil, nil, nil,
+        163, 164, 165, nil, nil, nil, nil,
         nil, nil, nil, nil, nil, nil, nil}
         editor.groupIndex[12]={"LEVEL CONFIG", "flag",
         nil, nil, nil, nil, nil, nil, nil,
@@ -4640,12 +4782,13 @@ editor=class()
                 playStage.active=true
             elseif editor.eyedropperMode==true then
                 local ID=pixel2ID(mouse.x,mouse.y-8,nil,true)
-                if not (isInteger(ID) and ID<=0) then
+                if not (tostring(ID):isInteger() and ID<=0) then
                     editor.selectedID=ID
                 end
             elseif editor.platformSelect then
                 local ID=level.current.get(editor.platformSelect[1],editor.platformSelect[2])
-                local mode=splitByChar(string.sub(ID,10,#ID),"~")[3]
+                local config=(string.sub(ID,10,#ID)):split("~")
+                local mode=config[3]
                 if string.sub(mode,1,1)=="l" and editor.platformSelect[3]~=true then
                     editor.platformSelect[3]=true
                 else
@@ -4739,8 +4882,8 @@ editor=class()
         if editor.levelList then
             gui:clear() editor.levelList=false
         elseif string.sub(editor.selectedID,1,4)=="warp" then
-            local ID=splitByChar(editor.selectedID,"_")
-            local ID,action,option=ID[2],tonumber(ID[3]),ID[4] --action (before) '2'=entr '4'=exit
+            local config=editor.selectedID:split("_")
+            local ID,action,option=config[2],tonumber(config[3]),config[4] --action (before) '2'=entr '4'=exit
             editor.selectedID=editor.selectedIDCache
             editor:selectID("warp_"..ID.."_"..(action-1))
         elseif editor.select then
@@ -4765,8 +4908,8 @@ editor=class()
 
     function editor:selectID(ID) --false means clicking outside of group (usually cancel)
         if ID and string.sub(ID,1,4)=="warp" then
-            local pID=splitByChar(ID,"_")
-            local pID,action,option=pID[2],pID[3],pID[4]
+            local config=pID:split("_")
+            local pID,action,option=config[2],config[3],config[4]
             --'1'=select entrance type '2'=place entrance '3'=select exit type       '4'=place exit      '5'=set pipe ("new")     '6'=delete pipe
             --'7'=view entrance        '8'=view exit      '9'=disable enter entrance '10'=disable enter exit
             if action=="edit" then --display entrance type
@@ -4840,8 +4983,6 @@ editor=class()
             local iconX=x
             local iconY=y
 
-            print("icon",icon, block.name)
-
             if icon then
                 if type(icon)=="table" then
                     iconToDraw=icon[1]
@@ -4873,8 +5014,8 @@ editor=class()
             elseif blockID=="scrollStopC" then
                 gc:drawImage(texs.icon_scrollStopC,x+2,y+3)
             elseif string.sub(blockID,1,4)=="warp" then
-                blockID=splitByChar(blockID,"_")
-                local ID,action,option=blockID[2],blockID[3],blockID[4]
+                local config=blockID:split("_")
+                local ID,action,option=config[2],config[3],config[4]
                 if action=="edit" or action=="6" then
                     gc:drawImage(texs.group_pipe,x,y)
                     if action=="edit" then drawFont2(gc,addZeros(ID,2),x+5,y+10,nil,false,true)
@@ -4964,9 +5105,9 @@ editor=class()
             elseif string.sub(ID,1,5)=="theme" then --for themes
                 level.current.t[plotX]=tonumber(string.sub(ID,6,#ID))
             elseif string.sub(ID,1,4)=="warp" then --for warps
-                local ID=splitByChar(editor.selectedID,"_")
-                local ID,action,option=ID[2],tonumber(ID[3]),ID[4] --action (before) '2'=entr '4'=exit
-                ID=isInteger(ID) and tonumber(ID) or ID
+                local config=editor.selectedID:split("_")
+                local ID,action,option=config[2],tonumber(config[3]),config[4] --action (before) '2'=entr '4'=exit
+                ID=ID:isInteger() and tonumber(ID) or ID
                 if level.current.pipeData[ID]==nil then level.current.pipeData[ID]={} end --IMPORTANT: this should ONLY happen for when the ID is 'n' (new)!!!
                 level.current.pipeData[ID][action/2]={plotX,plotY,tonumber(option)}
                 if ID=="n" then editor:selectID("warp_n_"..(action+1)) end
@@ -5216,8 +5357,8 @@ editor=class()
 
         if string.sub(editor.selectedID,1,4)=="warp" then
             gc:setPen("thin","dashed")
-            local ID=splitByChar(editor.selectedID,"_")
-            local ID,action,option=ID[2],ID[3],ID[4]
+            local config=editor.selectedID:split("_")
+            local ID,action,option=config[2],config[3],config[4]
             if action=="2" or action=="4" then --place entrance/exit
                 if option=="1" then --left
                     gc:drawRect(box[1],box[2]-8,14,31) --PIPE FACING LEFT
@@ -5279,7 +5420,8 @@ editor=class()
                     end
                 else
                     local ID=level.current.get(x,y)
-                    local config=splitByChar(string.sub(ID,10,#ID),"~") local distance
+                    local config=(string.sub(ID,10,#ID)):split("~")
+                    local distance
                     if config[3]=="lx" then
                         distance=tostring(editor.highlightedTile[1]-editor.platformSelect[1])*16
                     else
@@ -5649,7 +5791,7 @@ titleScreen=class()
         local endlessScreen     =string2level("<20-v5-5~5-!-500>,1*14,9,*12,9*2,*12,9*2,*12,9*2,*12,9*2,*12,9*2,*12,9*2,*12,9*2,*12,9*2,*12,9,50,45,*11,9,51,44,*11,9*15,1*14",40,-13)
         
         level.current=mainScreen
-        level.current.xy=mergeMultiple(
+        level.current.xy=table.merge(
             mainScreen.xy,
             localScreen.xy,
             courseWorldScreen.xy,
@@ -5757,7 +5899,7 @@ gui=class()
     end end
 
     function gui:charIn(chr)
-        if (isAlphaNumeric(chr) or chr==" " or chr=="." or chr=="!" or chr=="/" or chr=="?" or chr=="," or chr=="'" or chr=="(" or chr==")" or chr=="-") and gui.PROMPT.inputLength and gui.PROMPT.inputLength>#gui.input then
+        if (chr:isAlphaNumeric() or chr==" " or chr=="." or chr=="!" or chr=="/" or chr=="?" or chr=="," or chr=="'" or chr=="(" or chr==")" or chr=="-") and gui.PROMPT.inputLength and gui.PROMPT.inputLength>#gui.input then
             gui.input=gui.input..chr
         end
     end
@@ -5943,7 +6085,7 @@ gui=class()
     function gui:createLookupTable(LIST) --if only the var library wasnt so restrictive...
         gui[LIST]={}
         gui[LIST].directory=gui:retrieveLookupString(LIST)
-        local lvls=gui[LIST].directory and splitByChar(gui[LIST].directory,"-") or {}
+        local lvls=gui[LIST].directory and gui[LIST].directory:split("-") or {}
         for i=1,#lvls do
             gui[LIST][tonumber(lvls[i])]=string2level(gui:retrieveLevel(LIST,lvls[i]),nil,nil,1)
         end
@@ -5951,7 +6093,7 @@ gui=class()
 
     function gui:modifyLookupString(location,ADDorDEL,LIST) --ADDorDEL -> true=add, false=del
         local lvls=gui:retrieveLookupString(LIST)
-        lvls=lvls and splitByChar(lvls,"-") or {}
+        lvls=lvls and lvls:split("-") or {}
         for i, v in ipairs(lvls) do
             if tonumber(v)==location then
                 if ADDorDEL then return --adding, but already present; no point to continue
@@ -5964,7 +6106,8 @@ gui=class()
     function gui:createPrompt(header,text,buttons,horizontalButtons,disableExit,x,y,w,h) -- eg -->  gui:createPrompt("PAUSE",{"Select Option"},{{"continue",close},{"quit","quit"}},false)
         gui:clearPrompt() switchTimer(false) -- NOTE: set 'buttons' to an int for a text box
         local buttonW={-1} local headerW=22+#header*8 local textW={0} local text=text or {}
-        if not isInteger(buttons) then
+        local isInt=type(buttons)=="number" or (type(buttons)==string and buttons:isInteger()) --check if buttons is an integer or a table with an integer
+        if not isInt then
             for i=1,#buttons do
                 if horizontalButtons then
                     buttonW[1]=buttonW[1]+14+#buttons[i][1]*8
@@ -5976,12 +6119,12 @@ gui=class()
             for i=1,#text do textW[i]=12+#text[i]*8 end
         end
         w=w or (math.max(headerW or 0,math.max(unpack(textW)),math.max(unpack(buttonW))))
-        h=h or 17+#(text)*9+(not isInteger(buttons) and ((horizontalButtons and #buttons>0 and 17) or (#buttons*17)) or 17) --if h is not specified. there are some stupid bodges here
+        h=h or 17+#(text)*9+(not isInt and ((horizontalButtons and #buttons>0 and 17) or (#buttons*17)) or 17) --if h is not specified. there are some stupid bodges here
         x=x or (158-math.floor(w/2))
         y=y or (106-math.floor(h/2))
         gui.PROMPT={x,y,w,h,header,{unpack(text)},horizontalButtons,disableExit}
         local offsetX=horizontalButtons and (x+3+(w/2)-(buttonW[1]/2)) or x+3 local offsetY=horizontalButtons and 0 or -2
-        if not isInteger(buttons) then
+        if not isInt then
             for i=1,#buttons do
                 if horizontalButtons then
                     gui:newButton(buttons[i][1],true,offsetX+((10+#buttons[i][1]*8)/2),y+(#text*9)+20,buttons[i][2],"buttonListPrompt") offsetX=offsetX+12+#buttons[i][1]*8
@@ -6008,7 +6151,7 @@ gui=class()
 
             switchTimer(true) --switch timer back on; pay attention to this, all the buttons benefit due to performing some kind of change but future ones may not
             if string.sub(action,1,1)=="m" then --screen moving time
-                local v=splitByChar(string.sub(action,2,#action),",")
+                local v=(string.sub(action,2,#action)):split(",")
                 titleScreen:moveScreens(v[1],v[2])
             elseif action=="create" then
                 editor:generate(defaultCourse)
@@ -6028,14 +6171,15 @@ gui=class()
             elseif action=="coursename" then
                 level.current.courseName=gui.input or "my course"
                 editor:updateToolpalette()
-            elseif action=="time" and isInteger(gui.input) then
+            elseif action=="time" and gui.input:isInteger() then
                 toolpaletteSelection("Time",tonumber(gui.input)-level.current.TIME)
-            elseif action=="length" and isInteger(gui.input) then
+            elseif action=="length" and gui.input:isInteger() then
                 toolpaletteSelection("⇥Length",tonumber(gui.input)-level.current.END)
             elseif action=="author" then
                 var.store("author",gui.input) username=gui.input
             elseif string.sub(action,1,2)=="ll" then
-                local action=splitByChar(action,"_") action[3]=tonumber(action[3])
+                local action=action:split("_")
+                action[3]=tonumber(action[3])
                 if     action[2]=="play"   then
                     playStage:generate(gui:retrieveLevel(action[4],action[3]),true)
                     playStage.active=true titleScreen.active=false editor.file=(action[4]=="levelListLocal") and action[3] or nil
@@ -6119,7 +6263,7 @@ gui=class()
                 local STRING=clipboard.getText()
                 if type(STRING)=="string" and string.sub(STRING,1,2)=="Γ" then --probably legit?
                     gui:click("clearlevelsconfirm")
-                    STRING=splitByChar(STRING,"Γ")
+                    STRING=STRING:split("Γ")
                     for i=1,#STRING,2 do
                         local varName,content=STRING[i],STRING[i+1]
                         var.store(varName,content)
@@ -6146,7 +6290,7 @@ gui=class()
                 for i=1,#vars do del(vars[i]) end username=""
                 gui:clearPrompt() titleScreen:init()
             elseif string.sub(action,1,7)=="delwarp" then
-                table.remove(level.current.pipeData,tonumber(splitByChar(action,"_")[2]))
+                table.remove(level.current.pipeData,tonumber(action:split("_")[2]))
                 editor:setDisplayedGroup(false) gui:clearPrompt()
             elseif action=="enterauthor" then
                 gui:createPrompt("ENTER NEW AUTHOR",{"TYPE BELOW TO SET A","NEW AUTHOR NAME TO BE","ASSOCIATED WITH YOUR","LEVELS AND PRESS ENTER"},12,"author",false)
