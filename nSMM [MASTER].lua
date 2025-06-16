@@ -448,6 +448,7 @@ despook=0
         texs.R0walk1=image.new("\016\000\000\000\016\000\000\000\000\000\000\000 \000\000\000\016\000\001\000\1605\1605\1605\1605\196X\196\216\196\216\196\216\196\216\196\216\196X\196X\196X\196X\196X\196X\1605\1605\1605\196X\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196X\196X\196X\1605\1605\1605\1605\160\181\160\181\160\181d\242d\242\160\181d\242drdrdrdrdr\1605\1605\1605\160\181d\242\160\181d\242d\242d\242\160\181d\242d\242d\242drdrdr\1605\1605\1605\160\181d\242\160\181\160\181d\242d\242d\242\160\181d\242d\242d\242drdrdr\1605\1605\160\181\160\181d\242d\242d\242d\242\160\181\160\181\160\181\160\181drdrdrdrdr\1605\1605\1605d\242d\242d\242d\242d\242d\242d\242\1605drdrdrdrdr\160\181\160\181\160\181\160\181\196\216\196\216\160\181\160\181\1605\1605drdrdrdrd\242d\242\160\181\160\181\160\181\160\181\196\216\196\216\196\216\160\181\160\181\160\181d\242d\242d\242drd\242d\242d\242\1605\160\181\160\181\196\216d\242\196\216\196\216\196\216\160\181\160\181d\242d\242drd\242d\242dr\196X\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196X\1605\160\181drdrdrdr\196X\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\160\181\160\181\1605\1605\1605\1605\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\160\181\160\181\1605\1605\1605\160\181\160\181\196\216\196\216\196\216\196X\196X\196X\196\216\196\216\196\216\160\181\160\181\1605\1605\1605\160\181\160\181\160\181\1605\196X\255\127\255\127\255\127\196X\196X\196X\1605\1605\1605\1605\1605\1605\160\181\160\181\160\181\1605\255\127\255\127\255\127\255\127\255\127\255\127\1605\1605\1605\1605")
         texs.R0walk2=image.new("\016\000\000\000\016\000\000\000\000\000\000\000 \000\000\000\016\000\001\000\196X\196X\196X\196X\196X\196\216\196\216\196\216\196\216\196\216\196X\196X\196X\196X\196X\1605\196X\196X\196X\196X\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196X\196X\196X\1605\1605\1605\1605\160\181\160\181\160\181d\242d\242\160\181d\242drdrdrdrdr\1605\1605\1605\160\181d\242\160\181d\242d\242d\242\160\181d\242d\242d\242drdrdr\1605\1605\1605\160\181d\242\160\181\160\181d\242d\242d\242\160\181d\242d\242d\242drdr\1605\1605\1605\160\181\160\181d\242d\242d\242d\242\160\181\160\181\160\181\160\181drdrdrdr\1605\1605\1605\1605d\242d\242d\242d\242d\242d\242d\242\1605drdrdrdr\1605\1605\1605\160\181\160\181\196\216\160\181\160\181\160\181\1605dr\1605drdrdrdr\1605\1605\160\181\160\181\160\181\160\181\196\216\196\216\160\181\160\181drdrdrdrdrdr\1605\1605\160\181\160\181\160\181\196\216\196\216d\242\196\216\196\216d\242drdrdrdrdr\1605\1605\160\181\160\181\160\181\160\181\196\216\196\216\196\216\196\216\196\216\196X\196X\196Xdr\196X\196X\196X\196\216\160\181\160\181d\242d\242d\242\196\216\196\216\196\216\196X\196X\196X\1605\1605\196X\196X\196X\196\216\160\181d\242d\242\196\216\196\216\196\216\196X\196X\196X\196X\1605\1605\196X\196X\196X\196X\196\216\196\216\196\216\160\181\160\181\160\181\1605\1605\1605\1605\1605\1605\1605\1605\1605\1605\160\181\160\181\160\181\160\181\160\181\160\181\160\181\1605\1605\1605\1605\1605\1605\1605\1605\1605\160\181\160\181\160\181\160\181\1605\1605\1605\1605\1605\1605\1605")
         texs.R0walk3=image.new("\016\000\000\000\016\000\000\000\000\000\000\000 \000\000\000\016\000\001\000\1605\1605\1605\196X\196X\196X\196X\196X\196X\196X\196X\1605\1605\1605\1605\1605\1605\1605\196X\196X\196X\196X\196\216\196\216\196\216\196\216\196\216\196X\196X\196X\196X\196X\1605\196X\196X\196X\196X\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196X\196Xdr\1605\1605\1605\1605\160\181\160\181\160\181d\242d\242\160\181d\242drdrdrdrdr\1605\1605\1605\160\181d\242\160\181d\242d\242d\242\160\181d\242d\242d\242drdrdr\1605\1605\1605\160\181d\242\160\181\160\181d\242d\242d\242\160\181d\242d\242d\242dr\1605\1605\1605\1605\160\181\160\181d\242d\242d\242d\242\160\181\160\181\160\181\160\181drdr\1605\1605\1605\1605\1605\1605d\242d\242d\242d\242d\242d\242d\242\1605drdrdrdrdrdrdr\160\181\160\181\160\181\160\181\196\216\160\181drd\242drdrdrdrdrdrdrd\242\160\181\160\181\160\181\160\181\160\181\160\181d\242d\242d\242drdrdrdrdrd\242d\242\196\216\160\181\160\181\160\181\160\181\160\181d\242d\242drdrdr\1605\1605\1605\160\181\160\181\196\216\196\216\196\216\196\216\196\216\196\216\196\216drdrdr\1605\1605\1605\1605\160\181\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196\216\196X\196X\196X\1605\1605\1605\160\181\160\181\196\216\196\216\196\216\1605\196\216\196\216\196\216\196X\196X\196X\1605\1605\1605\1605\160\181\1605\196X\196X\196X\160\181\160\181\160\181\1605\1605\1605\1605\1605\1605\1605\1605\1605\1605\196X\196X\1605\160\181\160\181\160\181\160\181\1605\1605\1605\1605\1605")
+        texs.R0death=image.new("\016\000\000\000\016\000\000\000\000\000\000\000 \000\000\000\016\000\001\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\196\216\196\216\196\216\196\216\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000d\242\000\000\196\216\196\216\196\216\196\216\196\216\196\216\000\000d\242\000\000\000\000\000\000\000\000d\242d\242d\242\160\181d\242\160\181d\242d\242\160\181d\242\160\181d\242d\242d\242\000\000\000\000d\242d\242\160\181\160\181d\242\160\181d\242d\242\160\181d\242\160\181\160\181d\242d\242\000\000\000\000d\242d\242\160\181\160\181\160\181d\242d\242d\242d\242\160\181\160\181\160\181d\242d\242\000\000\000\000\000\000\000\000\160\181\160\181\160\181\160\181d\242d\242\160\181\160\181\160\181\160\181\000\000\000\000\000\000\000\000\000\000\000\000\000\000\160\181d\242\160\181\160\181\160\181\160\181d\242\160\181\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\160\181d\242d\242d\242d\242d\242d\242\160\181\000\000\000\000\000\000\000\000\000\000\000\000\000\000\196\216\196\216\196\216d\242d\242d\242d\242\196\216\196\216\196\216\000\000\000\000\000\000\000\000\000\000\160\181\160\181\196\216\196\216\160\181\160\181\160\181\160\181\196\216\196\216\160\181\160\181\000\000\000\000\000\000\000\000\160\181\160\181\160\181\196\216\196\216\160\181\160\181\196\216\196\216\160\181\160\181\160\181\000\000\000\000\000\000\000\000\160\181\160\181\160\181\196\216d\242\196\216\196\216d\242\196\216\160\181\160\181\160\181\000\000\000\000\000\000\000\000\160\181\160\181\160\181\196\216\196\216\196\216\196\216\196\216\196\216\160\181\160\181\160\181\000\000\000\000\000\000\000\000\000\000\160\181\160\181\196\216\196\216\196\216\196\216\196\216\196\216\160\181\160\181\000\000\000\000\000\000")
     --FONT 1
         texs.font1_0=image.new("\008\000\000\000\008\000\000\000\000\000\000\000\016\000\000\000\016\000\001\000\000\000\000\000\255\255\255\255\255\255\000\000\000\000\000\000\000\000\255\255\000\000\000\000\255\255\255\255\000\000\000\000\255\255\255\255\000\000\000\000\000\000\255\255\255\255\000\000\255\255\255\255\000\000\000\000\000\000\255\255\255\255\000\000\255\255\255\255\000\000\000\000\000\000\255\255\255\255\000\000\000\000\255\255\255\255\000\000\000\000\255\255\000\000\000\000\000\000\000\000\255\255\255\255\255\255\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000")
         texs.font1_1=image.new("\008\000\000\000\008\000\000\000\000\000\000\000\016\000\000\000\016\000\001\000\000\000\000\000\000\000\255\255\255\255\000\000\000\000\000\000\000\000\000\000\255\255\255\255\255\255\000\000\000\000\000\000\000\000\000\000\000\000\255\255\255\255\000\000\000\000\000\000\000\000\000\000\000\000\255\255\255\255\000\000\000\000\000\000\000\000\000\000\000\000\255\255\255\255\000\000\000\000\000\000\000\000\000\000\000\000\255\255\255\255\000\000\000\000\000\000\000\000\255\255\255\255\255\255\255\255\255\255\255\255\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000")
@@ -549,6 +550,8 @@ despook=0
         texs.font2__c=image.new("\004\000\000\000\004\000\000\000\000\000\000\000\008\000\000\000\016\000\001\000\000\000\181\214\000\000\000\000\000\000\000\000\000\000\000\000\000\000\181\214\000\000\000\000\000\000\000\000\000\000\000\000")
         texs.font2__D=image.new("\004\000\000\000\004\000\000\000\000\000\000\000\008\000\000\000\016\000\001\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\181\214\181\214\000\000")
         texs.font2__E=image.new("\004\000\000\000\004\000\000\000\000\000\000\000\008\000\000\000\016\000\001\000\000\128\181\214\181\214\000\128\000\128\181\214\181\214\000\128\000\128\000\128\000\128\000\128\000\128\181\214\181\214\000\128")
+
+        fontsLoaded=true
     end
 
 --------------------------
@@ -1033,6 +1036,7 @@ despook=0
     end
 
     function on.charIn(chr)
+        if errored then error(errored) end
         if gui.PROMPT then
             gui:charIn(tostring(chr))
         elseif playStage.active==true then
@@ -1425,38 +1429,51 @@ despook=0
     end
 
     function drawFont(gc,text,x,y,position,spacing,backdrop,size,FONT)
-        local function countFont(text,spacing) -- this is for font2, small font
-            local length=0 local spacing=spacing or 0
+        if fontsLoaded then
+            local function countFont(text,spacing) -- this is for font2, small font
+                local length=0 local spacing=spacing or 0
+                for i=1,#text do
+                    length=length+((string.lower(string.sub(text,i,i))=="m" or string.lower(string.sub(text,i,i))=="w") and 6 or 5)+spacing
+            end return length end
+            x=x or 158 y=y or 106 size=size or 1 spacing=spacing or 0 FONT=FONT or "font1"
+            local drawOffset,totalLength=0,FONT=="font2" and countFont(text,spacing)-1 or (#text*((8*size)+spacing))-1
+            if position~=nil then
+                if position=="left" then drawOffset=0
+                elseif position=="centre" or position=="center" then drawOffset=1-math.ceil(totalLength/2) --british english and american english #_#
+                elseif position=="right" then drawOffset=-totalLength
+                end
+            end
+            if backdrop and #text>0 then
+                gc:setColorRGB(0,0,0)
+                if backdrop=="rgb" then timer2rainbow(gc,framesPassed+200,10) end
+                local height=(FONT=="font2") and 6 or 10
+                gc:fillRect(x+drawOffset-1,y-1,totalLength+2,height)
+            end
             for i=1,#text do
-                length=length+((string.lower(string.sub(text,i,i))=="m" or string.lower(string.sub(text,i,i))=="w") and 6 or 5)+spacing
-        end return length end
-        x=x or 158 y=y or 106 size=size or 1 spacing=spacing or 0 FONT=FONT or "font1"
-        local drawOffset,totalLength=0,FONT=="font2" and countFont(text,spacing)-1 or (#text*((8*size)+spacing))-1
-        if position~=nil then
-            if position=="left" then drawOffset=0
-            elseif position=="centre" or position=="center" then drawOffset=1-math.ceil(totalLength/2) --british english and american english #_#
-            elseif position=="right" then drawOffset=-totalLength
+                local letter,texture=string.sub(text,i,i)
+                if letter:isAlphaNumeric() then
+                    texture=texs[FONT.."_"..string.lower(letter)]
+                elseif fontLookup[letter]~=nil then
+                    texture=texs[FONT.."_"..fontLookup[letter]]
+                end
+                if texture then
+                    if size~=1 then texture=image.copy(texture,8*size,8*size) end
+                    gc:drawImage(texture,x+drawOffset,y)
+                end
+                drawOffset=drawOffset+(FONT~="font2" and (8*size)+spacing or countFont(letter,spacing))
             end
+        else
+            y=y or 106 x=x or 158
+            local width=gc:getStringWidth(text)
+            if position=="centre" then
+                x=x-(width/2)
+            elseif position=="right" then
+                x=x-width
+            end
+            gc:setColorRGB(255,255,255)
+            gc:drawString(text,x,y,"top")
         end
-        if backdrop and #text>0 then
-            gc:setColorRGB(0,0,0)
-            if backdrop=="rgb" then timer2rainbow(gc,framesPassed+200,10) end
-            local height=(FONT=="font2") and 6 or 10
-            gc:fillRect(x+drawOffset-1,y-1,totalLength+2,height)
-        end
-        for i=1,#text do
-            local letter,texture=string.sub(text,i,i)
-            if letter:isAlphaNumeric() then
-                texture=texs[FONT.."_"..string.lower(letter)]
-            elseif fontLookup[letter]~=nil then
-                texture=texs[FONT.."_"..fontLookup[letter]]
-            end
-            if texture then
-                if size~=1 then texture=image.copy(texture,8*size,8*size) end
-                gc:drawImage(texture,x+drawOffset,y)
-            end
-            drawOffset=drawOffset+(FONT~="font2" and (8*size)+spacing or countFont(letter,spacing))
-    end end
+    end
 
     function drawFont2(gc,text,x,y,position,spacing,backdrop,size,FONT) drawFont(gc,text,x,y,position,spacing,backdrop,size,"font2") end
 
@@ -4100,7 +4117,7 @@ playStage=class()
     --math.ceil(playStage.cameraOffset/16),math.ceil((320+playStage.cameraOffset)/16)
 
     function playStage:generate(LEVELSTRING,transition,EDITOR)
-        gui:clear() editor.active=false
+        gui:clear() --editor.active=false
         mario.trail={}
         cursor.set("default")
         playStage:clearEntities()
@@ -6461,12 +6478,83 @@ gui=class()
         table.insert(gui[buttonList],button)
     end
 --------------------------
+-------CRASH SCREEN-------
+--------------------------
+
+    function drawCrashScreen(gc,err)
+        gc:setColorRGB(0,0,0)
+        gc:fillRect(0,0,screenWidth,screenHeight)
+        gc:setColorRGB(97,133,248) --daytime
+        gc:fillRect(0,0,screenWidth,75)
+        gc:setColorRGB(255,0,0)
+        gc:drawRect(0,0,screenWidth-1,screenHeight-1)
+        gc:setColorRGB(255,255,255)
+
+        if texs.titlescreen_logo then
+            gc:drawImage(texs.titlescreen_logo,81,12)
+        end
+
+        local offset=55
+
+        drawFont(gc,"nSMM - CRASH SCREEN", nil, 30+offset,"centre",0,true)
+        drawFont(gc,"An error has occurred in the program.", nil, 40+offset,"centre",0,true)
+        local errSplit=tostring(err):split("...")
+        drawFont(gc,"Error message:", nil, 60+offset,"centre",0,true)
+        drawFont(gc,errSplit[1].."...", nil, 70+offset,"centre",0,true)
+        local errSplit2=errSplit[2]:split(" ")
+        --join together the first half and the second half of the error message
+        local errPart1, errPart2 = "", ""
+        for i=1,math.floor(#errSplit2/2) do
+            errPart1 = errPart1 .. errSplit2[i] .. " "
+        end
+        for i=math.floor(#errSplit2/2)+1,#errSplit2 do
+            errPart2 = errPart2 .. errSplit2[i] .. " "
+        end
+        --draw the two parts of the error message
+        drawFont(gc,errPart1, nil, 80+offset,"centre",0,true)
+        drawFont(gc,errPart2, nil, 90+offset,"centre",0,true)
+
+        drawFont(gc,"Press any key, then:", nil, 110+offset,"centre",0,true)
+        drawFont(gc,"Menu -) Recover -) Restart Script", nil, 120+offset,"centre",0,true)
+
+        if texs.R0death then
+            gc:drawImage(texs.R0death,screenWidth/2-16,132+offset)
+        end
+    end
+
+--------------------------
 ------FRAME FUNCTIONS-----
 --------------------------
     fps = 0
     lastTime = timer.getMilliSecCounter()
+    errored = false
 
     function on.paint(gc)
+        --pcall the onpaint function, which is the main paint function
+        local function func(trycatch)
+            local success, err = true, nil
+            if not studentSoftware then Profiler:start("onpaint", false, "onpaint") end
+            if trycatch then
+                success, err = pcall(onpaint, gc)
+                if not success then
+                    print("Error in onpaint: " .. tostring(err))
+                    errored = err
+                end
+            else
+                onpaint(gc)
+            end
+            if not studentSoftware then Profiler:stop("onpaint") end
+            return success, err
+        end
+
+        if not errored then
+            func(not debug)
+        else
+            drawCrashScreen(gc, errored)
+        end
+    end
+
+    function onpaint(gc)
         if framesPassed>22 then
             local runLogic=gameSpeed[1+framesPassed%(#gameSpeed)]
             if playStage.active==true then playStage:paint(gc,runLogic) end
@@ -6477,6 +6565,7 @@ gui=class()
                 if checkCollision(mouse.x,mouse.y,1,1,1,92,18,18) then gui.TEXT="Safe sleep mode active!" end
             end
             gui:paint(gc)
+            local err=2+"e"
         else --load stuff
             gc:fillRect(0,0,screenWidth,screenHeight)
             gc:setColorRGB(173,170,173)
@@ -6531,7 +6620,8 @@ gui=class()
                     playStage=playStage()
                     editor=editor()
                     titleScreen=titleScreen()
-                    titleScreen.active=true editor.active=false
+                    titleScreen.active=true
+                    editor.active=false
                     if notFinal then gui:createPrompt("NOT RELEASE VERSION",{"THIS VERSION IS CURRENTLY","IN DEVELOPMENT. IT MAY", "HAVE THE WRONG VERSION NUMBER","AND UNFINISHED FEATURES!!"},{{"OK","close"}},true,false) end
         end end end
         framesPassed=framesPassed+1 --global framecount
