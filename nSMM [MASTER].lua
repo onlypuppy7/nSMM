@@ -1189,16 +1189,25 @@ despook=0
             if ID<0 then ID=0 end
         end return ID
     end
-
-    function pixel2anything(checkFor,x,y,Global)
-        local ID=pixel2ID(x,y,Global)
+    function pixel2block(x,y,Global,EDITOR) --returns block table from pixel position
+        local ID=pixel2ID(x,y,Global,EDITOR)
         if type(ID)=='number' then
             if ID<0 then ID=0 end
-            return blockIndex[ID][checkFor]
-    end end
+            return blockIndex[ID]
+        end return nil --ID doesnt exist (likely out of bounds)
+    end
+    function block2anything(checkFor,block) 
+        if not block then return nil end --if block doesnt exist, return nil
+        return block[checkFor] --if checkFor exists, return it
+    end
+
+    function pixel2anything(checkFor,x,y,Global)
+        local block=pixel2block(x,y,Global)
+        return block2anything(checkFor,block)
+    end
 
     function pixel2solid(x,y,Global) --semi useless function to remove redundant args, returns state of solid
-        if (y<4) and blockIndex[pixel2ID(x,12,Global)]["ceiling"] then return true end --screen top block if ground/hard block is there
+        if (y<4) and pixel2anything("ceiling",x,12,Global) then return true end --screen top block if ground/hard block is there
         return pixel2anything("solid",x,y,Global)
     end
     function pixel2bumpable(x,y,Global) --semi useless function to remove redundant args, returns state of bumpable
@@ -1981,26 +1990,27 @@ objAPI=class() --categories are only roughly representative
                         local entity=allEntities[focusedList[i]]
 
                         if entity.hitBox then --if entity can be hit
-                            local hitBox=entity.hitBox
-                            local hitArea=hitBoxList[iH]
-                            hitBox[5],hitBox[6]=hitBox[5] or 0,hitBox[6] or 0
+                            local victomHitBox=entity.hitBox
+                            local aggressorHitBox=hitBoxList[iH]
+                            victomHitBox[5],victomHitBox[6]=victomHitBox[5] or 0,victomHitBox[6] or 0
                             -- local pos={entity.x,entity.y} -- V if there is a collision V
-                            local CLASS=entity.objectID
 
-                            if hitArea[1]~=CLASS and (checkCollision(hitArea[2],hitArea[3],hitArea[4],hitArea[5],entity.x+2+hitBox[5],entity.y+2+hitBox[6],hitBox[1]-4,hitBox[2]-4)) then
+                            if aggressorHitBox[1]~=entity.objectID and (checkCollision(aggressorHitBox[2],aggressorHitBox[3],aggressorHitBox[4],aggressorHitBox[5],entity.x+2+victomHitBox[5],entity.y+2+victomHitBox[6],victomHitBox[1]-4,victomHitBox[2]-4)) then
                                 if entity.dead~=true then
-                                    local hitVictim=allEntities[hitArea[1]]
+                                    local hitVictim=allEntities[aggressorHitBox[1]]
+
+                                    print("HIT",aggressorHitBox[1],entity.objectID,victomHitBox[1],victomHitBox[2],victomHitBox[3],victomHitBox[4],aggressorHitBox[2],aggressorHitBox[3],aggressorHitBox[4],aggressorHitBox[5],aggressorHitBox[6])
                                     
-                                    if hitArea[6]=="shell" and hitBox[3]==true then
+                                    if aggressorHitBox[6]=="shell" and victomHitBox[3]==true then
                                         hitVictim:handleShellPoints()
                                         if entity.destroyShell then hitVictim:hit() end
-                                    elseif hitArea[6]=="fireball" and hitBox[4]==true then
+                                    elseif aggressorHitBox[6]=="fireball" and victomHitBox[4]==true then
                                         hitVictim:handleFireballHit()
-                                    elseif hitArea[6]=="mario" and not entity.disableStarPoints then
+                                    elseif aggressorHitBox[6]=="mario" and not entity.disableStarPoints then
                                         objAPI:addStats("points","200",mario.x,mario.y-16)
                                     end
                                 end
-                                entity:hit(hitArea[6]) --react to hit (death/jump/other)
+                                entity:hit(aggressorHitBox[6]) --react to hit (death/jump/other)
             end end end end end --important for hitbox to go first so that new queued requests don't get cleared
             for i=1,#cleanupListDestroy do --remove entity from list and clear all stored vars
                 local objectName,LEVEL=unpack(cleanupListDestroy[i])
@@ -2031,9 +2041,30 @@ objAPI=class() --categories are only roughly representative
         end
 
         function objAPI:getBlockStandingOn() --returns the block that the entity is standing on, if any
-            -- return tostring(self.x)..tostring(self.y)..tostring(self.w)..tostring(self.h)
-            local blockID=pixel2ID(self.x+(self.w/2),self.y+self.h,true) --check the center of the bottom of the entity
-            return blockID and blockIndex[blockID] or false
+            local rightX=self.x+self.w
+            local bottomY=self.y+self.h
+
+            local blockLeft=pixel2block(self.x,bottomY,true)
+            local blockRight=pixel2block(rightX,bottomY,true)
+
+            blockLeft=(blockLeft and self:checkForWall(self.x,bottomY)) and blockLeft or false
+            blockRight=(blockRight and self:checkForWall(rightX,bottomY)) and blockRight or false
+
+            -- print("blockLeft",blockLeft,blockRight)
+
+            local pushVLeft=blockLeft and blockLeft.pushV or 0
+
+            local block
+
+            if blockLeft and blockRight then
+                --go in the center of the block
+                local blockCenter=pixel2block(self.x+(self.w/2),bottomY,true)
+                block=blockCenter or false
+            else 
+                block=blockLeft or blockRight
+            end
+
+            return block
         end
         
         function objAPI:setNewPushV()
@@ -3737,7 +3768,6 @@ objBowser=class(objAPI)
                 gc:fillRect(x+8+facingOffset,y-16,16*(hp/5),2)
     end end end
 
-
     -- gc:drawImage(texs["bowser_body_"..dir],EDITOR[1]-editor.cameraOffset+offsets[dir][1][1],EDITOR[2]+8+offsets[dir][1][2])
     -- gc:drawImage(texs["bowser_walk_1_"..dir],EDITOR[1]-editor.cameraOffset+offsets[dir][2][1],EDITOR[2]+8+offsets[dir][2][2])
     -- gc:drawImage(texs["bowser_mouth_1_"..dir],EDITOR[1]-editor.cameraOffset+offsets[dir][3][1],EDITOR[2]+8+offsets[dir][3][2])
@@ -3748,7 +3778,7 @@ objBowser=class(objAPI)
 objBowserFlame=class(objAPI)
 
     function objBowserFlame:setup(objectID,posX,posY,TYPE,despawnable,moveToY,arg2)
-        self:initObject(objectID,TYPE,"inner",{16,4,false,true},{posX,math.round(posY+4)},true,0)
+        self:initObject(objectID,TYPE,"inner",{16,4,false,false},{posX,math.round(posY+4)},true,0)
         self.status=1 self.despawnable=true self.interactSpring=false
         self.vx=(self.TYPE=="flame_L") and -3 or 3
         self.moveToY=moveToY and math.round(moveToY+4) or self.y
@@ -3780,7 +3810,7 @@ objBowserFlame=class(objAPI)
 objPowerUp=class(objAPI)
 
     function objPowerUp:setup(objectID,posX,posY,TYPE,despawnable,arg1,arg2) --eg ("mushroom37253",64,16,"mushroom",true)
-        self:initObject(objectID,TYPE,"inner",{16,16,false,true},{posX,posY},true,0)
+        self:initObject(objectID,TYPE,"inner",{16,16,false,false},{posX,posY},true,0)
         if string.sub(TYPE,1,1)=="P" then
             if mario.power==0 then self.TYPE="mushroom"
             elseif mario.power>0 then self.TYPE="fireflower" end
@@ -4947,7 +4977,7 @@ editor=class()
 
     function editor:selectID(ID) --false means clicking outside of group (usually cancel)
         if ID and string.sub(ID,1,4)=="warp" then
-            local config=pID:split("_")
+            local config=ID:split("_")
             local pID,action,option=config[2],config[3],config[4]
             --'1'=select entrance type '2'=place entrance '3'=select exit type       '4'=place exit      '5'=set pipe ("new")     '6'=delete pipe
             --'7'=view entrance        '8'=view exit      '9'=disable enter entrance '10'=disable enter exit
