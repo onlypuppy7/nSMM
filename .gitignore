@@ -1,1 +1,4 @@
 nSMM [MASTER].tns
+.node_modules
+.vscode
+.dev
