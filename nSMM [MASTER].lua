@@ -1498,10 +1498,10 @@ despook=0
         if state==nil then --fallback, doubt however that it is (or ever will be) used :p
             switchTimer(not timerState)
         else
-            if state==true and not timerState==true then
+            if state==true and not timerState==true then --full speed
                 timer.stop() timerState=state
                 timer.start(0.04)
-            elseif state==false and not timerState==false then
+            elseif state==false and not timerState==false then --safe sleep mode
                 timer.stop() timerState=state
                 timer.start(0.15) --from my testing, this is slow enough to where the page doesnt freeze when turning off
             end
@@ -6398,6 +6398,11 @@ gui=class()
                 titleScreen.active=true
                 playStage.active=false
                 editor.file=false
+            elseif action=="recoveryes" then
+                editor:generate(recoveredLevelString)
+                editor.active=true
+                titleScreen.active=false
+                del("recoveredLevel")
             end
             gui.highlightedButton=false
             cursor.set("default")
@@ -6522,6 +6527,39 @@ gui=class()
         end
     end
 
+    function onexit()
+        local inStage=playStage.active and playStage.EDITOR
+        local inEditor=editor.active
+
+        if inStage or inEditor then
+            local levelString
+            if inStage then
+                levelString=level.perm
+            elseif inEditor then
+                levelString=level2string(level.current)
+            end
+            print("Saving level data before exit...", levelString)
+            var.store("recoveredLevel", levelString)
+            print("Level data saved successfully.")
+        end
+    end
+
+    function on.destroy()
+        onexit()
+    end
+
+    function on.deactivate()
+        onexit()
+    end
+
+    function on.loseFocus()
+        onexit()
+    end
+
+    function on.save()
+        onexit()
+    end
+
 --------------------------
 ------FRAME FUNCTIONS-----
 --------------------------
@@ -6539,6 +6577,7 @@ gui=class()
                 if not success then
                     print("Error in onpaint: " .. tostring(err))
                     errored = err
+                    onexit()
                 end
             else
                 onpaint(gc)
@@ -6560,12 +6599,25 @@ gui=class()
             if playStage.active==true then playStage:paint(gc,runLogic) end
             if editor.active==true then editor:paint(gc) end
             if titleScreen.active==true then titleScreen:paint(gc) end
-            if not timerState then 
+            if not timerState then
                 gc:drawImage(texs.safeSleep,0,92)
                 if checkCollision(mouse.x,mouse.y,1,1,1,92,18,18) then gui.TEXT="Safe sleep mode active!" end
             end
             gui:paint(gc)
-            local err=2+"e"
+
+            if framesPassed==23 then
+                recoveredLevelString=var.recall("recoveredLevel")
+                if recoveredLevelString and type(recoveredLevelString)=="string" then
+                    print("Recovered level data found, loading...")
+                    gui:createPrompt("RECOVER LEVEL",{"A LEVEL WAS FOUND","FROM THE LAST SESSION.","DO YOU WANT TO LOAD IT?"},{{"YES","recoveryes"},{"NO","close"}},true,false)
+                    -- editor:generate(recoveredLevelString)
+                    -- editor.active=true
+                    -- titleScreen.active=false
+                end
+            end
+            if framesPassed==1000 then
+                local err=2+"e" -- this is just to test the error handling
+            end
         else --load stuff
             gc:fillRect(0,0,screenWidth,screenHeight)
             gc:setColorRGB(173,170,173)
