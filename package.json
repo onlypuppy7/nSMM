@@ -19,6 +19,7 @@
   "homepage": "https://github.com/onlypuppy7/nSMM#readme",
   "dependencies": {
     "fs": "^0.0.1-security",
+    "luabundle": "^1.7.0",
     "luamin": "^1.0.4",
     "path": "^0.12.7"
   }

@@ -1,3 +1,5 @@
+# YOU DONT NEED THIS TO BUILD NSMM
+
 # windows is absolutely abysmal at package management
 # as well as path management. i hate it so much.
 
@@ -51,7 +53,3 @@ if (-not (Get-Command lua -ErrorAction SilentlyContinue)) {
 
 # show lua version
 lua -v
-
-# luarocks install luabundler
-
-#if error installing luarocks, try to install it manually

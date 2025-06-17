@@ -1,0 +1,3 @@
+require("nsmm")
+
+debug=true

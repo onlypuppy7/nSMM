@@ -19,30 +19,6 @@ function initialiseVARS()
     hitProgressionMario={100, 200, 400, 500, 800, 1000, 2000, 4000, 5000, 8000} --credit mariowiki :>
     debugBoxes={}
     blockIndex={}
-    fontLookup={           --all special characters - <>&^&@.!-+
-        ["["] = "_1", --coin icon 1
-        ["{"] = "_2", --coin icon 2
-        ["}"] = "_3", --coin icon 3
-        ["'"] = "_A", --apostrophe
-        [")"] = "_b", --close brackets
-        ["("] = "_B", --open brackets
-        [":"] = "_c", --colon
-        ["@"] = "_C", --copyright icon
-        ["."] = "_D", --period
-        ["="] = "_e", --equal
-        ["!"] = "_E", --exclamation mark
-        ["$"] = "_h", --home icon
-        ["-"] = "_H", --hyphen
-        [","] = "_K", --comma
-        ["<"] = "_M", --mario icon
-        ["~"] = "_N", --back icon
-        ["^"] = "_P", --power
-        ["?"] = "_Q", --question mark
-        [";"] = "_s", --semicolon
-        ["/"] = "_S", --forward slash
-        [">"] = "_T", --clock/time icon
-        ["+"] = "_X"  --X icon
-    }
     typeIndex={
         goomb = {"objGoomba",        "inner"},
         koopa = {"objKoopa",         "inner"},
