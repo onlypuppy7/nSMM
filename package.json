@@ -1,0 +1,25 @@
+{
+  "name": "nsmmbuilder",
+  "version": "1.0.0",
+  "description": "build nsmm... quickly...?",
+  "type": "module",
+  "main": "node src/js/index.js",
+  "scripts": {
+    "build": "node src/js/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/onlypuppy7/nSMM.git"
+  },
+  "author": "",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/onlypuppy7/nSMM/issues"
+  },
+  "homepage": "https://github.com/onlypuppy7/nSMM#readme",
+  "dependencies": {
+    "fs": "^0.0.1-security",
+    "luamin": "^1.0.4",
+    "path": "^0.12.7"
+  }
+}

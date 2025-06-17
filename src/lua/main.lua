@@ -1,0 +1,5416 @@
+notFinal=true
+--[[
+    RELEASE CHECKLIST: 1.4.0a
+        # versText
+        # versNum
+        - rename editor
+        - clear data
+        - check changelog date
+        - remove checklist
+]]
+
+versText="1.4.0a"
+versNum=56
+platform.apilevel = '2.2'
+debug=false
+despook=0
+
+-- (c) onlypuppy7/chalex0 2025
+--This code has been indented in places where it may not look necessary, this is in order to be able to collapse entire code categories in IDEs such as VSCode. Indents do not affect syntax in Lua :>
+
+--reminder for myself:
+--collapsing all code in VSCode shortcut: Ctrl+K Ctrl+0
+--expanding all code in VSCode shortcut: Ctrl+K Ctrl+J
+
+--------------------------
+-----TEXTURE LIBRARY------
+--------------------------
+
+    texs={}
+
+    require("data.textures")
+
+--------------------------
+----INITIALISING VARS-----
+--------------------------
+
+    require("core.init")
+    extendStandard()
+    initialiseVARS()
+
+--------------------------
+----GENERAL FUNCTIONS-----
+--------------------------
+
+    -- Collision detection function; --credit to Love2D
+    function checkCollision(x1,y1,w1,h1, x2,y2,w2,h2) -- Returns true if two boxes overlap, false if they don't;
+        return x1 < x2+w2 and
+            x2 < x1+w1 and
+            y1 < y2+h2 and
+            y2 < y1+h1
+    end
+
+    function drawSlantedRect(gc,xyw) --this is literally only for the OP7 logo at startup...
+        gc:drawLine(xyw[1],xyw[2]+xyw[3],xyw[1]+xyw[3],xyw[2]) --you thought i'd explain this??
+        gc:drawLine(xyw[1]+xyw[3],xyw[2],xyw[1]+2*xyw[3],xyw[2]+xyw[3])
+        gc:drawLine(xyw[1]+2*xyw[3],xyw[2]+xyw[3],xyw[1]+xyw[3],xyw[2]+2*xyw[3])
+        gc:drawLine(xyw[1]+xyw[3],xyw[2]+2*xyw[3],xyw[1],xyw[2]+xyw[3])
+    end
+
+    function del(var) math.eval("DelVar "..var) end
+
+    function pol2binary(num) --returns 0 if negative, 1 if positive
+        if num==0 then return 0
+        else return ((num/math.abs(num))+1)/2
+    end end
+
+    function sign(num) --returns -1 if negative, 1 if positive
+        if num==0 then return 1
+        else return (num/math.abs(num))
+    end end
+
+    function timer2rainbow(gc, hue, speed)
+        local saturation=0.7 local lightness=0.5
+        local chroma = (1 - math.abs(2 * lightness - 1)) * saturation
+        local h = ((hue*speed)%360)/60
+        local x =(1 - math.abs(h % 2 - 1)) * chroma
+        local r, g, b = 0, 0, 0
+        if h < 1 then     r,g,b=chroma,x,0
+        elseif h < 2 then r,g,b=x,chroma,0
+        elseif h < 3 then r,g,b=0,chroma,x
+        elseif h < 4 then r,g,b=0,x,chroma
+        elseif h < 5 then r,g,b=x,0,chroma
+        else r,g,b=chroma,0,x
+        end
+        local m = lightness - chroma/2
+        gc:setColorRGB((r+m)*255,(g+m)*255,(b+m)*255)
+    end
+
+    function addZeros(input, length)
+        return tostring(input):padStart(length, '0')
+    end
+    
+    function toBinary(num,bits)
+        bits = bits or math.max(1, select(2, math.frexp(num)))
+        local t = {}    
+        for b = bits, 1, -1 do
+            t[b] = math.fmod(num, 2)
+            num = math.floor((num - t[b]) / 2)
+        end return table.concat(t)
+    end
+    
+    function rgb2ti(R,G,B,A) --these functions are mostly just here for fun - they cannot actually be used to generate an image on the fly unfortunately. they do return accurate colour codes that can be used to hardcode values though
+        if A==0 then return "\000\000" end
+        R=toBinary(math.floor(R/8),5)
+        G=toBinary(math.floor(G/8),5)
+        B=toBinary(math.floor(B/8),5)
+        local data="1"..R..G..B
+        data={string.sub(data, 1, 8),string.sub(data, 9, 16)}
+        return ("\\"..addZeros(tonumber(data[2],2),3).."\\"..addZeros(tonumber(data[1],2),3))
+    end
+    
+    function ti2rgb(data) --will not return fully accurate values due to compressing values to make it TI-image compatible
+        data={string.sub(data,2,4),string.sub(data,6,8)}
+        data=(toBinary(tonumber(data[2]),8))..(toBinary(tonumber(data[1]),8))
+        local R=((tonumber(string.sub(data,2,6),2)+1)*8)-1
+        local G=((tonumber(string.sub(data,7,11),2)+1)*8)-1
+        local B=((tonumber(string.sub(data,12,16),2)+1)*8)-1
+        return{R,G,B}
+    end
+
+    function string2image(name,flipImage,string,recolour) --recolour={{{"\000\000","\100\100","newname"},more colour swaps},etc}
+        local function toInt(v) return string.byte(v) end --if flipping, assumes input string is facing left
+        local function toPairs(str)
+            local t = {}
+            for i = 1, #str, 2 do
+                t[#t+1] = string.sub(str, i, i+1)
+            end
+            return t
+        end
+        local function substitute(body, lookFor, replaceWith)
+            local pairs = toPairs(body)
+            for i = 1, #pairs do
+                if pairs[i] == lookFor then
+                    pairs[i] = replaceWith
+                end
+            end
+            return table.concat(pairs)
+        end
+
+        for flip=0,(flipImage and 1 or 0) do
+            if flip==1 then name=flipImage
+                local function flipImage(img)
+                    local imageString,imageTable,flippedTable=string.sub(img,21),{},{}
+                    local w,h=toInt(string.sub(img,1,1))+(toInt(string.sub(img,2,2))*255),toInt(string.sub(img,5,5))+(toInt(string.sub(img,6,6))*255) --retrieve width and height
+                    for i=1,#imageString,2 do --conv to table
+                        local colorValue=string.sub(imageString,i,i+1)
+                        table.insert(imageTable,colorValue)
+                    end
+                    for i=1,h do --flip horizontally
+                        local startIndex,endIndex,row=(i-1)*w+1,i*w,{}
+                        for i2=endIndex,startIndex,-1 do table.insert(row,imageTable[i2]) end
+                        table.insert(flippedTable,table.concat(row))
+                    end
+                    local flippedString=table.concat(flippedTable) --reconstruct string
+                    return string.sub(img,1,20)..flippedString
+                end string=flipImage(string)
+            end
+            if recolour then for i=1,#recolour do -- recolour = all recoloured images, i = recolours for new img, i2[1] = old colour, i2[2] = new colour, i2[3] = new name
+                local newImg=string
+                for i2=3,#recolour[i] do --all recolours
+                    newImg=string.sub(newImg,1,20)..substitute(string.sub(newImg,21),recolour[i][i2][1],recolour[i][i2][2])
+                end local imgName=(flip==0) and recolour[i][1] or recolour[i][2]
+                texs[imgName]=image.new(newImg)
+            end end
+            texs[name]=image.new(string)
+    end end
+
+--------------------------
+---------EVENTS-----------
+--------------------------
+
+    require("core.events")
+
+---------------------------
+-----PROGRAM FUNCTIONS-----
+---------------------------
+
+    require("core.plotmath")
+
+    --[[function pixel2exactPixel(x,y) --useless or something idk
+        local v={pixel2plot(xPos-playStage.cameraOffset,yPos+(1))[1],pixel2plot(xPos-playStage.cameraOffset,yPos+(1))[2]}
+        v = plot2pixel(v[1],v[2],true)[2]+16
+        return {v[1],v[2]-12}
+    end]]
+
+    require("core.levelserialise")
+
+    function drawFont(gc,text,x,y,position,spacing,backdrop,size,FONT)
+        if fontsLoaded then
+            local function countFont(text,spacing) -- this is for font2, small font
+                local length=0 local spacing=spacing or 0
+                for i=1,#text do
+                    length=length+((string.lower(string.sub(text,i,i))=="m" or string.lower(string.sub(text,i,i))=="w") and 6 or 5)+spacing
+            end return length end
+            x=x or 158 y=y or 106 size=size or 1 spacing=spacing or 0 FONT=FONT or "font1"
+            local drawOffset,totalLength=0,FONT=="font2" and countFont(text,spacing)-1 or (#text*((8*size)+spacing))-1
+            if position~=nil then
+                if position=="left" then drawOffset=0
+                elseif position=="centre" or position=="center" then drawOffset=1-math.ceil(totalLength/2) --british english and american english #_#
+                elseif position=="right" then drawOffset=-totalLength
+                end
+            end
+            if backdrop and #text>0 then
+                gc:setColorRGB(0,0,0)
+                if backdrop=="rgb" then timer2rainbow(gc,framesPassed+200,10) end
+                local height=(FONT=="font2") and 6 or 10
+                gc:fillRect(x+drawOffset-1,y-1,totalLength+2,height)
+            end
+            for i=1,#text do
+                local letter,texture=string.sub(text,i,i)
+                if letter:isAlphaNumeric() then
+                    texture=texs[FONT.."_"..string.lower(letter)]
+                elseif fontLookup[letter]~=nil then
+                    texture=texs[FONT.."_"..fontLookup[letter]]
+                end
+                if texture then
+                    if size~=1 then texture=image.copy(texture,8*size,8*size) end
+                    gc:drawImage(texture,x+drawOffset,y)
+                end
+                drawOffset=drawOffset+(FONT~="font2" and (8*size)+spacing or countFont(letter,spacing))
+            end
+        else
+            y=y or 106 x=x or 158
+            local width=gc:getStringWidth(text)
+            if position=="centre" then
+                x=x-(width/2)
+            elseif position=="right" then
+                x=x-width
+            end
+            gc:setColorRGB(255,255,255)
+            gc:drawString(text,x,y,"top")
+        end
+    end
+
+    function drawFont2(gc,text,x,y,position,spacing,backdrop,size,FONT) drawFont(gc,text,x,y,position,spacing,backdrop,size,"font2") end
+
+    function drawGUIBox(gc,x,y,w,h,header,text,ignoreLeft) --dont recommend making awfully small boxes
+        gc:setPen("thin","smooth") -- i never quite know how to describe these.. vv
+        gc:setColorRGB(0,0,0) --outer black border
+        gc:drawRect(ignoreLeft and x+2 or x,y,ignoreLeft and w-2 or w,h)
+        gc:setColorRGB(255,255,255) --white filling
+        gc:fillRect(ignoreLeft and x+2 or x+1,y+1,ignoreLeft and w-2 or w-1,h-1)
+        gc:setColorRGB(27,27,27) --dark grey inner box filling
+        gc:fillRect(x+3,y+1+(header and 10 or 2),w-5,h-(3+(header and 10 or 2)))
+        if header then drawFont(gc,header,x+w/2,y+1,"centre",0,true) end
+        gc:setColorRGB(108,108,108) --light grey inner box border
+        gc:drawRect(x+2,y+(header and 10 or 2),w-4,h-(2+(header and 10 or 2)))
+        if text then
+            for i=1,#text do
+                drawFont(gc,text[i],x+w/2,y+12+(i-1)*9,"centre",0)
+        end end
+    end
+
+    function switchTimer(state)
+        if state==nil then --fallback, doubt however that it is (or ever will be) used :p
+            switchTimer(not timerState)
+        else
+            if state==true and not timerState==true then --full speed
+                timer.stop() timerState=state
+                timer.start(0.04)
+            elseif state==false and not timerState==false then --safe sleep mode
+                timer.stop() timerState=state
+                timer.start(0.15) --from my testing, this is slow enough to where the page doesnt freeze when turning off
+            end
+    end end
+
+    function sTimer(time)  return playStage.framesPassed+time  end --set timer vars
+    function cTimer(timer) return timer-playStage.framesPassed end --calculate timer
+    function gTimer(timer) return (cTimer(timer)<0)            end --goal timer..? cant think of what to name it
+
+    function string2ext(name,data) --store data as public library function --huge thanks and credit to Adriweb for this solution!!
+        _G[name]=data --store the data as lua var
+        local bigStr = "Define LibPub "..name.."()=" .. "\nFunc\n:Return \"" .. _G[name] .. "\"\n:EndFunc" --basic string to save as public library function
+        math.eval(bigStr) --execute it (save it)
+    end
+
+    function ext2string(document,var) --retrieve data from public library function
+        if not document==false then return math.eval(document.."\\"..var.."()") --get from public library function
+        else return math.eval(var.."()") --get it locally, for emu testing
+        end
+    end
+       
+
+--------------------------
+-------BLOCK INDEX--------
+--------------------------
+addBlock=class()
+
+    function addBlock:init(id,name,solid,textureID) --textureID can also be a list, eg {1,1,1,1,2,3} for an animation sequence
+        --print(id,name,solid,#textureID)
+        lastAdded=id
+        blockIndex[lastAdded]={["solid"]=solid,["name"]=name,["texture"]=textureID}
+        --set default
+        local props = blockIndex[lastAdded]
+
+        if props["semisolid"]== nil then      props["semisolid"]=false end      --semisolid (mario must be above the top eg mushrooms): in arrangement NESW (north,east,south,west) where a 1 represents that it is solid on that side and 0 means the side is passable
+        if props["containing"]== nil then     props["containing"]=false end     --contains coins, powerup, vine or star
+        if props["icon"]== nil then           props["icon"]=false end           --an icon to draw in the editor, string or table defining the offset of the icon, eg {"Coin",0,0}
+        if props["bumpable"]== nil then       props["bumpable"]={false} end     --ie moves when hit (bricks, question marks), second arg for texture to display during animation (if true uses first frame), third arg for what to replace it with once animation finished
+        if props["breakable"]== nil then      props["breakable"]=false end      --creates brick particles and disappears if super or fire mario
+        if props["entityonly"]== nil then     props["entityonly"]=false end     --only entities can pass through
+        if props["marioonly"]== nil then      props["marioonly"]=false end      --only mario can pass through
+        if props["coin"]== nil then           props["coin"]=false end           --it is a coin, that is all
+        if props["invisiblock"]== nil then    props["invisiblock"]=false end    --can still be bumped, but passed through from other angles
+        if props["theme"]== nil then          props["theme"]={nil} end          --changes appearance based on the theme it is in
+        if props["editor"]== nil then         props["editor"]=false end         --changes appearance in editor to the id
+        if props["damage"]== nil then         props["damage"]=false end         --hurts mario (spikes)
+        if props["kill"]== nil then           props["kill"]=false end           --kills mario (lava)
+        if props["ceiling"]== nil then        props["ceiling"]=false end        --cannot be jumped over when on y=13
+        if props["eventswitch"]== nil then    props["eventswitch"]={false} end  --switch block with another when event conditions are met. args: 1. the event name, 2. the event state, 3. the new block ID
+        if props["pushV"]== nil then          props["pushV"]=0 end              --will push things in the X direction when stood on, eg conveyor belts
+        if props["animSpeed"]== nil then      props["animSpeed"]=4 end          --animation speed, default is 4 frames per animation frame
+    end
+
+    function addBlock:attribute(property,val) --eg semisolid, containing, bumpable,
+        blockIndex[lastAdded][property]=val
+    end
+
+    function addBlock:addThemeTexture(themeNo,texture)
+        blockIndex[lastAdded]["theme"][themeNo]=texture
+    end
+
+    --addBlock(id,name,solid,textureID)
+    addBlock(1337,"Air (Editor)",false,{nil}) -- Batprime11: 1337 B)
+        addBlock:addThemeTexture(0,{"Air0"})
+        addBlock:addThemeTexture(1,{"Air1"})
+        addBlock:addThemeTexture(2,{"Air1"})
+        addBlock:addThemeTexture(3,{"Air1"})
+    addBlock(1338,"Invisible Block (Editor)",false,{nil})
+        addBlock:addThemeTexture(0,{"InvisibleBlock0"})
+        addBlock:addThemeTexture(1,{"InvisibleBlock1"})
+        addBlock:addThemeTexture(2,{"InvisibleBlock1"})
+        addBlock:addThemeTexture(3,{"InvisibleBlock1"})
+        addBlock:addThemeTexture(99,{"InvisibleBlock1"})
+    addBlock(1339,"Barrier (Editor)",false,{"Barrier"})
+
+    addBlock(0,"Air",false,{nil})
+        addBlock:attribute("editor",1337)
+    addBlock(1,"Ground",true,{"Ground"})
+        addBlock:addThemeTexture(1,{"GroundUnderground"})
+        addBlock:addThemeTexture(3,{"GroundCastle"})
+        addBlock:attribute("ceiling",true)
+    addBlock(2,"Mystery Box (Coin)",true,{"MysteryBox0","MysteryBox0","MysteryBox0","MysteryBox1","MysteryBox2","MysteryBox1"})
+        addBlock:addThemeTexture(1,{"MysteryBox0Underground","MysteryBox0Underground","MysteryBox0Underground","MysteryBox1Underground","MysteryBox2Underground","MysteryBox1Underground"})
+        addBlock:addThemeTexture(3,{"MysteryBox0Castle","MysteryBox0Castle","MysteryBox0Castle","MysteryBox1Castle","MysteryBox2Castle","MysteryBox1Castle"})
+        addBlock:attribute("containing","coin")
+        addBlock:attribute("icon","icon_coin")
+        addBlock:attribute("bumpable",{true,"EmptyBlock",5})
+    addBlock(3,"Brick",true,{"Brick"})
+        addBlock:addThemeTexture(1,{"BrickUnderground"})
+        addBlock:addThemeTexture(3,{"BrickCastle"})
+        addBlock:attribute("breakable",true)
+        addBlock:attribute("bumpable",{true,"Brick",3})
+    addBlock(4,"Coin",false,{"Coin1","Coin1","Coin1","Coin2","Coin3","Coin2"})
+        addBlock:attribute("coin",true)
+    addBlock(5,"Empty Block",true,{"EmptyBlock"})
+        addBlock:addThemeTexture(1,{"EmptyBlockUnderground"})
+        addBlock:addThemeTexture(3,{"EmptyBlockCastle"})
+    addBlock(6,"Bridge",false,{"Bridge"})
+        addBlock:attribute("semisolid","1000")
+    addBlock(7,"Entity Only Block",false,{"EntityOnly2","EntityOnly2","EntityOnly2","EntityOnly1","EntityOnly1","EntityOnly1"})
+        addBlock:attribute("entityonly",true)
+    addBlock(8,"Mario Only Block",true,{"MarioOnly2","MarioOnly2","MarioOnly2","MarioOnly1","MarioOnly1","MarioOnly1"})
+        addBlock:attribute("marioonly",true)
+    addBlock(9,"Hard Block",true,{"HardBlock"})
+        addBlock:addThemeTexture(1,{"HardBlockUnderground"})
+        addBlock:addThemeTexture(3,{"HardBlockCastle"})
+        addBlock:attribute("ceiling",true)
+    addBlock(10,"Invisible Block (Coin)",false,{nil})
+        addBlock:attribute("invisiblock",true)
+        addBlock:attribute("containing","coin")
+        addBlock:attribute("icon","icon_coin")
+        addBlock:attribute("bumpable",{true,"EmptyBlock",5})
+        addBlock:attribute("editor",1338)
+    addBlock(11,"Cloud Block",false,{"Cloud"})
+        addBlock:attribute("semisolid","1000")
+    addBlock(12,"Green Mushroom (L)",false,{"MushG1"})
+        addBlock:attribute("semisolid","1000")
+    addBlock(13,"Green Mushroom (M)",false,{"MushG2"})
+        addBlock:attribute("semisolid","1000")
+    addBlock(14,"Green Mushroom (R)",false,{"MushG3"})
+        addBlock:attribute("semisolid","1000")
+    addBlock(15,"Red Mushroom (L)",false,{"MushR1"})
+        addBlock:attribute("semisolid","1000")
+    addBlock(16,"Red Mushroom (M)",false,{"MushR2"})
+        addBlock:attribute("semisolid","1000")
+    addBlock(17,"Red Mushroom (R)",false,{"MushR3"})
+        addBlock:attribute("semisolid","1000")
+    addBlock(18,"Mushroom Stem (Top)",false,{"MushTop"})
+    addBlock(19,"Mushroom Stem",false,{"MushStem"})
+
+    addBlock(20,"Mystery Box (Mushroom)",true,{"MysteryBox0","MysteryBox0","MysteryBox0","MysteryBox1","MysteryBox2","MysteryBox1"})
+        addBlock:addThemeTexture(1,{"MysteryBox0Underground","MysteryBox0Underground","MysteryBox0Underground","MysteryBox1Underground","MysteryBox2Underground","MysteryBox1Underground"})
+        addBlock:addThemeTexture(3,{"MysteryBox0Castle","MysteryBox0Castle","MysteryBox0Castle","MysteryBox1Castle","MysteryBox2Castle","MysteryBox1Castle"})
+        addBlock:attribute("containing","mushroom")
+        addBlock:attribute("icon","icon_mushroom")
+        addBlock:attribute("bumpable",{true,"EmptyBlock",5})
+    addBlock(21,"Mystery Box (Fireflower)",true,{"MysteryBox0","MysteryBox0","MysteryBox0","MysteryBox1","MysteryBox2","MysteryBox1"})
+        addBlock:addThemeTexture(1,{"MysteryBox0Underground","MysteryBox0Underground","MysteryBox0Underground","MysteryBox1Underground","MysteryBox2Underground","MysteryBox1Underground"})
+        addBlock:addThemeTexture(3,{"MysteryBox0Castle","MysteryBox0Castle","MysteryBox0Castle","MysteryBox1Castle","MysteryBox2Castle","MysteryBox1Castle"})
+        addBlock:attribute("containing","fireflower")
+        addBlock:attribute("icon","icon_fireflower")
+        addBlock:attribute("bumpable",{true,"EmptyBlock",5})
+    addBlock(22,"Mystery Box (Progressive)",true,{"MysteryBox0","MysteryBox0","MysteryBox0","MysteryBox1","MysteryBox2","MysteryBox1"})
+        addBlock:addThemeTexture(1,{"MysteryBox0Underground","MysteryBox0Underground","MysteryBox0Underground","MysteryBox1Underground","MysteryBox2Underground","MysteryBox1Underground"})
+        addBlock:addThemeTexture(3,{"MysteryBox0Castle","MysteryBox0Castle","MysteryBox0Castle","MysteryBox1Castle","MysteryBox2Castle","MysteryBox1Castle"})
+        addBlock:attribute("containing","Pfireflower")
+        addBlock:attribute("icon","icon_Pfireflower")
+        addBlock:attribute("bumpable",{true,"EmptyBlock",5})
+    addBlock(23,"Mystery Box (Star)",true,{"MysteryBox0","MysteryBox0","MysteryBox0","MysteryBox1","MysteryBox2","MysteryBox1"})
+        addBlock:addThemeTexture(1,{"MysteryBox0Underground","MysteryBox0Underground","MysteryBox0Underground","MysteryBox1Underground","MysteryBox2Underground","MysteryBox1Underground"})
+        addBlock:addThemeTexture(3,{"MysteryBox0Castle","MysteryBox0Castle","MysteryBox0Castle","MysteryBox1Castle","MysteryBox2Castle","MysteryBox1Castle"})
+        addBlock:attribute("containing","star")
+        addBlock:attribute("icon","icon_star")
+        addBlock:attribute("bumpable",{true,"EmptyBlock",5})
+    addBlock(24,"Mystery Box (1-Up)",true,{"MysteryBox0","MysteryBox0","MysteryBox0","MysteryBox1","MysteryBox2","MysteryBox1"})
+        addBlock:addThemeTexture(1,{"MysteryBox0Underground","MysteryBox0Underground","MysteryBox0Underground","MysteryBox1Underground","MysteryBox2Underground","MysteryBox1Underground"})
+        addBlock:addThemeTexture(3,{"MysteryBox0Castle","MysteryBox0Castle","MysteryBox0Castle","MysteryBox1Castle","MysteryBox2Castle","MysteryBox1Castle"})
+        addBlock:attribute("containing","mushroom1up")
+        addBlock:attribute("icon","icon_mushroom1up")  --now the theme texture method is seeming a bit dated
+        addBlock:attribute("bumpable",{true,"EmptyBlock",5})
+    addBlock(25,"Mystery Box (Multi-Coin)",true,{"MysteryBox0","MysteryBox0","MysteryBox0","MysteryBox1","MysteryBox2","MysteryBox1"})
+        addBlock:addThemeTexture(1,{"MysteryBox0Underground","MysteryBox0Underground","MysteryBox0Underground","MysteryBox1Underground","MysteryBox2Underground","MysteryBox1Underground"})
+        addBlock:addThemeTexture(3,{"MysteryBox0Castle","MysteryBox0Castle","MysteryBox0Castle","MysteryBox1Castle","MysteryBox2Castle","MysteryBox1Castle"})
+        addBlock:attribute("containing","multicoin_2")
+        addBlock:attribute("icon","icon_multicoin")
+        addBlock:attribute("bumpable",{true,"MysteryBox0",26})
+    addBlock(26,"Mystery Box (Infinite-Coin)",true,{"MysteryBox0","MysteryBox0","MysteryBox0","MysteryBox1","MysteryBox2","MysteryBox1"})
+        addBlock:addThemeTexture(1,{"MysteryBox0Underground","MysteryBox0Underground","MysteryBox0Underground","MysteryBox1Underground","MysteryBox2Underground","MysteryBox1Underground"})
+        addBlock:addThemeTexture(3,{"MysteryBox0Castle","MysteryBox0Castle","MysteryBox0Castle","MysteryBox1Castle","MysteryBox2Castle","MysteryBox1Castle"})
+        addBlock:attribute("containing","coin")
+        addBlock:attribute("icon","icon_coin")
+        addBlock:attribute("bumpable",{true,"MysteryBox0",26})
+
+    addBlock(28,"Blaster Body",true,{"BlasterBody"})
+    addBlock(29,"Blaster Top",true,{"BlasterTop"})
+
+    addBlock(30,"Brick (Coin)",true,{"Brick"})
+        addBlock:addThemeTexture(1,{"BrickUnderground"})
+        addBlock:addThemeTexture(3,{"BrickCastle"})
+        addBlock:attribute("containing","coin")
+        addBlock:attribute("icon","icon_coin")
+        addBlock:attribute("bumpable",{true,"EmptyBlock",5})
+    addBlock(31,"Brick (Mushroom)",true,{"Brick"})
+        addBlock:addThemeTexture(1,{"BrickUnderground"})
+        addBlock:addThemeTexture(3,{"BrickCastle"})
+        addBlock:attribute("containing","mushroom")
+        addBlock:attribute("icon","icon_mushroom")
+        addBlock:attribute("bumpable",{true,"EmptyBlock",5})
+    addBlock(32,"Brick (Fireflower)",true,{"Brick"})
+        addBlock:addThemeTexture(1,{"BrickUnderground"})
+        addBlock:addThemeTexture(3,{"BrickCastle"})
+        addBlock:attribute("containing","fireflower")
+        addBlock:attribute("icon","icon_fireflower")
+        addBlock:attribute("bumpable",{true,"EmptyBlock",5})
+    addBlock(33,"Brick (Progressive)",true,{"Brick"})
+        addBlock:addThemeTexture(1,{"BrickUnderground"})
+        addBlock:addThemeTexture(3,{"BrickCastle"})
+        addBlock:attribute("containing","Pfireflower")
+        addBlock:attribute("icon","icon_Pfireflower")
+        addBlock:attribute("bumpable",{true,"EmptyBlock",5})
+    addBlock(34,"Brick (Star)",true,{"Brick"})
+        addBlock:addThemeTexture(1,{"BrickUnderground"})
+        addBlock:addThemeTexture(3,{"BrickCastle"})
+        addBlock:attribute("containing","star")
+        addBlock:attribute("icon","icon_star")
+        addBlock:attribute("bumpable",{true,"EmptyBlock",5})
+    addBlock(35,"Brick (1-Up)",true,{"Brick"})
+        addBlock:addThemeTexture(1,{"BrickUnderground"})
+        addBlock:addThemeTexture(3,{"BrickCastle"})
+        addBlock:attribute("containing","mushroom1up")
+        addBlock:attribute("icon","icon_mushroom1up")
+        addBlock:attribute("bumpable",{true,"EmptyBlock",5})
+    addBlock(36,"Brick (Multi-Coin)",true,{"Brick"})
+        addBlock:addThemeTexture(1,{"BrickUnderground"})
+        addBlock:addThemeTexture(3,{"BrickCastle"})
+        addBlock:attribute("containing","multicoin_30")
+        addBlock:attribute("icon","icon_multicoin")
+        addBlock:attribute("bumpable",{true,"Brick",39})
+    addBlock(39,"Brick (Infinite-Coin)",true,{"Brick"})
+        addBlock:addThemeTexture(1,{"BrickUnderground"})
+        addBlock:addThemeTexture(3,{"BrickCastle"})
+        addBlock:attribute("containing","coin")
+        addBlock:attribute("icon","icon_coin")
+        addBlock:attribute("bumpable",{true,"Brick",39})
+
+    addBlock(40,"Pipe Top - North (L)",true,{"Pipe_Top_NL"})
+    addBlock(41,"Pipe Top - North (R)",true,{"Pipe_Top_NR"})
+    addBlock(42,"Pipe Top - South (L)",true,{"Pipe_Top_SL"})
+    addBlock(43,"Pipe Top - South (R)",true,{"Pipe_Top_SR"})
+    addBlock(44,"Pipe Top - East (L)",true,{"Pipe_Top_EL"})
+    addBlock(45,"Pipe Top - East (R)",true,{"Pipe_Top_ER"}) 
+    addBlock(46,"Pipe Top - West (L)",true,{"Pipe_Top_WL"}) 
+    addBlock(47,"Pipe Top - West (R)",true,{"Pipe_Top_WR"}) 
+    addBlock(48,"Pipe Body - Vertical (L)",true,{"Pipe_Body_VertL"}) 
+    addBlock(49,"Pipe Body - Vertical (R)",true,{"Pipe_Body_VertR"}) 
+    addBlock(50,"Pipe Body - Horizontal (L)",true,{"Pipe_Body_HoriL"})
+    addBlock(51,"Pipe Body - Horizontal (R)",true,{"Pipe_Body_HoriR"})
+    addBlock(52,"Pipe Connector - North (L)",true,{"Pipe_Connector_NL"})
+    addBlock(53,"Pipe Connector - North (R)",true,{"Pipe_Connector_NR"})
+    addBlock(54,"Pipe Connector - South (L)",true,{"Pipe_Connector_SL"})
+    addBlock(55,"Pipe Connector - South (R)",true,{"Pipe_Connector_SR"})
+    addBlock(56,"Pipe Connector - East (L)",true,{"Pipe_Connector_EL"})
+    addBlock(57,"Pipe Connector - East (R)",true,{"Pipe_Connector_ER"})
+    addBlock(58,"Pipe Connector - West (L)",true,{"Pipe_Connector_WL"})
+    addBlock(59,"Pipe Connector - West (R)",true,{"Pipe_Connector_WR"})
+
+    addBlock(60,"Semisolid (L)",false,{"Leaves1"})
+        addBlock:attribute("semisolid","1000")
+    addBlock(61,"Semisolid (M)",false,{"Leaves2"})
+        addBlock:attribute("semisolid","1000")
+    addBlock(62,"Semisolid (R)",false,{"Leaves3"})
+        addBlock:attribute("semisolid","1000")
+    addBlock(63,"Semisolid BG",false,{"SemiSolidBG"})
+    --decorations part 1
+    addBlock(65,"Hill - 1",false,{"Hill1"})
+    addBlock(66,"Hill - 2",false,{"Hill2"})
+    addBlock(67,"Hill - 3",false,{"Hill3"})
+    addBlock(68,"Hill - 4",false,{"Hill4"})
+    addBlock(69,"Hill - 5",false,{"Hill5"})
+    addBlock(70,"Hill - 6",false,{"Hill6"})
+    addBlock(71,"Cloud - 1",false,{"Cloud1"})
+    addBlock(72,"Cloud - 2",false,{"Cloud2"})
+    addBlock(73,"Cloud - 3",false,{"Cloud3"})
+    addBlock(74,"Cloud - 4",false,{"Cloud4"})
+    addBlock(75,"Cloud - 5",false,{"Cloud5"})
+    addBlock(76,"Cloud - 6",false,{"Cloud6"})
+    addBlock(77,"Bush - 1",false,{"Bush1"})
+    addBlock(78,"Bush - 2",false,{"Bush2"})
+    addBlock(79,"Bush - 3",false,{"Bush3"})
+    addBlock(80,"Castle - 1",false,{"Castle1"})
+    addBlock(81,"Castle - 2",false,{"Castle2"})
+    addBlock(82,"Castle - 3",false,{"Castle3"})
+    addBlock(83,"Castle - 4",false,{"Castle4"})
+    addBlock(84,"Castle - 5",false,{"Castle5"})
+    addBlock(85,"Castle - 6",false,{"Castle6"})
+    addBlock(86,"Castle - 7",false,{"Castle7"})
+    addBlock(87,"Fence",false,{"Fence"})
+    addBlock(88,"Bridge Railing",false,{"BridgeRailing"})
+    addBlock(89,"Arrow (Right)",false,{"arrow_E"})
+    addBlock(90,"Arrow (Left)",false,{"arrow_W"})
+    addBlock(91,"Arrow (Down)",false,{"arrow_S"})
+    addBlock(92,"Arrow (Up)",false,{"arrow_N"})
+    addBlock(93,"Arrow Sign (Right)",false,{"arrowSign_E"})
+    addBlock(94,"Arrow Sign (Left)",false,{"arrowSign_W"})
+    addBlock(95,"Arrow Sign (Down)",false,{"arrowSign_S"})
+    addBlock(96,"Arrow Sign (Up)",false,{"arrowSign_N"})
+    addBlock(97,"Toad (Top)",false,{"Toad_1"})
+    addBlock(98,"Toad (Bottom)",false,{"Toad_2"})
+
+    addBlock(99,"Barrier",true,{nil})
+        addBlock:attribute("editor",1339)
+
+    addBlock(100,"Invisible Block (Mushroom)",false,{nil})
+        addBlock:attribute("invisiblock",true)
+        addBlock:attribute("containing","mushroom")
+        addBlock:attribute("icon","icon_mushroom")
+        addBlock:attribute("bumpable",{true,"EmptyBlock",5})
+        addBlock:attribute("editor",1338)
+    addBlock(101,"Invisible Block (Fireflower)",false,{nil})
+        addBlock:attribute("invisiblock",true)
+        addBlock:attribute("containing","fireflower")
+        addBlock:attribute("icon","icon_fireflower")
+        addBlock:attribute("bumpable",{true,"EmptyBlock",5})
+        addBlock:attribute("editor",1338)
+    addBlock(102,"Invisible Block (Progressive)",false,{nil})
+        addBlock:attribute("invisiblock",true)
+        addBlock:attribute("containing","Pfireflower")
+        addBlock:attribute("icon","icon_Pfireflower")
+        addBlock:attribute("bumpable",{true,"EmptyBlock",5})
+        addBlock:attribute("editor",1338)
+    addBlock(103,"Invisible Block (Star)",false,{nil})
+        addBlock:attribute("invisiblock",true)
+        addBlock:attribute("containing","star")
+        addBlock:attribute("icon","icon_star")
+        addBlock:attribute("bumpable",{true,"EmptyBlock",5})
+        addBlock:attribute("editor",1338)
+    addBlock(104,"Invisible Block (1-Up)",false,{nil})
+        addBlock:attribute("invisiblock",true)
+        addBlock:attribute("containing","mushroom1up")
+        addBlock:attribute("icon","icon_mushroom1up")
+        addBlock:attribute("bumpable",{true,"EmptyBlock",5})
+        addBlock:attribute("editor",1338)
+    addBlock(105,"One-Way Gate (Left)",false,{"OneWay_W_1","OneWay_W_2","OneWay_W_3"})
+        addBlock:attribute("semisolid","0001") --NES[W] (north east south west)
+    addBlock(106,"One-Way Gate (Right)",false,{"OneWay_E_1","OneWay_E_2","OneWay_E_3"})
+        addBlock:attribute("semisolid","0100") --N[E]SW
+    addBlock(107,"One-Way Gate (Up)",false,{"OneWay_N_1","OneWay_N_2","OneWay_N_3"})
+        addBlock:attribute("semisolid","1000") --[N]ESW
+    addBlock(108,"One-Way Gate (Down)",false,{"OneWay_S_1","OneWay_S_2","OneWay_S_3"})
+        addBlock:attribute("semisolid","0010") --NE[S]W
+    addBlock(109,"Lava (Surface)",false,{"Lava_1","Lava_2","Lava_3","Lava_4"})
+        addBlock:attribute("kill",true)
+    addBlock(110,"Lava",false,{"Lava_0"})
+        addBlock:attribute("kill",true)
+    addBlock(111,"Spike Trap",true,{"Spikes_1","Spikes_1","Spikes_1","Spikes_1","Spikes_1","Spikes_2","Spikes_2"})
+        addBlock:attribute("damage",true)
+    addBlock(112,"Invisible Block (Multi-Coin)",false,{nil})
+        addBlock:attribute("invisiblock",true)
+        addBlock:attribute("containing","multicoin_2")
+        addBlock:attribute("icon","icon_multicoin")
+        addBlock:attribute("bumpable",{true,"MysteryBox0",26})
+        addBlock:attribute("editor",1338)
+    --decorations part 2
+    addBlock(113,"Princess Toadstool (Top)",false,{"Peach_1"})
+    addBlock(114,"Princess Toadstool (Bottom)",false,{"Peach_2"})
+    addBlock(115,"Skeleton (Underground) - 1",false,{"SkeletonUnd_1"})
+    addBlock(116,"Skeleton (Underground) - 2",false,{"SkeletonUnd_2"})
+    addBlock(117,"Skeleton (Underground) - 3",false,{"SkeletonUnd_3"})
+    addBlock(118,"Short Tree (Stem)",false,{"ShortTree_Stem"})
+    addBlock(119,"Short Tree (Top)",false,{"ShortTree_1"})
+    addBlock(120,"Short Tree (Bottom)",false,{"ShortTree_2"})
+    addBlock(121,"Short Bush",false,{"ShortBush"})
+    addBlock(122,"Small Mushrooms (Underground)",false,{"MushroomsUnd"})
+    addBlock(123,"Fences (Castle) - 1",false,{"FencesCast_1"})
+    addBlock(124,"Fences (Castle) - 2",false,{"FencesCast_2"})
+    addBlock(125,"Fences (Castle) - 3",false,{"FencesCast_3"})
+    addBlock(126,"Post (Castle)",false,{"PostCast"})
+    addBlock(127,"Bowser Statue (Stem)",false,{"BowserStatue_1"})
+    addBlock(128,"Bowser Statue (Bottom)",false,{"BowserStatue_2"})
+    addBlock(129,"Bowser Statue (Top)",false,{"BowserStatue_3"})
+    addBlock(130,"Night Stars - 1",false,{"Stars_1","Stars_1","Stars_1","Stars_2","Stars_2","Stars_2"})
+    addBlock(131,"Night Stars - 2",false,{"Stars_2","Stars_2","Stars_2","Stars_1","Stars_1","Stars_1"})
+    addBlock(132,"Night Stars - 3",false,{"Stars_3","Stars_3","Stars_3","Stars_4","Stars_4","Stars_4"})
+    addBlock(133,"Night Stars - 4",false,{"Stars_4","Stars_4","Stars_4","Stars_3","Stars_3","Stars_3"})
+
+    addBlock(150,"On/Off Switch",true,{"OnSwitch_1","OnSwitch_1","OnSwitch_1","OnSwitch_2","OnSwitch_2","OnSwitch_2"})
+        addBlock:attribute("bumpable",{true,"OnSwitch_1",15000})
+        addBlock:attribute("eventswitch",{"onoff","false",15000})
+        addBlock:attribute("containing","event_onoff_false")
+    addBlock(15000,"Off Switch",true,{"OffSwitch_1","OffSwitch_1","OffSwitch_1","OffSwitch_2","OffSwitch_2","OffSwitch_2"})
+        addBlock:attribute("bumpable",{true,"OffSwitch_1",150})
+        addBlock:attribute("eventswitch",{"onoff","true",150})
+        addBlock:attribute("containing","event_onoff_true")
+    addBlock(152,"On Block",true,{"OnBlock_1"})
+        addBlock:attribute("eventswitch",{"onoff","false",15200})
+    addBlock(15200,"On Block (Inactive)",false,{"OnBlock_2"}) --big number bc it wont be in level strings
+        addBlock:attribute("eventswitch",{"onoff","true",152})
+    addBlock(153,"Off Block",false,{"OffBlock_2"})
+        addBlock:attribute("eventswitch",{"onoff","false",15300})
+    addBlock(15300,"Off Block (Active)",true,{"OffBlock_1"})
+        addBlock:attribute("eventswitch",{"onoff","true",153})
+
+        --al, ar, a2, a1 (l, r (slow, false))
+    addBlock(154,"Conveyor Belt - 1 (Left, Slow)",true,{"Conveyor_L_1","Conveyor_L_2","Conveyor_L_3","Conveyor_L_4"})
+        addBlock:attribute("pushV",-1)
+        addBlock:attribute("icon","icon_al") 
+    addBlock(155,"Conveyor Belt - 2 (Left, Slow)",true,{"Conveyor_M_1","Conveyor_M_2","Conveyor_M_3","Conveyor_M_4"})
+        addBlock:attribute("pushV",-1)
+        addBlock:attribute("icon","icon_al") 
+    addBlock(156,"Conveyor Belt - 3 (Left, Slow)",true,{"Conveyor_R_1","Conveyor_R_2","Conveyor_R_3","Conveyor_R_4"})
+        addBlock:attribute("pushV",-1)
+        addBlock:attribute("icon","icon_al") 
+    addBlock(157,"Conveyor Belt - 1 (Right, Slow)",true,{"Conveyor_L_4","Conveyor_L_3","Conveyor_L_2","Conveyor_L_1"})
+        addBlock:attribute("pushV",1)
+        addBlock:attribute("icon","icon_ar") 
+    addBlock(158,"Conveyor Belt - 2 (Right, Slow)",true,{"Conveyor_M_4","Conveyor_M_3","Conveyor_M_2","Conveyor_M_1"})
+        addBlock:attribute("pushV",1)
+        addBlock:attribute("icon","icon_ar") 
+    addBlock(159,"Conveyor Belt - 3 (Right, Slow)",true,{"Conveyor_R_4","Conveyor_R_3","Conveyor_R_2","Conveyor_R_1"})
+        addBlock:attribute("pushV",1)
+        addBlock:attribute("icon","icon_ar") 
+    addBlock(160,"Conveyor Belt - 1 (Left, Fast)",true,{"Conveyor_L_1","Conveyor_L_2","Conveyor_L_3","Conveyor_L_4"})
+        addBlock:attribute("pushV",-3)
+        addBlock:attribute("icon","icon_a2") 
+        addBlock:attribute("animSpeed",2) 
+    addBlock(161,"Conveyor Belt - 2 (Left, Fast)",true,{"Conveyor_M_1","Conveyor_M_2","Conveyor_M_3","Conveyor_M_4"})
+        addBlock:attribute("pushV",-3)
+        addBlock:attribute("icon","icon_a2")
+        addBlock:attribute("animSpeed",2)
+    addBlock(162,"Conveyor Belt - 3 (Left, Fast)",true,{"Conveyor_R_1","Conveyor_R_2","Conveyor_R_3","Conveyor_R_4"})
+        addBlock:attribute("pushV",-3)
+        addBlock:attribute("icon","icon_a2")
+        addBlock:attribute("animSpeed",2) 
+    addBlock(163,"Conveyor Belt - 1 (Right, Fast)",true,{"Conveyor_L_4","Conveyor_L_3","Conveyor_L_2","Conveyor_L_1"})
+        addBlock:attribute("pushV",3)
+        addBlock:attribute("icon","icon_a1") 
+        addBlock:attribute("animSpeed",2) 
+    addBlock(164,"Conveyor Belt - 2 (Right, Fast)",true,{"Conveyor_M_4","Conveyor_M_3","Conveyor_M_2","Conveyor_M_1"})
+        addBlock:attribute("pushV",3)
+        addBlock:attribute("icon","icon_a1") 
+        addBlock:attribute("animSpeed",2) 
+    addBlock(165,"Conveyor Belt - 3 (Right, Fast)",true,{"Conveyor_R_4","Conveyor_R_3","Conveyor_R_2","Conveyor_R_1"})
+        addBlock:attribute("pushV",3)
+        addBlock:attribute("icon","icon_a1") 
+        addBlock:attribute("animSpeed",2) 
+
+--------------------------
+--------OBJECT API--------
+--------------------------
+objAPI=class() --categories are only roughly representative
+    --DEFAULT VALUES
+    objAPI.dead=false objAPI.px=0 objAPI.py=0
+    objAPI.spring=false objAPI.interactSpring=true
+    --OBJECT/PLATFORM MANAGEMENT
+        function objAPI:getObjectCount(passedEntityLists) --returns the number of objects in a given level
+            local entityLists=passedEntityLists or entityLists
+            local count=0
+            for k in pairs(entityLists) do
+                count=count+#entityLists[k]
+            end
+            return count
+        end
+
+        function objAPI:createObj(TYPE,posX,posY,despawnable,arg1,arg2)
+            --todo, rename objectID to objectID because class makes no sense here
+            local objectID=TYPE..objAPI:getObjectCount()+1+framesPassed.."r"..math.random(0,200) --assign random ID
+            local classTYPE local LEVEL
+            classTYPE,LEVEL=objAPI:type2class(TYPE)
+            local levelObject=entityLists[LEVEL]
+            if classTYPE~=false then
+                allEntities[objectID]=entityClasses[classTYPE]()  --despawnable also triggers block animation (sometimes) [edit idfk why i made this comment here]
+                table.insert(levelObject,objectID)
+                allEntities[objectID]:setup(objectID,posX,posY,TYPE,despawnable,arg1,arg2)
+            end return objectID
+        end
+
+        function objAPI:initObject(objectID,TYPE,LEVEL,hitBox,xywh,vx,vy) --facilitates bringing an object into existence!
+            self.objectID=objectID
+            self.TYPE=TYPE
+            self.LEVEL=LEVEL or "inner"
+            self.hitBox=hitBox
+            self.x=xywh[1] self.y=xywh[2] self.w=xywh[3] or 16 self.h=xywh[4] or 16 self.vy=vy or 0
+            self.vx=(vx~=true) and vx or ((mario.x>self.x) and 2 or -2)
+        end
+    
+        function objAPI:destroy(objectName,LEVEL) --add to cleanup waitlist
+            table.insert(cleanupListDestroy,{objectName,LEVEL})
+        end
+    
+        function objAPI:transferLayer(objectName,LEVEL,newLEVEL) --add to cleanup waitlist
+            table.insert(cleanupListTransfer,{objectName,LEVEL,newLEVEL})
+        end
+    
+        function objAPI:sendToFront(objectName,LEVEL) --removes from layer and reinserts at the top
+            table.insert(cleanupListTransfer,{objectName,LEVEL,LEVEL})
+        end
+    
+        function objAPI:addHitBox(objectID,x,y,w,h,TYPE)
+            table.insert(hitBoxList,{objectID,x,y,w,h,TYPE})
+        end
+    
+        function objAPI:addPlatform(objectID,x,y,w,xVel,yVel)
+            local yOffset=0
+            if math.abs(yVel)>1 then
+                yOffset=(math.floor(y-4)%2)
+            end
+            table.insert(playStage.platformListAdd,{objectID,x,y-yOffset,w,xVel,yVel})
+        end
+    
+        function objAPI:updatePlatforms()
+            playStage.platformList={}
+            for i=1,#playStage.platformListAdd do
+                table.insert(playStage.platformList,{unpack(playStage.platformListAdd[i])})
+            end
+            playStage.platformListAdd={}
+        end
+    
+        function objAPI:cleanup() --these huge functions relating to every object are very fun :>
+            for iH=1,#hitBoxList do --hitBox aggressor array: {objectID,x,y,w,h,type} // hitBox passive array: {w,h,willBeKilled,destroyFireball,xOffset,yOffset}
+                for k in pairs(entityLists) do --do all entity lists
+                    local focusedList=entityLists[k]
+                    for i=1,#focusedList do --for all entities within the list
+                        local entity=allEntities[focusedList[i]]
+
+                        if entity.hitBox then --if entity can be hit
+                            local victomHitBox=entity.hitBox
+                            local aggressorHitBox=hitBoxList[iH]
+                            victomHitBox[5],victomHitBox[6]=victomHitBox[5] or 0,victomHitBox[6] or 0
+                            -- local pos={entity.x,entity.y} -- V if there is a collision V
+
+                            if aggressorHitBox[1]~=entity.objectID and (checkCollision(aggressorHitBox[2],aggressorHitBox[3],aggressorHitBox[4],aggressorHitBox[5],entity.x+2+victomHitBox[5],entity.y+2+victomHitBox[6],victomHitBox[1]-4,victomHitBox[2]-4)) then
+                                if entity.dead~=true then
+                                    local hitVictim=allEntities[aggressorHitBox[1]]
+
+                                    print("HIT",aggressorHitBox[1],entity.objectID,victomHitBox[1],victomHitBox[2],victomHitBox[3],victomHitBox[4],aggressorHitBox[2],aggressorHitBox[3],aggressorHitBox[4],aggressorHitBox[5],aggressorHitBox[6])
+                                    
+                                    if aggressorHitBox[6]=="shell" and victomHitBox[3]==true then
+                                        hitVictim:handleShellPoints()
+                                        if entity.destroyShell then hitVictim:hit() end
+                                    elseif aggressorHitBox[6]=="fireball" and victomHitBox[4]==true then
+                                        hitVictim:handleFireballHit()
+                                    elseif aggressorHitBox[6]=="mario" and not entity.disableStarPoints then
+                                        objAPI:addStats("points","200",mario.x,mario.y-16)
+                                    end
+                                end
+                                entity:hit(aggressorHitBox[6]) --react to hit (death/jump/other)
+            end end end end end --important for hitbox to go first so that new queued requests don't get cleared
+            for i=1,#cleanupListDestroy do --remove entity from list and clear all stored vars
+                local objectName,LEVEL=unpack(cleanupListDestroy[i])
+                -- print(objectName,LEVEL)
+                local levelObject=entityLists[LEVEL]
+                for i2=1,#levelObject do
+                    if levelObject[i2]==objectName then
+                        table.remove(levelObject,i2)
+                        allEntities[objectName]={}
+                        break
+            end end end
+            for i=1,#cleanupListTransfer do
+                local LEVEL=cleanupListTransfer[i][2]
+                local newLEVEL=cleanupListTransfer[i][3]
+                local objectName=cleanupListTransfer[i][1]
+                local levelObject=entityLists[LEVEL]
+                local newLevelObject=entityLists[newLEVEL]
+                for i2=1,#levelObject do
+                    if levelObject[i2]==objectName then
+                        table.remove(levelObject,i2)
+                        table.insert(newLevelObject,objectName)
+                        break
+            end end end
+
+            cleanupListDestroy={}
+            cleanupListTransfer={}
+            hitBoxList={}
+        end
+
+        function objAPI:getBlockStandingOn() --returns the block that the entity is standing on, if any
+            local rightX=self.x+self.w
+            local bottomY=self.y+self.h
+
+            local blockLeft=pixel2block(self.x,bottomY,true)
+            local blockRight=pixel2block(rightX,bottomY,true)
+
+            blockLeft=(blockLeft and self:checkForWall(self.x,bottomY)) and blockLeft or false
+            blockRight=(blockRight and self:checkForWall(rightX,bottomY)) and blockRight or false
+
+            -- print("blockLeft",blockLeft,blockRight)
+
+            local pushVLeft=blockLeft and blockLeft.pushV or 0
+
+            local block
+
+            if blockLeft and blockRight then
+                --go in the center of the block
+                local blockCenter=pixel2block(self.x+(self.w/2),bottomY,true)
+                block=blockCenter or false
+            else 
+                block=blockLeft or blockRight
+            end
+
+            return block
+        end
+        
+        function objAPI:setNewPushV()
+            local px,py=0,0
+            if not self.spring then --a somewhat embarrasing solution...
+                local platformVel=objAPI:platformCheck(self.x,self.y)
+                if platformVel then
+                    px,py=platformVel[1],platformVel[2]
+                end
+            end
+            local blockStandingOn=self:getBlockStandingOn()
+            if blockStandingOn and blockStandingOn.pushV then
+                px=px+blockStandingOn.pushV
+            end
+            self.px=px
+            self.py=py
+        end
+
+        function objAPI:addStats(type,value,x,y,fromFlagpole)
+            if type=="points" then
+                if x~=nil and y~=nil then objAPI:createObj("score",x,y,nil,value) end --particle
+                playStage.SCORE=playStage.SCORE+value
+            elseif type=="coins" then
+                playStage.coinCount=playStage.coinCount+value
+                if playStage.coinCount>99 then
+                    playStage.coinCount=playStage.coinCount%100
+                    objAPI:addStats("1up",1,mario.x,mario.y)
+                end
+            elseif type=="1up" and x~=nil and y~=nil then
+                objAPI:createObj("score",x,y,nil,"1up")
+            end
+        end
+
+    --OBJECT ANIMATION
+        function objAPI:animateDeathFlyOffscreen()
+            self.x=self.x+self.vx
+            if self.vy<-0.5 then --rising
+                self.vy=(self.vy+0.25)*0.75 --most of these values do not have much meaning, just tuned to what feels right :>
+            elseif (self.vy<0 and self.vy>-0.5) or self.vy>0 then --begin/is falling
+                self.vy=self.vy>6 and 6 or (math.abs(self.vy)+0.5)*1.18
+            end
+            self.y=self.y+self.vy
+            if self.y<0 then
+                objAPI:destroy(self.objectID,self.LEVEL)
+            end
+        end --NEW code approved
+
+    --OBJECT MOVEMENT
+        function objAPI:checkForWall(x,y,isMario) -- return true if point is in wall
+            local isMario=isMario or (self.objectID=="mario")
+            return (pixel2solid(x,y,true) and not (isMario and pixel2anything("marioonly",x,y,true))) or (isMario and pixel2anything("entityonly",x,y,true)) --check if x pos in a wall
+        end --NEW code approved
+
+        function objAPI:multiWallCheck(v,notRelative) -- returns true if any point in wall
+            local results,r={},not notRelative and {self.x,self.y} or {0,0}
+            for i=1,#v do
+                results[i]=self:checkForWall(v[i][1]+r[1],v[i][2]+r[2])
+            end return table.checkForValue(results,true)
+        end --NEW code approved
+
+        function objAPI:calculateAccelerationY(strength,terminalV)
+            if not self.spring then --a somewhat embarrasing solution...
+                strength=strength or 1
+                local terminalV,dec,acc=terminalV or -6,0.7*strength,1.2*strength
+                if self.vy>0 then --ascending
+                    self.vy=(self.vy>0.5) and self.vy*dec or -0.08
+                elseif self.vy<0 then --descending
+                    self.vy=(self.vy*acc<terminalV) and terminalV or self.vy*acc
+        end end end --NEW code approved
+
+        function objAPI:aggregateCheckX(V,platformCalc) --to move in the x direction
+            if not self.spring then --a somewhat embarrasing solution...
+                local function rndPos(X,V)
+                    if V<0 then return (math.floor(X/16))*16
+                    else return (math.ceil(X/16))*16 end
+                end
+                local function checkX(X,Y,V,checkSemisolid)
+                    local result={rndPos(X,V),true}
+                    if self:checkForWall(X+V,Y) then --wallX becomes true if there is a wall
+                    elseif checkSemisolid and V<0 and pixel2semisolid(2,X+V,Y,true) then --going left
+                        local semisolidPos=rndPos(X+V,0) --yea
+                        if not (((X+V)<=semisolidPos) and (X>=semisolidPos)) then result={X+V,false} end
+                    elseif checkSemisolid and V>0 and pixel2semisolid(4,X+V,Y,true) then --going right
+                        local semisolidPos=rndPos(X,V)
+                        if not (((X+V)>=semisolidPos) and (X<=semisolidPos)) then result={X+V,false} end
+                    else result={X+V,false} end return unpack(result)
+                end
+                local X,Y,W,H,V,isMario,LEFT,RIGHT,POWER = self.x,self.y,self.w or 16,self.h or 16,V or self.vx,self.objectID=="mario" and true or false,(V<0),(V>0)
+                local powerLeft,powerRight,wall5,wall6,finalPos
+                local topLeft,wall1     =checkX(X+2,Y+3,V,LEFT)
+                local topRight,wall2    =checkX(X+W-3,Y+3,V,RIGHT)
+                local bottomLeft,wall3  =checkX(X+2,Y+H-1,V,LEFT)
+                local bottomRight,wall4 =checkX(X+W-3,Y+H-1,V,RIGHT)
+                local valuesX={topLeft-2,topRight-W+3,bottomLeft-2,bottomRight-W+3}
+                if isMario and mario.power>0 and not mario.crouch then
+                    powerLeft,wall5     =checkX(X+2,Y-15,V,LEFT)
+                    powerRight,wall6    =checkX(X+W-3,Y-15,V,RIGHT)
+                    table.insert(valuesX,powerLeft-2) table.insert(valuesX,powerRight-W+3) 
+                end
+                if V<0 then finalPos=math.max(unpack(valuesX))
+                else        finalPos=math.min(unpack(valuesX)) end
+                if wall1 or wall2 or wall3 or wall4 or wall5 or wall6 then --contact with wall made
+                    local justify=((wall1 or wall3 or wall5) and input.left==1) and "L" or ((wall2 or wall4 or wall6) and input.right==1) and "R" or false
+                    self:checkFor(justify)
+                    if isMario and self.vy==0 then mario:pipeCheck() end
+                    if self.canHitSide and self.vx~=0 then
+                        local testPos=finalPos+(V>0 and W-3 or 0)+pol2binary(V)*8 local offsetY={1,H-1}
+                        for i=1,#offsetY do
+                            if pixel2bumpable(testPos,self.y+offsetY[i],true) then
+                                local v=pixel2plot(testPos,self.y+offsetY[i],true)
+                                objAPI:handleBumpedBlock(v[1],v[2],true)
+                    end end end
+                    if self.isFireball then self:handleFireballHit() end
+                    if not platformCalc then
+                        if isMario and math.round(X,1)==math.round(finalPos,1) then self.vx=0 --print(X,V,self.vx,finalPos)
+                        elseif self.turnAround then self.vx=-self.vx
+                end end end
+                self.x=finalPos
+        end end --NEW code approved
+
+        function objAPI:gravityCheck(yVel,platformCalc,jumpCalc) --made to work with velocity values that are reasonable, ie up is negative, down is positive
+            if not self.spring then --a somewhat embarrasing solution...
+                local function rndPos(Y,V) return (math.floor((Y+V)/16)*16)+4 end --this likely won't work so well with downwards velocities below -15, take note
+                local function checkY(isMario,X,Y,V,platformCalc)
+                    local pos={Y+V} --list of possible positions to fall to
+                    if not platformCalc then
+                        for i=1,#playStage.platformList do
+                            local platform=playStage.platformList[i]
+
+                            local pX=platform[2] local pY=platform[3] local pW=platform[4] local pV=-platform[6]
+                            if X>=pX and X<=pX+pW then --object is in x axis radius of platform, therefore possibility of landing
+                                if ((Y<=pY) and (not ((pos[1])<pY) or not ((pos[1])<(pY+pV)))) then --if above platform and not (wont land on it)
+                                    table.insert(pos,pY) pos[1]=pY
+                    end end end end
+                    if (pixel2solid(X,pos[1],true) and not (isMario and pixel2anything("marioonly",X,pos[1],true))) then
+                        table.insert(pos,rndPos(Y,V)) -- ↳ if block is solid
+                    elseif (isMario and pixel2anything("entityonly",X,pos[1],true)) then
+                        table.insert(pos,rndPos(Y,V)) -- ↳ if 1. it is mario 2. if it's entityonly then it is solid for him. necessary as entityonly blocks do not have the general 'solid' parameter
+                    elseif pixel2semisolid(1,X,pos[1],true) then
+                        local semisolidPos=rndPos(Y,V)
+                        if ((Y+V)>=semisolidPos) and (Y<=semisolidPos) then table.insert(pos,semisolidPos) end --MUCH better than my last """solution"""
+                    end
+                    local finalPos=math.min(unpack(pos)) local onFloor=(#pos)~=1
+                    return finalPos, onFloor
+                end
+                local X,Y,W,H,V,isMario=self.x,math.floor(self.y),self.w or 16,self.h or 16,math.floor(yVel) or -math.ceil(self.vy),self.objectID=="mario" and true or false
+                local LEFT, floorL=checkY(isMario,self.x+3,Y+H,V,platformCalc)
+                local RIGHT,floorR=checkY(isMario,self.x+W-3,Y+H,V,platformCalc)
+                if W>16 then --prevent falling into a block for wide entities. **only works for 32 in this case**
+                    local RIGHT2,floorR2=checkY(isMario,self.x+16-3,Y+H,V,platformCalc)
+                    if RIGHT2<RIGHT then
+                        RIGHT,floorR=RIGHT2,floorR2
+                end end
+                local finalPos=math.min(LEFT-H,RIGHT-H) --PAY ATTENTION!! the height offset must ALWAYS be considered
+                if jumpCalc then
+                    if self.y==finalPos then return true end
+                    return false
+                end
+                if not platformCalc or self.vy==0 then
+                    if floorL or floorR then
+                        if self.doesBounce then self.vy=(type(self.doesBounce)=='number' and self.doesBounce) or 17
+                        -- elseif self.isBouncy and self.vy<0 then
+                        --     self.vy=-((self.lastBounce or self.vy))
+                        --     self.lastBounce=-(self.vy)+3.5
+                        --     if self.vy<0.9 then self.lastBounce=nil self.vy=0 end
+                        else self.vy=0 end
+                        if isMario then mario.hitCount=0 end
+                    else self.vy=math.max(self.vy-1.4,-7)
+                end end
+                if self.noFall and self.vy==0 and not platformCalc then
+                    if (floorL and not floorR) or (floorR and not floorL) then
+                        self.vx=-self.vx
+                    end
+                end
+                self.y=finalPos
+        end end --NEW code approved
+
+        function objAPI:bumpCheck(V,crouchCalc) --made to work with velocity values that are reasonable, ie up is negative, down is positive
+            if not self.spring then --a somewhat embarrasing solution...
+                local function checkY(isMario,X,Y,V)
+                local function rndPos(X) return (math.ceil((X-4)/16)*16)+4 end
+                    for i=(math.floor((Y-4)/16)*16)+3,(Y+V-15),-16 do
+                        i=(i<(Y+V)) and (Y+V) or i
+                        if (pixel2solid(X,i,true) and not (isMario and pixel2anything("marioonly",X,i,true))) then
+                            return rndPos(i),{X,i} -- ↳ if block is solid
+                        elseif isMario and pixel2anything("entityonly",X,i,true) then
+                            return rndPos(i),{X,i} -- ↳ if 1. it is mario 2. if it's entityonly then it is solid for him. necessary as entityonly blocks do not have the general 'solid' parameter
+                        elseif isMario and pixel2anything("invisiblock",X,i,true) then
+                            return rndPos(i),{X,i}
+                        elseif pixel2semisolid(3,X,i,true) then
+                            local semisolidPos=rndPos(i)
+                            if ((Y+V)<=semisolidPos) and (Y>=semisolidPos) then return rndPos(i),{X,i} end
+                    end end return Y+V,false
+                end
+                local X,Y,W,H,V,isMario = self.x,self.y,self.w or 16,self.h or 16,V or self.vy,self.objectID=="mario" and true or false
+                local offsetY=(isMario and mario.power>0 and not mario.crouch) and -15 or 0
+                local topLeft,topLeftB=checkY(isMario,X+3,Y+offsetY,V)
+                local topRight,topRightB=checkY(isMario,X+W-3,Y+offsetY,V)
+                if crouchCalc and mario.crouch then return not not (topLeftB or topRightB) end --table to boolean :p
+                if topLeftB or topRightB then
+                    self.vy=-0.61
+                    if self.isFireball then self:handleFireballHit() self.y=self.y-4 return end
+                    if self.canHit or isMario then
+                        if type(topLeftB)=="boolean" then topLeftB=topRightB end
+                        if type(topRightB)=="boolean" then topRightB=topLeftB end
+                        topLeftB[2],topRightB[2]=math.max(topLeftB[2],topRightB[2]),math.max(topLeftB[2],topRightB[2])
+                        local bumps={topLeftB,topRightB}
+                        for i=1,#bumps do
+                            if bumps[i] and pixel2bumpable(bumps[i][1],bumps[i][2],true) then
+                                objAPI:handleBumpedBlock(unpack(pixel2plot(bumps[i][1],bumps[i][2],true)))
+                end end end end
+                self.y=math.max(topLeft-offsetY,topRight-offsetY)
+        end end --NEW code approved
+
+        function objAPI:platformCheck(x,y,optionalLength) --checks if standing on a platform and then returns xVel/yVel if applicable
+            y=math.floor(y)
+            local distance=15-2
+            if optionalLength then distance=optionalLength-2 end
+            for i=1,#playStage.platformList do 
+                local platform=playStage.platformList[i]
+                local pX=platform[2] local pY=platform[3] local pW=platform[4]
+
+                if ((x+2>=pX and x+2<=pX+pW) or (x+distance>=pX and x+distance<=pX+pW)) and y+16==pY then --object is in x axis radius of platform, and is on same y level
+                    return {tonumber(platform[5]),tonumber(platform[6])}
+                end
+            end
+            return {0,0}
+        end --TODO rewrite needed ##############
+
+    --OBJECT BEHAVIOUR
+        function objAPI:checkStuckInWall()
+            if self:checkForWall(self.x+8,self.y+8) and not self.dead then --stuck in a block
+                objAPI:destroy(self.objectID,self.LEVEL)
+            end
+        end --NEW code approved
+
+        function objAPI:checkMarioCollision(onStomp,noKill,bodge) bodge=bodge or 0 --bodge is a temporary fix for the fact that bowser's xy center is not the same as his visual appearance and so he can't be hit, very hacky, very bad, very sad, very mad
+            if not (mario.starTimer>playStage.framesPassed) or self.allowStarCollision then --hitting mario is possible
+                local marioSize=(mario.power==0 or mario.crouch) and 0 or 16
+                if onStomp and checkCollision(mario.x+1,mario.y-marioSize+1,14,14+marioSize,self.x+1,self.y,self.hitBox[1]-1,1) and (mario.vy<0 or mario.py<0 or self.py>0 or self.vy>0) then --hit on head
+                    if not noKill then
+                        mario.vtempY=15
+                        mario:handleStomp()
+                        self.dead=true -- !! may not always apply
+                    end
+                    if onStomp[1]=="stomp" then
+                        self.status=onStomp[2]
+                        self.deathAnimTimer=playStage.framesPassed+10
+                        objAPI:sendToFront(self.objectID,self.LEVEL)
+                    elseif onStomp[1]=="dropkill" then
+                        self.vy=0.5
+                    elseif onStomp[1]=="powerup" then self:use()
+                    elseif onStomp[1]=="shell" then
+                        self.hitTimer=playStage.framesPassed+8 --avoid instakill after kicking shell or double hits
+                        local shakeCondition=self.koopaTimer and (self.koopaTimer-45<playStage.framesPassed)
+                        if self.vx==0 and not shakeCondition then --NOT shaking (about to turn into koopa)
+                            self.koopaTimer=false
+                            if level.current.enableShellBouncing==true then mario.vtempY=8 end
+                            objAPI:addStats("points",400,self.x,self.y)
+                            self.vx=(self.x>mario.x) and 4 or -4
+                        else self.vx=0 --shaking or moving, outcome is the same either way
+                            self.koopaTimer=playStage.framesPassed+200
+                            mario.vtempY=15
+                            mario:handleStomp() --repeated code! aaah!
+                        end
+                    elseif onStomp[1]=="transform" then
+                        local vx,newID=self.vx,objAPI:createObj(onStomp[2],self.x,self.y,nil,onStomp[3],onStomp[4])
+                        objAPI:destroy(self.objectID,self.LEVEL) self.status=onStomp[5]
+                        if string.sub(self.TYPE,1,5)=="Pkoop" then allEntities[newID].vx=sign(vx)*2 end 
+                    end
+                    if level.current.enableCoinOnKill then objAPI:createObj("coin",self.x,self.y-16,true) end
+                elseif checkCollision(mario.x+1,mario.y-marioSize+1,14,14+marioSize,self.x+4,self.y+3+bodge,self.hitBox[1]-8,self.hitBox[2]-4) then --hit mario (side)
+                    if onStomp[1]=="shell" and self.vx==0 then
+                        self.hitTimer=playStage.framesPassed+8 --avoid instakill after kicking shell or double hits
+                        self.koopaTimer=false self.hitCount=0
+                        objAPI:addStats("points",400,self.x,self.y)
+                        self.vx=(self.x>mario.x) and 6 or -6
+                    elseif onStomp[1]=="powerup" then self:use()
+                    elseif onStomp[1]=="clear" then
+                        if not mario.clear then mario:clearedLevel(onStomp[2]) playStage.wait=true end
+                        self.dead=true
+                    else mario:powerDownMario() end
+                end
+                --table.insert(debugBoxes,{mario.x+1,mario.y-marioSize+1,14,14+marioSize})
+                --table.insert(debugBoxes,{self.x+4,self.y+3+bodge,self.hitBox[1]-8,self.hitBox[2]-4})
+            end
+        end --NEW code approved
+
+        function objAPI:handleHitDefault(circumstance,newStatus,newTYPE) --works for most enemies
+            self.vy=-11 self.dead=true self.status=newStatus self.TYPE=newTYPE or self.TYPE
+            if level.current.enableCoinOnKill then objAPI:createObj("coin",self.x,self.y-16,true) end
+            if circumstance=="fireball" or circumstance=="block" then
+                objAPI:addStats("points","100",self.x,self.y)
+            end
+            if circumstance=="mario" or circumstance=="fireball" then
+                self.vx=(mario.x<self.x) and 2 or -2
+            end objAPI:transferLayer(self.objectID,self.LEVEL,"particle")
+            self.LEVEL="particle"
+        end --NEW code approved
+
+        function objAPI:handleBumpedBlock(xLOC,yLOC,shell)
+            local ID=plot2ID(xLOC,yLOC)
+            local pixelXY=plot2pixel(xLOC,yLOC,false)
+            if blockIndex[ID].containing~=nil and blockIndex[ID].containing~=false then --if there is something in the block
+                objAPI:createObj(blockIndex[ID].containing,pixelXY[1],pixelXY[2],true) --(TYPE,posX,posY,fromBlock) objAPI:createObj(blockID,(i2-1)*16,212-16*(i),0)
+            end
+            if blockIndex[ID].breakable==false or (mario.power==0 and not shell) then --create bumped block if unable to be destroyed
+                local texture = blockIndex[ID].bumpable[2]
+                if texture == true then texture = blockIndex[ID].texture[1] end
+                objBumpedBlock:create(xLOC,yLOC,texture,blockIndex[ID].bumpable[3],false)
+            else --smash the block
+                playStage.SCORE=playStage.SCORE+50
+                plot2place(0,xLOC,yLOC)
+                objBrickParticleGlobalAnimIndex=0
+                objAPI:createObj("brick_piece",pixelXY[1],pixelXY[2],false,-3,7.5) --top left
+                objAPI:createObj("brick_piece",pixelXY[1]+8,pixelXY[2],false,3,7.5) --top right
+                objAPI:createObj("brick_piece",pixelXY[1]+8,pixelXY[2]+8,false,3,2.5) --bottom right
+                objAPI:createObj("brick_piece",pixelXY[1],pixelXY[2]+8,false,-3,2.5) --bottom left
+                objAPI:addHitBox(nil,pixelXY[1]+1,pixelXY[2]-16,14,16,"block")
+            end
+            --CRASH on below line: line 2174 attempt to index field '?' (a nil value)
+            if yLOC<=12 and blockIndex[plot2ID(xLOC,yLOC+1)].coin==true then --if there is a coin above the bumped block
+                plot2place(0,xLOC,yLOC+1)
+                objAPI:createObj("coin",pixelXY[1],pixelXY[2]-16,true)
+            end
+        end --TODO rewrite needed ##############
+
+        function objAPI:checkFor(CHECK) --cannot be inside aggregatecheckx as has to display changes immediately, otherwise will be a frame late in some instances
+            local X,Y,W,H,isMario,O=self.x,self.y,self.w or 16,self.h or 16,self.objectID=="mario",self.vy==0 and 0 or -1
+            local function doCheck(x,y,isTop,side)
+                if self.canCollectCoins and pixel2anything("coin",x,y,true) then
+                    objAPI:addStats("coins",1) pixel2place(0,x,y,true) objAPI:addStats("points",200)
+                end
+                if isMario then 
+                    if pixel2anything("damage",x,y,true) and (not (mario.starTimer>playStage.framesPassed)) then
+                        if ((self:gravityCheck(self.vy,true,true) and not isTop) or mario.vy==-0.61 or mario.vx~=0) then --inputs are so that if mario jumps on the pixel that the spike is, it will not hurt him unless he is walking/jumping into it.
+                            mario:powerDownMario()
+                    end end
+                    if pixel2anything("kill",x,y,true) and (isTop or mario.vy<0) then --use isTop for when descending, so that mario sinks into lava slightly when in contact, rather than dying instantly on the surface. may look jank i guess but who cares that deeply about a calculator game anyway?
+                        mario:kill()
+            end end end
+            doCheck(X+2,Y+O,true,"L") doCheck(X+W-2,Y+O,true,"R") doCheck(X+4,Y+H,false,"L") doCheck(X+W-4,Y+H,false,"R")
+            if isMario and mario.power>0 and (crouchCalc or not mario.crouch) then doCheck(X+2,Y-16+O,true) doCheck(X+W-3,Y-16+O,true) end
+        end --NEW code approved
+
+    --OTHER
+        function objAPI:type2class(TYPE)
+            if typeIndex[string.sub(TYPE,1,5)]~=nil then
+                return typeIndex[string.sub(TYPE,1,5)][1],typeIndex[string.sub(TYPE,1,5)][2]
+            else return false,false
+            end
+        end
+        
+        function objAPI:type2name(TYPE,statusBox) --statusBox: 0=false, 1=true
+            local name=""
+            if type(TYPE)=='number' then
+                if blockIndex[TYPE]~=nil then
+                    name=blockIndex[TYPE]["name"]
+                end
+            elseif string.sub(TYPE,1,4)=="warp" then
+                local config=TYPE:split("_")
+                local ID,action,option=config[2],config[3],config[4]
+                if action=="edit" then name="EDIT WARP "..ID
+                elseif option then name=nameIndex["warp_ID_"..action.."_"..option]
+                else name=nameIndex["warp_ID_"..action]
+                end
+            elseif string.sub(TYPE,1,8)~="platform" then
+                if nameIndex[TYPE]~=nil then name=nameIndex[TYPE] end
+            else
+                name={} --eg: platform_3~1~lx~64
+                local config=(string.sub(TYPE,10,#TYPE)):split("~")
+                if nameIndex[config[3]]~=nil then name[1]="Platform "..nameIndex[config[3]] end
+                if statusBox==1 then 
+                    name[2]="Length: "..config[1]
+                    if string.sub(config[3],1,1)=="l" then name[3]="Distance: "..math.floor(config[4]/16) end
+                end
+            end return name
+        end
+
+---------------------------
+---PROFILER+OPTIMISATION---
+---------------------------
+
+    Profiler = {}
+    Profiler.__index = Profiler
+
+    function Profiler.new()
+        local self = setmetatable({}, Profiler)
+        self:reset()
+        return self
+    end
+
+    function Profiler:dealWithStoppingPrevious()
+        if self.current then
+            self:stop(self.current, true)
+            self.current = nil  -- reset current label after stopping
+        end
+    end
+
+    function Profiler:start(label, stopThisNext, category)
+        if not studentSoftware then return end
+
+        self:dealWithStoppingPrevious()
+
+        category = category or "uncategorized"
+
+        if not self.data[category] then
+            self.data[category] = {}
+        end
+
+        if not self.data[category][label] then
+            self.data[category][label] = { total = 0, count = 0, start = 0 }
+        end
+        self.data[category][label].start = timer.getMilliSecCounter()
+
+        if stopThisNext then
+            self.current = { label = label, category = category }
+        end
+    end
+
+    function Profiler:stop(label, fromDealWithStoppingPrevious)
+        if not studentSoftware then return end
+
+        if not fromDealWithStoppingPrevious then
+            self:dealWithStoppingPrevious()
+        end
+
+        -- find the label in the current or any category
+        local entry
+        if self.current and self.current.label == label then
+            local cat = self.current.category
+            entry = self.data[cat][label]
+        else
+            -- fallback: search categories for label (slow path)
+            for cat, catData in pairs(self.data) do
+                if catData[label] then
+                    entry = catData[label]
+                    break
+                end
+            end
+        end
+        if not entry then return end -- label not found
+
+        local duration = timer.getMilliSecCounter() - entry.start
+        entry.total = entry.total + duration
+        entry.count = entry.count + 1
+        entry.start = 0
+    end
+
+    function Profiler:report()
+        if not studentSoftware then return end
+
+        local timeTaken = timer.getMilliSecCounter() - self.lastTime
+        print("=== PROFILER REPORT ===", collectgarbage("count"), "kb", timeTaken, "ms")
+
+        for category, catData in pairs(self.data) do
+            --add up all calls and total time for the category
+            local totalCalls = 0
+            local totalTime = 0
+            for label, stat in pairs(catData) do
+                totalCalls = totalCalls + stat.count
+                totalTime = totalTime + stat.total
+            end
+            print("### Category:", category, "Total Calls:", totalCalls, "Total Time:", totalTime, "ms")
+            for label, stat in pairs(catData) do
+                local avg = stat.total / math.max(stat.count, 1)
+                print(string.format("  %s: %d calls, total = %d ms, avg = %.2f ms",
+                    label, stat.count, stat.total, avg))
+            end
+        end
+
+        self:reset()
+    end
+
+    function Profiler:reset()
+        self.data = {}
+        self.current = nil
+        self.lastTime = timer.getMilliSecCounter()
+    end
+
+    function Profiler:wrap(label, func, category)
+        if not studentSoftware then return func end
+
+        category = category or "wrapped"
+        return function(...)
+            self:start(label, false, category)
+            local result = {func(...)}
+            self:stop(label)
+            -- if label == "string.match" then --crash to show debugger
+            --     error("Debugging call")
+            -- end
+            return unpack(result)
+        end
+    end
+
+    Profiler = Profiler.new()
+
+    local function hookFunctions(libName, lib)
+        local function hook(v, funcName)
+            print("Hooking function: " .. funcName)
+            local category = type(lib) == "table" and libName or "hooked"
+
+            return Profiler:wrap(funcName, v, category)
+        end
+
+        if type(lib) == "table" then
+            for k, v in pairs(lib) do
+                local funcName = libName .. "." .. k
+                if type(v) == "function" then
+                    lib[k] = hook(v, funcName)
+                elseif type(v) == "table" then
+                    hookFunctions(libName .. "." .. k, v) -- recursive hook for nested tables
+                end
+            end
+        elseif type(lib) == "function" then -- if the library is a function, we can wrap it directly
+            lib = hook(lib, libName)
+        end
+    end
+
+    if studentSoftware then
+        hookFunctions("string", string)
+        hookFunctions("table", table)
+        hookFunctions("math", math)
+
+        -- hookFunctions("unpack", unpack)
+        hookFunctions("collectgarbage", collectgarbage)
+        hookFunctions("print", print)
+        hookFunctions("error", error)
+        hookFunctions("type", type)
+        hookFunctions("pairs", pairs)
+        hookFunctions("ipairs", ipairs)
+        hookFunctions("next", next)
+        hookFunctions("tostring", tostring)
+        hookFunctions("tonumber", tonumber)
+        hookFunctions("assert", assert)
+        hookFunctions("require", require)
+        hookFunctions("pcall", pcall)
+        hookFunctions("xpcall", xpcall)
+    end
+
+    function destroyObject(obj, setTo)
+        setTo=setTo or nil
+        --iterate over the object and set all its fields to nil
+        if type(obj) == "table" then
+            for k in pairs(obj) do
+                local value = obj[k]
+                if type(value) == "table" then
+                    destroyObject(value)
+                else
+                    obj[k] = nil
+                end
+            end
+        end
+        return setTo or nil --return nil or the value to set the object to
+    end
+
+---------------------------
+---MARIO CLASS FUNCTIONS---
+---------------------------
+mario=class(objAPI)
+
+    function mario:init()
+        mario.trail={}
+        self.objectID="mario" self.canCollectCoins=true
+        mario:resetPos()
+    end
+
+    function mario:resetPos() --default config
+        mario.powerUp=false
+        mario.powerDown=false
+        mario.clear=false
+        mario.dead=false
+        mario.powerAnimTimer=0
+        mario.dir="R"
+        mario.crouch=false
+        mario.x=level.current.startX mario.y=level.current.startY
+        mario.w=16 mario.h=16
+        mario.vx=0 mario.vy=0
+        mario.status="idle"
+        mario.power=0 mario.skipAnim=false
+        playStage.wait=false
+        mario.iFrames=-1
+        mario.hitCount=0
+        mario.starAnim=false
+        mario.actionAnimTimer=0
+        mario.starTimer=0 mario.interactSpring=true
+        mario.jumpAnim=0 mario.spring=false mario.pipe=false
+    end
+
+    function mario:logic() --direction is seperate as its still needed during pause
+        mario.starAnim=false
+        if not playStage.wait and not mario.powerUp and not mario.powerDown then
+            if not mario.spring and not mario.clear or mario.clear==true or mario.clear=="count" then
+                mario:calculateInput()
+                mario:calculateMove()
+        end end
+        mario:calculateAnim()
+    end
+
+    function mario:calculateInput() --turns inputs into velocity (or crouch/fireball)
+        local topSpeed=7
+        if level.current.autoMove=="w" then topSpeed=3.5 end
+    --X movement
+        if mario.power~=0 and (input.down==1) and mario.vy==0 then
+            mario.crouch=true mario.actionAnimTimer=0
+        elseif mario.power~=0 and mario.vy==0 and self:bumpCheck(-1,true) then
+            mario.crouch=true mario.actionAnimTimer=0
+        elseif mario.vy==0 or mario.power==0 then mario.crouch=false end
+        if input.down==1 and mario.vy==0 then mario:pipeCheck() end
+        if mario.crouch then mario.vx=mario.vx*(0.93) end
+        if mario.crouch and mario.vy==0 and (pixel2solid(mario.x+2-playStage.cameraOffset,mario.y-8) or pixel2solid(mario.x+13-playStage.cameraOffset,mario.y-8)) then
+            if mario.jumpAnim>-7 and math.abs(mario.vx)<1 then
+                if input.right==1 and (mario.vx>0 or mario.jumpAnim>-1) then mario.vx=input.right
+                elseif input.left==1 and (mario.vx<0 or mario.jumpAnim>-1) then mario.vx=-input.left end
+            end
+        elseif (input.left==1 or input.right==1) and (not mario.crouch or mario.vy~=0) then
+            if ((input.left==1 and mario.vx>0.5) or (input.right==1 and mario.vx<-0.5)) and mario.vy==0 then mario.vx=mario.vx*0.9 --drifting slower
+            else --not drifting
+            --max running speed 7
+                if math.abs(mario.vx)<2.0 then --walking under 2.0
+                    mario.vx=mario.vx+input.right*(math.random(3,5)/10)
+                    mario.vx=mario.vx-input.left*(math.random(3,5)/10)
+                elseif math.abs(mario.vx)<4.5 then
+                    mario.vx=mario.vx+input.right*0.3
+                    mario.vx=mario.vx-input.left*0.3
+                elseif math.abs(mario.vx)<=topSpeed and mario.vy==0 then
+                    mario.vx=mario.vx+input.right*0.12
+                    mario.vx=mario.vx-input.left*0.12
+                elseif math.abs(mario.vx)<=topSpeed and mario.vy~=0 and ((input.right==1 and mario.vx<-0.5) or (input.left==1 and mario.vx>0.5)) then
+                    mario.vx=mario.vx+input.right*0.6
+                    mario.vx=mario.vx-input.left*0.6 end end
+        elseif not mario.crouch then -- not holding inputs
+            if mario.vy==0 then mario.vx=mario.vx*(0.8) -- on ground
+            else mario.vx=mario.vx*(0.95) end -- in air
+        end
+        if mario.vx>=topSpeed then mario.vx=topSpeed elseif mario.vx<=-topSpeed then mario.vx=-topSpeed end 
+        if math.abs(mario.vx)<0.1 then mario.vx=0 end --movement minumum, prevents velocity of 0.00001626 for example
+    --Y movement
+        if input.up==1 and self.vy==0 and self:gravityCheck(0,true,true) and not playStage.disableJumping then  --up arrow pressed and on the floor (no double jumps)
+            local runningBoost=(math.abs(mario.vx)>3) and math.abs(mario.vx) or 0
+            mario.jumpAnim=(mario.jumpAnim<=0) and 3 or mario.jumpAnim
+            self.vy=18+runningBoost--for a maximum of 25, jump ~5.5 blocks. without boost is 4 blocks (idle)
+        else mario.vy=(mario.vy>0) and mario.vy*0.745 or mario.vy end --slow down upwards velocity when jumping (lower is floatier)
+        mario.vy=(math.abs(mario.vy)<0.6) and 0 or mario.vy --movement minumum, prevents velocity of 0.00001626 for example
+    --SPECIAL ACTIONS
+        if input.action==1 and mario.power==2 and not mario.crouch then
+            local fireballCount=0
+            for _, particleName in ipairs(entityLists.particle) do
+                if string.match(particleName, "fireball") then
+                    fireballCount = fireballCount + 1
+                end
+            end
+            if fireballCount<2 then
+                mario.actionAnimTimer=2
+                if mario.dir=="L" then objAPI:createObj("fireball_L",mario.x,mario.y)
+                else objAPI:createObj("fireball_R",mario.x+8,mario.y)
+    end end end end
+
+    function mario:calculateMove() --use velocity to update position
+        if mario.vtempY ~= nil then
+            mario.vy=mario.vtempY
+            mario.vtempY=nil
+        end
+        mario.vx=math.round(mario.vx,2)
+        mario.vy=math.round(mario.vy,2)
+    --X handling
+        self:aggregateCheckX(mario.px,true) --check & confirm platform's velocity
+        self:aggregateCheckX(mario.vx) --check & confirm mario's velocity
+        if (mario.x<0) or (((mario.x)<playStage.cameraOffset-2) and (level.current.autoScroll or level.current.disableBackScrolling)) then --left side
+            mario.x=playStage.cameraOffset-2 if mario.vx<0 then mario.vx=0 end
+            if self:multiWallCheck({{13,1},{13,15}}) then mario:kill() end
+            if (mario.power>0 and not mario.crouch) and self:multiWallCheck({{13,-13} or nil}) then mario:kill() end
+        elseif (mario.x>(playStage.levelWidth-13)) or (((mario.x)-playStage.cameraOffset>305) and (level.current.autoScroll)) then --right side
+            mario.x=305+math.ceil(playStage.cameraOffset) if mario.vx>0 then mario.vx=0 end
+            if self:multiWallCheck({{2,1},{2,15},(mario.power>0) and {2,-13} or nil}) then mario:kill() end
+            if (mario.power>0 and not mario.crouch) and self:multiWallCheck({{2,-13} or nil}) then mario:kill() end
+        end
+    --Y handling
+        if self.py<=0 then self:gravityCheck(-self.py,true) else self:bumpCheck(-self.py) end
+        if self.vy<=0 then self:gravityCheck(-self.vy)      else self:bumpCheck(-self.vy) end
+    --OTHER (death plane)
+        self:checkFor()
+        if mario.y>216 then mario:kill() end
+        mario:setNewPushV()
+    end
+
+    function mario:calculateAnim(calculateAnimForce) --handles mario's visuals (walk cycles, animations etc)
+        if (not mario.powerUp and not mario.powerDown and not playStage.wait and not mario.clear and not mario.dead) or calculateAnimForce or mario.pipe then --normal gameplay
+            mario.powerAnim=mario.power
+            if not mario.crouch then
+                if mario.vy==0 then
+                    if mario.vx~=0 then
+                        local velocity2cycle=0
+                        if (math.abs(mario.vx))>6.5 then velocity2cycle = 1.2 elseif (math.abs(mario.vx))>4.5 then velocity2cycle = 0.6 elseif (math.abs(mario.vx))>2 then velocity2cycle = 0.3 else velocity2cycle = 0.2 end
+                        mario.status="walk"..math.floor((velocity2cycle*mario.framesPassed)%3)+1 end
+                    if input.left==1 and mario.vx>0 then mario.status="drift" input.right=0 --drift animation if arrow key is going opposite way to velocity
+                    elseif input.right==1 and mario.vx<0 then mario.status="drift" input.left=0 end
+                    if mario.vx==0 then mario.status="idle" end
+                    else mario.status="jump"
+                end
+            else mario.status="crouch"
+            end
+            if mario.actionAnimTimer>0 then
+                mario.actionAnimTimer=mario.actionAnimTimer-1
+                mario.status="fire"
+            end
+        elseif mario.powerUp and playStage.wait then --powering UP in progress
+            if mario.power==1 then --growing to big mario
+                if playStage.framesPassedBlock-12<mario.powerAnimTimer then 
+                    local animOption=(math.ceil((playStage.framesPassedBlock/2)))%2
+                    if animOption==1 then mario.powerAnim=1 mario.status="grow" else mario.powerAnim=0 mario.status="idle" end
+                else
+                    local animOption=(math.ceil((playStage.framesPassedBlock/2)))%3
+                    if animOption==0 then mario.powerAnim=0 mario.status="idle" elseif animOption==1 then mario.powerAnim=1 mario.status="grow" else mario.powerAnim=1 mario.status="idle" end
+                end
+            elseif mario.power==2 then --growing to fire mario
+                local animOption=(math.ceil((playStage.framesPassedBlock/2)))%4
+                mario.powerAnim=2
+                mario.starAnim=2
+            end
+            if playStage.framesPassedBlock-24>mario.powerAnimTimer then --end animation
+                mario.powerUp=false
+                playStage.wait=false
+                mario.starAnim=false
+            end
+        elseif mario.powerDown and playStage.wait then --powering DOWN in progress
+            if mario.power==0 then
+                local animOption=(math.ceil((playStage.framesPassedBlock/(flashingDelay*2))))%2
+                if playStage.framesPassedBlock-12<mario.powerAnimTimer then --powering down to small mario
+                    if animOption==1 then mario.powerAnim=mario.power+1 mario.status=mario.animCache else mario.powerAnim=mario.power+1 mario.status="invisible" end --flash
+                else --down to big
+                    mario.animCache=mario.animCache=="crouch" and "walk1" or mario.animCache
+                    if animOption==1 then mario.status=mario.animCache else mario.status="invisible" end --flash
+                    mario.powerAnim=mario.power
+                end
+            elseif mario.power==1 then --powering down to big mario
+                local animOption=(math.ceil((playStage.framesPassedBlock/3)))%2
+                if animOption==1 then
+                    mario.powerAnim=1
+                else
+                    mario.powerAnim=2
+                end
+            end
+            if playStage.framesPassedBlock-24>mario.powerAnimTimer then --end power down anim
+                mario.powerDown=false
+                playStage.wait=false
+                mario.iFrames=playStage.framesPassed+40
+            end
+        elseif mario.clear then --mario cleared animation
+            if type(mario.clear)=="table" then --mario turned around on flagpole
+                if mario.clear[1]<=playStage.framesPassed then
+                    mario.clear=true mario.clearedTimer=true
+                    mario.dir="R"
+                end
+            elseif mario.clear=="count" then --mario disappeared/stop walking
+                if (playStage.TIME-7)>=7 then
+                    playStage.SCORE=playStage.SCORE+350
+                    playStage.TIME=playStage.TIME-7
+                elseif playStage.TIME>0 then
+                    playStage.SCORE=playStage.SCORE+50*playStage.TIME
+                    playStage.TIME=0 playStage.clearedTimer=playStage.framesPassed+25
+                elseif playStage.clearedTimer<=playStage.framesPassed then
+                    playStage:completeStage("goal")
+                end
+            elseif mario.clear==true then --mario walking from flagpole
+                if not playStage.wait then mario:calculateAnim(true) end
+                if mario.clearedTimer==true then
+                    if mario.vy==0 then
+                        mario.clearedTimer=playStage.framesPassed+31
+                        level.current.autoMove="w"
+                        if mario.skipAnim then mario:kill()
+                        else mario.dir="R" end
+                    end
+                elseif mario.clearedTimer<=playStage.framesPassed then mario:kill()
+                end
+                if pixel2ID(mario.x,mario.y+8,true)==85 or pixel2ID(mario.x,mario.y+8,true)==86 then --castle door tiles
+                    mario:kill() mario.y=300 --hide him
+                end
+            elseif (mario.y+4)<mario.clear then mario.y=mario.y+4  --mario sliding down flagpole
+                mario.status="climb"..math.floor((0.5*playStage.framesPassed)%2)+1
+            else mario.y=mario.clear --mario at bottom of flagpole
+                mario.status="climb2"
+            end
+        elseif mario.dead then --mario death animation
+            mario.powerAnim=0
+            if mario.vdeath<-0.5 and (playStage.framesPassedBlock>mario.deathAnimTimer+12) then
+                mario.y=mario.y+mario.vdeath
+                mario.vdeath=(mario.vdeath+0.2)*0.8
+            elseif (mario.vdeath<0 and mario.vdeath>-0.5) or mario.vdeath>0 then
+                mario.vdeath=(math.abs(mario.vdeath)+0.3)*1.09
+                mario.y=mario.y+mario.vdeath
+            end
+            if mario.y>220 then
+                if not mario.respawnTime then
+                    mario.respawnTime=playStage.framesPassedBlock+18
+                end
+                if playStage.framesPassedBlock>mario.respawnTime then playStage:completeStage("dead")
+        end end end
+        if mario.pipe then
+            local pipeActions={ --{x/y, speed, set vx to (anim purposes), move x from pipeX, move y from pipeY}
+                {"x",1.5,5,3,0,"L"}, --left
+                {"y",1.5,0,8,0.5,"R"}, --up
+                {"x",-1.5,-5,-1,0,"R"}, --right
+                {"x",0,0,0,0,"R"} --teleport (exit)
+            }
+            local function limit(num,lim) if num>lim then num=lim end return num end
+            local TYPE=level.current.pipeData[mario.pipe[1]][mario.pipe[2]][3]
+            pipeActions=pipeActions[TYPE]
+            mario.pipe[5]=mario.pipe[5]+1 --timer
+            local pipeTime=mario.pipe[5]
+            
+            if pipeTime<=11 then --init enter pipe, small zoom
+                mario[pipeActions[1]]=mario[pipeActions[1]]+pipeActions[2]
+                mario.vx=pipeActions[3]
+                mario.pipe[6]=limit(mario.pipe[6]+1,6) --transition timer
+            elseif pipeTime<=26 then --complete zoom and show black
+                mario.pipe[6]=mario.pipe[6]+0.35 --transition timer
+            elseif pipeTime==27 then --swap initial entr/exit with opposite
+                mario.pipe[2]=mario.pipe[3] --could have just done 3-value here tbh, too late. cant be bothered
+            elseif pipeTime==28 then --perform any mid-transition calculation
+                mario.pipe[6]=7.5
+                local pipeX,pipeY=(level.current.pipeData[mario.pipe[1]][mario.pipe[2]][1]-1)*16,212-16*level.current.pipeData[mario.pipe[1]][mario.pipe[2]][2]
+                -- print(pipeX,pipeY,"|",TYPE)
+                mario.vx=0 mario.vy=0
+                mario.dir=pipeActions[6]
+                mario:teleport(pipeX+pipeActions[4],pipeY+pipeActions[5])
+                for i=1,#level.current.loadedObjects do
+                    plot2place(unpack(level.current.loadedObjects[i]))
+                end
+                level.current.loadedObjects={}
+                playStage:clearEntities()
+                -- mario[pipeActions[1]]=mario[pipeActions[1]]+pipeActions[2]*11
+            elseif pipeTime<=39 then --zoom small out again
+                mario[pipeActions[1]]=mario[pipeActions[1]]-pipeActions[2]
+                if pipeTime<=32 then
+                    mario.pipe[6]=-limit(-(mario.pipe[6]-0.35),-6) --transition timer
+                elseif pipeTime>=35 then
+                    mario.pipe[6]=mario.pipe[6]-1.25 --transition timer
+                end
+                if pipeTime==39 then --return game to playing state
+                    mario.pipe=false playStage.wait=false
+                    playStage.transition2=false
+                end
+            end
+            playStage.transition2=mario.pipe and {mario.x-playStage.cameraOffset+8,mario.y+8,mario.pipe[6]*4} or false
+        end
+        if (mario.starTimer>playStage.framesPassed) then --handle star anim and hitbox
+            if not playStage.wait then
+                if (mario.starTimer-70>playStage.framesPassed) then
+                    mario.starAnim=2
+                elseif (mario.starTimer-15>playStage.framesPassed) then
+                    mario.starAnim=5 --slow down anim
+                end
+            end
+            local h=(mario.power>0) and 16 or 0 --mario height
+            objAPI:addHitBox("mario",mario.x,mario.y-h,16,16+h,"mario")
+        end
+        if not playStage.wait and not mario.clear and not mario.powerUp and not mario.powerDown and (mario.jumpAnim>0 or (not (mario.crouch and (pixel2ID(mario.x+2-playStage.cameraOffset,mario.y-8)==1 or pixel2ID(mario.x+13-playStage.cameraOffset,mario.y-8)==1)) and not self:aggregateCheckX(0,true,true))) and mario.vy==0 then --on ground, not jumping
+            if input.right==1 then mario.dir="R"
+            elseif input.left==1 then mario.dir="L" end
+        end
+    end
+
+    function mario:clearedLevel(xy)
+        if type(xy)=="table" then --sliding anim and such
+            mario.clear=xy[1] mario.status="climb1"
+            mario.x=xy[2]
+        else
+            mario.clear=true mario.clearedTimer=true mario.skipAnim=xy
+        end mario.vx=0 mario.vy=-0.1
+    end
+
+    function mario:powerUpMario(optionalPower,forced)
+        if not mario.dead and not mario.clear and not mario.powerDown then
+            local proceed=true
+            if optionalPower~=nil and (forced==true or optionalPower>mario.power) then
+                mario.power=optionalPower
+            elseif optionalPower==nil and mario.power<2 then mario.power=mario.power+1
+            else proceed=false end --there is nothing to power to
+            if proceed then
+                playStage.wait=true
+                mario.powerUp=true
+                mario.powerDown=false
+                mario.powerAnimTimer=playStage.framesPassedBlock
+                mario:calculateAnim(true)
+            end
+        end
+    end
+
+    function mario:powerDownMario(optionalPower)
+        if mario.power>0 and not mario.dead and not mario.clear and not mario.powerDown and not mario.powerUp and not (mario.iFrames>playStage.framesPassed) then
+            mario.power=mario.power-1
+            playStage.wait=true
+            mario.powerDown=true mario.powerUp=false mario.iFrames=-1
+            mario.powerAnimTimer=playStage.framesPassedBlock
+            mario.animCache= mario.status=="invisible" and mario.animCache or mario.status --cant be invisible during it
+        elseif not mario.dead and not mario.clear and not (mario.iFrames>playStage.framesPassed) and not mario.powerDown and mario.power==0 then
+            mario.kill()
+        end
+    end
+
+    function mario:powerStarMario(optionalLength)
+        if optionalLength==nil then
+            mario.starTimer=playStage.framesPassed+200
+        else
+            mario.starTimer=playStage.framesPassed+optionalLength
+        end
+    end
+
+    function mario:kill()
+        if mario.clear then
+            level.current.autoMove=nil mario.clear="count"
+            if mario.vy==0 then mario.status="idle" self.vx=0
+                if not mario.skipAnim then mario.dir="L" end
+            end
+        else
+            mario.vdeath=-11
+            mario.respawnTime=false
+            mario.status="death"
+            playStage.wait=true
+            mario.powerDown=false
+            mario.powerUp=false
+            mario.dead=true
+            mario.power=0 mario.powerAnim=0
+            mario.jumpAnim=0
+            mario.deathAnimTimer=playStage.framesPassedBlock
+    end end
+
+    function mario:teleport(x,y)
+        local searchL,searchR,wait,offset=mario.x,mario.x,playStage.wait,0.001
+        mario.x,mario.y=x,y
+        playStage.cameraOffset=mario.x-151
+        playStage.cameraBias=30
+        playStage.wait=false
+        for i=#level.current.scrollStopL,1,-1 do
+            if ((mario.x+8)>level.current.scrollStopL[i]) then
+                searchL=(level.current.scrollStopL[i]+122)-mario.x
+                -- if searchL>159 then searchL=x end
+                break
+        end end
+        for i=1,#level.current.scrollStopR do
+            if ((mario.x+8)<level.current.scrollStopR[i]) then
+                searchR=((8/7)*mario.x)-(1318/7)
+                break
+        end end
+        if searchL<searchR then searchR=-searchL offset=-offset end
+        mario.x=x-searchR
+        playStage:scrollCamera(0.995) print(playStage.cameraOffset,playStage.cameraTargetOffset)
+        mario.x,mario.y=x,y
+        playStage:scrollCamera(0.995) print(playStage.cameraOffset,playStage.cameraTargetOffset)
+        playStage.wait=wait
+    end
+
+    function mario:pipeCheck() --print("000000000000")
+        if (not (playStage.wait or mario.dead or mario.powerDown or mario.powerUp or mario.clear)) and (mario.vy==0 and (input.down or mario.vx==0)) then --this is starting to become a mess, lol. perhaps more hindsight would be better......
+            local success=false --print(self:gravityCheck(self.vy,true,true))
+            local function rndPos(v,n) n=n or 16 return math.floor((v+(n/2))/n)*n end
+            for pipeID=1,#level.current.pipeData do --cycle thru all pipes
+                local pipe=level.current.pipeData[pipeID] --less typing
+                for i=1,2 do --entrance, exit
+                    local TYPE=pipe[i][3]
+                    local x,y=(pipe[i][1]-1)*16,212-16*(pipe[i][2])
+                    local mX,mY=rndPos(mario.x),rndPos(mario.y)+4 --mario x, mario y.. this is surely not too cryptic?
+                    -- print("entrance, exit",pipeID,"pipeID,x,y,TYPE,mario.x,mario.y",pipeID,x,y,TYPE,mario.x,mario.y)
+                    if input.down and TYPE==2 and self:gravityCheck(self.vy,true,true) then --pipe ID 2 (pipe facing up)
+                        if ((rndPos(mario.x-8,8)==x) and ((mY+16)==y)) then --yeah you gotta stand in the middle 16 pixels of the 32 on the pipe top
+                            success=true mario.vx=0
+                        end
+                    elseif input.stor.right>=4 and mario.dir=="R" and TYPE==1 and self:gravityCheck(self.vy,true,true) then --pipe ID 1 (pipe facing left) [assumes bumped into wall]
+                        if (((mX+16)==x) and (mY==y)) then --same x and y (plus or minus 8 px)
+                            success=true
+                        end
+                    elseif input.stor.left>=4 and mario.dir=="L" and TYPE==3 and self:gravityCheck(self.vy,true,true) then --pipe ID 3 (pipe facing right) [assumes bumped into wall]
+                        if ((mX==(x+16)) and (mY==y)) then --same x and y (plus or minus 8 px)
+                            success=true
+                        end
+                    end
+                    if success==true then
+                        -- print(pipeID,"|",x,y,"|",TYPE,"|",mario.x,mario.y,"|",mX,mY)
+                        mario.pipe={pipeID,i,3-i,"enter",0,0} --pipeID, initial entr/exit, depart entr/exit, state, timer, transition timer
+                        playStage.wait=true
+                        success=false
+                    end
+                end
+            end
+        end
+    end
+
+    function mario:draw(gc)
+        local drawOffset=0
+        local star=""
+        if mario.powerAnim~=0 then drawOffset=16 end
+        if mario.jumpAnim>-7 then 
+            if mario.jumpAnim>1 then --literally just so that he makes contact with the floor if jump is held. i know, animating a fake jump that isnt even happening
+                if not mario.crouch then mario.status="jump" end
+                drawOffset=drawOffset+2
+            end
+            mario.jumpAnim=mario.jumpAnim-1 
+        end
+        if mario.starAnim~=false then
+            local animOption=(math.ceil((playStage.framesPassedBlock/mario.starAnim)))%4
+            if animOption~=3 then
+                if mario.powerAnim>0 then
+                    mario.powerAnim=2
+                else
+                    mario.powerAnim=0
+                end
+                star="star"..animOption
+            end
+        end
+        if mario.iFrames>playStage.framesPassed and not playStage.wait and not mario.powerUp and not mario.powerDown then --currently under influence of iframes
+            local animOption=(math.ceil((playStage.framesPassed/flashingDelay)))%2
+            if animOption==1 then mario.animCache=mario.status mario.status="invisible" end
+        end
+        local status=mario.dir..((star=="" or mario.powerAnim<=1) and mario.powerAnim or "1")..mario.status..star
+        if playStage.EDITOR and not playStage.wait and not mario.powerUp and not mario.powerDown and mario.status~="invisible" then
+            table.insert(mario.trail,1,{status,mario.x,mario.y-drawOffset+8})
+            mario.trail[41]=nil --prevent list from becoming too long, if you increase this then the trail gets longer...
+        end
+        if mario.status~="invisible" then
+            gc:drawImage(texs[status],mario.x-playStage.cameraOffset,mario.y-drawOffset+8) --draw... mario.
+        end
+    end
+
+    function mario:handleStomp()
+        mario.hitCount=mario.hitCount+1
+        if mario.hitCount~=0 then
+            if mario.hitCount<#hitProgressionMario+1 then
+                objAPI:addStats("points",hitProgressionMario[mario.hitCount],mario.x,mario.y-16)
+            else --1up
+                objAPI:addStats("1up",1,mario.x,mario.y-16)
+            end
+        end
+    end
+
+
+--[[||||||||||||||||||||||||
+-----[----=======----]------
+-----[-===OBJECTS===-]------
+-----[----=======----]------
+||||||||||||||||||||||||||]]
+
+--------------------------
+------ORB FUNCTIONS------- NEW drawing format
+--------------------------
+objMagicOrb=class(objAPI)
+
+    function objMagicOrb:setup(objectID,posX,posY,TYPE,despawnable,arg1,arg2)
+        self:initObject(objectID,TYPE,"inner",{16,16,false,false},{posX,posY},0,0)
+        self.status=1 self.GLOBAL=true self.animTimer=0 self.isBouncy=true self.allowStarCollision=true
+        local v=self.TYPE:split("_")
+        self.animType=(v[2]=="a0") self.moveType=(v[3]=="m1") --i think the animtype is reversed, just roll with it tbh
+        self.interactSpring=self.moveType self.disableStarPoints=true
+    end
+
+    function objMagicOrb:logic() --handle both movement and animation
+        if not self.dead then
+            self:checkMarioCollision({"clear",self.animType},true)
+            if self.moveType then
+                self:aggregateCheckX(self.px,true)
+                self:aggregateCheckX(self.vx)
+                self:calculateAccelerationY()
+                if self.py<=0 then self:gravityCheck(-self.py,true) else self:bumpCheck(-self.py) end
+                if self.vy<=0 then self:gravityCheck(-self.vy)      else self:bumpCheck(-self.vy)      end
+                self:setNewPushV() self:checkFor()
+    end end end
+
+    function objMagicOrb:hit()
+    end
+
+    function objMagicOrb:draw(gc,x,y,TYPE,isEditor,isIcon)
+        if not isEditor then
+            local texture=self.dead and "poof_" or "magicorb_"
+            if self.dead then
+                if not gui.PROMPT then
+                    self.animTimer=self.animTimer+1
+                    self.status=((math.ceil((self.animTimer/5)))%5)+1
+                    if self.animTimer>=20 then objAPI:destroy(self.objectID,self.LEVEL) playStage.wait=false end
+                end
+            else
+                self.status=((math.ceil((playStage.framesPassed/4)))%4)+1
+                if self.status==4 then self.status=2 end
+            end
+            if self.status~=5 then gc:drawImage(texs[texture..self.status],x,y) end
+        else
+            local v,status=TYPE:split("_"),((math.ceil((framesPassed/(8*flashingDelay))))%2)+1
+            v=(status==1) and v[2] or v[3]
+            gc:drawImage(texs.magicorb_1,x,y)
+            gc:drawImage(texs["icon_"..v],x,y)
+        end
+    end
+
+
+--------------------------
+----FLAGPOLE FUNCTIONS---- NEW drawing format(ish)
+--------------------------
+objFlagpole=class(objAPI)
+
+    function objFlagpole:setup(objectID,posX,posY,TYPE,despawnable,arg1,arg2)
+        self:initObject(objectID,TYPE,"background",nil,{posX,posY},0,0)
+        self.despawnable=false self.my=0 self.interactSpring=false self.disableStarPoints=true
+        local v=pixel2plot(self.x,self.y,true) plot2place(9,(v[1]+1),v[2]) --set hard block base
+    end
+
+    function objFlagpole:logic()
+    end
+    
+    function objFlagpole:draw(gc,x,y,TYPE,isEditor,isIcon) --logic in draw so that it always runs...
+        if isIcon then gc:drawImage(texs.flag,x,y)
+        else
+            gc:setColorRGB(121,202,16)
+            gc:drawLine(x+7,y,x+7,y-1-(9*16))
+            gc:drawLine(x+8,y,x+8,y-1-(9*16))
+            gc:drawImage(texs.flagpole_top,x+4,y-8-(9*16))
+            if not isEditor then
+                if not gui.PROMPT then
+                    if self.my==0 then
+                        if not mario.clear then
+                            local marioSize=(mario.power==0 or mario.crouch) and 0 or 16
+                            if checkCollision(mario.x+1,mario.y-marioSize+1,14,14+marioSize,self.x+5,self.y-152,4,152) then --hit mario (side)
+                                mario:clearedLevel({self.y-16,self.x-5})
+                                self.my=4 mario.dir="R"
+                                local height=self.y-(mario.y+16)
+                                if     height>=128 then height="1up"
+                                elseif height>=82  then height="2000"
+                                elseif height>=58  then height="800"
+                                elseif height>=18  then height="400"
+                                else                    height="100" end
+                                objAPI:addStats(height~="1up" and "points" or "1up",tonumber(height))
+                                self.points=height
+                        end end
+                    else
+                        if self.my<122 then self.my=self.my+4 --flag going down anim
+                        elseif type(mario.clear)=="number" then --initiate walk-off
+                            mario.clear={playStage.framesPassed+10} mario.dir="L" mario.x=mario.x+11
+                end end end
+                gc:drawImage(texs.flag,x-8,self.y+self.my+9-(9*16))
+                if self.points then gc:drawImage(texs["score_"..self.points],x+11,self.y-self.my) end
+            else
+                gc:drawImage(texs.flag,x-8,y+1-(9*16))
+                gc:drawImage(texs.HardBlock,x,y)
+    end end end
+--------------------------
+----PLATFORM FUNCTIONS---- NEW drawing format(N/A)
+--------------------------
+objPlatform=class(objAPI)
+
+    function objPlatform:setup(objectID,posX,posY,TYPE,despawnable,arg1,arg2)  --platform_length~vel~MODE~distance eg, platform_3~2~lx~64
+        local config=(string.sub(TYPE,10,#TYPE)):split("~")
+        self.length,self.speed,self.ox,self.oy=config[1],config[2],0,0
+        self:initObject(objectID,config[3],"outer",nil,{posX,posY},0,0)
+        if self.TYPE=="lx" or self.TYPE=="ly" then --loops back and forth on the x/y axis
+            self.distance=tonumber(config[4])
+            if self.distance<0 then self.distance=math.abs(self.distance) self.speed=-self.speed end
+            self.distanceTracker=self.distance
+        elseif self.TYPE=="ru" or self.TYPE=="rd" then self.distanceTracker=0 end --repeats going up/down
+        self.sort,self.mode=string.sub(self.TYPE,#self.TYPE,#self.TYPE),string.sub(self.TYPE,1,1)
+        self.speed=(self.sort=="l" or self.sort=="d") and -math.abs(self.speed) or (self.sort=="r" or self.sort=="u") and math.abs(self.speed) or self.speed
+        self.active=not (self.mode=="a" or self.mode=="f")
+        self.despawnable=false self.interactSpring=false self.disableStarPoints=true
+        self.GLOBAL=true --always drawn and logic applying, to reduce pop in
+    end
+
+    function objPlatform:logic() --handle both movement and animation
+        if ((self.y<=-16) or( self.y>=204) or (self.x<=-(self.length*16)) or (self.x>=16*level.current.END)) and self.mode~="r" then objAPI:destroy(self.objectID,self.LEVEL) return end --despawn if needed
+        self.x,self.y=self.x+self.vx,self.y-self.vy --move
+        self.ox,self.oy=self.vx,self.vy
+    --CHECK IF MARIO COLLIDED
+        if not self.active then
+            local pX,pY,marioSize=self.x,self.y+self.vy,(mario.power==0 or mario.crouch) and 0 or 16
+            local pW,mX,mY=self.length*16,math.floor(mario.x+mario.px),math.floor(mario.y-mario.py)
+            if ((mX+2>=pX and mX+2<=pX+pW) or (mX+13>=pX and mX+13<=pX+pW)) and mY+16==pY and mario.vy==0 then --mario is on platform
+                self.active=true
+        end end
+    --PLATFORM MOVEMENT PATTERNS, UPDATE PLATFORM
+        if self.mode=="l" then --LOOPING PLATFORMS
+            if self.distanceTracker<0 then --loop back
+                self.distanceTracker=self.distance self.speed=-self.speed self["v"..self.sort]=0
+            else self.distanceTracker=self.distanceTracker-math.abs(self.speed)
+                self["v"..self.sort]=self.speed
+            end
+        else
+            local dir=(self.sort=="l" or self.sort=="r") and "x" or "y"
+            if self.mode=="a" or self.mode=="f" then --ONE DIRECTION PLATFORMS
+                if self.active then self.active=(self.mode=="f") and false or self.active
+                    self["v"..dir]=self.speed
+                else self["v"..dir]=0 end
+            elseif self.mode=="r" then --REPEATING PLATFORMS
+                self["v"..dir]=self.speed
+                if self.y<=-18 and self.sort=="u" then      self.y=206
+                elseif self.y>=206 and self.sort=="d" then  self.y=-18 end
+        end end
+        objAPI:addPlatform(self.objectID,self.x,self.y,self.length*16,self.vx,self.vy) --update the platform
+    end
+
+    function objPlatform:draw(gc,x,y,TYPE,isEditor,isIcon)
+        if not isEditor then
+            for i=1,self.length do
+                gc:drawImage(texs["platform"],x+(i-1)*16,y+self.oy)
+            end
+        else
+            local params=(string.sub(TYPE,10,#TYPE)):split("~")
+            local length,mode=params[1],params[3]
+            length=isIcon and 1 or length
+            for i=1,length do
+                gc:drawImage(texs["platform"],x+(i-1)*16,y)
+            end
+            gc:drawImage(texs["icon_"..mode],x,y)--texs.icon_ru
+            local plot=pixel2plot(x-editor.cameraOffset+16,y-8,true,true)
+            local plotMouse=pixel2plot(mouse.x+editor.cameraOffset,mouse.y-8,true)
+            if (editor.platformSelect and editor.platformSelect[3]==true and (plot[1]==editor.platformSelect[1] and plot[2]==editor.platformSelect[2])) or ((not (editor.platformSelect or editor.displayedGroup)) and plot[1]==plotMouse[1] and plot[2]==plotMouse[2]) then
+                timer2rainbow(gc,framesPassed+200,10) gc:setPen("thin","dashed")
+                local distance=tonumber(params[4])
+                if mode=="lx" then
+                    gc:drawRect(x+distance,y,length*16,8)
+                    gc:drawLine(x,y+4,x+distance,y+4)
+                elseif mode=="ly" then
+                    gc:drawRect(x,y-distance,length*16,8)
+                    local offset=(distance<0) and {8,0} or {0,8}
+                    gc:drawLine(x+length*8,y+offset[1],x+length*8,y-distance+offset[2])
+    end end end end
+--------------------------
+-----GOOMBA FUNCTIONS----- OLD drawing format#################################################################
+--------------------------
+objGoomba=class(objAPI)
+
+    function objGoomba:setup(objectID,posX,posY,TYPE,despawnable,arg1,arg2) --eg ("goomba77215",64,64,"goomba")
+        self:initObject(objectID,TYPE,"inner",{16,16,true,true},{posX,posY},true,0)
+        self.status=1 self.despawnable=false --for now, unless pipe spawning added
+        self.turnAround=true
+    end
+
+    function objGoomba:logic() --handle both movement and animation
+        self:checkStuckInWall()
+        if not self.dead then
+    --ANIMATION, MARIO COLLISION, X AXIS, Y AXIS + PLATFORMS
+            self.status=((math.ceil((playStage.framesPassed/4)))%2)+1
+            self:checkMarioCollision({"stomp",3})
+            self:aggregateCheckX(self.px,true)
+            self:aggregateCheckX(self.vx)
+            self:calculateAccelerationY()
+            if self.py<=0 then self:gravityCheck(-self.py,true) else self:bumpCheck(-self.py)      end
+            if self.vy<=0 then self:gravityCheck(-self.vy)      else self:bumpCheck(-self.vy)      end
+            self:setNewPushV() self:checkFor()
+        elseif self.status==4 then self:animateDeathFlyOffscreen() --fireball/flower
+        elseif self.status==3 and (self.deathAnimTimer<playStage.framesPassed) then --stomped
+            objAPI:destroy(self.objectID,self.LEVEL)
+        end
+    end
+    
+    function objGoomba:hit(circumstance)
+        if not self.dead then self:handleHitDefault(circumstance,4) end
+    end
+
+    function objGoomba:draw(gc,x,y,TYPE,isEditor,isIcon)
+        gc:drawImage(texs[TYPE..(self.status or "1")],x,y)
+    end
+
+--------------------------
+--PIRANHA PLANT FUNCTIONS- NEW drawing format
+--------------------------
+objPiranhaPlant=class(objAPI)
+
+    function objPiranhaPlant:setup(objectID,posX,posY,TYPE,despawnable,arg1,arg2) --eg ("piranhaplant_1r2923",64,64,"piranhaplant_1",true)
+        self:initObject(objectID,TYPE,"background",nil,{posX,posY},0,0)
+        self.status=1 self.despawnable=false self.interactSpring=false
+        self.moveTimer=50 --how far into the rising thing it is
+        self.riseTimer=5 --frames to wait before rising
+        local  TYPE=string.sub(self.TYPE,14,14) -- 1=up ↑ , 2=right → , 3=down ↓ , 4=left ←
+        if     TYPE=="1" then self.move={"x",1,"y",-1}                  --up
+        elseif TYPE=="2" then self.move={"y",1,"x",1}   self:moveY(-16) --right
+        elseif TYPE=="3" then self.move={"x",-1,"y",1}  self:moveY(-16) --down
+        elseif TYPE=="4" then self.move={"y",-1,"x",-1}                 --left
+        end self:moveX(8) self:moveY(-10) self:determineHitbox()
+    end
+
+    function objPiranhaPlant:moveX(amount) self[self.move[1]]=self[self.move[1]]+self.move[2]*amount end --moves on the x axis, relative to the direction the plant is facing
+    function objPiranhaPlant:moveY(amount) self[self.move[3]]=self[self.move[3]]+self.move[4]*amount end
+
+    function objPiranhaPlant:determineHitbox()
+        local  TYPE=string.sub(self.TYPE,14,14) --hardcoding is quicker, easier and more efficient than doing some cool code... i think
+        if     TYPE=="1" then self.hitBoxSTOR={16,20,true,true,0,14} --up
+        elseif TYPE=="2" then self.hitBoxSTOR={20,16,true,true,-4,0} --right
+        elseif TYPE=="3" then self.hitBoxSTOR={16,20,true,true,0,-3} --down
+        elseif TYPE=="4" then self.hitBoxSTOR={20,16,true,true,14,0} --left
+        end self.hitBox=self.hitBoxSTOR
+    end
+
+    function objPiranhaPlant:logic() --handle both movement and animation
+        if not self.dead then
+    --CHECK IF MARIO COLLIDED
+            if not (mario.starTimer>playStage.framesPassed) then
+                local marioSize=(mario.power==0 or mario.crouch) and 0 or 16
+                if checkCollision(mario.x+1,mario.y-marioSize+1,14,14+marioSize,self.x+2+self.hitBoxSTOR[5],self.y+2+self.hitBoxSTOR[6],self.hitBoxSTOR[1]-4,self.hitBoxSTOR[2]-4) then --hit mario (side)
+                    mario:powerDownMario()
+            end end
+    --X/Y AXIS
+            self.moveTimer=self.moveTimer+1
+            if     self.moveTimer<=12 then self:moveY(2)
+            elseif self.moveTimer<=36 then --stay put
+            elseif self.moveTimer<=48 then self:moveY(-2)
+            else self.hitBox=false self.riseTimer=self.riseTimer-1
+                if (math.abs(mario.x-self.x))>=35 then
+                    if self.riseTimer<=0 then
+                        self.moveTimer=0 self.riseTimer=32 self.hitBox=self.hitBoxSTOR
+            end end end
+        else self:animateDeathFlyOffscreen()
+    end end
+
+    function objPiranhaPlant:hit(circumstance)
+        if not self.dead then self:handleHitDefault(circumstance,1,"piranhaplant_3") end
+    end
+
+    function objPiranhaPlant:draw(gc,x,y,TYPE,isEditor,isIcon)
+        if isEditor then
+            if isIcon then
+                local offsets={
+                    {0,-11},{-4,0},{0,-5},{-11,0}
+                }
+                offsets=offsets[tonumber(string.sub(TYPE,14,14))]
+                gc:drawImage(texs[TYPE.."_1"],x+offsets[1],y+offsets[2])
+            else
+                if TYPE=="piranhaplant_2" then x=x-16 end
+                if TYPE=="piranhaplant_3" then y=y-16 end
+                gc:drawImage(texs[TYPE.."_1"],x,y)
+            end
+        else
+            self.status=((math.ceil((playStage.framesPassed/4)))%2)+1
+            gc:drawImage(texs[TYPE.."_"..self.status],x,y)
+        end
+    end
+
+
+--------------------------
+---BULLET BILL FUNCTIONS-- NEW drawing format(N/A)
+--------------------------
+objBulletBill=class(objAPI)
+
+    function objBulletBill:setup(objectID,posX,posY,TYPE,despawnable,fromBlaster,arg2) --eg ("bullet_L8173831",64,64,"bullet_L",true)
+        self:initObject(objectID,TYPE,fromBlaster and "inner" or "outer",{16,16,false,true},{posX,posY},true,0)
+        self.status=1 self.despawnable=true self.interactSpring=false self.disableStarPoints=true
+        self.vx=(self.TYPE=="bullet_L") and -3 or 3
+        self.timer=fromBlaster and sTimer(5) or false
+        if not fromBlaster then objAPI:transferLayer(self.objectID,"inner","outer") end
+    end
+
+    function objBulletBill:logic() --handle both movement and animation
+        if not self.dead then
+    --MARIO COLLISION, X AXIS
+            self:checkMarioCollision({"dropkill"})
+            self.x=self.x+self.vx
+        else self:animateDeathFlyOffscreen()
+        end
+    --LAYER STUFF
+        if self.timer and gTimer(self.timer) then
+            objAPI:transferLayer(self.objectID,self.LEVEL,"outer")
+            self.LEVEL="outer"
+            self.timer=false
+        end
+    end
+
+    function objBulletBill:hit(circumstance) --doesnt use standard function as not much needed
+        if circumstance=="mario" then self.dead=true self.vy=0.5 end
+    end
+
+    function objBulletBill:draw(gc,x,y,TYPE,isEditor,isIcon)
+        gc:drawImage(texs[TYPE],x,y)
+    end
+
+
+--------------------------
+-----BLASTER FUNCTIONS---- NEW drawing format(N/A)
+--------------------------
+objBlaster=class(objAPI)
+
+    function objBlaster:setup(objectID,posX,posY,TYPE,despawnable,arg1,arg2) --possible types: blaster_L blaster_R blaster_LR
+        self:initObject(objectID,TYPE,"inner",nil,{posX,posY},true,0)
+        self.despawnable=false self.timer=sTimer(30) self.interactSpring=false self.disableStarPoints=true
+        local v=pixel2plot(self.x,self.y,true) plot2place(99,(v[1]+1),v[2]) --make block solid
+    end
+
+    function objBlaster:logic()
+        if gTimer(self.timer) then
+            if (math.abs(mario.x-self.x))>=48 then --mario distance
+                if mario.x<self.x and (self.TYPE=="blaster_L" or self.TYPE=="blaster_LR") and pixel2solid(self.x-8,self.y+8,true)==false then --shoot left
+                    objAPI:createObj("bullet_L",self.x,self.y,nil,true)
+                    objAPI:sendToFront(self.objectID,self.LEVEL)
+                    self.timer=sTimer(60)
+                elseif mario.x>self.x and (self.TYPE=="blaster_R" or self.TYPE=="blaster_LR") and pixel2solid(self.x+20,self.y+8,true)==false then --shoot right
+                    self.timer=sTimer(60)
+                    objAPI:createObj("bullet_R",self.x,self.y,nil,true)
+                    objAPI:sendToFront(self.objectID,self.LEVEL)
+    end end end end
+
+    function objBlaster:draw(gc,x,y,TYPE,isEditor,isIcon)
+        gc:drawImage(texs.blaster,x,y)
+        if isEditor then
+            local icon=(TYPE=="blaster_L") and "al" or TYPE=="blaster_R" and "ar" or "lx"
+            gc:drawImage(texs["icon_"..icon],x,y)
+    end end
+
+
+--------------------------
+------EVENT FUNCTIONS----- NEW drawing format(N/A)
+--------------------------
+objEvent=class(objAPI)
+
+    function objEvent:setup(objectID,posX,posY,TYPE,despawnable,arg1,arg2) --possible types: blaster_L blaster_R blaster_LR
+        self:initObject(objectID,TYPE,"inner",nil,{posX,posY},true,0)
+        local eventDetails=TYPE:split("_")
+        playStage.events[eventDetails[2]]=eventDetails[3]
+        objAPI:destroy(objectID,"inner")
+    end
+
+    function objEvent:logic()
+    end
+
+    function objEvent:draw(gc,x,y,TYPE,isEditor,isIcon)
+    end
+
+--------------------------
+------KOOPA FUNCTIONS----- OLD drawing format#################################################################
+--------------------------
+objKoopa=class(objAPI)
+
+    function objKoopa:setup(objectID,posX,posY,TYPE,despawnable,arg1,arg2)
+        self:initObject(objectID,TYPE,"inner",{16,16,true,true},{posX,posY},self.vx or true,0)
+        self.status=1 self.despawnable=false --for now, unless pipe spawning added
+        self.turnAround=true
+        self.noFall=(self.TYPE=="koopa_R")
+    end
+
+    function objKoopa:logic() --handle both movement and animation
+        -- self:checkStuckInWall()
+        if not self.dead then
+    --ANIMATION, MARIO COLLISION, X AXIS, Y AXIS + PLATFORMS
+            self.status=((math.ceil((playStage.framesPassed/4)))%2)+1
+            self:checkMarioCollision({"transform","shell"..string.sub(self.TYPE,6,8),0,true,4})
+            self:aggregateCheckX(self.px,true)
+            self:aggregateCheckX(self.vx)
+            self:calculateAccelerationY()
+            if self.py<=0 then self:gravityCheck(-self.py,true) else self:bumpCheck(-self.py)      end
+            if self.vy<=0 then self:gravityCheck(-self.vy)      else self:bumpCheck(-self.vy)      end
+            self:setNewPushV() self:checkFor()
+        elseif self.status==3 then self:animateDeathFlyOffscreen() --fireball/flower
+        end
+    end
+
+    function objKoopa:hit(circumstance)
+        if not self.dead then
+            if not (self.TYPE=="koopa_B" and circumstance=="fireball") then
+                self:handleHitDefault(circumstance,3)
+    end end end
+
+    function objKoopa:draw(gc,x,y,TYPE,isEditor,isIcon)
+        local offset=(TYPE=="koopa_B") and 0 or -16
+        if isEditor then
+            if isIcon and offset==-16 then
+                gc:drawImage(texs["L_"..TYPE.."_2"],x,y-11)
+            else
+                gc:drawImage(texs["L_"..TYPE.."_2"],x,y+offset)
+            end
+        else
+            if not (self.status==4 and self.dead) then
+                local facing=(self.vx<0) and "L_" or "R_"
+                gc:drawImage(texs[facing..TYPE.."_"..self.status],x,y+offset) --eg "L_koopa_G_1"
+    end end end
+
+--------------------------
+----PARAKOOPA FUNCTIONS--- NEW drawing format
+--------------------------
+objKoopaPara=class(objAPI)
+
+    function objKoopaPara:setup(objectID,posX,posY,TYPE,despawnable,arg1,arg2)
+        self:initObject(objectID,TYPE,"inner",{16,16,true,true},{posX,posY},true,0)
+        self.status=1 self.despawnable=false --for now, unless pipe spawning added
+        self.turnAround=true self.doesBounce=(self.TYPE=="Pkoopa_G")
+        local config=self.TYPE:split("_")
+        self.facing="L_"
+        if config[2]=="R" then self.interactSpring=false
+            self.count=23 --half of 44, which is the total number of frames, add one for some reason (idk dont ask)
+            if config[3]=="V" then      self.config={nil,2.774444}        --vertical (all values are precalculated from the calcHeight.tns tool)
+            elseif config[3]=="H" then  self.config={2.774444,nil}        --horizontal
+            elseif config[3]=="HV" then self.config={2.774444,2.55195,10} --horizontal and vertical (vertical loop is purposely offset)
+            else                        self.config={nil,nil}             --stationary
+    end end end
+
+    function objKoopaPara:logic() --handle both movement and animation
+        if not self.dead then
+    --ANIMATION, MARIO COLLISION, X AXIS, Y AXIS + PLATFORMS
+            self:checkMarioCollision({"transform",string.sub(self.TYPE,2,8),0,true,4})
+            if self.TYPE=="Pkoopa_G" then --bouncing koopa
+                self:aggregateCheckX(self.px,true)
+                self:calculateAccelerationY()
+                if self.py<=0 then self:gravityCheck(-self.py,true) else self:bumpCheck(-self.py) end
+                self:setNewPushV() self:checkFor()
+                self.facing=(self.vx>0) and "R_" or "L_"
+            else --flying koopa
+                local function calc(top,HV) return math.round((math.sin(((self.count-(HV and 17 or 0))*(180/(HV or 44)))/57.296))*top) end --44 is the total frames of the loop
+                self.vx=(self.config[1]) and -calc(self.config[1]) or 0 --important! value here is inversed so they fly *up* when loaded
+                self.vy=(self.config[2]) and calc(self.config[2],self.config[3]) or 0
+                if self.config[1] then self.facing=(self.count%88)<=44 and "L_" or "R_"
+                else self.facing=(mario.x>self.x) and "R_" or "L_" end
+                self.count=self.count+1
+            end
+            self:aggregateCheckX(self.vx)
+            if self.vy<=0 then self:gravityCheck(-self.vy) else self:bumpCheck(-self.vy) end
+        elseif self.status==3 then self:animateDeathFlyOffscreen() --fireball/flower
+        end
+    end
+
+    function objKoopaPara:hit(circumstance)
+        if not self.dead then self:handleHitDefault(circumstance,3) end
+    end
+
+    function objKoopaPara:draw(gc,x,y,TYPE,isEditor,isIcon)
+        if isEditor then
+            if isIcon then
+                gc:drawImage(texs["L_"..string.sub(TYPE,1,8).."_2"],x,y-11)
+            else              gc:drawImage(texs["L_"..string.sub(TYPE,1,8).."_2"],x,y-16) end
+            if string.sub(TYPE,1,8)=="Pkoopa_R" then
+                local params=TYPE:split("_")
+                local config,icon=params[3]
+                if config=="V"      then icon="ly"
+                elseif config=="H"  then icon="lx"
+                elseif config=="HV" then icon="m1"
+                else                     icon="m0"
+                end gc:drawImage(texs["icon_"..icon],x+8,y)
+            end
+        else
+            if not self.dead then 
+                self.status=((math.ceil((playStage.framesPassed/4)))%2)+1
+            end
+            gc:drawImage(texs[self.facing..string.sub(TYPE,1,8).."_"..self.status],x,y-16)
+    end end
+
+--------------------------
+------SHELL FUNCTIONS----- NEW drawing format(N/A)
+--------------------------
+objShell=class(objAPI)
+
+    function objShell:setup(objectID,posX,posY,TYPE,despawnable,arg1,arg2) --eg ("shell_g77215",64,64,"shell_g",-4,false)
+        self:initObject(objectID,string.sub(TYPE,1,7),"inner",{16,16,true,true},{posX,posY},arg1 or 0,0)
+        local params=TYPE:split("_")
+        self.status=1 self.despawnable=false self.vx=tonumber(params[3] or self.vx)
+        self.koopaTimer=arg2 and playStage.framesPassed+200 or false
+        self.fromKoopa=arg2 or false self.hitTimer=0 self.hitCount=0
+        self.canHitSide=true self.turnAround=true
+    end
+
+    function objShell:logic() --handle both movement and animation
+        self:checkStuckInWall()
+        if not self.dead then
+    --MARIO COLLISION, SHELL BOUNDARY, X AXIS, Y AXIS + PLATFORMS
+            if self.hitTimer-playStage.framesPassed<=0 then self:checkMarioCollision({"shell"},true) end
+            if self.vx~=0 then objAPI:addHitBox(self.objectID,self.x,self.y,16,16,"shell") self.canCollectCoins=true
+            else self.canCollectCoins=false end
+            self:aggregateCheckX(self.px,true)
+            self:aggregateCheckX(self.vx)
+            self:calculateAccelerationY()
+            if self.py<=0 then self:gravityCheck(-self.py,true) else self:bumpCheck(-self.py)      end
+            if self.vy<=0 then self:gravityCheck(-self.vy)      else self:bumpCheck(-self.vy)      end
+            self:setNewPushV() self:checkFor()
+    --ANIMATION
+            if not self.dead then
+                if self.koopaTimer==false then self.status=1
+                elseif self.fromKoopa then
+                    if self.koopaTimer<playStage.framesPassed then
+                        objAPI:createObj("koopa"..string.sub(self.TYPE,6,8),self.x,self.y)
+                        objAPI:destroy(self.objectID,self.LEVEL) self.status=0
+                    elseif (self.koopaTimer-7<playStage.framesPassed) then self.status=2
+                    elseif (self.koopaTimer-45<playStage.framesPassed) then
+                        local animOption=((math.ceil((playStage.framesPassed)))%4)
+                        self.status=(animOption==0 or animOption==2) and 1 or (animOption==1) and 4 or 5
+                    else self.status=1
+                    end
+                else self.koopaTimer=false
+            end end
+        elseif self.dead then self:animateDeathFlyOffscreen() --fireball/flower
+        end
+    end
+
+    function objShell:handleShellPoints()
+        self.hitCount=self.hitCount+1
+        if self.hitCount~=0 then
+            if self.hitCount<(#hitProgressionKoopa+1) then objAPI:addStats("points",hitProgressionKoopa[self.hitCount],self.x,self.y+16)
+            else objAPI:addStats("1up",1,self.x,self.y+16)
+    end end end
+
+    function objShell:hit(circumstance)
+        if not self.dead then
+            if not (self.TYPE=="shell_B" and circumstance=="fireball") then
+                self:handleHitDefault(circumstance,3)
+    end end end
+
+    function objShell:draw(gc,x,y,TYPE,isEditor,isIcon)
+        if isEditor then
+            gc:drawImage(texs[string.sub(TYPE,1,7).."_1"],x,y)--"shell_R_1"
+            local config=TYPE:split("_")
+            local icon=tonumber(config[3])
+            if     icon==-4 then icon="al"
+            elseif icon==4  then icon="ar"
+            elseif icon==-6 then icon="a2"
+            elseif icon==6  then icon="a1"
+            else icon=false end
+            if icon then gc:drawImage(texs["icon_"..icon],x,y) end
+        else
+            if self.status~=0 then
+                local offsetY=0 if not studentSoftware and (self.status==4 or self.status==5) then offsetY=-2 end
+                gc:drawImage(texs[TYPE.."_"..self.status],x,y+offsetY)--"shell_R_1"
+    end end end
+
+--------------------------
+-----BOWSER FUNCTIONS----- NEW drawing format
+--------------------------
+objBowser=class(objAPI)
+
+    function objBowser:setup(objectID,posX,posY,TYPE,despawnable,arg1,arg2) --eg ("goomba77215",64,64,"goomba")
+        self:initObject(objectID,TYPE,"inner",{32,32,true,true,0,-16},{posX,posY,32},1,0)
+        self.status=1 self.despawnable=false
+        self.turnAround=true self.hp=5 self.destroyShell=true
+        self.jumpCountdown=-1
+        self.fireCountdown=-100
+        self.turnCountdown=120
+        self.maxRange={posX-64,posX+64}
+    end
+
+    function objBowser:logic() --handle both movement and animation
+        self:checkStuckInWall()
+        if not self.dead then
+            self.jumpCountdown=self.jumpCountdown-1
+            self.fireCountdown=self.fireCountdown-1
+            self.turnCountdown=self.turnCountdown-1
+            if self.jumpCountdown<1 then
+                if self.jumpCountdown==0 and self.vy==0 then
+                    self.vy=12
+                end
+                self.jumpCountdown=math.random(20,75)
+            end
+            if mario.x>self.x then
+                self.vx=1.5 self.fireCountdown=70
+            else
+                self.vx=sign(self.vx)
+                if     self.x<self.maxRange[1] then self.vx=1
+                elseif self.x>self.maxRange[2] then self.vx=-1
+                elseif self.turnCountdown<1 and (self.x>(self.maxRange[1]+16)) and (self.x<(self.maxRange[2]-16)) then
+                    self.vx=-self.vx
+                    self.turnCountdown=math.random(100,280)
+            end end
+            if self.vy==0 then self.lastY=pixel2snapgrid(0,self.y,16,16,false)[2] end
+            --table.insert(debugBoxes,{self.x-16,self.lastY,24,16})
+            --table.insert(debugBoxes,{self.x-16,self.lastY-16,24,16})
+            --table.insert(debugBoxes,{self.x-16,self.lastY-16-16,24,16})
+    --ANIMATION, MARIO COLLISION, X AXIS, Y AXIS + PLATFORMS
+            self:checkMarioCollision({false},true,-16)
+            self:aggregateCheckX(self.px,true)
+            if self.fireCountdown>1 then
+                self:aggregateCheckX(self.vx)
+            elseif self.fireCountdown<-10 then
+                objAPI:createObj("flame_L",self.x-20,self.y-16,nil,self.lastY-math.random(0,2)*16)
+                self.fireCountdown=math.random(10,120)
+            end despook=self.turnCountdown
+            self:calculateAccelerationY(1.03,-4.5)
+            if self.py<=0 then self:gravityCheck(-self.py,true) else self:bumpCheck(-self.py)      end
+            if self.vy<=0 then self:gravityCheck(-self.vy)      else self:bumpCheck(-self.vy)      end
+            self:setNewPushV() self:checkFor()
+            self.facing=(mario.x>self.x) and "R" or "L"
+        elseif self.status==3 then self:animateDeathFlyOffscreen() --fireball/flower
+        end
+    end
+
+    function objBowser:hit(circumstance)
+        -- if not self.dead then self:handleHitDefault(circumstance,4) end
+        if not self.dead then
+            if circumstance=="fireball" or circumstance=="shell" then
+                self.hp=self.hp-1
+                if self.hp<=0 then self:hit("mario") end
+            elseif circumstance=="mario" then
+                self:handleHitDefault(circumstance,3)
+            end
+        end
+    end
+
+    function objBowser:draw(gc,x,y,TYPE,isEditor,isIcon)
+        local offsets={
+            ["L"]={{8,-8},{16,8},{0,-16}},
+            ["R"]={{0,-8},{0,8},{16,-16}}
+        }
+        local dir,status,hp,mouth=self.facing or "L",(not isEditor) and ((math.ceil((playStage.framesPassed/4)))%2)+1 or 1,self.hp or 100 --[[big value]],(self.fireCountdown and self.fireCountdown<1) and 2 or 1
+        if isIcon then
+            gc:drawImage(texs["bowser_mouth_1_L"],x,y)
+        else
+            local facingOffset=(dir=="L") and -3 or 3
+            gc:drawImage(texs["bowser_body_"..dir],x+offsets[dir][1][1]+facingOffset,y+offsets[dir][1][2])
+            gc:drawImage(texs["bowser_walk_"..status.."_"..dir],x+offsets[dir][2][1]+facingOffset,y+offsets[dir][2][2])
+            gc:drawImage(texs["bowser_mouth_"..mouth.."_"..dir],x+offsets[dir][3][1]+facingOffset,y+offsets[dir][3][2])
+            if hp<5 and hp>0 then
+                gc:setColorRGB(255,255,255)
+                gc:fillRect(x+8+facingOffset,y-16,16,2)
+                gc:setColorRGB(255,0,0)
+                gc:fillRect(x+8+facingOffset,y-16,16*(hp/5),2)
+    end end end
+
+    -- gc:drawImage(texs["bowser_body_"..dir],EDITOR[1]-editor.cameraOffset+offsets[dir][1][1],EDITOR[2]+8+offsets[dir][1][2])
+    -- gc:drawImage(texs["bowser_walk_1_"..dir],EDITOR[1]-editor.cameraOffset+offsets[dir][2][1],EDITOR[2]+8+offsets[dir][2][2])
+    -- gc:drawImage(texs["bowser_mouth_1_"..dir],EDITOR[1]-editor.cameraOffset+offsets[dir][3][1],EDITOR[2]+8+offsets[dir][3][2])
+
+--------------------------
+---BOWSER FLAME FUNCTIONS-- NEW drawing format
+--------------------------
+objBowserFlame=class(objAPI)
+
+    function objBowserFlame:setup(objectID,posX,posY,TYPE,despawnable,moveToY,arg2)
+        self:initObject(objectID,TYPE,"inner",{16,4,false,false},{posX,math.round(posY+4)},true,0)
+        self.status=1 self.despawnable=true self.interactSpring=false
+        self.vx=(self.TYPE=="flame_L") and -3 or 3
+        self.moveToY=moveToY and math.round(moveToY+4) or self.y
+        self.disableStarPoints=true
+    end
+
+    function objBowserFlame:logic() --handle both movement and animation
+        self:checkMarioCollision({"fire"},true)
+        self.x=self.x+self.vx
+        if self.y~=self.moveToY then
+            self.y=self.y+sign(self.moveToY-self.y)
+    end end
+
+    function objBowserFlame:hit(circumstance) --no interaction
+    end
+
+    function objBowserFlame:draw(gc,x,y,TYPE,isEditor,isIcon)
+        if isEditor then
+            local offset=(TYPE=="flame_L") and -8 or 0
+            gc:drawImage(texs[TYPE.."_1"],x+offset,y+4)
+        else
+            gc:drawImage(texs[TYPE.."_"..((math.ceil((playStage.framesPassed/3)))%2)+1],x,y)
+        end
+    end
+
+--------------------------
+----POWER-UP FUNCTIONS---- OLD drawing format#################################################################
+--------------------------
+objPowerUp=class(objAPI)
+
+    function objPowerUp:setup(objectID,posX,posY,TYPE,despawnable,arg1,arg2) --eg ("mushroom37253",64,16,"mushroom",true)
+        self:initObject(objectID,TYPE,"inner",{16,16,false,false},{posX,posY},true,0)
+        if string.sub(TYPE,1,1)=="P" then
+            if mario.power==0 then self.TYPE="mushroom"
+            elseif mario.power>0 then self.TYPE="fireflower" end
+        end self.disableStarPoints=true
+        self.status=(self.TYPE=="mushroom" or self.TYPE=="mushroom1up") and "" or 1
+        self.despawnable=despawnable
+        if despawnable==true then self.blockTimer=playStage.framesPassed+(4-1) self.y=self.y-4
+        else self.blockTimer=playStage.framesPassed end
+        self.vx=(self.TYPE=="fireflower") and 0 or (level.current.allowBidirectionalSpawning==true and (mario.x<self.x)) and -2 or 2
+        self.doesBounce=(self.TYPE=="star") self.turnAround=true self.allowStarCollision=true
+    end
+
+    function objPowerUp:use() objAPI:destroy(self.objectID,self.LEVEL)
+        if self.TYPE=="mushroom1up" then objAPI:addStats("1up",1,self.x,self.y)
+        else    if self.TYPE=="mushroom" then       mario:powerUpMario(1)
+                elseif self.TYPE=="fireflower" then mario:powerUpMario(2)
+                elseif self.TYPE=="star" then       mario:powerStarMario()
+                end objAPI:addStats("points",1000,self.x,self.y) end
+    end
+
+    function objPowerUp:logic() --handle both movement and animation
+        if self.blockTimer<playStage.framesPassed then
+    --MARIO COLLISION, X AXIS, Y AXIS + PLATFORMS
+            self:checkStuckInWall()
+            self:checkMarioCollision({"powerup"},true)
+            self:aggregateCheckX(self.px,true)
+            self:aggregateCheckX(self.vx)
+            self:calculateAccelerationY()
+            if self.py<=0 then self:gravityCheck(-self.py,true) else self:bumpCheck(-self.py)      end
+            if self.vy<=0 then self:gravityCheck(-self.vy)      else self:bumpCheck(-self.vy)      end
+            self:setNewPushV() self:checkFor()
+    --ANIMATION
+        else self.y=self.y-4 --rise from block
+        end
+        if self.TYPE=="fireflower" or self.TYPE=="star" then
+            self.status=((math.ceil((playStage.framesPassed/flashingDelay)))%4)+1
+    end end
+
+    function objPowerUp:hit(circumstance)
+        if self.blockTimer<playStage.framesPassed then
+            if (circumstance=="block" and self.vy<=0) or (level.current.enablePowerUpBouncing and circumstance~="block") then
+                self.vy=10
+    end end end
+
+    function objPowerUp:draw(gc,x,y,TYPE,isEditor,isIcon)
+        local status=self.status or (TYPE=="fireflower" or TYPE=="star") and "1" or ""
+        gc:drawImage(texs[TYPE..status],x,y)
+    end
+
+--------------------------
+-----SPRING FUNCTIONS----- NEW drawing format(N/A)
+--------------------------
+objSpring=class(objAPI)
+
+    function objSpring:setup(objectID,posX,posY,TYPE,despawnable,arg1,arg2)
+        self:initObject(objectID,TYPE,"inner",{16,16,false,false},{posX,posY},0,0)
+        self.status=1 self.GLOBAL=true self.springData={}
+        if self.TYPE=="spring_O" then     self.bounceHeight=16
+        elseif self.TYPE=="spring_B" then self.bounceHeight=8
+        elseif self.TYPE=="spring_R" then self.bounceHeight=24
+        end self.boostHeight=self.bounceHeight*1.5
+        self.disableStarPoints=true
+    end
+
+    function objSpring:logic() --handle both movement and animation
+        -- self.status=((math.ceil((playStage.framesPassed/4)))%3)+1
+        -- self:checkMarioCollision({"clear",self.animType},true)
+        local function check(entity)
+            if not entity.spring and entity.interactSpring and checkCollision(entity.x+1,entity.y+1,(entity.w or 16)-2,16,self.x+1,self.y,15,1) and (entity.vy<0 or entity.py<0 or self.py>0 or self.vy>0) then
+                entity.y=self.y-12 self.status=2 table.insert(self.springData,{0,entity,entity.vx,self.bounceHeight,self.boostHeight}) entity.vx=0
+        end end
+        local function checkLists()
+            for k in pairs(entityLists) do --do all entity lists
+                local focusedList=entityLists[k]
+                for i=1,#focusedList do --for all entities within the list
+                    local entity=allEntities[focusedList[i]]
+                    check(entity)
+        end end end
+        checkLists() check(mario)
+        for i=#self.springData,1,-1 do
+            local springData=self.springData[i]
+            local entity=springData[2]
+            springData[1]=springData[1]+1
+            if springData[1]==2        then self.status=3 entity.vy=0 entity.spring=true --fixes softlock when mario has cleared a level while bouncing on springs
+            elseif springData[1]==4    then self.status=2
+                entity.vy=(entity.objectID=="mario" and input.stor.up>-8) and springData[5] or springData[4]
+                entity.vx=entity.objectID=="mario" and 0 or springData[3]
+                entity.spring=false
+            elseif springData[1]==6    then self.status=1 table.remove(self.springData,i)
+            end
+            if entity.spring then entity.y=(self.status==3 and self.y-7) or (self.status==2 and self.y-12) or self.y-16 end
+        end
+        -- for i=1,#self.removeEntities do table.remove(self.springData,self.removeEntities[i]) end
+        self:aggregateCheckX(self.px,true)
+        self:aggregateCheckX(self.vx)
+        self:calculateAccelerationY()
+        if self.py<=0 then self:gravityCheck(-self.py,true) else self:bumpCheck(-self.py) end
+        if self.vy<=0 then self:gravityCheck(-self.vy)      else self:bumpCheck(-self.vy) end
+        self:setNewPushV() self:checkFor()
+    end
+
+    function objSpring:hit(circumstance)
+        if self.vy<=0 and circumstance=="block" then
+            self.vy=6
+    end end
+
+    function objSpring:draw(gc,x,y,TYPE,isEditor,isIcon)
+        local status=self.status or 1
+        local offset=(status==2) and 4 or (status==3) and 9 or 0
+        gc:drawImage(texs[TYPE.."_"..status],x,y+offset)
+    end
+
+--------------------------
+----FIREBALL FUNCTIONS---- OLD drawing format#################################################################
+--------------------------
+objFireball=class(objAPI)
+
+    function objFireball:setup(objectID,posX,posY,TYPE,despawnable,arg1,arg2)
+        self:initObject(objectID,TYPE,"particle",nil,{posX,posY,8,8},TYPE=="fireball_L" and -6 or 6,-0.5)
+        self.timer=false self.despawnable=true self.status=((math.ceil((framesPassed/2)))%4)+1
+        self.doesBounce=7 self.isFireball=true self.disableStarPoints=true self.interactSpring=false
+    end
+
+    function objFireball:handleFireballHit()
+        self.dead=true self.timer=1
+        self.x,self.y=self.x-4,self.y-4
+        self.TYPE="fireball_A"
+        self.status=1
+    end
+
+    function objFireball:logic()
+        if not self.dead then
+            objAPI:addHitBox(self.objectID,self.x,self.y,12,12,"fireball")
+    --X AXIS, Y AXIS + PLATFORMS
+            self:aggregateCheckX(self.px,true)
+            self:aggregateCheckX(self.vx)
+            self:calculateAccelerationY(0.85)
+            if self.py<=0 then self:gravityCheck(-self.py,true) else self:bumpCheck(-self.py)      end
+            if self.vy<=0 then self:gravityCheck(-self.vy)      else self:bumpCheck(-self.vy)      end
+            self:setNewPushV() self:checkFor()
+    --DEAD
+        else self.timer=self.timer+1
+            if self.timer>=(flashingDelay*3)+1 then objAPI:destroy(self.objectID,self.LEVEL) return
+        end end
+    --ANIMATION
+        if not self.dead then self.status=((math.ceil((playStage.framesPassed/2)))%4)+1
+        else self.status=math.ceil(self.timer/flashingDelay)
+        end
+    end
+
+    function objFireball:draw(gc,x,y,TYPE,isEditor,isIcon)
+        gc:drawImage(texs[self.TYPE..self.status],x,y)
+    end
+
+--------------------------
+-------BUMPED BLOCK------- OLD drawing format#################################################################
+--------------------------
+objBumpedBlock=class(objAPI)
+
+    function objBumpedBlock:create(blockX,blockY,TYPE,replaceWith) --sorta forgot why i made this specifically have its own create function
+        local objectID="bumpedBlock"..#entityLists.outer+#entityLists.inner+1+framesPassed+math.random(1,99999) --assign random ID
+        table.insert(entityLists.outer,tostring(objectID))
+        allEntities[objectID]=objBumpedBlock() allEntities[objectID].initObject=objAPI.initObject allEntities[objectID]:setup(objectID,blockX,blockY,TYPE,replaceWith)
+    end
+
+    function objBumpedBlock:setup(objectID,blockX,blockY,TYPE,replaceWith) --eg (23,6,"UsedBlock",false)
+        local v,texture=plot2pixel(blockX,blockY),blockIndex[replaceWith]["texture"][1]
+        if blockIndex[replaceWith]["theme"][plot2theme(blockX)]~=nil then texture=blockIndex[replaceWith]["theme"][plot2theme(blockX)][1] end
+        self:initObject(objectID,texture,"outer",nil,{v[1],v[2]},true,0)
+        self.yA=self.y self.replaceWith={blockX,blockY,replaceWith} self.interactSpring=false
+        self.animCount=0 self.despawnable=true plot2place(99,blockX,blockY) --barrier
+        self.disableStarPoints=true
+    end
+
+    function objBumpedBlock:logic()
+        if self.animCount<3 then
+            objAPI:sendToFront(self.objectID,self.LEVEL)
+            objAPI:addHitBox(nil,self.x+1,self.y-16,14,16,"block")
+        end
+        if self.animCount<=4 then self.animCount=self.animCount+1
+            self.yA=self.y-math.round(((math.sin((self.animCount*30)/57.296))*8),0) --math..?
+        else objAPI:destroy(self.objectID,self.LEVEL)
+            plot2place(self.replaceWith[3],self.replaceWith[1],self.replaceWith[2])
+        end
+    end
+
+    function objBumpedBlock:draw(gc,x,y,TYPE,isEditor,isIcon)
+        gc:drawImage(texs[TYPE],x,self.yA+8)
+    end
+
+--------------------------
+-----MULTICOIN BLOCK------ NEW drawing format(N/A)
+--------------------------
+objMultiCoinBlock=class(objAPI)
+        
+    function objMultiCoinBlock:setup(objectID,posX,posY,TYPE,despawnable,arg1,arg2)
+        self:initObject(objectID,TYPE,"background",nil,{posX,posY},true,0)
+        self.despawnable=false self.GLOBAL=true self.timer=sTimer(100) self.interactSpring=false self.disableStarPoints=true
+        objAPI:createObj("coin",self.x,self.y,true)
+    end
+
+    function objMultiCoinBlock:logic()
+        if cTimer(self.timer)<=0 then objAPI:destroy(self.objectID,self.LEVEL)
+        elseif cTimer(self.timer)==1 then --start ending the multi coin period
+            local config=self.TYPE:split("_")
+            if (pixel2ID(self.x+16,self.y,true)~=99) then pixel2place(tonumber(config[2]),self.x+16,self.y,true) end --get rid of the infinite coin block at all costs
+            for i=1,#entityLists.outer do --now THIS is a stupid workaround to a problem i caused, finds the bumped block animation and changes what it replaces
+                local objectID=entityLists.outer[i]
+                if string.sub(objectID,1,11)=="bumpedBlock" and allEntities[objectID].x==self.x and allEntities[objectID].y==self.y then
+                    allEntities[objectID].replaceWith[3]=tonumber(config[2])
+    end end end end
+
+    function objMultiCoinBlock:draw(gc,x,y,TYPE,isEditor,isIcon) end -- ...nothing to draw
+
+--------------------------
+-----BRICK PARTICLES------ OLD drawing format#################################################################
+--------------------------
+objBrickParticle=class(objAPI)
+
+
+    function objBrickParticle:setup(objectID,posX,posY,TYPE,despawnable,thrustX,thrustY)
+        self:initObject(objectID,TYPE,"particle",nil,{posX,posY},thrustX*0.4,math.abs(thrustY*8))
+        self.THEME=(pixel2theme(self.x+1,true)==1) and "_underground" or (pixel2theme(self.x+1,true)==3) and "_castle" or ""
+        self.animIndex=#entityLists.particle%4 self.delay=true self.status=((math.ceil((playStage.framesPassed/3)+self.animIndex))%4)+1
+        self.xAnimTimer=playStage.framesPassed+15 self.GLOBAL=true self.interactSpring=false self.disableStarPoints=true
+    end
+
+    function objBrickParticle:logic()
+    --ANIMATION (comes first in this case)
+        self.status=((math.ceil((playStage.framesPassed/3)+self.animIndex))%4)+1
+        if self.delay==true then self.delay=false return end --initial frame
+    --X AXIS,Y AXIS
+        if self.xAnimTimer>playStage.framesPassed then self.x=self.x+self.vx end
+        if self.y>216 then objAPI:destroy(self.objectID,self.LEVEL) return
+        else self.vy=(self.vy<0) and (self.vy-0.6) or (self.vy<0.7) and -0.5 or self.vy*0.4
+        end self.y=self.y-(self.vy*0.8)
+    end
+
+    function objBrickParticle:draw(gc,x,y,TYPE,isEditor,isIcon)
+        gc:drawImage(texs["brick_piece"..self.status..self.THEME],x,y)
+    end
+--------------------------
+-----SCORE PARTICLES------ NEW drawing format(N/A)
+--------------------------
+objScoreParticle=class(objAPI)
+
+    function objScoreParticle:setup(objectID,posX,posY,TYPE,despawnable,arg1,arg2)
+        self:initObject(objectID,arg1,"particle",nil,{posX-playStage.cameraOffset,posY+8},true,0)
+        self.animLimit=sTimer(12) self.GLOBAL=true self.interactSpring=false self.disableStarPoints=true
+    end
+
+    function objScoreParticle:logic() 
+        if gTimer(self.animLimit) then objAPI:destroy(self.objectID,self.LEVEL)
+        else self.y=self.y-3
+    end end
+
+    function objScoreParticle:draw(gc,x,y,TYPE,isEditor,isIcon)
+        gc:drawImage(texs["score_"..TYPE],self.x,self.y)
+    end
+    
+--------------------------
+--------COIN ANIM--------- OLD drawing format#################################################################
+--------------------------
+objCoinAnim=class(objAPI)
+
+    function objCoinAnim:setup(objectID,posX,posY,TYPE,despawnable,arg1,arg2)
+        self:initObject(objectID,TYPE,"outer",nil,{posX,posY},true,0) self.disableStarPoints=true
+        self.yA=self.y self.status=1 self.animCount=0 objAPI:addStats("coins",1) self.interactSpring=false
+    end
+
+    function objCoinAnim:logic() 
+        if self.animCount<16 then self.animCount=self.animCount+1
+            self.yA=self.y-(math.sin((self.animCount*9)/57.296))*64
+            self.status=((math.ceil((playStage.framesPassed/3)))%4)+1
+        else objAPI:destroy(self.objectID,self.LEVEL) objAPI:addStats("points",200,self.x,self.yA) end
+        if self.animCount==16 then self.drawCondition=true end
+    end
+
+    function objCoinAnim:draw(gc,x,y,TYPE,isEditor,isIcon)
+        if not self.drawCondition then gc:drawImage(texs["coin_"..self.status],x,self.yA+8)
+    end end
+
+--------------------------
+----GAMEPLAY FUNCTIONS----
+--------------------------
+playStage=class()
+    --math.ceil(playStage.cameraOffset/16),math.ceil((320+playStage.cameraOffset)/16)
+
+    function playStage:generate(LEVELSTRING,transition,EDITOR)
+        gui:clear() --editor.active=false
+        mario.trail={}
+        cursor.set("default")
+        playStage:clearEntities()
+        playStage.framesPassed=0
+        mario.framesPassed=0
+        playStage.framesPassedBlock=0
+        playStage.SCORE=0
+        playStage.coinCount=0
+        level.perm=LEVELSTRING
+        playStage.load=0
+        playStage.transition=0 playStage.transition2=false
+        playStage.EDITOR=EDITOR
+        playStage.cameraBias=30
+        input.left=0 input.right=0 input.up=0 input.down=0 input.action=0 input.stor.left=0 input.stor.right=0 input.stor.up=0 input.stor.down=0 input.stor.action=0
+        if transition==true then
+            playStage.transition=20
+        end
+        playStage.events["onoff"]="true"
+    end
+
+    function playStage:init()
+        entityLists={
+            background={},
+            inner={},
+            outer={},
+            particle={},
+        }
+        allEntities={}
+        level.current=destroyObject(level.current,{})
+        playStage.active=false
+        playStage.wait=false
+        playStage.events={}
+        mario:init()
+    end
+
+    function playStage:clearEntities()
+        for k in pairs(entityLists) do
+            entityLists[k] = {}
+        end
+        allEntities={}
+        cleanupListDestroy={}
+        cleanupListTransfer={}
+        hitBoxList={}
+        playStage.platformList={}
+        playStage.platformListAdd={}
+    end
+
+    --BUTTON INPUTS
+        function playStage:charIn(chr)
+            if chr=="−" or chr==" " then playStage:handleInput("action")
+            elseif chr=="2" then         playStage:handleInput("down")
+            elseif chr=="4" then         playStage:handleInput("left")
+            elseif chr=="6" then         playStage:handleInput("right")
+            elseif chr=="5" then         playStage:handleInput("up")
+            elseif chr=="restart" then   playStage:generate(level.perm)
+            elseif chr=="edit" and level.current.get(1,1)~=nil then
+                local fileSTOR=editor.file
+                editor:generate(level.perm)
+                editor.active=true editor.file=fileSTOR playStage.active=false
+                editor.cameraOffset=math.floor(playStage.cameraOffset/20)*20
+            end
+            if debug then --these are mostly legacy functions, prevailing from the most early versions of nsmm
+                if chr=="1" then
+                    mario:powerUpMario()
+                elseif chr=="2" then
+                    mario.y=mario.y-3
+                    mario.x=mario.x+2
+                elseif chr=="8" then
+                    mario.x=mario.x-1
+                elseif chr=="9" then
+                    mario.x=mario.x+1
+                elseif chr=="0" then
+                    mario:powerDownMario()
+                elseif chr=="r" and level.current.get(1,1)~=nil then playStage:randomise()
+                elseif chr=="f" then frameByFrame=not frameByFrame
+                elseif chr=="y" then mario.x=73*16
+                elseif chr=="d" then
+                    debug=not debug
+                elseif chr=="g" then
+                    mario:clearedLevel(190)
+                elseif chr=="v" then
+                    on.mouseDown()
+                elseif chr=="c" then
+                    print(level.perm)
+                elseif chr=="s" then
+                    clipboard.addText(level.perm)
+                elseif chr=="l" then
+                    local PASTE=clipboard.getText()
+                    if string.sub(PASTE,1,1)=="<" then --very crude for now
+                        playStage:generate(PASTE)
+                        mario:resetPos()
+                    end
+                elseif chr=="j" then
+                    blockSelectionTEMP=blockSelectionTEMP-1
+                elseif chr=="k" then
+                    blockSelectionTEMP=blockSelectionTEMP+1
+                elseif chr=="p" then
+                    playStage:PAUSE()
+                end
+            end
+        end
+        function playStage:escapeKey()
+            playStage:PAUSE()
+        end
+        function playStage:arrowUp()
+            playStage:handleInput("up")
+        end
+        function playStage:arrowDown()
+            playStage:handleInput("down")
+        end
+        function playStage:arrowLeft()
+            playStage:handleInput("left")
+        end
+        function playStage:arrowRight()
+            playStage:handleInput("right")
+        end
+        function playStage:enterKey()
+            if playStage.EDITOR then playStage:charIn("edit") end
+        end
+        function playStage:mouseDown()
+            if debug then
+                local placeXY=pixel2plot(mouse.x,mouse.y-8)
+                level.current.set(placeXY[1], placeXY[2], blockSelectionListTEMP[(blockSelectionTEMP%(#blockSelectionListTEMP))+1])
+            end
+            if playStage.EDITOR and checkCollision(mouse.x,mouse.y,1,1,4,178,40,30) then
+                playStage:charIn("edit")
+            end
+        end
+        function playStage:rightMouseDown()
+            if debug then
+                local placeXY=pixel2plot(mouse.x,mouse.y-8)
+                level.current.set(placeXY[1], placeXY[2], 0)
+            end
+        end
+
+    function playStage:PAUSE() --true/false
+        gui:clear()
+        if playStage.EDITOR or mario.dead then gui:createPrompt("PAUSED",nil,{{"RESUME","close"},{"EDIT","play_edit"},{"QUIT","quit"}},false)
+        else                                   gui:createPrompt("PAUSED",nil,{{"RESUME","close"},{"RETRY","play_retry"},{"EDIT","play_edit"},{"QUIT","quit"}},false)
+        end
+    end
+
+    function playStage:handleInput(INPUT)
+        if INPUT~=nil and not mario.clear then
+            input[INPUT]=1
+            if     INPUT=="down" and not mario.clear then   input.stor.down=8
+            elseif INPUT=="up" and not mario.clear then     input.stor.up=2
+            elseif INPUT=="action" and not mario.clear then input.stor.action=2
+            elseif not level.current.autoMove then           input.stor[INPUT]=6
+            end
+        else
+            input.stor.up=input.stor.up-1
+            input.stor.down=input.stor.down-1
+            input.stor.left=input.stor.left-1
+            input.stor.right=input.stor.right-1
+            input.stor.action=input.stor.action-1
+            
+            if level.current.autoMove then input.left=0 input.right=1
+            else
+                if input.stor.left>0 then input.left=1 else input.left=0 end
+                if input.stor.right>0 then input.right=1 else input.right=0 end
+            end
+
+            if input.stor.up>0 then input.up=1 else input.up=0 end
+            if input.stor.down>0 then input.down=1 else input.down=0 end
+            if input.stor.action>0 then input.action=1 else input.action=0 end
+        end
+    end
+
+    function playStage:completeStage(condition) --"dead" or "goal"
+        if not playStage.EDITOR then
+            if condition=="dead" then playStage:charIn("restart")
+            elseif condition=="goal" then gui:click("quitconfirm")
+            end
+        else
+            playStage:charIn("edit")
+        end
+    end
+
+    function playStage:randomise() --entertaining but ultimately useless (... FOR NOW!!)
+
+        -- math.randomseed(1)
+
+        local level=string2level(defaultCourse) --a relic of the past i think
+        
+        local levelWidth,levelHeight=200,13 --width/height
+        local groundHeight=3 --ground parameters
+        local minHeight,maxHeight=groundHeight-2,groundHeight+2
+        local flatnessThreshold=1-(0.8) --how flat the ground should be (0 = completely flat, 1 = completely random)
+        local pitFrequency=0.05 --frequency of pits of death (0 = none, 1 = very frequent)
+        local enemyTable={{"goomba",0.02},{"koopa_R",0.02},{"koopa_G",0.02},{"bullet_L",0.03,2}} -- table of possible enemies and their probabilities
+        local blockFrequency=0.05
+        local blockTable={{22,0.05},{2,0.07},{23,0.03},{24,0.02},{36,0.04},{33,0.05}} -- table of possible blocks and their probabilities
+
+        local function generateGround()
+            local lastHeight,x,lastRow=groundHeight,1,0
+            while x<=levelWidth do
+        --GROUND GENERATION
+                local height=lastHeight
+                if math.random()>flatnessThreshold then
+                    height=lastHeight+math.random(-1,1)
+                    if height<minHeight then
+                    height=minHeight
+                    elseif height>maxHeight then
+                    height=maxHeight
+                end end
+                for y=1,levelHeight do
+                    if y<=height then level.set(x,y,1)
+                    elseif level.get(x,y)==nil then level.set(x,y,0)
+                end end lastHeight=height
+        --PIT SPAWNING
+                if math.random()<pitFrequency and x>6 then x=x+math.random(2,4)
+                end
+        --BLOCK SPAWNING
+                if lastRow<=0 and blockFrequency>math.random() then
+                    local blockY=0
+                    for y=1,levelHeight do
+                        if level.get(x,y)==0 then
+                            blockY=y break
+                    end end
+                    local rowLength=math.random(1,4)
+                    for x2=x,x+rowLength do
+                        local blockProb,chosenBlock=math.random(),3
+                        for _, block in ipairs(blockTable) do
+                            if blockProb<=block[2] then chosenBlock=block[1] break
+                            else blockProb=blockProb-block[2]
+                            end end
+                        level.set(x2,blockY+4,chosenBlock)
+                    end
+                    lastRow=rowLength+4
+                end lastRow=lastRow-1
+        --ENEMY SPAWNING
+                if x>6 then
+                    local enemyProb=math.random()
+                    for _, enemy in ipairs(enemyTable) do
+                        if enemyProb<=enemy[2] then
+                            local enemyX,enemyY=x,0
+                            for y=1,levelHeight do
+                                if level.get(x,y)==0 then
+                                    enemyY=y break
+                            end end level.set(enemyX,(enemyY+math.random(0,enemy[3] or 0)),enemy[1]) break
+                        else enemyProb=enemyProb-enemy[2]
+                end end end
+                x=x+1
+            end
+        end
+
+        generateGround()
+        
+        local starts=plot2pixel(3,5)
+        level.startX=starts[1] level.startY=starts[2] 
+        level.set(2,5,0) level.TIME=500 level.END=levelWidth
+        playStage:generate(level2string(level))
+    end
+
+    function playStage:drawTerrain(gc) --rendered in rows from bottom to top w/ the rows from left to right
+        for i2=math.ceil(playStage.cameraOffset/16),math.ceil((screenWidth+playStage.cameraOffset)/16) do --left to right, horizontally, only draw what is visible on screen
+            local THEME=plot2theme(i2)
+            for i=1,13 do --bottom to top, vertically (row 14 is reserved for hud/special events and is not drawn)
+                local blockID=plot2ID(i2,i)
+                if type(blockID)=='number' then --themed blocks
+                    if blockID<0 then blockID=0 end
+                    if blockIndex[blockID]["theme"][THEME]~=nil then
+                        local animSpeed=blockIndex[blockID]["animSpeed"] or 4 --default animation speed
+                        local frameForAnim=(math.floor((playStage.framesPassedBlock/animSpeed)%#blockIndex[blockID]["theme"][THEME]))+1 --(support for animations)
+                        gc:drawImage(texs[blockIndex[blockID]["theme"][THEME][frameForAnim]], ((i2-1)*16)-playStage.cameraOffset, 212-16*(i)+8)
+                        if i==13 and blockIndex[blockID]["ceiling"] and level.current.showCeilingBlock then gc:drawImage(texs[blockIndex[blockID]["theme"][THEME][frameForAnim]], ((i2-1)*16)-playStage.cameraOffset, 212-16*(i+1)+8) end --draw a block above the blocks to denote that mario cannot jump over it
+                elseif blockIndex[blockID]["texture"][1]~=nil then --it has an animation
+                        local animSpeed=blockIndex[blockID]["animSpeed"] or 4 --default animation speed
+                        local frameForAnim=(math.floor((playStage.framesPassedBlock/animSpeed)%#blockIndex[blockID]["texture"]))+1 --(support for animations)
+                        gc:drawImage(texs[blockIndex[blockID]["texture"][frameForAnim]], ((i2-1)*16)-playStage.cameraOffset, 212-16*(i)+8)
+                        if i==13 and blockIndex[blockID]["ceiling"] and level.current.showCeilingBlock then gc:drawImage(texs[blockIndex[blockID]["texture"][frameForAnim]], ((i2-1)*16)-playStage.cameraOffset, 212-16*(i+1)+8) end --draw a block above the blocks to denote that mario cannot jump over it
+                    end --^^^ CAUTION so far no animated blocks are ceiling ones.. if they are then this will cease to work!
+                else --load the object
+                    table.insert(level.current.loadedObjects,{blockID,i2,i}) --to load back if there's a pipe transition
+                    plot2place(0,i2,i) --blank it out
+                    objAPI:createObj(blockID,(i2-1)*16,212-16*(i),false)
+    end end end end
+
+    function playStage:drawBackground(gc) --rendered in rows from bottom to top w/ the rows from left to right
+        for i=math.ceil(playStage.cameraOffset/16),math.ceil((screenWidth+playStage.cameraOffset)/16) do --left to right, horizontally, only draw what is visible on screen
+            local THEME=plot2theme(i)
+            if THEME==0 then gc:setColorRGB(97,133,248) --daytime
+            else gc:setColorRGB(0,0,0) --underground or nighttime or castle
+            end
+            gc:fillRect(((i-1)*16)-playStage.cameraOffset,0,18,212) --backdrop
+    end end
+
+    function playStage:levelLogic()
+        if checkCollision(mouse.x,mouse.y,1,1,4,178,40,30) and playStage.EDITOR then
+            cursor.set("hand pointer") --simple bounding of clapperboard in corner
+        else cursor.set("default")
+        end
+        playStage.framesPassedBlock=playStage.framesPassedBlock+1
+        if not mario.dead and not mario.clear then
+            playStage.TIME=level.current.TIME-(math.floor(playStage.framesPassed/18))
+            if playStage.TIME<=0 then mario:kill() end
+        end
+    end
+
+    function playStage:scrollCamera(force)
+        if (not (mario.clear or mario.dead)) then
+            playStage.cameraTargetOffset=playStage.cameraOffset
+            if level.current.autoScroll then
+                if playStage.cameraOffset>=playStage.levelWidth-318 then
+                    playStage.cameraOffset=playStage.levelWidth-318
+                elseif not (playStage.wait or gui.PROMPT) and playStage.cameraOffset~=playStage.levelWidth-318 then
+                    playStage.cameraOffset=playStage.cameraOffset+level.current.autoScroll
+                end
+            elseif (playStage.wait==false) and (not mario.powerUp) then
+                local biasBoundary=48 --distance from centre (159) that mario has to travel to change the bias direction
+                if mario.x>159 then --if progressed past initial screen centre
+                    if not (level.current.disableBackScrolling==true and ((mario.x+8-159+math.abs(playStage.cameraBias))<playStage.cameraOffset)) then
+                        if (mario.x-playStage.cameraOffset+8)>159+biasBoundary and (mario.vx>=1 or mario.vx==0) then --passed right side boundary
+                            playStage.cameraBias=math.abs(playStage.cameraBias)
+                        elseif (mario.x-playStage.cameraOffset+8)<159-biasBoundary and (mario.vx<=-1 or mario.vx==0) then --passed left side boundary
+                            playStage.cameraBias=-math.abs(playStage.cameraBias)
+                        end
+                        if playStage.cameraBias==math.abs(playStage.cameraBias) and (mario.x-playStage.cameraOffset+8)<159-playStage.cameraBias then
+                        elseif playStage.cameraBias==-math.abs(playStage.cameraBias) and (mario.x-playStage.cameraOffset+8)>159-playStage.cameraBias then
+                        else
+                            playStage.cameraTargetOffset=mario.x+8-159+playStage.cameraBias
+                        end
+                    end
+                elseif level.current.disableBackScrolling~=true then
+                    playStage.cameraTargetOffset=0
+                end
+            end
+        end
+        --scroll stop
+        local function posInList(list,num,bodge)
+            if list[1]>num and bodge then return 2 end --wtf is this
+            for i=1,#list do
+                if list[i]>num then return i end
+            end return #list+(bodge or 0) --i'm really sorry for this
+        end
+        -- local posLeft,posRight=0,playStage.levelWidth-318 --never scroll past these
+        local posLeft=level.current.scrollStopL[math.max(math.min(posInList(level.current.scrollStopL,mario.x+3,1),posInList(level.current.scrollStopL,playStage.cameraOffset,1)),posInList(level.current.scrollStopL,playStage.cameraTargetOffset,1))-1]
+        local posRight=level.current.scrollStopR[math.max(math.min(posInList(level.current.scrollStopR,playStage.cameraTargetOffset),posInList(level.current.scrollStopR,playStage.cameraOffset)),posInList(level.current.scrollStopR,mario.x-306))] --this is held together with post it note glue
+        playStage.cameraTargetOffset=math.max(posLeft,math.min(playStage.cameraTargetOffset,posRight)) --clamp values to scroll stops --CONSIDER THIS FOR SCROLL STOP
+        --smooth scrolling
+        local lerpFactor=(mario.clear or mario.dead) and 0.25 or force or 0.15 --the lerpFactor (scrolling smoothness (higher=smoother))
+        playStage.cameraOffset=math.round(playStage.cameraOffset+(playStage.cameraTargetOffset-playStage.cameraOffset)*lerpFactor,4)
+        playStage.cameraOffset=math.max(0,math.min(playStage.cameraOffset,playStage.levelWidth-318)) --clamp values to level borders --CONSIDER THIS FOR SCROLL STOP
+        if level.current.autoMove and playStage.cameraOffset>=playStage.levelWidth-318 then
+            level.current.autoMove=nil
+        end
+    end
+
+    function playStage:getSpawnOffsets()
+        --view distance plus 3 blocks
+        local spawnOffsetX=math.ceil(playStage.cameraOffset/16)*16-48 --left side
+        local spawnOffsetY=math.ceil((screenWidth+playStage.cameraOffset)/16)*16+48 --right side
+        return spawnOffsetX,spawnOffsetY
+    end
+
+    function playStage:objLogic()
+        if not playStage.wait and not mario.powerUp then
+            local spawnOffsetX,spawnOffsetY=playStage:getSpawnOffsets() --get the view distance
+            for k in pairs(entityLists) do
+                local focusedList=entityLists[k]
+                for i=1,#focusedList do --for all entities within the list
+                    local entity=allEntities[focusedList[i]]
+                    if entity~=nil and entity.objectID then --if entity exists
+                        if ((entity.y)>212) then
+                            -- print("offscreen y",entity.TYPE)
+                            objAPI:destroy(entity.objectID,entity.LEVEL)
+                        elseif (((entity.x) > (spawnOffsetX)) and ((entity.x) < (spawnOffsetY))) or (entity.GLOBAL==true) or level.current.enableGlobalEntities==true then --if in view distance
+                            entity:logic()
+                            -- print("logic",entity.TYPE)
+                        elseif entity.despawnable then
+                            -- print("despawn1",entity.TYPE)
+                            if entity.x<-16 or (entity.x < spawnOffsetX+8) or ((entity.x) > spawnOffsetY-8) then
+                                -- print("despawn2",entity.TYPE)
+                                objAPI:destroy(entity.objectID,entity.LEVEL) end
+                        end
+                    else table.remove(focusedList,i) end --get rid of blank entities that may occur as a result of overloading, NOT a substantial issue
+    end end end end
+
+    function playStage:objDraw(gc,entityLists)
+        local spawnOffsetX,spawnOffsetY=playStage:getSpawnOffsets() --get the view distance
+        for k in pairs(entityLists) do
+            local focusedList=entityLists[k]
+            for i=1,#focusedList do
+                local entity=allEntities[focusedList[i]]
+                -- print(entity)
+                if entity~=nil and entity.objectID then
+                    if (not ((entity.x) < (spawnOffsetX)) and not ((entity.x) > (spawnOffsetY))) or entity.GLOBAL==true then
+                        local obj=allEntities[focusedList[i]]
+                        obj:draw(gc,obj.x-playStage.cameraOffset,obj.y+8,obj.TYPE,false,false) --:draw(gc,x,y,TYPE,isEditor,isIcon)
+    end end end end end
+
+    function playStage:paint(gc,runLogic) --all logic/drawing required to play the stage
+        if playStage.load>1 then
+        --logic
+            Profiler:start("playStage:paint logic", false, "playStage:paint logic")
+            for i=1,runLogic do
+                if playStage.transition<=10 and not gui.PROMPT then
+                    if not playStage.wait then
+                        playStage.framesPassed=playStage.framesPassed+1
+                        objAPI:updatePlatforms()
+                    end
+                    if (not playStage.wait) or mario.pipe then
+                        mario.framesPassed=mario.framesPassed+1
+                    end
+                    Profiler:start("playStage:levelLogic", true, "playStage:paint logic")
+                    playStage:levelLogic() --timer etc
+                    Profiler:start("playStage:scrollCamera", true, "playStage:paint logic")
+                    playStage:scrollCamera() --scrolling
+                    Profiler:start("playStage:handleInput", true, "playStage:paint logic")
+                    playStage:handleInput() --receive information from keys pressed and parse it
+                    Profiler:start("playStage:objLogic", true, "playStage:paint logic")
+                    playStage:objLogic() --logic for every obj (powerups, enemies etc) except mario
+                    -- if playStage.framesPassed%2==0 then --every other frame
+                        Profiler:start("objAPI:cleanup", true, "playStage:paint logic")
+                        objAPI:cleanup() --transfers layers, destroys queued objects
+                    -- end
+                    Profiler:start("mario:logic", true, "playStage:paint logic")
+                    mario:logic()
+                end
+            end
+            Profiler:stop("playStage:paint logic")
+            
+        --drawing (terrain and most objs)
+            Profiler:start("playStage:paint drawing", false, "playStage:paint drawing")
+
+            Profiler:start("playStage:drawBackground", true, "playStage:paint drawing")
+            playStage:drawBackground(gc)
+            Profiler:start("playStage:objDraw background", true, "playStage:paint drawing")
+            playStage:objDraw(gc,{entityLists.background})
+            if mario.pipe then
+                Profiler:start("mario:draw", true, "playStage:paint drawing")
+                mario:draw(gc)
+            end
+            Profiler:start("playStage:drawTerrain", true, "playStage:paint drawing")
+            playStage:drawTerrain(gc)
+            Profiler:start("playStage:objDraw inner outer", true, "playStage:paint drawing")
+            playStage:objDraw(gc,{entityLists.inner,entityLists.outer})
+            if not mario.pipe then
+                Profiler:start("mario:draw", true, "playStage:paint drawing")
+                mario:draw(gc)
+            end
+            Profiler:start("playStage:objDraw particle", true, "playStage:paint drawing")
+            playStage:objDraw(gc,{entityLists.particle})
+            if playStage.transition2 then
+                Profiler:start("playStage:drawCircleTransition", true, "playStage:paint drawing")
+                playStage:drawCircleTransition(gc,unpack(playStage.transition2))
+            end
+        
+        --hud (coins= %^&)
+            Profiler:start("playStage:paint HUD", true, "playStage:paint drawing")
+            local frameForAnim=(math.floor((framesPassed/4)%6))+1
+            if frameForAnim<4 then frameForAnim="[" elseif frameForAnim==5 then frameForAnim="}" else frameForAnim="{" end
+            local hud1=frameForAnim.."+"..addZeros(playStage.coinCount,2)
+            local hud2=addZeros(playStage.SCORE,6).." > "..addZeros(playStage.TIME,3)
+            if false then hud1="< +".."lives".." " end
+            drawFont(gc,hud1,2,2,"left")
+            drawFont(gc,hud2,316,2,"right")
+            if playStage.TIME<=0 and not mario.clear then drawFont(gc,"TIME UP",nil,nil,"centre") end
+            if playStage.EDITOR then
+                if checkCollision(mouse.x,mouse.y,1,1,4,178,40,30) then gc:drawImage(texs.button_create2,1,168)
+                else gc:drawImage(texs.button_create1,6,178)
+                end gc:drawImage(texs.prompt_enter,28,203)
+            end
+
+            gui:detectPos(0,8)
+
+        --debug stuff
+            if debug then --this is very messy and a complete clusterf*ck
+                Profiler:start("playStage:paint debug", true, "playStage:paint drawing")
+                
+                local highlightedx=pixel2plot(mouse.x,mouse.y-8)[1]
+                local highlightedy=pixel2plot(mouse.x,mouse.y-8)[2]
+                local pixels = plot2pixel(highlightedx,highlightedy,true)
+                gc:setColorRGB(255,255,100) 
+                local ID=blockSelectionListTEMP[(blockSelectionTEMP%(#blockSelectionListTEMP))+1]
+                local name=""
+                if blockIndex[ID]~=nil then
+                    name=(" ("..blockIndex[ID]["name"]..") ")
+                end
+                gc:drawString("fps: "..tostring(fps).." select: "..ID..name.." velX: "..mario.vx.." velY: "..mario.vy, 0, 16, top)
+                
+                gc:drawString("("..(highlightedx-1)..": "..(13-highlightedy)..") despook: "..despook.." entities: "..objAPI:getObjectCount(), 0, 32, top)
+                gc:drawString("blockX "..highlightedx.." blockY "..highlightedy.." id: "..plot2ID(highlightedx,highlightedy).." x"..mouse.x.."y"..(mouse.y-8).." mX: "..mario.x.." mY: "..mario.y, 0, 48, top)
+                gc:drawString("mem "..collectgarbage("count"), 0, 48+16, top)
+                --gc:drawString("("..(highlightedx-1)..": "..(13-highlightedy)..") id: "..plot2ID(highlightedx,highlightedy), 0, 48, top) --this is for translating GreatEd maps
+
+                for i=1,#debugBoxes do
+                    gc:setColorRGB(math.random(0,255),math.random(0,255),math.random(0,255))
+                    if debugBoxes[i][5]==true then --NOT global
+                        gc:drawRect(debugBoxes[i][1],debugBoxes[i][2]+8,debugBoxes[i][3],debugBoxes[i][4])
+                    else
+                        gc:drawRect(debugBoxes[i][1]-playStage.cameraOffset,debugBoxes[i][2]+8,debugBoxes[i][3],debugBoxes[i][4])
+                    end
+                end
+                debugBoxes={}
+                timer2rainbow(gc,framesPassed+200,10)
+                if ((framesPassed/15)%2) <= 1 then
+                    gc:setPen("thin","dotted")
+                else
+                    gc:setPen("thin","dashed")
+                end
+                gc:drawRect(pixels[1],pixels[2]+8,15,15)
+                gc:setPen("thin","smooth")
+                gc:setColorRGB(255,255,100) 
+            end
+
+        --transition
+            if playStage.transition>0 then
+                Profiler:start("playStage:draw transition", true, "playStage:paint drawing")
+
+                playStage.transition=playStage.transition-1
+                gc:setColorRGB(0,0,0)
+                gc:fillRect(0,0,160-((20-playStage.transition)*8),212)
+                gc:fillRect(160+(20-playStage.transition)*8,0,160-(20-playStage.transition)*8,212)
+            end
+
+            Profiler:stop("playStage:paint drawing")
+        else
+            gc:setColorRGB(0,0,0)
+            gc:fillRect(0,0,screenWidth,screenHeight)
+            if playStage.load==1 then
+                level.current=string2level(level.perm)
+                mario:resetPos()
+                playStage.cameraOffset=(mario.x<96) and 0 or mario.x-96
+                if type(playStage.EDITOR)=="table" then
+                    mario.x,mario.y=math.round(playStage.EDITOR[1]/16)*16,math.round(playStage.EDITOR[2]/16)*16
+                    mario.iFrames=playStage.framesPassed+40
+                    playStage.cameraOffset=editor.cameraOffset
+                end playStage.cameraTargetOffset=playStage.cameraOffset
+                playStage.levelWidth=((level.current.END)*16)
+                playStage:levelLogic()
+                mario:logic() mario:teleport(mario.x,mario.y)
+            end
+            playStage.load=playStage.load+1
+            drawFont(gc,"LOADING LEVEL FOR PLAY...", nil, nil,"centre",0)
+        end
+    end
+
+    function playStage:drawCircleTransition(gc,centerX,centerY,frame,out) --out=false/nil, then in. frame values: 1-29
+        if out then frame=30-frame end
+        --CALCULATE THE VALUE
+        local circleSize=280
+        local speedValue=24
+        for i=1,(frame-1) do
+            if speedValue>5 then speedValue=speedValue-1
+            else speedValue=speedValue-0.1
+            end circleSize=circleSize-(speedValue*0.9)
+        end
+        gc:setColorRGB(0, 0, 0)
+        if frame<0 then
+        elseif frame<30 then
+            --DRAW CIRCLE
+            gc:drawImage(image.copy(texs.transitioncircle_1,circleSize,circleSize),centerX-circleSize,centerY-circleSize)
+            gc:drawImage(image.copy(texs.transitioncircle_2,circleSize,circleSize),centerX,centerY-circleSize)
+            gc:drawImage(image.copy(texs.transitioncircle_3,circleSize,circleSize),centerX,centerY)
+            gc:drawImage(image.copy(texs.transitioncircle_4,circleSize,circleSize),centerX-circleSize,centerY)
+            --DRAW BORDERS
+            local v1=math.max(0,centerY-circleSize)
+            local v2=math.max(0,centerX+circleSize-1)
+            gc:fillRect(0,0,320,v1+1)--top
+            gc:fillRect(0,math.max(0,circleSize+centerY)-1,320,math.max(0,212-(circleSize+centerY))+2)--bottom
+            gc:fillRect(0,v1,math.max(0,centerX-circleSize)+1,circleSize*2)--left
+            gc:fillRect(v2,v1,math.max(0,320-v2),circleSize*2)--right
+        else
+            gc:fillRect(0,0,320,212)
+        end
+    end
+--------------------------
+-----EDITOR FUNCTIONS-----
+--------------------------
+editor=class()
+
+    function editor:init(gc)
+        editor.showTrail=false editor.levelList=false
+        editor.selectedID=1
+        editor.highlightedTile={1,1}
+        editor.selectionSize={16,16}
+        editor.groupIndex={}
+        editor.groupIndex[1]={"TERRAIN", "Ground",
+        1  , 4  , 5  , 6  , 7  , 8  , 9  ,
+        109, 105, 107, 106, 12 , 13 , 14 ,
+        110, 11 , 108, 111, 15 , 16 , 17 ,
+        150, nil, 60 , 61 , 62 , 18 , 29 ,
+        152, 153, nil, 63 , 99 , 19 , 28 }
+        editor.groupIndex[2]={"MYSTERY BOXES", "MysteryBox0",
+        nil, nil, nil, nil, nil, nil, nil,
+        nil, nil, nil, nil,  nil, nil, nil,
+        nil, 20 , 21 , 22 , 23 , 24 , nil,
+        nil, nil, 2  , nil, 25 , nil, nil,
+        nil, nil, nil, nil, nil, nil, nil}
+        editor.groupIndex[3]={"BRICKS", "Brick",
+        nil, nil, nil, nil, nil, nil, nil,
+        nil, nil, nil, 3  , nil, nil, nil,
+        nil, 31 , 32 , 33 , 34 , 35 , nil,
+        nil, nil, 30 , nil, 36 , nil, nil,
+        nil, nil, nil, nil, nil, nil, nil}
+        editor.groupIndex[4]={"INVIS. BLOCKS", "InvisibleBlock1",
+        nil, nil, nil, nil, nil, nil, nil,
+        nil, nil, nil, nil, nil, nil, nil,
+        nil, 100, 101, 102, 103, 104, nil,
+        nil, nil, 10 , nil, 112, nil, nil,
+        nil, nil, nil, nil, nil, nil, nil}
+        editor.groupIndex[5]={"ENEMIES", "goomba1",
+        "koopa_G", "koopa_R", "Pkoopa_G", "Pkoopa_R_H", "Pkoopa_R_V", "Pkoopa_R_HV", "Pkoopa_R", -- o how the once nice neat formatting crumbles away once you introduce objects...
+        "goomba", "piranhaplant_1", "piranhaplant_2", "piranhaplant_3", "piranhaplant_4", "shell_G", "shell_R",
+        "bullet_L", "bullet_R", "blaster_L", "blaster_R", "blaster_LR", "shell_G_-4", "shell_G_4",
+        "bowser", "flame_L", "flame_R", nil, nil, "shell_R_-6", "shell_R_6",
+        nil, nil, nil, nil, nil, "koopa_B", "shell_B"}
+        editor.groupIndex[6]={"POWER-UPS", "mushroom",
+        nil, nil, nil, nil, nil, nil, nil,
+        nil, nil, nil, nil, nil, nil, nil, 
+        nil, "mushroom", "fireflower", "Pfireflower", "star", "mushroom1up", nil,
+        nil, nil, nil, nil, nil, nil, nil,
+        nil, nil, nil, nil, nil, nil, nil}
+        editor.groupIndex[7]={"PIPES", "group_pipe",
+        nil, nil, 40 , 41 , 52 , 53 , nil,
+        nil, nil, 48 , 49 , 55 , 54 , nil,
+        nil, 47 , 59 , 56 , 51 , 44 , nil, 
+        nil, 46 , 58 , 57 , 50 , 45 , nil,
+        nil, nil, 43 , 42 , nil, nil, nil}
+        editor.groupIndex[8]={"PLATFORMS", "platform",
+        nil, "platform_0~2~au", nil,                nil, nil, "platform_0~2~fu", nil,
+        "platform_0~2~al", nil, "platform_0~2~ar",  nil, "platform_0~2~fl", nil, "platform_0~2~fr", 
+        nil, "platform_0~2~ad", nil,                nil, nil, "platform_0~2~fd", nil,
+        nil, nil, nil, nil, nil, nil, nil,
+        nil, "platform_0~2~ru", "platform_0~2~rd", nil, "platform_0~2~lx~64", "platform_0~2~ly~64", nil}
+        editor.groupIndex[9]={"DECORATION", "Fence",
+        80 , 81 , 82 , 83 , 84 , 85 , 86 ,
+        65 , 66 , 67 , 71 , 72 , 73 , 87 ,
+        68 , 69 , 70 , 74 , 75 , 76 , 88 , 
+        77 , 78 , 79 , 89 , 91 , 93 , 95 ,
+        129, 97 , 113, 90 , 92 , 94 , 96 ,
+        128, 98 , 114, 122, nil, 121, 119,
+        127, 126, 123, 124, 125, 118, 120,
+        115, 116, 117, 130, 131, 132, 133}
+        editor.groupIndex[10]={"THEMES", "theme0",
+        nil, nil, nil, nil, nil, nil, nil,
+        nil, nil, "theme0", nil, "theme1", nil, nil,
+        nil, nil, "theme2", nil, "theme3", nil, nil, 
+        nil, nil, nil, nil, nil, nil, nil,
+        nil, nil, nil, nil, nil, nil, nil}
+        editor.groupIndex[11]={"GIZMOS", "spring_O_1",
+        154, 155, 156, nil, "spring_O", "spring_B", "spring_R",
+        157, 158, 159, nil, nil, nil, nil, 
+        160, 161, 162, nil, nil, nil, nil,
+        163, 164, 165, nil, nil, nil, nil,
+        nil, nil, nil, nil, nil, nil, nil}
+        editor.groupIndex[12]={"LEVEL CONFIG", "flag",
+        nil, nil, nil, nil, nil, nil, nil,
+        nil, nil, nil, "mario", nil, nil, nil,
+        "scrollStopL", nil, nil, nil, nil, nil, "flagpole",
+        "scrollStopR", "viewpipe", nil, nil, nil, "magicorb_a1_m0", "magicorb_a1_m1",
+        "scrollStopC", nil, nil, nil, nil, "magicorb_a0_m0", "magicorb_a0_m1"}
+        -- editor.groupIndex[69]={"TEMPLATE", "texture",
+        -- nil, nil, nil, nil, nil, nil, nil,
+        -- nil, nil, nil, nil, nil, nil, nil,
+        -- nil, nil, nil, nil, nil, nil, nil, 
+        -- nil, nil, nil, nil, nil, nil, nil,
+        -- nil, nil, nil, nil, nil, nil, nil}
+        editor.tilebarTiles={1,2,3,4,5,6,7,8,9,10,11,12}
+    end
+
+    function editor:drawBackground(gc) --rendered in rows from bottom to top w/ the rows from left to right
+        for i=math.ceil(editor.cameraOffset/16),math.ceil((screenWidth+editor.cameraOffset)/16) do --left to right, horizontally, only draw what is visible on screen
+            local THEME=plot2theme(i,true)
+            if THEME==0 then gc:setColorRGB(97,133,248) --daytime
+            else gc:setColorRGB(0,0,0) --underground or nighttime or castle
+            end
+            gc:fillRect(((i-1)*16)-editor.cameraOffset,0,18,212) --backdrop
+    end end
+
+    function editor:setDisplayedGroup(group)
+        gui:clear()
+        editor.displayedGroup=group
+        if group then
+            local function countRow(num)
+                for i=(num*7)-4,(num*7)+2 do
+                    if group[i] then return true end
+                end return false
+            end local rows,emptyRows=0,0
+            while emptyRows<5 do rows=rows+1
+                if countRow(rows) then emptyRows=0
+                else emptyRows=emptyRows+1
+                end
+            end rows=rows-emptyRows
+            editor.displayedGroup["rows"]=rows
+            if rows>5 then
+                editor.displayedGroup["scroll"]=0
+                local x,y,h=-40,18,-55 --these values now specify position/height offset from original (in level list)
+                gui:newButton("levelList_scrollUp",{"levelList_scrollUp",10,12},x+266,y+42,"gscrollU")
+                gui:newButton("levelList_scrollDown",{"levelList_scrollDown",10,12},x+266,y+177+h,"gscrollD")
+    end end end
+    
+    function editor:charIn(chr)
+        if not gui.PROMPT and not editor.levelList then 
+            if chr=="4" then
+                editor.cameraOffset=editor.cameraOffset-21
+            elseif chr=="5" then
+                editor:setDisplayedGroup(editor.groupIndex[editor.tilebarTiles[1]])
+            elseif chr=="6" then
+                editor.cameraOffset=editor.cameraOffset+21
+            elseif string.sub(editor.selectedID,1,4)~="warp" then
+                if chr=="=" then
+                    if editor.select==false then
+                        editor.eyedropperMode=not editor.eyedropperMode
+                        editor.eraseMode=false
+                        editor.playMode=false
+                    end
+                elseif chr=="−" then
+                    editor.showTrail=not editor.showTrail
+                elseif chr=="^" then
+                    editor.minimised=not editor.minimised
+                elseif chr=="s" then toolpaletteSelection("File","Save")
+                elseif chr=="o" then toolpaletteSelection("File","Open")
+                elseif chr=="play" then
+                    switchTimer(true)
+                    playStage:generate(level2string(level.current),false,true)
+                    playStage.active=true
+                end
+            end
+        end
+    end
+    function editor:arrowLeft()
+        if not gui.PROMPT and not editor.levelList then editor.cameraOffset=editor.cameraOffset-21 end
+    end
+    function editor:arrowRight()
+        if not gui.PROMPT and not editor.levelList then editor.cameraOffset=editor.cameraOffset+21 end
+    end
+    function editor:arrowUp()
+        if editor.displayedGroup and editor.displayedGroup["scroll"] then
+            gui:click("gscrollU")
+        end
+    end
+    function editor:arrowDown()
+        if editor.displayedGroup and editor.displayedGroup["scroll"] then
+            gui:click("gscrollD")
+        end
+    end
+    function editor:mouseDown()
+        if gui.PROMPT then
+        elseif editor.highlightedArea=="grid" then
+            local TILE=editor.selectedID
+            if editor.eraseMode then TILE=0 end
+            if editor.playMode==true then
+                local pos=pixel2snapgrid(editor.mouseTile.x+editor.cameraOffset,editor.mouseTile.y-8,editor.selectionSize[1],editor.selectionSize[2])
+                playStage:generate(level2string(level.current),false,pos)
+                playStage.active=true
+            elseif editor.eyedropperMode==true then
+                local ID=pixel2ID(mouse.x,mouse.y-8,nil,true)
+                if not (tostring(ID):isInteger() and ID<=0) then
+                    editor.selectedID=ID
+                end
+            elseif editor.platformSelect then
+                local ID=level.current.get(editor.platformSelect[1],editor.platformSelect[2])
+                local config=(string.sub(ID,10,#ID)):split("~")
+                local mode=config[3]
+                if string.sub(mode,1,1)=="l" and editor.platformSelect[3]~=true then
+                    editor.platformSelect[3]=true
+                else
+                    editor.selectedID=ID
+                    editor.platformSelect=false
+                end
+            elseif editor.select==false then
+                editor:placeTile(TILE,editor.highlightedTile[1],editor.highlightedTile[2])
+                if editor.selectedIDCache then editor.selectedID=editor.selectedIDCache editor.selectedIDCache=false end
+            elseif editor.select2==false then
+                editor.select2=pixel2grid(editor.mouseTile.x,editor.mouseTile.y-8,editor.selectionSize[1],editor.selectionSize[2])
+            else
+                if editor.select2~=false then
+                    local posSelect=grid2pixel(editor.select[1],editor.select[2],editor.selectionSize[1],editor.selectionSize[2],true)
+                    local posSelect2=grid2pixel(editor.select2[1],editor.select2[2],editor.selectionSize[1],editor.selectionSize[2],true)
+                    local box=editor:determineSelectBox(posSelect[1],posSelect[2],editor.selectionSize[1]-1,editor.selectionSize[2]-1,posSelect2[1],posSelect2[2],editor.selectionSize[1]-1,editor.selectionSize[2]-1)
+                    if checkCollision(box[1],box[2]+8,box[3],box[4],editor.mouseTile.x,editor.mouseTile.y,1,1) then
+                        editor:fillTiles(TILE,editor.select[1],editor.select[2],editor.select2[1],editor.select2[2])
+                        if editor.selectedIDCache then editor.selectedID=editor.selectedIDCache editor.selectedIDCache=false end
+                    end
+                end
+                editor.select=false
+                editor.select2=false
+            end
+            editor.eyedropperMode=false
+            editor.playMode=false
+        elseif editor.highlightedArea=="eraser" then
+            editor:backspaceKey()
+        elseif editor.highlightedArea=="trail" then
+            editor:charIn("−")
+        elseif editor.highlightedArea=="eyedropper" then
+            editor:charIn("=")
+        elseif editor.highlightedArea=="minimise" then
+            editor:charIn("^")
+        elseif editor.displayedGroup then -- a group is open
+            if editor.highlightedArea=="group" then
+                local ID=editor.displayedGroup[editor.highlightedTile[1]+2+(editor.highlightedTile[2]-1+(editor.displayedGroup["scroll"] and (editor.displayedGroup["scroll"]) or 0))*7]
+                if ID~=nil then editor:selectID(ID) end
+            elseif editor.highlightedArea==false then editor:selectID(false)
+            end
+        elseif editor.highlightedArea=="tilebar" then
+            local groupID=table.remove(editor.tilebarTiles,editor.highlightedTile[1])
+            if groupID~=nil then
+                table.insert(editor.tilebarTiles,1,groupID)
+                editor:setDisplayedGroup(editor.groupIndex[groupID])
+            end
+        elseif editor.highlightedArea=="pipes" then
+            local group={"MANAGE WARPS", "texture"}
+            for i=1,#level.current.pipeData do
+                table.insert(group,"warp_"..i.."_edit")
+            end table.insert(group,"newwarp")
+            editor:setDisplayedGroup(group)
+        elseif editor.highlightedArea=="play" then
+            editor:enterKey()
+        end
+    end
+    function editor:rightMouseDown()
+        if editor.selectedID=="mario" then editor.selectedID=nil end
+        if (editor.highlightedArea=="grid") and (not editor.platformSelect) and (string.sub(editor.selectedID,1,4)~="warp") then
+            if editor.select==false then
+                editor.select=pixel2grid(editor.mouseTile.x,editor.mouseTile.y-8,editor.selectionSize[1],editor.selectionSize[2])
+            elseif editor.select2==false then
+                editor.select2=pixel2grid(editor.mouseTile.x,editor.mouseTile.y-8,editor.selectionSize[1],editor.selectionSize[2])
+            else editor:mouseDown()
+            end
+            editor.eyedropperMode=false
+            editor.playMode=false
+            editor.eraseMode=false
+    end end
+    function editor:backspaceKey()
+        if editor.select==false and (string.sub(editor.selectedID,1,4)~="warp") then
+            editor.eraseMode=not editor.eraseMode
+            editor.eyedropperMode=false
+            editor.playMode=false
+        elseif editor.select2~=false and (editor.selectedID==nil or string.sub(editor.selectedID,1,5)~="theme" or string.sub(editor.selectedID,1,6)~="scroll") then
+            editor:fillTiles(0,editor.select[1],editor.select[2],editor.select2[1],editor.select2[2])
+            editor.select=false
+            editor.select2=false
+    end end
+    function editor:enterKey()
+        if editor.select==false and editor.playTimer==false and (string.sub(editor.selectedID,1,4)~="warp") then
+            if editor.playMode==false then
+                editor.playMode=true
+                editor.eyedropperMode=false
+                editor.eraseMode=false
+            else
+                editor.playMode=false
+                editor.playTimer=5 --preserves the 'clacking' animation... to a degree
+    end end end
+    function editor:escapeKey()
+        if editor.levelList then
+            gui:clear() editor.levelList=false
+        elseif string.sub(editor.selectedID,1,4)=="warp" then
+            local config=editor.selectedID:split("_")
+            local ID,action,option=config[2],tonumber(config[3]),config[4] --action (before) '2'=entr '4'=exit
+            editor.selectedID=editor.selectedIDCache
+            editor:selectID("warp_"..ID.."_"..(action-1))
+        elseif editor.select then
+            editor.select=false
+            editor.select2=false
+        elseif editor.platformSelect then
+            level.current.set(editor.platformSelect[1],editor.platformSelect[2],0)
+            editor.platformSelect=false
+        elseif editor.eyedropperMode or editor.eraseMode or editor.playMode or editor.displayedGroup then
+            editor.eyedropperMode=false
+            editor.eraseMode=false
+            editor.playMode=false
+            editor:setDisplayedGroup(false)
+        elseif not editor.PROMPT then
+            editor:PAUSE()
+    end end
+
+    function editor:PAUSE() --true/false
+        gui:clear()
+        gui:createPrompt("PAUSED",nil,{{"RESUME","close"},{"QUIT","quit"}},false)
+    end
+
+    function editor:selectID(ID) --false means clicking outside of group (usually cancel)
+        if ID and string.sub(ID,1,4)=="warp" then
+            local config=ID:split("_")
+            local pID,action,option=config[2],config[3],config[4]
+            --'1'=select entrance type '2'=place entrance '3'=select exit type       '4'=place exit      '5'=set pipe ("new")     '6'=delete pipe
+            --'7'=view entrance        '8'=view exit      '9'=disable enter entrance '10'=disable enter exit
+            if action=="edit" then --display entrance type
+                editor:setDisplayedGroup({"EDIT PIPE "..pID, "texture",
+                nil, nil, nil, nil, nil, nil, nil,
+                nil, "warp_"..pID.."_1", nil, nil, nil, "warp_"..pID.."_3", nil,
+                nil, "warp_"..pID.."_7", nil, nil, nil, "warp_"..pID.."_8", nil,
+                nil, nil, nil, "warp_"..pID.."_6", nil, nil, nil,
+                nil, nil, nil, nil, nil, nil, nil})
+            elseif action=="1" then --display select entrance type
+                editor:setDisplayedGroup({"ENTRANCE TYPE", "texture",
+                nil, nil, nil, nil, nil, nil, nil,
+                nil, nil, nil, nil, nil, nil, nil,
+                nil, nil,"warp_"..pID.."_2_1","warp_"..pID.."_2_2","warp_"..pID.."_2_3",nil, nil, 
+                nil, nil, nil, nil, nil, nil, nil,
+                nil, nil, nil, nil, nil, nil, nil})
+            elseif action=="3" then --display select exit type
+                editor:setDisplayedGroup({"EXIT TYPE", "texture",
+                nil, nil, nil, nil, nil, nil, nil,
+                nil, nil, nil, nil, nil, nil, nil,
+                nil, nil,"warp_"..pID.."_4_1","warp_"..pID.."_4_2","warp_"..pID.."_4_3",nil, nil, 
+                nil, nil, nil, "warp_"..pID.."_4_4", nil, nil, nil,
+                nil, nil, nil, nil, nil, nil, nil})
+            elseif action=="2" or action=="4" then --selected type and now placing
+                editor.selectedIDCache=editor.selectedID
+                editor.selectedID=ID
+                editor:setDisplayedGroup(false)
+            elseif action=="5" then --placed both exit and entrance for a new pipe
+               table.insert(level.current.pipeData,{unpack(level.current.pipeData["n"])})
+            elseif action=="6" then --delete pipe entirely
+                gui:clear()
+                gui:createPrompt("DELETE PIPE "..pID,{"REALLY DELETE?","THIS CANNOT","BE UNDONE!"},{{"CONFIRM","delwarp_"..pID},{"CANCEL","close"}},true,false)
+            elseif action=="7" or action=="8" then --view pos of pipe
+                pID=tonumber(pID)
+                if     action=="7" then editor.cameraOffset=(level.current.pipeData[pID][1][1]*16)-159
+                elseif action=="8" then editor.cameraOffset=(level.current.pipeData[pID][2][1]*16)-159 end
+                editor:setDisplayedGroup(false)
+            elseif action=="9" or action=="10" then --disable entering (TODO unimplemented in level string)
+            end
+        elseif ID=="newwarp" then editor:selectID("warp_n_1") --n=new (dont write to pipe until process finished)
+        elseif ID then --no special actions
+            editor.selectedID=ID
+            editor:setDisplayedGroup(false)
+        elseif not gui.highlightedButton then --close group
+            editor:escapeKey()
+        end
+    end
+
+    function editor:drawTile(gc,blockID,x,y,THEME,ICON)
+        if type(blockID)=='number' then --its a tile
+            local block=blockIndex[blockID]
+
+            if blockID<0 then blockID=0 end
+            local drawBlock=blockID
+            if block["editor"] then
+                drawBlock=block["editor"]
+            end
+            if blockIndex[drawBlock]["theme"][THEME]~=nil then
+                gc:drawImage(texs[blockIndex[drawBlock]["theme"][THEME][1]],x,y)
+            elseif blockIndex[drawBlock]["texture"][1]~=nil then
+                gc:drawImage(texs[blockIndex[drawBlock]["texture"][1]],x,y)
+            end
+            local iconToDraw
+            -- local containing=block["containing"]
+            -- if containing and string.sub(containing,1,5)~="event" then
+            --     if string.sub(containing,1,9)=="multicoin" then containing="multicoin" end
+            --     iconToDraw="icon_"..containing
+            -- end
+
+            local icon=block.icon
+            local iconX=x
+            local iconY=y
+
+            if icon then
+                if type(icon)=="table" then
+                    iconToDraw=icon[1]
+                    iconX=icon[2] and iconX+icon[2] or iconX
+                    iconY=icon[3] and iconY+icon[3] or iconY
+                elseif type(icon)=="string" then
+                    iconToDraw=icon
+                end
+            end
+
+            if iconToDraw then
+                gc:drawImage(texs[iconToDraw],iconX,iconY) --texs.icon_star
+            end
+        elseif blockID~=nil then
+            local TYPE=objAPI:type2class(blockID)
+            if TYPE~=false then
+                if ICON then y=y-8 x=x+editor.cameraOffset end
+                obj=entityClasses[TYPE]
+                if ICON then gc:clipRect("set",x-editor.cameraOffset,y+8,16,16) end
+                obj:draw(gc,x-editor.cameraOffset,y+8,blockID,true,ICON) --(gc,x,y,TYPE,isEditor,isIcon)
+                gc:clipRect("reset")
+            elseif blockID=="mario" then
+                gc:drawImage(texs.icon_start,x+1,y-1)
+            elseif blockID=="scrollStopL" then
+                gc:drawImage(texs.icon_scrollStopL,x+2,y+2)
+            elseif blockID=="scrollStopR" then
+                gc:drawImage(texs.icon_scrollStopR,x+2,y+2)
+            elseif blockID=="viewpipe" then
+            elseif blockID=="scrollStopC" then
+                gc:drawImage(texs.icon_scrollStopC,x+2,y+3)
+            elseif string.sub(blockID,1,4)=="warp" then
+                local config=blockID:split("_")
+                local ID,action,option=config[2],config[3],config[4]
+                if action=="edit" or action=="6" then
+                    gc:drawImage(texs.group_pipe,x,y)
+                    if action=="edit" then drawFont2(gc,addZeros(ID,2),x+5,y+10,nil,false,true)
+                    elseif action=="6" then gc:drawImage(texs.levelList_delete,x+4,y+4) end --bin icon
+                elseif action=="1" or action=="3" or action=="7" or action=="8" then
+                    if     action=="1" or action=="7" then gc:drawImage(image.copy(texs.entrance_2,12,17),x,y-1) --pipe entrance icon
+                    elseif action=="3" or action=="8" then gc:drawImage(image.copy(texs.exit_2,12,17),x,y-1) end --pipe exit icon
+                    if action=="1" or action=="3" then  --change type icon(??)
+                    elseif action=="7" or action=="8" then gc:drawImage(texs.viewpipe,x+6,y+10) end --view pipe icon
+                elseif action=="4" and option=="4" then
+                    gc:drawImage(texs.icon_start,x+1,y-1)
+                elseif action=="2" or action=="4" then
+                    gc:drawImage(texs["warp_"..option],x,y)
+                end
+            else --this is for themes (derp, exploited by ElNoob0)
+                gc:drawImage(texs[blockID],x,y)
+            end
+    end end
+
+    editor.pipeConfig={ --this is sort of randomly here. eh
+        ["entrance"]={
+            {-8,0,6,2}, --1: pipe facing left (text in top right)
+            {1,-8,1,10}, --2: pipe facing up (text in bottom left)
+            {0,0,2,2}, --3: pipe facing right (text in top left)
+            {0,0,0,0} --4: unused as it is for teleport exit
+        },
+        ["exit"]={
+            {-8,0,6,2}, --1: pipe facing left (text in top right)
+            {1,-8,1,10}, --2: pipe facing up (text in bottom left)
+            {0,0,2,2}, --3: pipe facing right (text in top left)
+            {1,-1,6,10} --4: teleport (text in bottom right)
+        }
+    }
+
+    function editor:drawPipe(gc,pipeID,posX,posY,TYPE,typeID) --for WARP pipes btw
+        posX,posY=((posX-1)*16)-editor.cameraOffset,212-16*(posY)+8
+        local x,y=posX+(editor.pipeConfig[TYPE][typeID][1]),posY+(editor.pipeConfig[TYPE][typeID][2])
+        local tX,tY=posX+(editor.pipeConfig[TYPE][typeID][3]),posY+(editor.pipeConfig[TYPE][typeID][4])
+        gc:drawImage(texs[TYPE.."_"..typeID],x,y)
+        drawFont2(gc,addZeros(pipeID,2),tX,tY,nil,false,true)
+        -- print(pipeID,x,y,TYPE,typeID)
+    end
+
+    function editor:drawScrollStop(gc,isRight,x)
+        x=x+(isRight and 317 or 0)
+        local THEME=plot2theme(math.ceil(x/16)+(isRight and 0 or 1),true)
+        if THEME==0 then gc:setColorRGB(0,0,0) --daytime
+        else gc:setColorRGB(255,255,255) --underground or nighttime or castle
+        end gc:drawLine(x-editor.cameraOffset,0,x-editor.cameraOffset,212)
+        if not isRight then gc:drawImage(texs.icon_scrollStopL,x-editor.cameraOffset+1,45) --left
+        elseif isRight then gc:drawImage(texs.icon_scrollStopR,x-editor.cameraOffset-12,45) end --right
+    end
+
+    function editor:drawTerrain(gc) --rendered in rows from bottom to top w/ the rows from left to right
+        local objectList={}
+        for i2=math.ceil(editor.cameraOffset/16),math.ceil((screenWidth+editor.cameraOffset)/16) do --left to right, horizontally, only draw what is visible on screen
+            local THEME=plot2theme(i2,true)
+            for i=1,13 do --bottom to top, vertically (row 14 is reserved for hud/special events and is not drawn)
+                local blockID=plot2ID(i2,i,true)
+                if type(blockID)=='number' and blockID>=0 then --its a tile
+                    editor:drawTile(gc,blockID,((i2-1)*16)-editor.cameraOffset, 212-16*(i)+8,THEME)
+                    if i==13 and blockIndex[blockID]["ceiling"] then editor:drawTile(gc,level.current.showCeilingBlock and blockID or 99,((i2-1)*16)-editor.cameraOffset, 212-16*(i+1)+8,THEME) end --draw a barrier above the blocks to denote that mario cannot jump over it
+                else --its an object
+                    table.insert(objectList,{(i2-1)*16,212-16*(i),blockID}) --x,y,ID
+        end end end
+        for i=1,#objectList do
+            editor:drawTile(gc,objectList[i][3],objectList[i][1],objectList[i][2])
+        end
+        for i=1,#level.current.pipeData do
+            editor:drawPipe(gc,i,level.current.pipeData[i][1][1],level.current.pipeData[i][1][2],"entrance",level.current.pipeData[i][1][3])
+            editor:drawPipe(gc,i,level.current.pipeData[i][2][1],level.current.pipeData[i][2][2],"exit",level.current.pipeData[i][2][3])
+        end gc:setPen("thin","dashed") --for scroll stops
+        for i=2,#level.current.scrollStopL do --skip out 0 (start)
+            editor:drawScrollStop(gc,false,level.current.scrollStopL[i])
+        end
+        for i=1,(#level.current.scrollStopR-1) do --skip out last (end)
+            editor:drawScrollStop(gc,true,level.current.scrollStopR[i])
+        end
+        gc:drawImage(texs.icon_start,level.current.startX-editor.cameraOffset+1,level.current.startY+7)
+    end
+
+    function editor:placeTile(ID,plotX,plotY)
+        if ID~=nil then
+            if string.sub(ID,1,11)=="platform_0~" then
+                editor.platformSelect={plotX,plotY}
+                level.current.set(plotX,plotY,"platform_1"..string.sub(ID,11,#ID))
+            elseif string.sub(ID,1,5)=="theme" then --for themes
+                level.current.t[plotX]=tonumber(string.sub(ID,6,#ID))
+            elseif string.sub(ID,1,4)=="warp" then --for warps
+                local config=editor.selectedID:split("_")
+                local ID,action,option=config[2],tonumber(config[3]),config[4] --action (before) '2'=entr '4'=exit
+                ID=ID:isInteger() and tonumber(ID) or ID
+                if level.current.pipeData[ID]==nil then level.current.pipeData[ID]={} end --IMPORTANT: this should ONLY happen for when the ID is 'n' (new)!!!
+                level.current.pipeData[ID][action/2]={plotX,plotY,tonumber(option)}
+                if ID=="n" then editor:selectID("warp_n_"..(action+1)) end
+            elseif string.sub(ID,1,6)=="scroll" then --for scroll stops
+                if (plotX>1) and (plotX<level.current.END) then --avoid overwriting the default values.. i think
+                    local function removeInstances(tbl,val) local newTbl={}
+                        for i=1,#tbl do if tbl[i]~=val then table.insert(newTbl,tbl[i]) end
+                        end return newTbl
+                    end
+                    local valueL,valueR=(plotX-1)*16,(plotX*16)-318
+                    level.current.scrollStopL=removeInstances(level.current.scrollStopL,valueL)
+                    level.current.scrollStopR=removeInstances(level.current.scrollStopR,valueR)
+                    if ID=="scrollStopL"     then table.insert(level.current.scrollStopL,valueL)
+                    elseif ID=="scrollStopR" then table.insert(level.current.scrollStopR,valueR) end
+                    table.sort(level.current.scrollStopL) table.sort(level.current.scrollStopR)
+                end
+            elseif ID=="mario" then
+                local starts=plot2pixel(plotX,plotY)
+                level.current.startX=starts[1]+1 level.current.startY=starts[2]
+                editor.selectedID=nil
+            else
+                level.current.set(plotX,plotY,ID)
+            end
+        end
+    end
+
+    function editor:fillTiles(ID, x1, y1, x2, y2)
+        local differenceX = x2 - x1
+        local differenceY = y2 - y1
+        if differenceX < 0 then differenceX = -1 else differenceX = 1 end
+        if differenceY < 0 then differenceY = -1 else differenceY = 1 end
+        for i = x1, x2, differenceX do
+            for i2 = y1, y2, differenceY do
+                editor:placeTile(ID, i, i2)
+    end end end
+    
+    function editor:determineSelectBox(x1,y1,w1,h1,x2,y2,w2,h2)
+        local x local y local w local h
+        if y1<=y2 then y=y1 else y=y2 end
+        if x1<=x2 then x=x1 else x=x2 end
+        if x1+w1<x2+w2 then w=(x2+w2)-x else w=(x1+w1)-x end
+        if y1+h1<y2+h2 then h=(y2+h2)-y else h=(y1+h1)-y end
+        return {x,y,w,h}
+    end
+
+    function editor:statusBox(gc,logic)
+        drawGUIBox(gc,298,-2,20,21)
+        editor:drawTile(gc,editor.selectedID,301,1,plot2theme(editor.highlightedTile[1],true),true)
+        if logic then
+            editor.highlightedArea="status"
+            local groupName="NOTHING SELECTED!"
+            if editor.selectedID then
+                groupName=objAPI:type2name(editor.selectedID,1)
+            end
+            gui.TEXT=groupName
+        end
+    end
+
+    function editor:tilebar(gc,logic)
+        drawGUIBox(gc,55,-2,208,21)
+        drawGUIBox(gc,27,-2,21,21)
+        gc:drawImage(texs.group_setpipe,30,1)
+        for i=1,11 do
+            gc:drawLine(57+(i*17),1,57+(i*17),16) --box dividers
+        end
+        for i=1,12 do
+            if editor.tilebarTiles[i]~=nil then
+                gc:drawImage(texs[editor.groupIndex[editor.tilebarTiles[i]][2]],245-(i-1)*17,1)
+        end end
+        timer2rainbow(gc,framesPassed+200,10)
+        gc:setPen("thin","dashed")
+        if logic=="pipes" then
+            editor.highlightedArea="pipes"
+            gui.TEXT="MANAGE WARPS"
+            gc:drawRect(30,1,15,15)
+        elseif logic then --perform tilebar logic
+            local pos=pixel2snapgrid(editor.mouseTile.x+10,editor.mouseTile.y,17,17,true) --this all is a lot less elegant than the group selector, but i really dont care
+            editor.highlightedArea="tilebar"
+            editor.highlightedTile={math.floor((255-pos[1])/17)+1,1}
+            gc:drawRect(262-(editor.highlightedTile[1]*17),1,15,15)
+            local groupID=editor.tilebarTiles[editor.highlightedTile[1]] local groupName
+            if groupID~=nil then
+                groupName=editor.groupIndex[groupID][1]
+            end
+            if groupName then gui.TEXT=groupName end
+        end
+    end
+
+    function editor:interface(gc)
+        local eraserActive=true local eyedropperActive=true trailActive=true local playActive=true local tilebarActive=true local statusActive=true local minimOffset=0 local tilebarLogic local statusLogic
+        local function insideCircle(pX,pY,cX,cY,cR)
+            return ((pX-(cX+(cR/2)))^2 + (pY-(cY+(cR/2)))^2) < ((cR/2)^2)
+        end
+        if editor.minimised then playActive=false eyedropperActive=false eraserActive=false trailActive=false tilebarActive=false minimOffset=-12
+        elseif editor.select~=false or string.sub(editor.selectedID,1,4)=="warp" then --which icons should be drawn/be able to be clicked
+            eyedropperActive=false
+            playActive=false
+            tilebarActive=false
+            if editor.select2==false or string.sub(editor.selectedID,1,4)=="warp" then
+                eraserActive=false
+                trailActive=false
+                if not editor.platformSelect then
+                    statusActive=false
+        end end end
+        if editor.showTrail then
+            for i=#mario.trail,1,-3 do --parse list backwards and skip three frames, so that they are a reasonable distance apart and overlap such that the most recent is on top
+                gc:drawImage(texs[mario.trail[i][1]],mario.trail[i][2]-editor.cameraOffset,mario.trail[i][3])
+        end end
+        if eraserActive then gc:drawImage(texs.button_eraser,297,191) end --draw if active
+        if trailActive then gc:drawImage(texs.button_trail,275,191) end --draw if active
+        if eyedropperActive then gc:drawImage(texs.button_eyedropper,253,191) end --draw if active
+        gc:drawImage(texs.button_minimiserope,-2,-10+minimOffset)
+        timer2rainbow(gc,framesPassed+200,10)
+        gc:setPen("thin","dashed") --V determine if mouse is hovering over any buttons
+        if gui.PROMPT or editor.levelList or (editor.displayedGroup --[[and editor.displayedGroup["rows"] ]]) then
+            editor.highlightedArea=false
+            gui:detectPos(0,8)
+        elseif insideCircle(mouse.x,mouse.y,296,190,22) and eraserActive then
+            if editor.select2 then editor:drawGridCursor(gc) gc:setPen("thin","dashed") end --eraser
+            gc:drawArc(297,191,20,20,0,360)
+            editor.highlightedArea="eraser"
+            gui.TEXT="ERASER: DEL"
+        elseif insideCircle(mouse.x,mouse.y,274,190,22) and trailActive then
+            gc:drawArc(275,191,20,20,0,360)
+            editor.highlightedArea="trail"
+            gui.TEXT="SHOW/HIDE TRAIL: (-)"
+        elseif insideCircle(mouse.x,mouse.y,252,190,22) and eyedropperActive then --eyedropper
+            gc:drawArc(253,191,20,20,0,360)
+            editor.highlightedArea="eyedropper"
+            gui.TEXT="EYEDROPPER: ="
+        elseif checkCollision(mouse.x,mouse.y,1,1,4,178,40,30) and playActive then --play button
+            editor.highlightedArea="play"
+            gui.TEXT="PLAY LEVEL: ENTER"
+        elseif checkCollision(mouse.x,mouse.y,1,1,4,0,16,20+(minimOffset*0.8)) then --minimise rope
+            editor.highlightedArea="minimise"
+            gui.TEXT="MINIMISE ROPE: ^"
+        elseif checkCollision(mouse.x,mouse.y,1,1,298,0,18,18) and statusActive then --status box
+            statusLogic=true
+        elseif checkCollision(mouse.x,mouse.y,1,1,59,0,204,18) and tilebarActive then --tilebar
+            tilebarLogic=true
+        elseif checkCollision(mouse.x,mouse.y,1,1,31,0,17,18) and tilebarActive then --tilebar
+            tilebarLogic="pipes"
+        elseif mouse.y>12 then
+            editor:drawGridCursor(gc)
+            editor.highlightedArea="grid"
+            if not editor.minimised and editor.enableShowCoords then
+                local xy=pixel2plot(mouse.x,mouse.y-8,nil,true)
+                local txt={"("..tostring(xy[1])..","..tostring(xy[2])..")"}
+                if editor.enableSMBUtility then table.insert(txt,"["..tostring(xy[1]-1)..":"..tostring(13-xy[2]).."]") end
+                gui.TEXT=txt gui.TEXToffset=(mouse.y>=170) and -50 or 0
+            end
+        else
+            editor.highlightedArea=false
+        end
+        if editor.displayedGroup~=false and (not gui.PROMPT) then
+            editor:handleGroup(gc,editor.displayedGroup)
+        end
+        gc:setColorRGB(255,0,0)
+        gc:setPen("medium","smooth")
+        if editor.showTrail and trailActive then
+            gc:drawArc(274,190,22,22,0,360)
+        end
+        if editor.eraseMode and eraserActive then --draw circle over icon to show it is currently in use
+            gc:drawArc(296,190,22,22,0,360)
+        elseif editor.eyedropperMode and eyedropperActive then
+            gc:drawArc(252,190,22,22,0,360)
+        end -- V draw button prompts
+        if playActive then
+            if editor.playMode then gc:drawImage(texs.button_play2,1,168)
+            else                    gc:drawImage(texs.button_play1,6,178)
+            end                     gc:drawImage(texs.prompt_enter,28,203)
+        end
+        gc:drawImage(texs.prompt_power,16,20+minimOffset)
+        if editor.notification then
+            editor.notification[2]=editor.notification[2] and editor.notification[2]+1 or 1
+            editor.notification[3]=editor.notification[3] and (editor.notification[3]+(editor.notification[2]<12 and 3 or editor.notification[2]>32 and -3 or 0)) or 0
+            drawFont(gc,editor.notification[1],159,editor.notification[3],"centre",nil,"rgb")
+            if editor.notification[2]==44 then editor.notification=nil end
+        end
+        if tilebarActive then editor:tilebar(gc,tilebarLogic) end
+        if statusActive then editor:statusBox(gc,statusLogic) end
+        if eraserActive then gc:drawImage(texs.prompt_del,306,203) end
+        if trailActive then gc:drawImage(texs.prompt_dash,287,203) end
+        if eyedropperActive then gc:drawImage(texs.prompt_equals,268,204) end
+        if editor.levelList then
+            gui:detectPos(0,8)
+            gui:levelList(gc,{0,0,0,0},"levelListLocal",editor.levellist)
+    end end
+    
+    function editor:handleGroup(gc,data)
+        drawGUIBox(gc,97,57,123,97,data[1])
+        local scroll=0
+        if editor.displayedGroup["scroll"] then
+            scroll=editor.displayedGroup["scroll"]
+            local x,y,h=-40,18,-55 --these values now specify position/height offset from original (in level list)
+            drawGUIBox(gc,x+263,y+39,15,152+h)
+            gc:drawImage(texs.levelList_scrollPiece,x+267,y+58+((editor.displayedGroup["scroll"])*((106+h)/(editor.displayedGroup["rows"]-5)))) -- 91 slots, 106 px (to scroll)
+            gc:setColorRGB(108,108,108)     gc:drawRect(x+265,y+54,11,2)            gc:drawRect(x+265,y+174+h,11,2) --grey
+            gc:setColorRGB(255,255,255)     gc:drawLine(x+264,y+55,x+265+12,y+55)   gc:drawLine(x+264,y+175+h,x+265+12,y+175+h) --white lines (divide)
+        end
+        for i=0,4 do
+            for i2=1,7 do
+                local ID=data[((i+scroll)*7)+i2+2]
+                if ID then editor:drawTile(gc,ID,100+((i2-1)*17), 68+(i*17),99,true) end
+        end end
+        gc:setColorRGB(108,108,108) --light grey inner box border
+        for i=1,6 do
+            gc:drawLine(99+(i*17),68,99+(i*17),151)
+        end
+        for i=1,4 do
+            gc:drawLine(100,67+(i*17),217,67+(i*17))
+        end timer2rainbow(gc,framesPassed+200,10)
+        gc:setPen("thin","dashed")
+        local pos=pixel2snapgrid(editor.mouseTile.x+2,editor.mouseTile.y-9,17,17,true)
+        local IDdesc=""
+        if (pos[1]>=102 and pos[1]<=204) and (pos[2]>=59 and pos[2]<=127) then
+            editor.highlightedTile={((pos[1]-85)/17),((pos[2]-42)/17)}
+            editor.highlightedArea="group"
+            local ID=data[editor.highlightedTile[1]+2+(editor.highlightedTile[2]-1+scroll)*7]
+            if ID~=nil then IDdesc=objAPI:type2name(ID,0) end
+        else
+            editor.highlightedArea=false
+        end
+        gc:drawRect((editor.highlightedTile[1]*17)+83,(editor.highlightedTile[2]*17)+51,15,15)
+        gui.TEXT=IDdesc
+    end
+
+    function editor:drawGridCursor(gc)
+        local pos=pixel2snapgrid(editor.mouseTile.x,editor.mouseTile.y-8,editor.selectionSize[1],editor.selectionSize[2])
+        local box
+        if editor.select==false then
+            gc:setPen("thin","dotted")
+            box={pos[1],pos[2],editor.selectionSize[1]-1,editor.selectionSize[2]-1}
+        else
+            local posSelect=grid2pixel(editor.select[1],editor.select[2],editor.selectionSize[1],editor.selectionSize[2],true)
+            local posSelect2
+            if editor.select2==false then
+                gc:setPen("thin","dashed")
+                posSelect2={pos[1],pos[2]}
+            else
+                gc:setPen("thin","smooth")
+                posSelect2=grid2pixel(editor.select2[1],editor.select2[2],editor.selectionSize[1],editor.selectionSize[2],true)
+            end
+            box=editor:determineSelectBox(posSelect[1],posSelect[2],editor.selectionSize[1]-1,editor.selectionSize[2]-1,posSelect2[1],posSelect2[2],editor.selectionSize[1]-1,editor.selectionSize[2]-1)
+        end
+        if (box[2]+box[4])>203 then box[4]=203-box[2] end
+
+        if string.sub(editor.selectedID,1,4)=="warp" then
+            gc:setPen("thin","dashed")
+            local config=editor.selectedID:split("_")
+            local ID,action,option=config[2],config[3],config[4]
+            if action=="2" or action=="4" then --place entrance/exit
+                if option=="1" then --left
+                    gc:drawRect(box[1],box[2]-8,14,31) --PIPE FACING LEFT
+                    gc:drawLine(box[1]+15,box[2]-7,box[1]+15+17,box[2]-7)
+                    gc:drawLine(box[1]+15,box[2]+22,box[1]+15+17,box[2]+22)
+                elseif option=="2" then --up
+                    gc:drawRect(box[1],box[2]+8,31,14) --PIPE FACING UP 
+                    gc:drawLine(box[1]+2,box[2]+23,box[1]+2,box[2]+23+17)
+                    gc:drawLine(box[1]+30,box[2]+23,box[1]+30,box[2]+23+17)
+                elseif option=="3" then --right
+                    gc:drawRect(box[1]+1,box[2]-8,14,31) --PIPE FACING RIGHT
+                    gc:drawLine(box[1]+15-31,box[2]-7,box[1]+15+17-31,box[2]-7)
+                    gc:drawLine(box[1]+15-31,box[2]+22,box[1]+15+17-31,box[2]+22)
+                elseif option=="4" then --teleport
+                    gc:drawRect(box[1],box[2]+8,box[3],box[4])
+            end end
+        else gc:drawRect(box[1],box[2]+8,box[3],box[4])
+        end
+        gc:setPen("thin","smooth")
+        editor.highlightedTile=pixel2grid(editor.mouseTile.x,editor.mouseTile.y-8,editor.selectionSize[1],editor.selectionSize[2])
+    end
+
+    function editor:logic()
+        cursor.show()
+        if editor.eraseMode or editor.eyedropperMode or editor.playMode then
+            editor.selectionSize={16,16}
+        elseif editor.selectedID~=nil and (string.sub(editor.selectedID,1,5)=="theme" or string.sub(editor.selectedID,1,6)=="scroll") then
+            editor.selectionSize={16,208}
+        else
+            editor.selectionSize={16,16}
+        end
+        if mouse.y<12 then editor.mouseTile.y=12 else editor.mouseTile.y=mouse.y end
+        editor.mouseTile.x=mouse.x
+        if editor.highlightedArea=="grid" then
+            if editor.select~=false then --selection in progress
+                if editor.select2~=false then --selection is finalised
+                    local posSelect=grid2pixel(editor.select[1],editor.select[2],editor.selectionSize[1],editor.selectionSize[2],true)
+                    local posSelect2=grid2pixel(editor.select2[1],editor.select2[2],editor.selectionSize[1],editor.selectionSize[2],true)
+                    local box=editor:determineSelectBox(posSelect[1],posSelect[2],editor.selectionSize[1]-1,editor.selectionSize[2]-1,posSelect2[1],posSelect2[2],editor.selectionSize[1]-1,editor.selectionSize[2]-1)
+                    if checkCollision(box[1],box[2]+8,box[3],box[4],editor.mouseTile.x,editor.mouseTile.y,1,1) then 
+                        if editor.eraseMode==true then cursor.set("clear")
+                        else cursor.set("pencil") end
+                    else cursor.set("unavailable")
+                    end
+                else --selection is being made
+                    cursor.set("hand closed")
+                    if editor.mouseTile.x<=8 then
+                        editor.cameraOffset=editor.cameraOffset-7
+                    elseif editor.mouseTile.x>=310 then
+                        editor.cameraOffset=editor.cameraOffset+7
+                    end
+                end
+            elseif editor.platformSelect then cursor.set("animate")
+                local x=editor.highlightedTile[1] local y=editor.highlightedTile[2]
+                if editor.platformSelect[3]~=true then
+                    local length=editor.highlightedTile[1]-editor.platformSelect[1]+1
+                    if length>0 then
+                        level.current.set(x,y,"platform_"..tostring(length)..string.sub(editor.selectedID,11,#editor.selectedID))
+                    end
+                else
+                    local ID=level.current.get(x,y)
+                    local config=(string.sub(ID,10,#ID)):split("~")
+                    local distance
+                    if config[3]=="lx" then
+                        distance=tostring(editor.highlightedTile[1]-editor.platformSelect[1])*16
+                    else
+                        distance=tostring(editor.highlightedTile[2]-editor.platformSelect[2])*16
+                    end
+                    level.current.set(x,y,"platform_"..config[1].."~"..config[2].."~"..config[3].."~"..distance)
+                end
+            elseif editor.eraseMode==true then cursor.set("clear")
+            elseif editor.eyedropperMode==true then cursor.set("crosshair")
+            elseif editor.playMode==true then cursor.set("dotted arrow")
+            else cursor.set("default")
+            end
+        elseif editor.highlightedArea=="group" or editor.highlightedArea=="tilebar" or editor.highlightedArea=="pipes" or editor.highlightedArea=="play" or editor.highlightedArea=="eraser" or editor.highlightedArea=="trail" or editor.highlightedArea=="eyedropper" or editor.highlightedArea=="minimise" then
+            cursor.set("hand pointer")
+        elseif editor.highlightedArea=="status" then
+            cursor.set("show")
+        else cursor.set("default")
+        end
+        if editor.playTimer~=false then
+            editor.playTimer=editor.playTimer-1
+            editor.playMode=false
+            if editor.playTimer<=0 then
+                editor:charIn("play")
+            end
+        end
+        if editor.cameraOffset<0 then editor.cameraOffset=0 end
+        if editor.cameraOffset>((level.current.END-20)*16) then editor.cameraOffset=((level.current.END-20)*16)+2 end
+        if editor.enableAutoSave then
+            if not editor.lastAutoSave then editor.lastAutoSave = 0 end
+            if (framesPassed - editor.lastAutoSave) > 1000 then
+                editor.lastAutoSave = framesPassed
+                if editor.file then gui:click("ll_save_"..editor.file.."_levelListLocal")
+                else editor.notification={"CANNOT AUTO-SAVE, SLOT NOT SET!"}
+                end
+            elseif (framesPassed - editor.lastAutoSave) == 800 then
+                editor.notification={"AUTO-SAVING SOON!"}
+            end
+        end
+    end
+
+    function editor:generate(LEVELSTRING)
+        print("Generating level from string...")
+        gui:clear()
+        level.perm=LEVELSTRING
+        editor.LOAD=0 editor.file=false
+        editor.cameraOffset=0 editor.notification=false
+        editor.select=false
+        editor.select2=false
+        editor.platformSelect=false
+        editor.eraseMode=false
+        editor.eyedropperMode=false
+        editor.playMode=false
+        editor.minimised=false
+        editor.mouseTile={}
+        editor.mouseTile.x=0
+        editor.mouseTile.y=0
+        editor.highlightedArea=false
+        editor.playTimer=false
+        editor.enableAutoSave=var.recall("enableAutoSave") == "true"
+        editor:setDisplayedGroup(false)
+    end
+
+    function toolpaletteSelection(group,option) --has to be a global function, because toolpalette reasons...
+        if group=="Editor Settings" then
+            if string.sub(option,-9)=="Auto-Save" then
+                editor.enableAutoSave=not editor.enableAutoSave var.store("enableAutoSave",editor.enableAutoSave and "true" or "false")
+            elseif string.sub(option,-17)=="Show Co-ordinates" then
+                editor.enableShowCoords=not editor.enableShowCoords
+            elseif string.sub(option,-19)=="SMB Utility Co-ords" then
+                editor.enableSMBUtility=not editor.enableSMBUtility
+            end
+        elseif group=="Modifiers" then
+            local modifier={"disableBackScrolling","allowBidirectionalSpawning","enableGlobalEntities","enableShellBouncing","enableCoinOnKill","enablePowerUpBouncing","showCeilingBlock"} --possible modifiers, values that are nil when disabled and true when enabled
+            for i=1,#modifier do
+                if string.sub(option,#option-#modifier[i]+1,#option)==modifier[i] then
+                    modifier=string.sub(option,#option-#modifier[i]+1,#option)
+                    break
+            end end
+            if type(modifier)~="table" then --one has been located
+                if level.current[modifier]==nil then level.current[modifier]=true
+                else level.current[modifier]=nil
+            end end
+        elseif group=="Autoscroll" then
+            if string.sub(option,12,12)~="" then
+                level.current.autoScroll=string.sub(option,12,12)
+            else level.current.autoScroll=nil
+            end
+        elseif group=="▶Automove" then
+            if string.sub(option,-13)=="Walking Speed" then
+                level.current.autoMove="w"
+            elseif string.sub(option,-13)=="Running Speed" then
+                level.current.autoMove="r"
+            else level.current.autoMove=nil
+            end
+        elseif group=="⇥Length" then
+            if string.sub(option,1,14)=="Current Length" then
+                gui:createPrompt("SET LEVEL LENGTH",{"TYPE THE VALUE TO SET","THE LEVEL LENGTH TO!"},4,"length",false)
+            else
+                level.current.END=level.current.END+tonumber(option)
+                if level.current.END<=20 then level.current.END=20 end
+                level.current=copyLevel(level.current)
+            end
+        elseif group=="Time" then
+            if string.sub(option,1,18)=="Current Time Limit" then
+                gui:createPrompt("SET TIME LIMIT",{"TYPE THE VALUE TO SET","THE TIME LIMIT TO!"},3,"time",false)
+            else
+                level.current.TIME=level.current.TIME+tonumber(option)
+                if level.current.TIME<=5 then level.current.TIME=5
+                elseif level.current.TIME>=999 then level.current.TIME=999
+            end end
+        elseif group=="File" then
+            if string.sub(option,1,4)=="Name" then
+                gui:createPrompt("ENTER COURSE NAME",{"TYPE BELOW TO SET A","NEW COURSE NAME TO BE","ASSOCIATED WITH YOUR","LEVEL AND PRESS ENTER.","ACCEPTED CHARACTERS:","A-Z 0-9 !?/-'().,"},19,"coursename",false) 
+            elseif option=="New" then
+                gui:createPrompt("CLEAR LEVEL",{"REALLY CLEAR?","UNSAVED LEVEL DATA WILL", "BE DELETED!"},{{"CONFIRM","create"},{"CANCEL","close"}},true,false)
+            elseif option=="Open" then gui:click("editor_open")
+            elseif option=="Save" then gui:click("editor_save")
+            elseif option=="Save As" then gui:click("editor_saveas")
+            elseif option=="Close File" then gui:click("editor_close")
+            elseif option=="Copy to Clipboard" then
+                clipboard.addText(level2string(level.current))
+                gui:createPrompt("DONE!",{"LEVEL COPIED","TO CLIPBOARD!"},{{"OK","close"}},nil,nil,false)
+            elseif option=="Load from Clipboard" then
+                local PASTE=clipboard.getText() or "err"
+                if string.sub(PASTE,1,1)=="<" then --very crude for now
+                    editor:generate(PASTE)
+                    gui:createPrompt("DONE!",{"LEVEL IMPORTED","FROM CLIPBOARD!"},{{"OK","close"}},nil,nil,false)
+                else
+                    gui:createPrompt("ERROR!",{"LEVEL IMPORTING","FAILED! CHECK TO","SEE IF THE LEVEL","CODE IS VALID."},{{"OK","close"}})
+                end
+            end
+        elseif group=="Game Speed" then
+            local speeds={
+                ["0.25x"]={1,0,0,0},
+                ["0.5x"]={1,0},
+                ["0.75x"]={1,1,1,0},
+                ["1x"]={1},
+                ["1.25x"]={2,1,1,1},
+                ["1.5x"]={2,2,1,1},
+                ["1.75x"]={2,2,2,1},
+                ["2x"]={2,2,2,2}
+            } gameSpeed=speeds[option]
+        end
+        if editor.active then editor:updateToolpalette() end
+    end
+
+    function editor:updateToolpalette(init)
+        local eAS="[   ]" if editor.enableAutoSave==true                 then eAS="[✓]" end
+        local eSC="[   ]" if editor.enableShowCoords==true               then eSC="[✓]" end
+        local sUC="[   ]" if editor.enableSMBUtility==true               then sUC="[✓]" end
+
+        local dBS="[   ]" if level.current.disableBackScrolling==true        then dBS="[✓]" end
+        local aBS="[   ]" if level.current.allowBidirectionalSpawning==true  then aBS="[✓]" end
+        local eGE="[   ]" if level.current.enableGlobalEntities==true        then eGE="[✓]" end
+        local eSB="[   ]" if level.current.enableShellBouncing==true         then eSB="[✓]" end
+        local eCK="[   ]" if level.current.enableCoinOnKill==true            then eCK="[✓]" end
+        local ePB="[   ]" if level.current.enablePowerUpBouncing==true       then ePB="[✓]" end
+        local sCB="[   ]" if level.current.showCeilingBlock==true            then sCB="[✓]" end
+
+        local aSc={"[   ]","[   ]","[   ]","[   ]","[   ]","[   ]"} -- aSc: autoScroll
+        if      level.current.autoScroll==nil   then aSc[1]="[✓]"
+        elseif  level.current.autoScroll=="1"   then aSc[2]="[✓]"
+        elseif  level.current.autoScroll=="2"   then aSc[3]="[✓]"
+        elseif  level.current.autoScroll=="3"   then aSc[4]="[✓]"
+        elseif  level.current.autoScroll=="4"   then aSc[5]="[✓]"
+        elseif  level.current.autoScroll=="5"   then aSc[6]="[✓]"
+        end
+
+        local aMv={"[   ]","[   ]","[   ]"} -- aMv: autoMove
+        if      level.current.autoMove==nil then aMv[1]="[✓]"
+        elseif  level.current.autoMove=="w" then aMv[2]="[✓]"
+        elseif  level.current.autoMove=="r" then aMv[3]="[✓]"
+        end
+
+        local menu = {
+            {"File",
+                {"Name: "..string.upper(level.current.courseName), toolpaletteSelection},
+                "-",
+                {"New", toolpaletteSelection},
+                {"Open", toolpaletteSelection},
+                {"Save", toolpaletteSelection},
+                {"Save As", toolpaletteSelection},
+                {"Close File", toolpaletteSelection},
+                "-",
+                {"Copy to Clipboard", toolpaletteSelection},
+                {"Load from Clipboard", toolpaletteSelection},
+                "-",
+                {(editor.file and "File: Slot "..editor.file or "No File Open!"), toolpaletteSelection},
+            },
+            {"Editor Settings",
+                {eAS.."Auto-Save", toolpaletteSelection},
+                {eSC.."Show Co-ordinates", toolpaletteSelection},
+                {sUC.."SMB Utility Co-ords", toolpaletteSelection},
+                -- "-", -- Section divider
+            },
+            {"Modifiers",
+                {dBS.."disableBackScrolling", toolpaletteSelection},
+                {aBS.."allowBidirectionalSpawning", toolpaletteSelection},
+                {eGE.."enableGlobalEntities", toolpaletteSelection},
+                {eSB.."enableShellBouncing", toolpaletteSelection},
+                {eCK.."enableCoinOnKill", toolpaletteSelection},
+                {ePB.."enablePowerUpBouncing", toolpaletteSelection},
+                {sCB.."showCeilingBlock", toolpaletteSelection},
+                -- "-", -- Section divider
+            },
+            {"Autoscroll",
+                {aSc[1].."OFF", toolpaletteSelection},
+                {aSc[2].."Speed 1: Slow", toolpaletteSelection},
+                {aSc[3].."Speed 2: Koopa", toolpaletteSelection},
+                {aSc[4].."Speed 3: Bullet Bill", toolpaletteSelection},
+                {aSc[5].."Speed 4: Shell", toolpaletteSelection},
+                {aSc[6].."Speed 5: Sprint", toolpaletteSelection},
+            },
+            {"▶Automove",
+                {aMv[1].."OFF", toolpaletteSelection},
+                {aMv[2].."Walking Speed", toolpaletteSelection},
+                {aMv[3].."Running Speed", toolpaletteSelection},
+            },
+            {"⇥Length",
+                {"Current Length: "..level.current.END, toolpaletteSelection},
+                "-",
+                {"+5", toolpaletteSelection},
+                {"+10", toolpaletteSelection},
+                {"+50", toolpaletteSelection},
+                {"+100", toolpaletteSelection},
+                {"+200", toolpaletteSelection},
+                "-",
+                {"-5", toolpaletteSelection},
+                {"-10", toolpaletteSelection},
+                {"-50", toolpaletteSelection},
+                {"-100", toolpaletteSelection},
+                {"-200", toolpaletteSelection},
+            },
+            {"Time",
+                {"Current Time Limit: "..level.current.TIME, toolpaletteSelection},
+                "-",
+                {"+5", toolpaletteSelection},
+                {"+10", toolpaletteSelection},
+                {"+50", toolpaletteSelection},
+                {"+100", toolpaletteSelection},
+                {"+200", toolpaletteSelection},
+                "-",
+                {"-5", toolpaletteSelection},
+                {"-10", toolpaletteSelection},
+                {"-50", toolpaletteSelection},
+                {"-100", toolpaletteSelection},
+                {"-200", toolpaletteSelection},
+            }
+        } 
+        toolpalette.register(menu)
+        if init~=true then
+            if not editor.enableShowCoords then
+                toolpalette.enable("Editor Settings",(editor.enableSMBUtility and "[✓]" or "[   ]").."SMB Utility Co-ords",false)
+            end
+            if level.current.TIME<=10 then
+                toolpalette.enable("Time","-5",false)
+                toolpalette.enable("Time","-10",false)
+                toolpalette.enable("Time","-50",false)
+                toolpalette.enable("Time","-100",false)
+                toolpalette.enable("Time","-200",false)
+            elseif level.current.TIME>=999 then
+                toolpalette.enable("Time","+5",false)
+                toolpalette.enable("Time","+10",false)
+                toolpalette.enable("Time","+50",false)
+                toolpalette.enable("Time","+100",false)
+                toolpalette.enable("Time","+200",false)
+            end
+            if level.current.END<=20 then
+                toolpalette.enable("⇥Length","-5",false)
+                toolpalette.enable("⇥Length","-10",false)
+                toolpalette.enable("⇥Length","-50",false)
+                toolpalette.enable("⇥Length","-100",false)
+                toolpalette.enable("⇥Length","-200",false)
+            end
+            if not editor.file then toolpalette.enable("File","Close File",false) end
+            toolpalette.enable("File",(editor.file and "File: Slot "..editor.file or "No File Open!"),false)
+        end
+    end
+
+    function editor:paint(gc) --permanent logic loop
+        if not playStage.active then
+            if editor.LOAD>1 then
+                if not gui.PROMPT and not editor.levelList then editor:logic() end
+                editor:drawBackground(gc)
+                editor:drawTerrain(gc)
+                editor:interface(gc)
+            else --loading screen
+                gc:setColorRGB(0,0,0)
+                gc:fillRect(0,0,screenWidth,screenHeight)
+                if editor.LOAD==1 then
+                    level.current=string2level(level.perm)
+                end
+                drawFont(gc,"LOADING LEVEL FOR EDITING...",nil,nil,"centre",0)
+                editor.LOAD=editor.LOAD+1
+    end end end
+
+
+--------------------------
+--TITLE SCREEN FUNCTIONS--
+--------------------------
+titleScreen=class()
+
+    function titleScreen:init()
+        titleScreen.cameraOffsetX=0
+        titleScreen.cameraOffsetY=8
+        titleScreen:reset()
+    end
+
+    function titleScreen:reset()
+        gui:clear()
+        --home screen       (0,0)       //  (0,0)
+        gui:newButton(versText,1,290,197)
+        gui:newButton("OPTIONS",true,35,197,"m-1,0")
+        gui:newButton("button_create1",{"button_create2",40,30,-5,-10},111,109,"create")
+        gui:newButton("button_play1",{"button_play2",40,30,-5,-10},167,109,"m1,0")
+        gui:newButton("titlescreen_logo",{nil},81,37,nil)
+        gui:newButton("R0idle",{nil},26,172,nil) -- i mean... its not a button. but it still works i guess!
+        if debug then gui:newButton("DEBUG MODE ACTIVE!",true,159,197,"debuginfo") end
+        --options screen    (-320,0)    //  (-1,0)
+        gui:newButton("$",true,-298,13,"m1,0") --home icon
+        gui:newButton("OPTIONS",2,-161,16)
+        gui:newButton("CHANGE AUTHOR NAME",true,-161,64,"enterauthor")
+        gui:newButton("CLEAR SAVED LEVELS",true,-161,84,"clearlevels")
+        gui:newButton("CLEAR ALL DATA",true,-161,104,"clearall")
+        gui:newButton("EXPORT DATA",true,-161,134,"exportdata")
+        gui:newButton("IMPORT DATA",true,-161,154,"importdata")
+        gui:newButton("R0death",{nil},-294,172,nil)
+        gui:newButton("goomba1",{nil},-284,172,nil)
+        --play screen       (320,0)     //  (1,0)
+        gui:newButton("$",true,342,13,"m-1,0") --home icon
+        gui:newButton("PLAY",3,479,16)
+        gui:newButton("LOCAL LEVELS",true,479,78,"m1,0")
+        gui:newButton("COURSE WORLD",true,479,98,"m0,1")
+        gui:newButton("CAMPAIGN",true,479,118,"m0,-1")
+        gui:newButton("ENDLESS MODE",true,479,138,"m1,-1")
+        gui:newButton("R0jump",{nil},598,67,nil)
+        --local screen      (640,0)     //  (2,0)
+        gui:newButton("~",true,662,13,"m-1,0") --back icon
+        gui:newButton("LOCAL LEVELS",2,799,16)
+        gui:newButton("L2idle",{nil},928,156,nil)
+        --course world      (320,-224)  //  (1,-1)
+        gui:newButton("~",true,342,-211,"m0,-1")
+        gui:newButton("COURSE WORLD",2,479,-208)
+        gui:newButton("L0jump",{nil},603,-121,nil)
+        --campaign screen   (320,224)   //  (1,1)
+        gui:newButton("~",true,342,237,"m0,1") --back icon
+        gui:newButton("CAMPAIGN",2,479,256)
+        gui:newButton("COMING... SOON?",1,479,324)
+        gui:newButton("R1crouch",{nil},346,380,nil)
+        --endless screen    (640,224)   //  (2,1)
+        gui:newButton("~",true,662,237,"m-1,1") --back icon
+        gui:newButton("ENDLESS MODE",2,799,256)
+        gui:newButton("COMING... SOON?",1,799,324)
+        if username=="" then
+            gui:createPrompt("WELCOME!",{"YOU DO NOT HAVE ANY","EXISTING SAVE DATA. WOULD","YOU LIKE TO IMPORT YOUR","OLD DATA OR START ANEW?"},{{"IMPORT","initimport"},{"NEW DATA","initnew"}},true,true)
+        end
+        titleScreen.splashText=titleSplashes[math.random(1,#titleSplashes)]
+        titleScreen.framesPassedBlock=0
+        titleScreen.vx=0
+        titleScreen.vy=0
+        local mainScreen        =string2level("<20-v6-5~5-!-500-v0.9.0a-42-my course>,1*28,*3,77,78*2,79,4*3,65,68,69,68,69,70,67,*E,65,68,69,70,67,*4,9,*B,65,68,67,*4,9,49,0,21*2,*9,66,*2,3,2,0,48,49,*12,48,49,0,74,75,76,*E,48,49,0,71,72,73,*E,48,49,*E,74,75*2,76,48,49,*E,71,72*2,73,48,49,*12,48,41,*12,40,*14")
+        local optionsScreen     =string2level("<20-v6-5~3-!-500-v0.9.0a-42-my course>,1*28,86*A,85,82*7,*2,86*9,85,82*6,81,82,*2,86*8,85,82*4,81,82*4,0,9,86*7,85,82*2,81,82*3,83,82*3,0,48,86*6,85,82*B,0,48,86*5,85,82*9,81,82*2,0,48,86*4,85,82*2,81,82*3,81,82*6,0,48,86*3,85,82*6,83,82*7,0,48,86*2,85,82*9,81,82*5,0,48,86,85,82*3,81,82*3,83,82*4,81,82*3,0,48,85,3*11,0,40,*14",-20)
+        local playScreen        =string2level("<20-v6-5~5-!-500-v0.9.0a-42-my course>,1*9,48,49,1*4,48,49,1*2,0,1*9,40,41,1*4,48,49,1*2,*6,77,78,79,*3,87*2,0,9,48,49,9*2,*10,48,49,9*2,0,9,*E,40,41,9*2,0,49,*2,2*2,*C,9*2,0,49,*13,49,*11,4,0,49,*12,4,49,*D,74,75*2,76,*2,49,*D,71,72*2,73,*2,49,*13,41,*27",20)
+        local localScreen       =string2level("<20-v6-5~5-!-500-v0.9.0a-42-my course>,0,1*13,0,1*13,0,9*4,69,70,67,77,78*2,79,*4,82*2,86,82,0,9*3,65,68,67,*9,82*2,85,82,0,9*2,*2,66,*A,80,84*3,*11,81,82,83,*11,80*3,0,4,*12,4,*38,74,75*2,*11,71,72*2,*28",40)
+        local courseWorldScreen =string2level("<20-v5-5~5-!-500>,*15,11*12,*2,87*12,*81,74,75*3,76,*8,74,75*2,76,*3,71,72*3,73,*2,74,75,76,*3,71,72*2,73,*A,71,72,73,*17,*15",20,14)
+        local campaignScreen    =string2level("<20-v5-5~5-!-500>,1*14,9,*12,9*2,*12,9*2,*12,9*2,*12,9*2,*12,9*2,*12,9*2,*12,9*2,*12,9*2,*12,9*2,*D,46,50*5,9,*8,43,42,*3,47,52,53,51*3,9*9,48,49,9*4,48,49,9*3,1*14",20,-13)
+        local endlessScreen     =string2level("<20-v5-5~5-!-500>,1*14,9,*12,9*2,*12,9*2,*12,9*2,*12,9*2,*12,9*2,*12,9*2,*12,9*2,*12,9*2,*12,9,50,45,*11,9,51,44,*11,9*15,1*14",40,-13)
+        
+        level.current=mainScreen
+        level.current.xy=table.merge(
+            mainScreen.xy,
+            localScreen.xy,
+            courseWorldScreen.xy,
+            campaignScreen.xy,
+            endlessScreen.xy,
+            optionsScreen.xy,
+            playScreen.xy
+        )
+        
+        for i=-21,21 do level.current.set(i,14,9) end
+        for i=21,60 do level.current.set(i,-13,1) end
+    end
+
+    function titleScreen:charIn(chr)
+        if chr=="d" then
+            debug=not debug
+            titleScreen:init()
+        end
+    end
+
+    function titleScreen:drawTerrain(gc) --rendered in rows from bottom to top w/ the rows from left to right. this script supports y level scrolling
+        local objectList={}
+        for i2=math.ceil(titleScreen.cameraOffsetX/16),math.ceil((screenWidth+titleScreen.cameraOffsetX)/16) do --left to right, horizontally, only draw what is visible on screen
+            local THEME=1
+            for i=math.ceil(titleScreen.cameraOffsetY/16),math.ceil((screenHeight+titleScreen.cameraOffsetY)/16) do --bottom to top, vertically
+                local blockID=plot2ID(i2,i)
+                if type(blockID)=='number' then --its a tile. this particular hacked together drawTerrain script cannot do anything else besides it.
+                    if blockID<0 then blockID=0 end
+                    if i<1 and blockIndex[blockID]["theme"][THEME]~=nil then
+                        local frameForAnim=(math.floor((titleScreen.framesPassedBlock/4)%#blockIndex[blockID]["theme"][THEME]))+1 --(support for animations)
+                        gc:drawImage(texs[blockIndex[blockID]["theme"][THEME][frameForAnim]], ((i2-1)*16)-titleScreen.cameraOffsetX, 212-16*(i)+titleScreen.cameraOffsetY)
+                    elseif blockIndex[blockID]["texture"][1]~=nil then
+                        local frameForAnim=(math.floor((titleScreen.framesPassedBlock/4)%#blockIndex[blockID]["texture"]))+1 --(support for animations)
+                        gc:drawImage(texs[blockIndex[blockID]["texture"][frameForAnim]], ((i2-1)*16)-titleScreen.cameraOffsetX, 212-16*(i)+titleScreen.cameraOffsetY) end
+    end end end end
+
+    function titleScreen:drawBackground(gc)
+        gc:setColorRGB(97,133,248)
+        gc:fillRect(0,0,screenWidth,212)
+        gc:setColorRGB(0,0,0)
+        gc:fillRect(0,212+titleScreen.cameraOffsetY,screenWidth,216) --below ground. anything below y pixel 212 will be the underground theme
+    end
+
+    function titleScreen:moveScreens(x,y)
+        x=x or 0 y=y or 0
+        titleScreen.vx=(x*16)+titleScreen.vx
+        titleScreen.vy=(y*16)+titleScreen.vy
+    end
+
+    function titleScreen:mouseDown()
+    end
+
+    function titleScreen:escapeKey()
+        if titleScreen.vx==0 and titleScreen.vy==0 then
+            gui:detectPos(titleScreen.cameraOffsetX,titleScreen.cameraOffsetY,23,17) --select the top left button...
+            gui:click() --and click it. could be handled differently, but it works.
+        end
+    end
+
+    function titleScreen:paint(gc)
+        cursor.show()
+        titleScreen.framesPassedBlock=titleScreen.framesPassedBlock+1
+        if (titleScreen.vx~=0 or titleScreen.vy~=0) and not gui.PROMPT then
+            switchTimer(true)
+            if math.abs(titleScreen.vx)>0 then
+                titleScreen.cameraOffsetX=titleScreen.cameraOffsetX+((titleScreen.vx/math.abs(titleScreen.vx))*20)
+                titleScreen.vx=titleScreen.vx-(titleScreen.vx/math.abs(titleScreen.vx))
+            end
+            if math.abs(titleScreen.vy)>0 then
+                titleScreen.cameraOffsetY=titleScreen.cameraOffsetY+((titleScreen.vy/math.abs(titleScreen.vy))*14)
+                titleScreen.vy=titleScreen.vy-(titleScreen.vy/math.abs(titleScreen.vy))
+            end
+        else
+            switchTimer(false)
+            gui:detectPos(titleScreen.cameraOffsetX,titleScreen.cameraOffsetY)
+        end
+        titleScreen:drawBackground(gc)
+        titleScreen:drawTerrain(gc)
+        if username~="" then
+            drawFont(gc,"WELCOME BACK "..username.."!",159-titleScreen.cameraOffsetX,6+titleScreen.cameraOffsetY,"centre",false,true)
+            drawFont(gc,titleScreen.splashText,159-titleScreen.cameraOffsetX,17+titleScreen.cameraOffsetY,"centre",nil,"rgb")
+        end
+    end
+
+
+--------------------------
+-------GUI FUNCTIONS------
+--------------------------
+gui=class()
+
+    function gui:init()
+        gui:clear() gui.levelLists={} gui.levelListBLs={}
+    end
+
+    function gui:escapeKey()
+        if gui.PROMPT and not gui.PROMPT[8] then
+            gui:clearPrompt()
+    end end
+
+    function gui:enterKey()
+        if gui.PROMPT and type(gui.PROMPT[7])=="string" and #gui.input>0 then
+            local action=gui.PROMPT[7] local input=gui.input
+            gui:clearPrompt() gui.input=input
+            gui:click(action)
+    end end
+
+    function gui:charIn(chr)
+        if (chr:isAlphaNumeric() or chr==" " or chr=="." or chr=="!" or chr=="/" or chr=="?" or chr=="," or chr=="'" or chr=="(" or chr==")" or chr=="-") and gui.PROMPT.inputLength and gui.PROMPT.inputLength>#gui.input then
+            gui.input=gui.input..chr
+        end
+    end
+    function gui:backspaceKey()
+        if #gui.input>0 then
+            gui.input=string.sub(gui.input,1,#gui.input-1)
+        end
+    end
+
+    function gui:clear()
+        gui.buttonList={}
+        if gui.levelLists then for i=1,#gui.levelLists do gui[gui.levelLists[i]].loaded=nil end end
+        if gui.levelListBLs then for i=1,#gui.levelListBLs do gui[gui.levelListBLs[i]]=nil end end
+        -- gui.buttonListlevelListLocal=nil
+        gui.levelListBLs={} --gui.levelLists={}
+        gui.highlightedButton=false
+        gui:clearPrompt()
+    end
+
+    function gui:paint(gc)
+        if (not titleScreen.active) and (editor.active or playStage.active) then
+            gui:drawButtons(gc,0,8,"buttonList")
+            if editor.levelList then gui:drawButtons(gc,0,8,"buttonListlevelListLocal") end --huge bodge, huge cringe
+        elseif titleScreen.active then
+            local offset={titleScreen.cameraOffsetX,titleScreen.cameraOffsetY-8}
+            gui:levelList(gc,{640,0,offset[1],offset[2]},"levelListLocal","titlescreen")
+            gui:levelList(gc,{320,-224,offset[1],offset[2]},"nSMMCourseWorld","titlescreen")
+            for i=1,#gui.levelListBLs do
+                gui:drawButtons(gc,offset[1],titleScreen.cameraOffsetY,gui.levelListBLs[i])
+            end
+            -- gui:drawButtons(gc,offset[1],offset[2],"buttonList")
+            gui:drawButtons(gc,offset[1],titleScreen.cameraOffsetY,"buttonList")
+        end
+        gui:drawMisc(gc)
+        gui:drawButtons(gc,0,8,"buttonListPrompt")
+    end
+
+    function gui:scroll(dir)
+        for i=1,#gui.levelLists do
+            local levelList,cameraOffsetX,cameraOffsetY=gui[gui.levelLists[i]],titleScreen.active and titleScreen.cameraOffsetX or 0,titleScreen.active and -(titleScreen.cameraOffsetY-8) or 0
+            if cameraOffsetX==levelList.x and cameraOffsetY==levelList.y then
+                gui:click("scroll"..dir..gui.levelLists[i])
+    end end end
+
+    function gui:levelList(gc,hook,LIST,TYPE)
+        if not gui[LIST] then gui[LIST]={} end
+        local x,y=hook[1]-(hook[3] or 0),(hook[4] or 0)+hook[2]
+        if (x>-320 and x<320) and (y>-218 and y<218) then
+            if (gui[LIST].loaded or 0)>=1 then --dont change this stupid value
+                if LIST~="levelListLocal" and not _G["loaded"..LIST] then
+                    drawFont(gc,"NOT FOUND!",x+120,y+82)
+                    drawFont(gc,"PLACE THE FILE NSMMCOURSEWORLD",x+40,y+92)
+                    drawFont(gc,"INTO THE MYLIB FOLDER AND",x+60,y+102)
+                    drawFont(gc,"PRESS DOC, THEN 6. FOR",x+56,y+112)
+                    drawFont(gc,"MORE INFORMATION, LOOK IN 2.2",x+44,y+122)
+                else
+                    local function drawRow(gc,x,y,number,courseData)
+                        drawGUIBox(gc,x,y,22,19)
+                        drawGUIBox(gc,x+20,y,209,19,nil,nil,true)
+                        drawFont(gc,addZeros(number,2),x+4,y+6)
+                        drawFont(gc,courseData[1],x+49,y+4)
+                        if courseData[2] then --level exists
+                            --compatibility icon
+                            local icon=(courseData[2]==versNum and "G" or courseData[2]<versNum and "O" or "R")
+                            gc:drawImage(texs["levelList_"..icon],x+49,y+12)
+                            if (mouse.x>=(x+49-1) and mouse.x<=(x+49+5)) and (mouse.y>=(y+12-1) and mouse.y<=(y+12+5)) then
+                                gui.TEXT=(icon=="G") and "COMPATIBLE - UP TO DATE" or (icon=="O") and "PROBABLY COMPATIBLE - OUT OF DATE" or "LIKELY NOT COMPATIBLE - FOR NEWER NSMM"
+                            end
+                            drawFont2(gc,courseData[3],x+54,y+12)
+                            --length icon
+                            local length=tostring(courseData[5])
+                            gc:drawImage(texs.levelList_length,x+106,y+12)
+                            if (mouse.x>=(x+106-1) and mouse.x<=(x+106+5)) and (mouse.y>=(y+12-1) and mouse.y<=(y+12+5)) then
+                                gui.TEXT="LEVEL LENGTH: "..length
+                            end
+                            drawFont2(gc,length,x+111,y+12)
+                            --author
+                            drawFont2(gc,courseData[4],x+202,y+12,"right")
+                        end
+                    end
+                    for i=1,8 do local lvl=gui[LIST][i+gui[LIST].scroll-1] or {"NO DATA",false}
+                        drawRow(gc,x+31,y+20+i*19,i+gui[LIST].scroll-1,lvl)
+                    end
+                    drawGUIBox(gc,x+263,y+39,15,152)
+                    gc:drawImage(texs.levelList_scrollPiece,x+267,y+58+((gui[LIST].scroll-1)*(106/91))) -- 91 slots, 106 px (to scroll)
+                    gc:setColorRGB(108,108,108)     gc:drawRect(x+265,y+54,11,2)            gc:drawRect(x+265,y+174,11,2) --grey
+                    gc:setColorRGB(255,255,255)     gc:drawLine(x+264,y+55,x+265+12,y+55)   gc:drawLine(x+264,y+175,x+265+12,y+175) --white lines (divide)
+                    -- gc:fillRect(x+267,y+61,8,9)
+                end
+            else drawFont(gc,"LOADING...",x+122,y+102) 
+            end
+            if x==0 and y==0 and gui[LIST].loaded~=3 then
+                if gui[LIST].loaded~=2 then gui:initLevelList(hook,LIST,TYPE)
+                    gui[LIST].loaded=(gui[LIST].loaded or 0)+1
+                elseif gui[LIST].loaded==2 then gui:refreshLevelList() --shit! just to "fix" course world... easier than actually fixing it
+                    gui[LIST].loaded=3
+                end
+    end end end
+
+    function gui:initLevelList(hook,LIST,TYPE)
+        if LIST~="levelListLocal" and _G["loaded"..LIST]==nil then _G["loaded"..LIST]=ext2string(LIST,"loaded") and true or false end
+        if LIST=="levelListLocal" or _G["loaded"..LIST] then
+            if gui[LIST].loaded==nil and not (LIST~="levelListLocal" and gui[LIST].directory) then --this logic is now needlessly complicated due to a problem 
+                local scroll=gui[LIST].scroll or 1
+                gui:createLookupTable(LIST)
+                gui[LIST].scroll=scroll
+                gui[LIST].x=hook[1] gui[LIST].y=hook[2]
+                gui["buttonList"..LIST]={} local present=false
+                for i=1,#gui.levelLists do if gui.levelLists[i]==LIST then present=true break end end
+                if not present then table.insert(gui.levelLists,LIST) end
+            elseif gui[LIST].loaded==1 then local present=false
+                for i=1,#gui.levelListBLs do if gui.levelListBLs[i]=="buttonList"..LIST then present=true break end end
+                if not present then table.insert(gui.levelListBLs,"buttonList"..LIST) end
+                gui:newButton("levelList_scrollUp",{"levelList_scrollUp",10,12},hook[1]+266,hook[2]+42,"scrollU"..LIST)
+                gui:newButton("levelList_scrollDown",{"levelList_scrollDown",10,12},hook[1]+266,hook[2]+177,"scrollD"..LIST)
+                if editor.active and (not titleScreen.active) then gui:newButton("~ CANCEL",true,159,198,"ll_close") end
+                gui:refreshLevelList()
+            end
+        end
+    end
+
+    function gui:refreshLevelList()
+        local function refreshList(hook,LIST,buttonLIST,TYPE)
+            local function refreshRow(x,y,number,courseData,buttonLIST,TYPE)
+                if not TYPE or TYPE=="titlescreen" then
+                    if LIST=="nSMMCourseWorld" then
+                        if courseData then
+                            gui:newButton("levelList_play",{"levelList_play",12,12},x+24,y-4,"ll_play_"..number.."_"..LIST,buttonLIST)
+                            gui:newButton("levelList_copy",{"levelList_copy",10,12},x+24+190,y-4,"ll_copy_"..number.."_"..LIST,buttonLIST)
+                        end
+                    elseif courseData then
+                        gui:newButton("levelList_play",{"levelList_play",12,12},x+24,y-4,"ll_play_"..number.."_"..LIST,buttonLIST)
+                        gui:newButton("levelList_edit",{"levelList_edit",10,10},x+24+13,y-3,"ll_edit_"..number.."_"..LIST,buttonLIST)
+                        gui:newButton("levelList_copy",{"levelList_copy",10,12},x+24+178,y-4,"ll_copy_"..number.."_"..LIST,buttonLIST)
+                        gui:newButton("levelList_delete",{"levelList_delete",13,12},x+24+189,y-4,"ll_delete_"..number.."_"..LIST,buttonLIST)
+                    else
+                        gui:newButton("levelList_paste",{"levelList_paste",12,12},x+24+178,y-4,"ll_paste_"..number.."_"..LIST,buttonLIST)
+                        gui:newButton("levelList_edit",{"levelList_edit",10,10},x+24+190,y-3,"ll_new_"..number.."_"..LIST,buttonLIST)
+                    end
+                elseif TYPE=="save" then
+                    gui:newButton("levelList_save",{"levelList_save",12,12},x+24+190,y-4,"ll_save_"..number.."_"..LIST,buttonLIST)
+                elseif TYPE=="open" then
+                    if courseData then gui:newButton("levelList_open",{"levelList_open",12,10},x+24+190,y-3,"ll_open_"..number.."_"..LIST,buttonLIST)
+                    else gui:newButton("levelList_new",{"levelList_new",10,12},x+24+191,y-4,"ll_new_"..number.."_"..LIST,buttonLIST) end
+                end
+            end TYPE=editor.levelList or TYPE
+            for i=1,8 do local lvl=gui[LIST][i+gui[LIST].scroll-1] and true or false
+                refreshRow(hook[1]+31,(hook[2]+20+i*19)+(not editor.active and 8 or 0),addZeros(i+gui[LIST].scroll-1,2),lvl,buttonLIST,TYPE)
+            end
+        end
+        for i=1,#gui.levelLists do
+            local levelList,cameraOffsetX,cameraOffsetY=gui[gui.levelLists[i]],titleScreen.active and titleScreen.cameraOffsetX or 0,titleScreen.active and -(titleScreen.cameraOffsetY-8) or 0
+            if cameraOffsetX==levelList.x and cameraOffsetY==levelList.y then
+                gui["buttonList"..gui.levelLists[i]]={}
+                refreshList({levelList.x,levelList.y+(editor.active and 8 or 0)},gui.levelLists[i],"buttonList"..gui.levelLists[i],"titlescreen")
+        end end
+    end
+
+    function gui:writeLevel(location,LIST,levelString)
+        if levelString then var.store("levelListLocal"..location,levelString)
+        else del("levelListLocal"..location) end
+        gui:modifyLookupString(location,not not levelString,LIST)
+        if gui[LIST] then 
+            if levelString then gui[LIST][location]=string2level(levelString,nil,nil,1)
+            else gui[LIST][location]=nil end
+        end
+    end
+
+    function gui:retrieveLevel(LIST,location)
+        if LIST=="levelListLocal" then return var.recall(LIST..location)
+        else return ext2string(LIST,"levelList"..location)
+        end
+    end
+
+    function gui:writeLookupString(LIST,lookupString) var.store(LIST.."D",lookupString) end
+
+    function gui:retrieveLookupString(LIST)
+        if LIST=="levelListLocal" then return var.recall(LIST.."D")
+        else return ext2string(LIST,"levelListD")
+        end
+    end
+
+    function gui:createLookupTable(LIST) --if only the var library wasnt so restrictive...
+        gui[LIST]={}
+        gui[LIST].directory=gui:retrieveLookupString(LIST)
+        local lvls=gui[LIST].directory and gui[LIST].directory:split("-") or {}
+        for i=1,#lvls do
+            gui[LIST][tonumber(lvls[i])]=string2level(gui:retrieveLevel(LIST,lvls[i]),nil,nil,1)
+        end
+    end
+
+    function gui:modifyLookupString(location,ADDorDEL,LIST) --ADDorDEL -> true=add, false=del
+        local lvls=gui:retrieveLookupString(LIST)
+        lvls=lvls and lvls:split("-") or {}
+        for i, v in ipairs(lvls) do
+            if tonumber(v)==location then
+                if ADDorDEL then return --adding, but already present; no point to continue
+                else table.remove(lvls,i) end --removing, and found; list still needs updating
+        end end
+        if ADDorDEL then table.insert(lvls,tostring(location)) end
+        gui:writeLookupString(LIST,table.concat(lvls, "-"))
+    end
+
+    function gui:createPrompt(header,text,buttons,horizontalButtons,disableExit,x,y,w,h) -- eg -->  gui:createPrompt("PAUSE",{"Select Option"},{{"continue",close},{"quit","quit"}},false)
+        gui:clearPrompt() switchTimer(false) -- NOTE: set 'buttons' to an int for a text box
+        local buttonW={-1} local headerW=22+#header*8 local textW={0} local text=text or {}
+        local isInt=type(buttons)=="number" or (type(buttons)==string and buttons:isInteger()) --check if buttons is an integer or a table with an integer
+        if not isInt then
+            for i=1,#buttons do
+                if horizontalButtons then
+                    buttonW[1]=buttonW[1]+14+#buttons[i][1]*8
+                else
+                    buttonW[i]=10+#buttons[i][1]
+            end end
+        else buttonW[1]=12+buttons*8 end
+        if not w and text then
+            for i=1,#text do textW[i]=12+#text[i]*8 end
+        end
+        w=w or (math.max(headerW or 0,math.max(unpack(textW)),math.max(unpack(buttonW))))
+        h=h or 17+#(text)*9+(not isInt and ((horizontalButtons and #buttons>0 and 17) or (#buttons*17)) or 17) --if h is not specified. there are some stupid bodges here
+        x=x or (158-math.floor(w/2))
+        y=y or (106-math.floor(h/2))
+        gui.PROMPT={x,y,w,h,header,{unpack(text)},horizontalButtons,disableExit}
+        local offsetX=horizontalButtons and (x+3+(w/2)-(buttonW[1]/2)) or x+3 local offsetY=horizontalButtons and 0 or -2
+        if not isInt then
+            for i=1,#buttons do
+                if horizontalButtons then
+                    gui:newButton(buttons[i][1],true,offsetX+((10+#buttons[i][1]*8)/2),y+(#text*9)+20,buttons[i][2],"buttonListPrompt") offsetX=offsetX+12+#buttons[i][1]*8
+                else
+                    gui:newButton(buttons[i][1],true,x+(w/2),y+(#text*9)+20+offsetY,buttons[i][2],"buttonListPrompt") offsetY=offsetY+17
+                end
+            end
+        else gui.PROMPT.inputLength=buttons
+        end
+        if not disableExit then gui:newButton("button_close",{"button_close",7,7,0,0},x+w-8,y+2,"close","buttonListPrompt") end
+    end
+
+    function gui:clearPrompt()
+        gui.PROMPT=false
+        gui.buttonListPrompt={}
+        switchTimer(true)
+        gui.input=""
+    end
+
+    function gui:click(action) -- actions relating to buttons and prompts go here. also some small tasks too.
+        if gui.highlightedButton or action then
+            action=action or gui[gui.highlightedButton[2]][gui.highlightedButton[1]]["action"]
+            print("gui:click",action)
+
+            switchTimer(true) --switch timer back on; pay attention to this, all the buttons benefit due to performing some kind of change but future ones may not
+            if string.sub(action,1,1)=="m" then --screen moving time
+                local v=(string.sub(action,2,#action)):split(",")
+                titleScreen:moveScreens(v[1],v[2])
+            elseif action=="create" then
+                editor:generate(defaultCourse)
+                editor.active=true editor.file=false
+                playStage.active=false
+                titleScreen.active=false
+            elseif action=="editor_new" then
+                gui:click("create") editor.file=false editor:updateToolpalette()
+            elseif action=="editor_open" then editor.levelList="open"
+            elseif action=="editor_save" then
+                if editor.file then gui:click("ll_save_"..editor.file.."_levelListLocal")
+                else gui:click("editor_saveas")
+                end
+            elseif action=="editor_saveas" then editor.levelList="save"
+            elseif action=="editor_close" and editor.file then editor.notification={"CLOSED SLOT "..editor.file.."!"}
+                editor.file=false editor:updateToolpalette()
+            elseif action=="coursename" then
+                level.current.courseName=gui.input or "my course"
+                editor:updateToolpalette()
+            elseif action=="time" and gui.input:isInteger() then
+                toolpaletteSelection("Time",tonumber(gui.input)-level.current.TIME)
+            elseif action=="length" and gui.input:isInteger() then
+                toolpaletteSelection("⇥Length",tonumber(gui.input)-level.current.END)
+            elseif action=="author" then
+                var.store("author",gui.input) username=gui.input
+            elseif string.sub(action,1,2)=="ll" then
+                local action=action:split("_")
+                action[3]=tonumber(action[3])
+                if     action[2]=="play"   then
+                    playStage:generate(gui:retrieveLevel(action[4],action[3]),true)
+                    playStage.active=true titleScreen.active=false editor.file=(action[4]=="levelListLocal") and action[3] or nil
+                elseif action[2]=="edit"   then
+                    editor:generate(gui:retrieveLevel(action[4],action[3]))
+                    editor.active=true playStage.active=false titleScreen.active=false
+                    if (action[4]=="levelListLocal") then
+                        editor.file=action[3] editor.notification={"OPENED FROM SLOT "..action[3].."!"}
+                    end
+                elseif action[2]=="copy"   then
+                    clipboard.addText(gui:retrieveLevel(action[4],action[3]))
+                    gui:createPrompt("DONE!",{"LEVEL COPIED","TO CLIPBOARD!"},{{"OK","close"}},nil,nil,false)
+                elseif action[2]=="delete" then
+                    action[2]="deleteconfirm"
+                    gui:createPrompt("DELETE LEVEL",{"REALLY DELETE?","LEVEL DATA WILL", "BE DELETED!"},{{"CONFIRM",table.concat(action,"_")},{"CANCEL","close"}},true,false)
+                elseif action[2]=="deleteconfirm" then
+                    gui:writeLevel(action[3],action[4],false)
+                    gui:clearPrompt() gui:refreshLevelList()
+                elseif action[2]=="paste"  then
+                    local PASTE=clipboard.getText() or "err"
+                    if string.sub(PASTE,1,1)=="<" then --very crude for now
+                        gui:writeLevel(action[3],action[4],PASTE)
+                        gui:createPrompt("DONE!",{"LEVEL IMPORTED","FROM CLIPBOARD!"},{{"OK","close"}},nil,nil,false)
+                    else
+                        gui:createPrompt("ERROR!",{"LEVEL IMPORTING","FAILED! CHECK TO","SEE IF THE LEVEL","CODE IS VALID."},{{"OK","close"}})
+                    end gui:refreshLevelList()
+                --IN EDITOR--
+                elseif action[2]=="new"    then
+                    gui:click("create") editor.levelList=false editor.file=(action[4]=="levelListLocal") and action[3] or nil --editor:updateToolpalette()
+                elseif action[2]=="open"   then
+                    action[2]="openconfirm"
+                    if gui[action[4]][action[3]] then
+                        gui:createPrompt("WARNING!",{"CURRENT UNSAVED DATA WILL","BE LOST!"},{{"CONFIRM",table.concat(action,"_")},{"CANCEL","close"}},true,nil,false)
+                    end
+                elseif action[2]=="openconfirmsave" then
+                elseif action[2]=="openconfirm" then
+                    gui:clear() editor.levelList=false
+                    editor:generate(gui:retrieveLevel(action[4],action[3]) or defaultCourse)
+                    if (action[4]=="levelListLocal") then
+                        editor.file=action[3] editor.notification={"OPENED FROM SLOT "..action[3].."!"}
+                    end editor:updateToolpalette()
+                elseif action[2]=="save"   then
+                    action[2]="saveconfirm"
+                    if gui[action[4]][action[3]] and tonumber(action[3])~=tonumber(editor.file) then
+                        gui:createPrompt("WARNING!",{"DATA ALREADY PRESENT IN","SLOT "..tostring(action[3]).."! CONTINUING WILL","OVERWRITE THIS LEVEL."},{{"CONFIRM",table.concat(action,"_")},{"CANCEL","close"}},true,nil,false)
+                    else gui:click(table.concat(action,"_"))
+                    end
+                elseif action[2]=="saveconfirm" then
+                    gui:writeLevel(action[3],action[4],level2string(level.current)) gui:clear() editor.levelList=false
+                    editor.file=(action[4]=="levelListLocal") and action[3] or nil editor.notification={"SAVED TO SLOT "..action[3].."!"} editor:updateToolpalette()
+                elseif action[2]=="close" then
+                    gui:clear() editor.levelList=false
+                end
+                -------------
+            elseif string.sub(action,1,6)=="scroll" then local scroll=gui[string.sub(action,8,#action)].scroll
+                if string.sub(action,7,7)=="U" and scroll>1 then
+                    gui[string.sub(action,8,#action)].scroll=scroll-1
+                elseif string.sub(action,7,7)=="D" and scroll<92 then gui[string.sub(action,8,#action)].scroll=scroll+1 end
+                gui:refreshLevelList()
+            elseif string.sub(action,1,7)=="gscroll" then local scroll=editor.displayedGroup["scroll"]
+                if string.sub(action,8,8)=="U" then editor.displayedGroup["scroll"]=editor.displayedGroup["scroll"]-1
+                elseif string.sub(action,8,8)=="D" then editor.displayedGroup["scroll"]=editor.displayedGroup["scroll"]+1 end
+                if editor.displayedGroup["scroll"]<0 then editor.displayedGroup["scroll"]=0
+                elseif editor.displayedGroup["scroll"]>(editor.displayedGroup["rows"]-5) then editor.displayedGroup["scroll"]=(editor.displayedGroup["rows"]-5) end
+            elseif action=="initimport" then
+                gui:click("importdataconfirm")
+                if username=="" then --failed
+                    gui:createPrompt("WELCOME!",{"VALID RESTORE DATA WAS NOT FOUND","IN YOUR CLIPBOARD. EITHER CLICK","'EXPORT DATA' IN YOUR PREVIOUS VERSION","OR, IF YOU HAVE A PRE 1.3.0A VERSION,","USE THE NSMM LEGACY DATA EXTRACTOR","TO CONTINUE USING YOUR DATA."},{{"IMPORT","initimport"},{"NEW DATA","initnew"}},true,true)
+                end
+            elseif action=="initnew" then
+                gui:createPrompt("WELCOME!",{"YOU DO NOT HAVE AN AUTHOR NAME","SET. TYPE IN THE NAME YOU WOULD","LIKE TO BE ASSOCIATED WITH","YOUR LEVELS AND PRESS ENTER!"},12,"author",true)
+            elseif action=="exportdata" then
+                local vars,STRING=var.list(),"Γ"
+                for i=1,#vars do
+                    STRING=STRING..vars[i].."Γ"..var.recall(vars[i]).."Γ"
+                end clipboard.addText(STRING)
+                gui:createPrompt("COMPLETE",{"SAVED DATA TO CLIPBOARD,","READY FOR IMPORTING!"},{{"OK","close"}},true,false)
+            elseif action=="importdata" then
+                gui:createPrompt("IMPORT DATA",{"REALLY IMPORT?","ALL SAVED LEVEL DATA", "WILL BE LOST!"},{{"DELETE","importdataconfirm"},{"BACK","close"}},true,false)
+            elseif action=="importdataconfirm" then
+                local STRING=clipboard.getText()
+                if type(STRING)=="string" and string.sub(STRING,1,2)=="Γ" then --probably legit?
+                    gui:click("clearlevelsconfirm")
+                    STRING=STRING:split("Γ")
+                    for i=1,#STRING,2 do
+                        local varName,content=STRING[i],STRING[i+1]
+                        var.store(varName,content)
+                        if varName=="author" then username=content end
+                    end
+                    gui:clearPrompt() titleScreen:init()
+                    gui:createPrompt("SUCCESS!",{"SAVE DATA RESTORED","FROM CLIPBOARD."},{{"OK","close"}},true,false)
+                else
+                    gui:createPrompt("ERROR",{"SAVE DATA NOT FOUND","IN CLIPBOARD."},{{"OK","close"}},true,false)
+                end
+            elseif action=="clearlevels" then
+                gui:createPrompt("CLEAR LEVELS",{"REALLY DELETE?","ALL SAVED LEVEL DATA", "WILL BE LOST!"},{{"DELETE","clearlevelsconfirm"},{"BACK","close"}},true,false)
+            elseif action=="clearlevelsconfirm" then
+                for i=1,99 do gui:writeLevel(i,"levelListLocal") end del("levelListLocalD")
+                gui:createPrompt("DONE!",{"LEVEL DATA CLEARED!","IF YOU WOULD LIKE TO RESTORE", "THEN REOPEN WITHOUT SAVING.","OTHERWISE SAVE TO","CONFIRM CHANGES."},{{"OK","close"}},true,false)
+            elseif action=="debuginfo" then
+                gui:createPrompt("INFO ABOUT DEBUG MODE",{"DEBUG MODE ACTIVATES SOME EXTRA","KEYBINDS AND ON-SCREEN INFORMATION.", "HOWEVER THE EXTRA SHORTCUTS ARE","NOT TESTED AND MAY CRASH OR CAUSE"," UNINTENDED BEHAVIOUR! PLEASE DON'T","REPORT BUGS WHILE IN DEBUG MODE :)"},{{"OK","close"}},true,false)
+            elseif action=="clearall" then
+                gui:createPrompt("CLEAR ALL DATA",{"ALL SAVED DATA SUCH AS", "AUTHOR NAME AND SAVED","LEVELS WILL BE LOST!"},{{"DELETE","clearall2"},{"BACK","close"}},true,false)
+            elseif action=="clearall2" then
+                gui:createPrompt("REALLY DELETE?",{"CLICK DELETE TO CONFIRM.", "IF YOU WANT TO RESTORE","AFTER DELETING, THEN REOPEN","THE DOCUMENT WITHOUT SAVING!"},{{"DELETE","clearallconfirm"},{"BACK","close"}},true,false)
+            elseif action=="clearallconfirm" then
+                local vars=var.list()
+                for i=1,#vars do del(vars[i]) end username=""
+                gui:clearPrompt() titleScreen:init()
+            elseif string.sub(action,1,7)=="delwarp" then
+                table.remove(level.current.pipeData,tonumber(action:split("_")[2]))
+                editor:setDisplayedGroup(false) gui:clearPrompt()
+            elseif action=="enterauthor" then
+                gui:createPrompt("ENTER NEW AUTHOR",{"TYPE BELOW TO SET A","NEW AUTHOR NAME TO BE","ASSOCIATED WITH YOUR","LEVELS AND PRESS ENTER"},12,"author",false)
+            elseif action=="close" then
+                gui:clearPrompt()
+                if editor.displayedGroup then editor:setDisplayedGroup(editor.displayedGroup) end
+            elseif action=="play_retry" then
+                mario:kill() gui:clearPrompt()
+            elseif action=="play_edit" then
+                playStage:charIn("edit")
+            elseif action=="quit" then
+                if editor.active and editor.file then gui:createPrompt("QUIT",{"REALLY QUIT?","UNSAVED LEVEL DATA", "WILL BE LOST!"},{{"SAVE AND QUIT","quitconfirmsave"},{"QUIT WITHOUT SAVING","quitconfirm"},{"BACK","close"}},false,false,nil,nil,174)
+                else gui:createPrompt("QUIT",{"REALLY QUIT?","UNSAVED LEVEL DATA", "WILL BE LOST!"},{{"QUIT","quitconfirm"},{"BACK","close"}},true,false)
+                end
+            elseif action=="quitconfirmsave" then
+                gui:click("ll_save_"..editor.file.."_levelListLocal") gui:click("quitconfirm")
+            elseif string.sub(action,1,11)=="quitconfirm" then
+                titleScreen:reset()
+                titleScreen.active=true
+                playStage.active=false
+                editor.file=false
+            elseif action=="recoveryes" then
+                editor:generate(recoveredLevelString)
+                editor.active=true
+                titleScreen.active=false
+                del("recoveredLevel")
+            end
+            gui.highlightedButton=false
+            cursor.set("default")
+        end
+    end
+
+    function gui:detectPos(offsetX,offsetY,x,y) -- what this does is take the mouse pos and tries to match it to being within the boundary of a button. if it succeeds then it changes the mouse pointer and sets the highlightedButton var to the ID of the button
+        x=x or mouse.x y=y or mouse.y
+        gui.highlightedButton=false
+        local buttonLists=gui.PROMPT and {"buttonListPrompt"} or {"buttonListPrompt","buttonList",unpack(gui.levelListBLs)}
+        for i2=1,#buttonLists do
+            local offX=buttonLists[i2]=="buttonListPrompt" and 0 or offsetX local offY=buttonLists[i2]=="buttonListPrompt" and 8 or offsetY
+            for i=1,#gui[buttonLists[i2]] do
+                if checkCollision(x,y,1,1,gui[buttonLists[i2]][i].ix-offX,gui[buttonLists[i2]][i].iy+offY-8,gui[buttonLists[i2]][i].w,gui[buttonLists[i2]][i].h) then
+                    gui.highlightedButton={i,buttonLists[i2]} cursor.set("hand pointer") return
+        end end end
+        if not editor.displayedGroup then cursor.set("default") end
+    end
+
+    function gui:drawButtons(gc,offsetX,offsetY,buttonList)
+        offsetX=offsetX or 0 offsetY=offsetY or 0
+        for i=#gui[buttonList],1,-1 do
+            if gui[buttonList][i].TYPE=="img" then
+                if not gui.highlightedButton or gui.highlightedButton[1]~=i or gui.highlightedButton[2]~=buttonList then
+                    gc:drawImage(texs[gui[buttonList][i].data[1]],gui[buttonList][i].ix-offsetX,gui[buttonList][i].iy+offsetY-8) --not highlighted
+                else
+                    gc:drawImage(texs[gui[buttonList][i].data[2][1]],gui[buttonList][i].ix-offsetX+gui[buttonList][i].data[2][2],gui[buttonList][i].iy+offsetY+gui[buttonList][i].data[2][3]-8) --highlighted
+                end
+            elseif gui[buttonList][i].TYPE=="txtbutton" then
+                local x,y,w=gui[buttonList][i].ix-offsetX+6,gui[buttonList][i].iy+offsetY-3,(#gui[buttonList][i].data[1]*8)-2
+                gc:setColorRGB(0,0,0)      --outline 3: black
+                gc:drawRect(x,y-5,w+1,16)
+                gc:setColorRGB(255,255,255)--outline 2: white
+                gc:drawRect(x,y-4,w+1,14)
+                gc:setColorRGB(108,108,108)--outline 1: light grey
+                gc:drawRect(x,y-3,w+1,12)
+                gc:setColorRGB(27,27,27)   --internal dark grey
+                gc:fillRect(x,y-2,w+2,11)
+                gc:drawImage(texs.titlescreen_buttonL,x-5,y-4)
+                gc:drawImage(texs.titlescreen_buttonR,x+w+2,y-4)
+                drawFont(gc,gui[buttonList][i].data[1],x,y)
+            elseif gui[buttonList][i].TYPE=="txtbox" then
+                local x,y,w,h=gui[buttonList][i].ix-offsetX,gui[buttonList][i].iy+offsetY-8,(#gui[buttonList][i].data[1]*8*gui[buttonList][i].data[2])+8,(7*gui[buttonList][i].data[2])+8
+                drawGUIBox(gc,x-4,y-4,w,h)
+                drawFont(gc,gui[buttonList][i].data[1],x,y,nil,nil,nil,gui[buttonList][i].data[2])
+    end end end
+
+    function gui:drawMisc(gc)
+        if gui.PROMPT then
+            drawGUIBox(gc,gui.PROMPT[1],gui.PROMPT[2],gui.PROMPT[3],gui.PROMPT[4],gui.PROMPT[5],gui.PROMPT[6])
+            if gui.PROMPT.inputLength then
+                local offsetX=gui.PROMPT[1]+((gui.PROMPT[3]-8-gui.PROMPT.inputLength*8)/2) local offsetY=gui.PROMPT[2]+gui.PROMPT[4]-17
+                drawGUIBox(gc,offsetX,offsetY,8+gui.PROMPT.inputLength*8,14)
+                drawFont(gc,gui.input,4+offsetX,4+offsetY)
+                if framesPassed%(flashingDelay*4)>=flashingDelay*2 then --blinking indicator
+                    gc:setColorRGB(255,255,255)
+                    gc:fillRect(4+offsetX+#gui.input*8,4+offsetY,2,7)
+        end end end
+        if gui.TEXT then gui.TEXToffset=gui.TEXToffset or 0
+            gui.TEXT=type(gui.TEXT)=="string" and {gui.TEXT} or gui.TEXT
+            for i=1,#gui.TEXT do
+                drawFont(gc,gui.TEXT[i], nil, 206-(i*10)+gui.TEXToffset,"centre",0,true)
+        end end
+        gui.TEXT={} gui.TEXToffset=0
+    end
+
+    function gui:newButton(param1,param2,x,y,action,buttonList) -- guide: ("asdf",{"asdf_frame2",w,h,offsetX,offsetY},...) <- an image button, when highlighted displays image in param2 ; ("asdf",true,...) <- makes a text button ; ("asdf",false,...) <- this is not actually a button, just a text box
+        local button={} local w=0 local h=0 local buttonList=buttonList or "buttonList"
+        if type(param2)=="table" then   button.TYPE="img"          -- it's an image button
+            w=param2[2] or 0 h=param2[3] or 0
+            param2={param2[1],param2[4] or 0,param2[5] or 0}
+        elseif param2==true then        button.TYPE="txtbutton"    -- it's a text button
+            w=10+(#param1*8) h=17 x=x-(w/2) y=y-5
+        else                            button.TYPE="txtbox"       -- it's a text box
+            local w=(#param1*8*param2)+8 x=x-((w)/2)
+        end
+        button.data={param1,param2} button.ix=x button.iy=y button.w=w button.h=h button.action=action
+        table.insert(gui[buttonList],button)
+    end
+--------------------------
+-------CRASH SCREEN-------
+--------------------------
+
+    function drawCrashScreen(gc,err)
+        gc:setColorRGB(0,0,0)
+        gc:fillRect(0,0,screenWidth,screenHeight)
+        gc:setColorRGB(97,133,248) --daytime
+        gc:fillRect(0,0,screenWidth,75)
+        gc:setColorRGB(255,0,0)
+        gc:drawRect(0,0,screenWidth-1,screenHeight-1)
+        gc:setColorRGB(255,255,255)
+
+        if texs.titlescreen_logo then
+            gc:drawImage(texs.titlescreen_logo,81,12)
+        end
+
+        local offset=55
+
+        drawFont(gc,"nSMM - CRASH SCREEN", nil, 30+offset,"centre",0,true)
+        drawFont(gc,"An error has occurred in the program.", nil, 40+offset,"centre",0,true)
+        local errSplit=tostring(err):split("...")
+        drawFont(gc,"Error message:", nil, 60+offset,"centre",0,true)
+        drawFont(gc,errSplit[1].."...", nil, 70+offset,"centre",0,true)
+        local errSplit2=errSplit[2]:split(" ")
+        --join together the first half and the second half of the error message
+        local errPart1, errPart2 = "", ""
+        for i=1,math.floor(#errSplit2/2) do
+            errPart1 = errPart1 .. errSplit2[i] .. " "
+        end
+        for i=math.floor(#errSplit2/2)+1,#errSplit2 do
+            errPart2 = errPart2 .. errSplit2[i] .. " "
+        end
+        --draw the two parts of the error message
+        drawFont(gc,errPart1, nil, 80+offset,"centre",0,true)
+        drawFont(gc,errPart2, nil, 90+offset,"centre",0,true)
+
+        drawFont(gc,"Press any key, then:", nil, 110+offset,"centre",0,true)
+        drawFont(gc,"Menu -) Recover -) Restart Script", nil, 120+offset,"centre",0,true)
+
+        if texs.R0death then
+            gc:drawImage(texs.R0death,screenWidth/2-16,132+offset)
+        end
+    end
+
+    function onexit()
+        local inStage=playStage.active and playStage.EDITOR
+        local inEditor=editor.active
+
+        if inStage or inEditor then
+            local levelString
+            if inStage then
+                levelString=level.perm
+            elseif inEditor then
+                levelString=level2string(level.current)
+            end
+            print("Saving level data before exit...", levelString)
+            var.store("recoveredLevel", levelString)
+            print("Level data saved successfully.")
+        end
+    end
+
+--------------------------
+------FRAME FUNCTIONS-----
+--------------------------
+
+    function onpaint(gc)
+        if framesPassed>22 then
+            local runLogic=gameSpeed[1+framesPassed%(#gameSpeed)]
+            if playStage.active==true then playStage:paint(gc,runLogic) end
+            if editor.active==true then editor:paint(gc) end
+            if titleScreen.active==true then titleScreen:paint(gc) end
+            if not timerState then
+                gc:drawImage(texs.safeSleep,0,92)
+                if checkCollision(mouse.x,mouse.y,1,1,1,92,18,18) then gui.TEXT="Safe sleep mode active!" end
+            end
+            gui:paint(gc)
+
+            if framesPassed==23 then
+                recoveredLevelString=var.recall("recoveredLevel")
+                if recoveredLevelString and type(recoveredLevelString)=="string" then
+                    print("Recovered level data found, loading...")
+                    gui:createPrompt("RECOVER LEVEL",{"A LEVEL WAS FOUND","FROM THE LAST SESSION.","DO YOU WANT TO LOAD IT?"},{{"YES","recoveryes"},{"NO","close"}},true,false)
+                    -- editor:generate(recoveredLevelString)
+                    -- editor.active=true
+                    -- titleScreen.active=false
+                end
+            end
+            if framesPassed==1000 then
+                local err=2+"e" -- this is just to test the error handling
+            end
+        else --load stuff
+            gc:fillRect(0,0,screenWidth,screenHeight)
+            gc:setColorRGB(173,170,173)
+            drawSlantedRect(gc,{284,187,10}) drawSlantedRect(gc,{293,187,10})
+            drawFont2(gc,"O", 288, 196,"left",0)
+            drawFont2(gc,"P", 297, 196,"left",0)
+            drawFont2(gc,"7", 306, 196,"left",0)
+            gc:setColorRGB(255,255,255)
+            gc:drawRect(119,192,80,10)
+            gc:fillRect(121,194,77*0.1,7)
+            if framesPassed==1 then
+                loadFont()
+            elseif framesPassed==2 then
+                gc:fillRect(121,194,77*0.16,7)
+                gc:drawImage(texs.R0walk3,151,170)
+                drawFont(gc,"LOADING nSMM - TILES", nil, nil,"centre",0)
+                entityClasses={}
+                for className,object in pairs(_G) do
+                    if type(object)=="table" and string.sub(className,1,3)=="obj" then
+                        entityClasses[className]=object
+                    end
+                end
+            elseif framesPassed==3 then
+                loadTextures("tile")
+                gc:fillRect(121,194,77*0.32,7)
+                gc:drawImage(texs.R0walk1,151,170)
+                drawFont(gc,"LOADING nSMM - GUI TEXTURES", nil, nil,"centre",0)
+            elseif framesPassed==4 then
+                loadTextures("gui")
+                gc:fillRect(121,194,77*0.48,7)
+                gc:drawImage(texs.R0walk2,151,170)
+                drawFont(gc,"LOADING nSMM - OBJECT TEXTURES", nil, nil,"centre",0)
+            elseif framesPassed==5 then
+                loadTextures("object")
+                gc:fillRect(121,194,77*0.64,7)
+                gc:drawImage(texs.R0walk3,151,170)
+                drawFont(gc,"LOADING nSMM - MARIO TEXTURES", nil, nil,"centre",0)
+            elseif framesPassed==6 then
+                loadTextures("mario1")
+                gc:fillRect(121,194,77*0.8,7)
+                gc:drawImage(texs.R0walk1,151,170)
+                drawFont(gc,"LOADING nSMM - RECOLOUR MARIO", nil, nil,"centre",0)
+            elseif framesPassed==7 then
+                loadTextures("mario2")
+                gc:fillRect(121,194,77,7)
+            else
+                drawFont(gc,"DONE!", nil, nil,"centre",0)
+                gc:fillRect(121,194,77,7)
+                gc:drawImage(texs.R0jump,151,170)
+                if framesPassed==22 then
+                    gui=gui()
+                    playStage=playStage()
+                    editor=editor()
+                    titleScreen=titleScreen()
+                    titleScreen.active=true
+                    editor.active=false
+                    if notFinal then gui:createPrompt("NOT RELEASE VERSION",{"THIS VERSION IS CURRENTLY","IN DEVELOPMENT. IT MAY", "HAVE THE WRONG VERSION NUMBER","AND UNFINISHED FEATURES!!"},{{"OK","close"}},true,false) end
+        end end end
+        framesPassed=framesPassed+1 --global framecount
+        
+        local calculateFpsPer = 20
+
+        if framesPassed % calculateFpsPer == 0 and studentSoftware then
+            local currentTime = timer.getMilliSecCounter()
+            local delta = currentTime - lastTime
+
+            fps = math.floor(10000 / delta * calculateFpsPer) / 10
+
+            lastTime = currentTime
+            print("FPS: " .. fps)
+            Profiler:report()
+        end
+
+        if framesPassed % 100 == 0 then
+            collectgarbage()
+            print("collectgarbage() called, memory usage: " .. collectgarbage("count") .. "kb")
+        end
+    end
+
+--------------------------
+---------START-UP---------
+--------------------------
+    switchTimer(true)
+    print("Running!",versText,"start memory:",collectgarbage("count"),"kb")

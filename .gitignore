@@ -1,4 +1,7 @@
 nSMM [MASTER].tns
-.node_modules
+**/node_modules
 .vscode
 .dev
+**/store/
+**/build/
+**/dist/
