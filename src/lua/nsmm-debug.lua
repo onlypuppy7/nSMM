@@ -1,3 +1,6 @@
+notFinal=true
+debug=true
+
 require("nsmm")
 
-debug=true
+require("core.profile-everything")

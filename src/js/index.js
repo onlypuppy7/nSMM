@@ -50,3 +50,6 @@ const luaDir = 'src/lua';
 
 bundleNSMM('nSMM', path.resolve(luaDir+'/nsmm.lua'));
 bundleNSMM('nSMM.debug', path.resolve(luaDir+'/nsmm-debug.lua'));
+
+bundleNSMM('nSMMCourseWorld', path.resolve(luaDir+'/courseworld.lua'));
+// bundleNSMM('nSMMCourseWorld.debug', path.resolve(luaDir+'/courseworld-debug.lua'));

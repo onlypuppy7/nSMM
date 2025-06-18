@@ -1,0 +1,1 @@
+d2editor = require("love2d.noop")
