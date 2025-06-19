@@ -1,6 +1,5 @@
------------------------------
--- Graphical Context Class --
------------------------------
+--compatability: unchecked
+--tested: no
 
 platform.gc	= class()
 
@@ -24,7 +23,6 @@ end
 platform.gc["finish"]	= function (self)
 	--love.graphics.setRenderTarget(globalGC.framebuffer)
 end
-
 
 platform.gc.offsets	= {}
 platform.gc.offsets["top"     ]	= function () return 0 end

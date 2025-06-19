@@ -1,4 +1,8 @@
-locale	= {}
-function locale.name()
-	return "en"
-end
+--compatability: full, returns "en" for locale
+--tested: yes
+
+locale	= {
+    name = function()
+        return "en"
+    end
+}

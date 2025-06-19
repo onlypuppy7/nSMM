@@ -1,30 +1,50 @@
-platform	=	{}
+--compatability: unchecked
+--tested: no
 
-platform._hwLevel	= 5
-platform.apiLevel	= '1.5'
+platform = {
+    apiLevel = '1.5',
+    hw = function()
+        return 3
+    end,
+    isColorDisplay = function()
+        return true
+    end,
+    isDeviceModeRendering = function()
+        return true
+    end,
+    isTabletModeRendering = function()
+        return false
+    end,
+    errorHandler = false,
+    registerErrorHandler = function(func)
+        --setting to true will make errors ignored, func will be called with the error message
+        platform.errorHandler = func
+    end,
+    withGC = function(func, ...)
+        local gc = nil
+        --todo
+        func(..., gc)
+    end,
+    getDeviceID = function()
+        return "pcspire"
+    end,
 
-
-function platform.hw()
-	return platform._hwLevel
-end
-
-function platform.isColorDisplay()
-	return true
-end
-
-function platform.isDeviceModeRendering()
-	return true
-end
-
--------------------
--- Platform menu --
--------------------
-
-_menuState	= false
-function toggleMenu()
-	error("fake error, triggered")
-	_menuState	= not _menuState
-	if _menuState then
-		
-	end
-end
+    window = {
+        height = 212,
+        width = 318,
+        invalidate = function()
+            --todo
+        end,
+        backgroundColor = {255, 255, 255},
+        setBackgroundColor = function(r, g, b)
+            platform.window.backgroundColor = {r, g, b}
+        end,
+        getScrollHeight = function()
+            return 0
+        end,
+        setScrollHeight = function(height)
+        end,
+        displayInvalidatedRectangles = function(bool)
+        end,
+    },
+}

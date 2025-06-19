@@ -1,5 +1,5 @@
 class = function(prototype)
-local derived={}
+    local derived={}
 
  	if prototype then
 		derived.__proto	= prototype

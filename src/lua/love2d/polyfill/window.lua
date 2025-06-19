@@ -1,6 +1,4 @@
-------------------
--- Window Class --
-------------------
+--compatability: unchecked
 
 Window	= class()
 

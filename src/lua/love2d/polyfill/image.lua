@@ -1,3 +1,6 @@
+--compatability: unchecked
+--tested: no
+
 image	= class()
 
 image.h	= 32

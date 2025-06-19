@@ -27,6 +27,7 @@ function extendStandard()
         return str:find(substr, 1, true) ~= nil
     end
 
+    --although i found out that nspire has it built in, it isnt compatible with the outputs from this function so im keeping it
     function string.split(input, char)
         local output={}
         if not input then return output end

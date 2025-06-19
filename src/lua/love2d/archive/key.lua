@@ -13,7 +13,7 @@ Keys['tab'    ]	= function () PCspire.callEvent(on.tabKey   ) end
 Keys['backspace']	= function () PCspire.callEvent(on.backspaceKey) end
 Keys['delete'   ]	= function () PCspire.callEvent(on.deleteKey   ) end
 
-Keys['menu']	= function () toggleMenu() end
+-- Keys['menu']	= function () toggleMenu() end
 
 Keys['lctrl'   ]	= function (key, s) toggleMod(key, s) end
 Keys['rctrl'   ]	= Keys['lctrl']

@@ -1,4 +1,5 @@
-require("polyfill.var")
+require("polyfill.all")
+require("bindings")
 
 var.store("x", 42)
 print(var.recall("x")) -- 42
@@ -13,13 +14,10 @@ print(v, err) -- 20
 print(table.concat(var.list(), ", "))
 
 
-require("polyfill.cursor")
+-- require("polyfill.cursor")
 
-function love.load()
-    cursor.set("hand pointer")
-end
-
-function love.keypressed(key)
+function on.charIn(key)
+    -- print("Key pressed: " .. key)
     if key == "h" then
         cursor.hide()
     elseif key == "s" then
@@ -31,6 +29,20 @@ function love.keypressed(key)
     end
 end
 
-require("polyfill.d2editor")
+-- require("polyfill.d2editor")
 
 print(D2Editor.newRichText())
+
+-- require("polyfill.clipboard")
+-- require("polyfill.locale")
+
+function love.load()
+    cursor.set("hand pointer")
+
+    clipboard.addText("Hello, world!")
+    print(clipboard.getText()) -- Hello, world!
+
+    print(locale.name()) -- en
+
+    print(string.uchar(44)) -- en
+end

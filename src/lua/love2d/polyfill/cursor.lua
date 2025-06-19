@@ -1,3 +1,6 @@
+--compatability: full, except some cursors not available
+--tested: yes
+
 -- https://love2d.org/wiki/love.mouse.getSystemCursor
 
 cursor = {}

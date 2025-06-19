@@ -1,1 +1,6 @@
-d2editor = require("love2d.noop")
+--compatability: full, noop-ed
+--tested: yes
+
+require("tools.noop")
+
+D2Editor = noop()
