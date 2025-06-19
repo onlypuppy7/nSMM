@@ -30,9 +30,10 @@ function image:init(imgstr)
 
 	self.w	= dataStringToNumber(self.header:sub(1, 4))
 	self.h	= dataStringToNumber(self.header:sub(5, 8))
-	self.framebuffer	= love.graphics.newFramebuffer(self.w, self.h)
-	love.graphics.setRenderTarget(self.framebuffer)
-	love.graphics.setBackgroundColor(255, 255, 255)
+	self.framebuffer	= love.graphics.newCanvas(self.w, self.h)
+    self.framebuffer:setFilter("nearest", "nearest")
+	love.graphics.setCanvas(self.framebuffer)
+	love.graphics.setBackgroundColor(1, 1, 1)
 	love.graphics.clear()
 	love.graphics.setPointSize(1)
 	
@@ -57,12 +58,12 @@ function image:init(imgstr)
 		g	= g*256/32
 		b	= b*256/32
 
-		love.graphics.setColor(r, g, b, isAlpha and 0 or 255)
-		love.graphics.point(x+.5, y+.5)
+		love.graphics.setColor(r / 255, g / 255, b / 255, isAlpha and 0 or 1)
+		love.graphics.points(x+.5, y+.5)
 	end
 	
 	--love.graphics.present()
-	love.graphics.setRenderTarget()
+	love.graphics.setCanvas()
 	
 	if platform.window then
 		platform.window:invalidate()
@@ -79,4 +80,12 @@ end
 
 function image:height()
 	return self.h
+end
+
+function image:rotate(img, rotation)
+	return img
+end
+
+function image:copy(w, h)
+	return self
 end

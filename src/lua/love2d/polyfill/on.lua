@@ -3,93 +3,96 @@
 
 on = on or {}
 
-local function callEvent(func, ...)
+function __PC.callEvent(func, ...)
     if on[func] then
         return on[func](...)
     end
 end
 
-local onEvents = {
+--to add: timer, paint, resize(?)
+
+__PC.onEvents = {
     load = function()
-        callEvent("create") --todo add graphics context to this
-        callEvent("construction")
+        __PC.callEvent("create") --todo add graphics context to this
+        __PC.callEvent("construction")
     end,
     keypressed = function(key, scancode, isrepeat)
-        -- Map arrow keys:
+        -- map arrow keys:
         if key == "up" then
-            callEvent("arrowUp")
+            __PC.callEvent("arrowUp")
         elseif key == "down" then
-            callEvent("arrowDown")
+            __PC.callEvent("arrowDown")
         elseif key == "left" then
-            callEvent("arrowLeft")
+            __PC.callEvent("arrowLeft")
         elseif key == "right" then
-            callEvent("arrowRight")
+            __PC.callEvent("arrowRight")
         else
-            -- Fallback generic arrowKey:
+            -- fallback generic arrowKey:
             if key == "up" or key == "down" or key == "left" or key == "right" then
-                callEvent("arrowKey", key)
+                __PC.callEvent("arrowKey", key)
             else
-                callEvent("charIn", key)
+                __PC.callEvent("charIn", key)
             end
         end
 
-        -- Map special keys:
+        -- map special keys:
         if key == "backspace" then
-            callEvent("backspaceKey")
+            __PC.callEvent("backspaceKey")
         elseif key == "delete" then
-            callEvent("deleteKey")
+            __PC.callEvent("deleteKey")
         elseif key == "return" then
-            callEvent("enterKey")
+            __PC.callEvent("enterKey")
         elseif key == "escape" then
-            callEvent("escapeKey")
+            __PC.callEvent("escapeKey")
         elseif key == "tab" then
-            callEvent("tabKey")
+            __PC.callEvent("tabKey")
         elseif key == "tab" and love.keyboard.isDown("lshift", "rshift") then
-            callEvent("backTabKey")
+            __PC.callEvent("backTabKey")
         elseif key == "c" and (love.keyboard.isDown("lctrl") or love.keyboard.isDown("rctrl")) then
-            callEvent("copy")
+            __PC.callEvent("copy")
         elseif key == "x" and (love.keyboard.isDown("lctrl") or love.keyboard.isDown("rctrl")) then
-            callEvent("cut")
+            __PC.callEvent("cut")
         elseif key == "v" and (love.keyboard.isDown("lctrl") or love.keyboard.isDown("rctrl")) then
-            callEvent("paste")
+            __PC.callEvent("paste")
         elseif key == "h" and (love.keyboard.isDown("lctrl") or love.keyboard.isDown("rctrl")) and love.keyboard.isDown("lshift", "rshift") then
-            callEvent("help")
+            __PC.callEvent("help")
         elseif key == "pause" or key == "break" then
-            callEvent("help")
+            __PC.callEvent("help")
         end
     end,
     mousepressed = function(x, y, button)
-        if button == 'l' then
-            callEvent("mouseDown", x, y)
-        elseif button == 'r' then
-            callEvent("rightMouseDown", x, y)
-            -- callEvent("grabDown", x, y)
+        if button == 1 then
+            __PC.callEvent("mouseDown", x, y)
+        elseif button == 2 then
+            __PC.callEvent("rightMouseDown", x, y)
+            -- __PC.callEvent("grabDown", x, y)
         end
     end,
     mousereleased = function(x, y, button)
-        if button == 'l' then
-            callEvent("mouseUp", x, y)
-        elseif button == 'r' then
-            callEvent("rightMouseUp", x, y)
-            -- callEvent("grabUp", x, y)
+        if button == 1 then
+            __PC.callEvent("mouseUp", x, y)
+        elseif button == 2 then
+            __PC.callEvent("rightMouseUp", x, y)
+            -- __PC.callEvent("grabUp", x, y)
         end
     end,
     mousemoved = function(x, y, dx, dy, istouch)
-        callEvent("mouseMove", x, y)
+        __PC.callEvent("mouseMove", x, y)
     end,
     focus = function(f)
         if not f then
-            callEvent("deactivate")
-            callEvent("loseFocus")
+            __PC.callEvent("deactivate")
+            __PC.callEvent("loseFocus")
         else
-            callEvent("activate")
-            callEvent("getFocus")
+            __PC.callEvent("activate")
+            __PC.callEvent("getFocus")
             platform.window:invalidate()
         end
     end,
     quit = function()
-        callEvent("destroy")
+        __PC.callEvent("destroy")
+    end,
+    update = function(dt)
+        -- __PC.callEvent("timer", dt)
     end,
 }
-
-return onEvents

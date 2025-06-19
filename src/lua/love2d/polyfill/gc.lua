@@ -113,9 +113,9 @@ end
 function platform.gc:setPen(thickness, style)	
 	local w	= 1
 	if thickness == "medium" then
-		w	= 3
+		w = 3
 	elseif thickness == "thick" then
-		w	= 8
+		w = 8
 	end
 
 	--love.graphics.setLineStyle("rough")
@@ -123,7 +123,7 @@ function platform.gc:setPen(thickness, style)
 end
 
 function platform.gc:setColorRGB(r, g, b)
-	love.graphics.setColor(r, g, b, 255)	
+	love.graphics.setColor(r / 255, g / 255, b / 255, 1)	
 end
 
 function platform.gc:getStringWidth(str)
@@ -137,8 +137,6 @@ end
 function platform.gc:setAlpha() end
 
 function platform.gc:drawImage(img, x, y)
-	love.graphics.setColorMode("replace")
-	love.graphics.setColor(0,0,0,255)
+	love.graphics.setColor(1, 1, 1, 1) -- white (no tint)
 	love.graphics.draw(img.framebuffer, x, y)
-	love.graphics.setColorMode("modulate")
 end

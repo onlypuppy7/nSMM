@@ -1,7 +1,7 @@
 fonts	= {}
-fonts.l	= "TINSSaRG.TTF"
-fonts.b	= "TINSSaBD.TTF"
-fonts.i	= "TINSSaIT.TTF"
+fonts.l	= "love2d/ttf/TINSSaRG.TTF"
+fonts.b	= "love2d/ttf/TINSSaBD.TTF"
+fonts.i	= "love2d/ttf/TINSSaIT.TTF"
 
 local nf	= love.graphics.newFont
 

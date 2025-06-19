@@ -136,7 +136,7 @@ function gui:levelList(gc,hook,LIST,TYPE)
 end end end
 
 function gui:initLevelList(hook,LIST,TYPE)
-    if LIST~="levelListLocal" and _G["loaded"..LIST]==nil then _G["loaded"..LIST]=ext2string(LIST,"loaded") and true or false end
+    if LIST~="levelListLocal" and _G["loaded"..LIST]==nil then _G["loaded"..LIST]=ext2string(LIST,"loaded") and true or (not not COURSEWORLDCOURSES) end
     if LIST=="levelListLocal" or _G["loaded"..LIST] then
         if gui[LIST].loaded==nil and not (LIST~="levelListLocal" and gui[LIST].directory) then --this logic is now needlessly complicated due to a problem 
             local scroll=gui[LIST].scroll or 1
@@ -206,6 +206,9 @@ end
 
 function gui:retrieveLevel(LIST,location)
     if LIST=="levelListLocal" then return var.recall(LIST..location)
+    elseif LIST=="nSMMCourseWorld" and COURSEWORLDCOURSES then
+        print(location, COURSEWORLDCOURSES[location])
+        return COURSEWORLDCOURSES[location]
     else return ext2string(LIST,"levelList"..location)
     end
 end
@@ -220,10 +223,15 @@ end
 
 function gui:createLookupTable(LIST) --if only the var library wasnt so restrictive...
     gui[LIST]={}
-    gui[LIST].directory=gui:retrieveLookupString(LIST)
-    local lvls=gui[LIST].directory and gui[LIST].directory:split("-") or {}
+    if LIST == "nSMMCourseWorld" and COURSEWORLDCOURSES then
+        gui[LIST].directory="dummydata"
+    else
+        gui[LIST].directory=gui:retrieveLookupString(LIST)
+    end
+    local lvls=COURSEWORLDCOURSES or (gui[LIST].directory and gui[LIST].directory:split("-")) or {}
     for i=1,#lvls do
-        gui[LIST][tonumber(lvls[i])]=string2level(gui:retrieveLevel(LIST,lvls[i]),nil,nil,1)
+        local iter = COURSEWORLDCOURSES and i or tonumber(lvls[i])
+        gui[LIST][tonumber(iter)]=string2level(gui:retrieveLevel(LIST,iter),nil,nil,1)
     end
 end
 

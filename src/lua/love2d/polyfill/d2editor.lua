@@ -1,6 +1,6 @@
 --compatability: full, noop-ed
 --tested: yes
 
-require("tools.noop")
+require("core.noop")
 
 D2Editor = noop()

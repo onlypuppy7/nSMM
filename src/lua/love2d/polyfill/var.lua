@@ -1,7 +1,7 @@
 --compatability: partial, no monitor, saves immediately to json file instead of marking as changed
 --tested: yes
 
-local json = require("libs.dkjson")
+local json = require("love2d.libs.dkjson")
 
 local VARS_FILENAME = "vars.json"
 local variables = {}

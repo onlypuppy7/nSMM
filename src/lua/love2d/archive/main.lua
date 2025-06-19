@@ -112,7 +112,7 @@ function PCspire.main()
 		if id == 0 then
 			love.graphics.clear()
 		else
-			love.graphics.setColor(255, 255, 255, 255)
+			love.graphics.setColor(1, 1, 1, 1)
 			love.graphics.rectangle("fill", id[1], id[2],id[3],id[4])
 		end
 		

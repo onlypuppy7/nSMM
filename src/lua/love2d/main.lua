@@ -1,5 +1,5 @@
-require("polyfill.all")
-require("bindings")
+require("love2d.polyfill.all")
+require("love2d.bindings")
 
 var.store("x", 42)
 print(var.recall("x")) -- 42
@@ -14,7 +14,7 @@ print(v, err) -- 20
 print(table.concat(var.list(), ", "))
 
 
--- require("polyfill.cursor")
+-- require("love2d.polyfill.cursor")
 
 function on.charIn(key)
     -- print("Key pressed: " .. key)
@@ -29,12 +29,12 @@ function on.charIn(key)
     end
 end
 
--- require("polyfill.d2editor")
+-- require("love2d.polyfill.d2editor")
 
 print(D2Editor.newRichText())
 
--- require("polyfill.clipboard")
--- require("polyfill.locale")
+-- require("love2d.polyfill.clipboard")
+-- require("love2d.polyfill.locale")
 
 function love.load()
     cursor.set("hand pointer")

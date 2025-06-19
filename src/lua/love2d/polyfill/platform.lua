@@ -26,14 +26,35 @@ platform = {
         func(..., gc)
     end,
     getDeviceID = function()
-        return "pcspire"
+        return "nsmm-pc"
     end,
 
     window = {
-        height = 212,
-        width = 318,
-        invalidate = function()
-            --todo
+        height = function () return 212 end,
+        width = function () return 318 end,
+        invalidate = function(x, y, w, h)
+	        platform.window.invalidated	= true
+
+            if x and y and w and h then
+                x=x-1
+                y=y-1
+                w=w+2
+                h=h+2
+                if type(platform.window.invaliddata) == "table" then
+                    local id	= platform.window.invaliddata
+                    local xo, yo, wo, ho	= id[1], id[2],id[3],id[4]
+                    local xn	= math.min(x, xo)
+                    local yn	= math.min(y, yo)
+                    local wn	= math.max(x+w, xo+wo) - xn + 2
+                    local hn	= math.max(y+h, yo+ho) - yn + 2
+                    
+                    platform.window.invaliddata	= {xn, yn, wn, hn}
+                else
+                    platform.window.invaliddata	= {x, y, w, h}
+                end
+            else
+                platform.window.invaliddata	= 0
+            end
         end,
         backgroundColor = {255, 255, 255},
         setBackgroundColor = function(r, g, b)
