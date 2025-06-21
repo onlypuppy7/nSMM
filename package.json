@@ -21,6 +21,7 @@
   "homepage": "https://github.com/onlypuppy7/nSMM#readme",
   "dependencies": {
     "crypto": "^1.0.1",
+    "express": "^5.1.0",
     "fs": "^0.0.1-security",
     "jszip": "^3.10.1",
     "luabundle": "^1.7.0",
