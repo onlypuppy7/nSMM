@@ -11,7 +11,7 @@ const PORT = 1985;
 const staticPath = path.join(__dirname, '..', '..', 'dist', 'html');
 console.log('Serving static files from:', staticPath);
 
-app.get(['/lovejs/index.html', '/player/index.html'], (req, res, next) => {
+app.get(['/lovejs', '/play'], (req, res, next) => {
   res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
   res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp');
   next();
