@@ -42,9 +42,67 @@ function love.textinput(text)
     __PC.onEvents.textinput(text)
 end
 
-function love.keypressed(key, scancode, isrepeat)
-    __PC.onEvents.keypressed(key, scancode, isrepeat)
+local receiving = false
+local base32_buffer = ""
+local BASE32_ALPHABET = {}
+for i, c in ipairs({
+    "A","B","C","D","E","F","G","H","I","J","K","L","M",
+    "N","O","P","Q","R","S","T","U","V","W","X","Y","Z",
+    "2","3","4","5","6","7"
+}) do
+    BASE32_ALPHABET[c] = i - 1
 end
+
+local function to_binary(n, bits)
+    local t = {}
+    for i = bits, 1, -1 do
+        t[#t+1] = (n % 2 == 1) and '1' or '0'
+        n = math.floor(n / 2)
+    end
+    return table.concat(t):reverse()
+end
+
+local function base32_decode(str)
+    local bits = ""
+    for c in str:gmatch(".") do
+        local val = BASE32_ALPHABET[c]
+        if val == nil then return nil end
+        bits = bits .. to_binary(val, 5)
+    end
+
+    local out = {}
+    for i = 1, #bits, 8 do
+        local byte = bits:sub(i, i+7)
+        if #byte == 8 then
+            table.insert(out, string.char(tonumber(byte, 2)))
+        end
+    end
+
+    return table.concat(out)
+end
+
+function love.keypressed(key, scancode, isrepeat)
+    if key == "f15" then
+        if not receiving then
+            receiving = true
+            base32_buffer = ""
+        else
+            receiving = false
+            local decoded = base32_decode(base32_buffer)
+            if decoded then
+                __PC.handleDecodedInput(decoded)
+            end
+        end
+    elseif receiving then
+        key = key:upper()
+        if BASE32_ALPHABET[key] then
+            base32_buffer = base32_buffer .. key
+        end
+    else 
+        __PC.onEvents.keypressed(key, scancode, isrepeat)
+    end
+end
+
 
 function love.keyreleased(key, scancode, isrepeat)
     __PC.onEvents.keyreleased(key, scancode, isrepeat)

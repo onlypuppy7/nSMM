@@ -186,7 +186,19 @@
       window.console.log = async function () {
         //var a = args[0];
         var a = arguments[0];
-        if (typeof(a)  === 'string' && a.startsWith('@')) {
+        if (typeof(a) === 'string' && a.startsWith('@COPY')) {
+            var text = a.substring(5).trim();
+            if (text) {
+                try {
+                await navigator.clipboard.writeText(text);
+                return _console.info('Copied to clipboard:', text);
+                } catch (error) {
+                return _console.warn('Could not copy to clipboard:', error);
+                }
+            } else {
+                return _console.warn('No text provided to copy');
+            }
+        } else if (typeof(a)  === 'string' && a.startsWith('@')) {
           var list = a.match(/^@([^\t]+)\t([^\t]+)\t([^\t]+)\t?(.*)/);
           if (list) {
             var output = '';
@@ -259,6 +271,59 @@
       }
     });
   };
+
+  let clipboardText = null;
+
+  (setInterval(() => {
+    //get clipboard text every 5 seconds
+    navigator.clipboard.readText().then(text => {
+        if (text && text != clipboardText) {
+            clipboardText = text;
+            //send clipboard text to Lua
+            // Base32 Alphabet (RFC 4648, Crockford-safe)
+            const BASE32_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+
+            function base32Encode(str) {
+                const bytes = new TextEncoder().encode(str);
+                let bits = "";
+                for (const byte of bytes) bits += byte.toString(2).padStart(8, '0');
+
+                let output = "";
+                for (let i = 0; i < bits.length; i += 5) {
+                    const chunk = bits.substring(i, i + 5).padEnd(5, '0');
+                    const index = parseInt(chunk, 2);
+                    output += BASE32_ALPHABET[index];
+                }
+
+                return output;
+            }
+
+            function sendToLoveBase32(text) {
+                const encoded = base32Encode(text);
+                const target = document.getElementById("canvas");
+
+                function fire(char) {
+                    const event = new KeyboardEvent('keydown', {
+                        key: char,
+                        keyCode: char.charCodeAt(0),
+                        which: char.charCodeAt(0),
+                        bubbles: true
+                    });
+                    target.dispatchEvent(event);
+                }
+
+                fire("~"); // start
+                for (const char of encoded) fire(char);
+                fire("~"); // end
+            }
+
+            sendToLoveBase32(clipboardText);
+            console.log('Clipboard text sent to Lua:', clipboardText);
+        }
+    }).catch(err => {
+      //console.warn('Could not read clipboard text:', err);
+    });
+  }), 1000);
 
   // DOM
   var script = document.currentScript;
