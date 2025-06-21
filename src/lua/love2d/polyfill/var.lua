@@ -7,7 +7,7 @@ local VARS_FILENAME = "vars.json"
 local variables = {}
 
 local function loadVars()
-    if love.filesystem.getInfo(VARS_FILENAME) then
+    if love.filesystem.getInfo and love.filesystem.getInfo(VARS_FILENAME) then
         local contents = love.filesystem.read(VARS_FILENAME)
         local tbl, _, err = json.decode(contents)
         if not err and type(tbl) == "table" then
@@ -21,8 +21,10 @@ local function loadVars()
 end
 
 local function saveVars()
-    local contents = json.encode(variables)
-    love.filesystem.write(VARS_FILENAME, contents)
+    if love.filesystem.getInfo and love.filesystem.write then
+        local contents = json.encode(variables)
+        love.filesystem.write(VARS_FILENAME, contents)
+    end
 end
 
 var = {

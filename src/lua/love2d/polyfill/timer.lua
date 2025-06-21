@@ -20,6 +20,6 @@ timer = {
         timer.running = false
     end,
     getMilliSecCounter = function()
-        return __PC.timeNow() * 1000
+        return __PC.timeNow()
     end
 }

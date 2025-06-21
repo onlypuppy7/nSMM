@@ -1,12 +1,7 @@
 --compatability: unchecked
 --tested: no
 
-image	= class()
-
-image.h	= 32
-image.w	= 32
-
-function dataStringToNumber(str)
+local function dataStringToNumber(str)
 	local len	= #str
 	local out	= 0
 	for i=1, len do
@@ -15,21 +10,42 @@ function dataStringToNumber(str)
 	return out
 end
 
-function l_shift(n, m)
+local function l_shift(n, m)
 	return n * (2^m)
 end
 
-function r_shift(n, m)
+local function r_shift(n, m)
 	return math.floor(n / (2^m))
 end
 
-function image:init(imgstr)
+imageClass = class()
+
+function imageClass:init(input)
+    if type(input) == "string" then
+        self:parse(input)
+    elseif type(input) == "table" then
+        self.w = input.w
+        self.h = input.h
+        self.sx = input.sx or 1
+        self.sy = input.sy or 1
+        self.r = input.r or 0
+        self.data = input.data
+        self.header = input.header
+        self.framebuffer = input.framebuffer
+    end
+end
+
+function imageClass:parse(imgstr)
 	self.data	= imgstr
 	self.header	= imgstr:sub(1,  20)
 	self.data	= imgstr:sub(21, -1)
 
 	self.w	= dataStringToNumber(self.header:sub(1, 4))
 	self.h	= dataStringToNumber(self.header:sub(5, 8))
+    self.sx	= 1
+    self.sy	= 1
+    self.r = 0 --rotation
+    -- self.imgstr = imgstr
 	self.framebuffer	= love.graphics.newCanvas(self.w, self.h)
     self.framebuffer:setFilter("nearest", "nearest")
 	love.graphics.setCanvas(self.framebuffer)
@@ -65,27 +81,51 @@ function image:init(imgstr)
 	--love.graphics.present()
 	love.graphics.setCanvas()
 	
-	if platform.window then
-		platform.window:invalidate()
-	end
+	-- if platform.window then
+	-- 	platform.window:invalidate()
+	-- end
 end
 
-image.new	= function (str)
-	return image(str)
+function imageClass:copy(newWidth, newHeight)
+    local newImg = image.new(self)
+
+    newImg.sx = newWidth and (newWidth / self.w) or self.sx
+    newImg.sy = newHeight and (newHeight / self.h) or self.sy
+    
+    return newImg
 end
 
-function image:width()
-	return self.w
+function imageClass:rotate(rotation)
+    local newImg = image.new(self)
+    newImg.r = (newImg.r - (rotation or 0)) % 360
+    return newImg
 end
 
-function image:height()
-	return self.h
+function imageClass:width()
+    return self.w
 end
 
-function image:rotate(img, rotation)
-	return img
+function imageClass:height()
+    return self.h
 end
 
-function image:copy(w, h)
-	return self
-end
+imageClass.__index = imageClass
+
+image = {
+    new = function(str)
+        local img = imageClass(str)
+        return img
+    end,
+    copy = function(img, newWidth, newHeight)
+        return img:copy(newWidth, newHeight)
+    end,
+    rotate = function(img, rotation)
+        return img:rotate(rotation)
+    end,
+    width = function(img)
+        return img:width()
+    end,
+    height = function(img)
+        return img:height()
+    end,
+}

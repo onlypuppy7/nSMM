@@ -5,7 +5,9 @@
   "type": "module",
   "main": "node src/js/index.js",
   "scripts": {
-    "build": "node src/js/index.js"
+    "build": "node src/js/build.js",
+    "serve": "node src/js/serve.js",
+    "start": "node src/js/build.js && node src/js/serve.js"
   },
   "repository": {
     "type": "git",
@@ -18,7 +20,9 @@
   },
   "homepage": "https://github.com/onlypuppy7/nSMM#readme",
   "dependencies": {
+    "crypto": "^1.0.1",
     "fs": "^0.0.1-security",
+    "jszip": "^3.10.1",
     "luabundle": "^1.7.0",
     "luamin": "^1.0.4",
     "path": "^0.12.7"

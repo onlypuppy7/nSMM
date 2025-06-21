@@ -6,6 +6,7 @@ end
 
 __PC.loop = function()
 	local tm = __PC.timeNow()
+
 	if timer.running and tm >= timer.delay + timer.lastrun then
 		timer.lastrun	= tm
 		__PC.callEvent("timer")
@@ -13,12 +14,13 @@ __PC.loop = function()
 
 	if platform.window.invalidated then
 		local id	=	platform.window.invaliddata
-		if id == 0 then
+        
+		-- if id == 0 then
 			love.graphics.clear()
-		else
-			love.graphics.setColor(1, 1, 1, 1)
-			love.graphics.rectangle("fill", id[1], id[2],id[3],id[4])
-		end
+		-- else
+		-- 	love.graphics.setColor(1, 1, 1, 1)
+		-- 	love.graphics.rectangle("fill", id[1], id[2],id[3],id[4])
+		-- end
 		
 		platform.gc:default()
 		__PC.callEvent("paint", platform.gc)
@@ -27,4 +29,6 @@ __PC.loop = function()
 	
 	    -- love.graphics.present()
 	end
+
+    __PC.callAllHeldKeys()
 end

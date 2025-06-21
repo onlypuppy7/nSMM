@@ -85,19 +85,22 @@ function onpaint(gc)
     
     local calculateFpsPer = 20
 
-    if framesPassed % calculateFpsPer == 0 and studentSoftware then
+    if framesPassed % calculateFpsPer == 0 then
         local currentTime = timer.getMilliSecCounter()
+
         local delta = currentTime - lastTime
 
         fps = math.floor(10000 / delta * calculateFpsPer) / 10
 
         lastTime = currentTime
-        print("FPS: " .. fps)
-        Profiler:report()
+        if studentSoftware then
+            print("FPS: " .. fps)
+            Profiler:report()
+        end
     end
 
     if framesPassed % 100 == 0 then
         collectgarbage()
-        print("collectgarbage() called, memory usage: " .. collectgarbage("count") .. "kb")
+        -- print("collectgarbage() called, memory usage: " .. collectgarbage("count") .. "kb")
     end
 end

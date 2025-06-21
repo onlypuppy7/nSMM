@@ -34,7 +34,7 @@ function gui:enterKey()
 end end
 
 function gui:charIn(chr)
-    if (chr:isAlphaNumeric() or chr==" " or chr=="." or chr=="!" or chr=="/" or chr=="?" or chr=="," or chr=="'" or chr=="(" or chr==")" or chr=="-") and gui.PROMPT.inputLength and gui.PROMPT.inputLength>#gui.input then
+    if ((chr:isAlphaNumeric() or chr==" " or chr=="." or chr=="!" or chr=="/" or chr=="?" or chr=="," or chr=="'" or chr=="(" or chr==")" or chr=="-") and not (#chr > 1)) and gui.PROMPT.inputLength and gui.PROMPT.inputLength>#gui.input then
         gui.input=gui.input..chr
     end
 end
@@ -223,14 +223,16 @@ end
 
 function gui:createLookupTable(LIST) --if only the var library wasnt so restrictive...
     gui[LIST]={}
-    if LIST == "nSMMCourseWorld" and COURSEWORLDCOURSES then
+    local courseworldavailable = LIST=="nSMMCourseWorld" and COURSEWORLDCOURSES
+    print("gui:createLookupTable",LIST,courseworldavailable)
+    if courseworldavailable then
         gui[LIST].directory="dummydata"
     else
         gui[LIST].directory=gui:retrieveLookupString(LIST)
     end
-    local lvls=COURSEWORLDCOURSES or (gui[LIST].directory and gui[LIST].directory:split("-")) or {}
+    local lvls=courseworldavailable and COURSEWORLDCOURSES or (gui[LIST].directory and gui[LIST].directory:split("-")) or {}
     for i=1,#lvls do
-        local iter = COURSEWORLDCOURSES and i or tonumber(lvls[i])
+        local iter = courseworldavailable and i or tonumber(lvls[i])
         gui[LIST][tonumber(iter)]=string2level(gui:retrieveLevel(LIST,iter),nil,nil,1)
     end
 end

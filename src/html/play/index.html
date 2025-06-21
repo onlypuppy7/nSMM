@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>nSMM - Super Mario Maker for TI-Nspire</title>
+  <link rel="icon" href="/img/icon.png" type="image/png" />
+  <script src="/lib/tailwind.js"></script>
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <style>
+    @font-face {
+      font-family: 'SMM';
+      src: url('/font/smm.ttf') format('truetype');
+    }
+    @font-face {
+      font-family: 'SMW';
+      src: url('/font/smw.ttf') format('truetype');
+    }
+    @font-face {
+      font-family: 'SMB';
+      src: url('/font/smb.ttf') format('truetype');
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: #222;
+      height: 100vh;
+      font-family: 'SMM', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #eee;
+    }
+
+    /* Container to hold top link, iframe, and bottom section */
+    .container {
+      position: relative;
+      width: 100%;
+      max-width: 63.6em;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Home link styles */
+    .home-link {
+      position: absolute;
+      top: 0.5em;
+      left: 0.5em;
+      font-family: 'SMB', sans-serif;
+      font-size: 1.2em;
+      color: #ccc;
+      text-decoration: none;
+      user-select: none;
+      padding: 0em 0.5em;
+      transition: border-color 0.2s ease;
+      z-index: 10;
+    }
+    .home-link:hover,
+    .home-link:focus {
+      color: #fff;
+    }
+
+    iframe {
+      width: 63.6em;
+      height: 42.4em;
+      border: none;
+      image-rendering: pixelated;
+      margin-top: 2.5em; /* leave space for home link */
+    }
+
+    /* Spoiler expandable section */
+    details {
+      width: 100%;
+      max-width: 63.6em;
+      margin-top: 1em;
+      border: 1px solid #444;
+      border-radius: 0.3em;
+      background: #111;
+      color: #ccc;
+      font-size: 0.9em;
+      user-select: text;
+    }
+    details[open] {
+      background: #222;
+      color: #eee;
+    }
+    summary {
+      cursor: pointer;
+      padding: 0.6em 1em;
+      font-family: 'SMB', sans-serif;
+      font-weight: bold;
+      outline: none;
+      list-style: none;
+      user-select: none;
+    }
+    summary::-webkit-details-marker {
+      display: none;
+    }
+    summary::before {
+      content: '▶';
+      display: inline-block;
+      margin-right: 0.6em;
+      transform: rotate(0deg);
+      transition: transform 0.2s ease;
+      color: #888;
+    }
+    details[open] summary::before {
+      transform: rotate(90deg);
+      color: #aaa;
+    }
+    details > div {
+      padding: 1em;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="/" class="home-link" aria-label="Return to home">Home</a>
+    <iframe src="/lovejs" allowfullscreen></iframe>
+
+    <details>
+      <summary>More Info</summary>
+      <div>
+        <!-- Put any additional info you want here -->
+        This demo was created with a compatability layer for TI-Nspire Lua applications for LÖVE, then love.js to run in the browser.<br />
+        Your save data is stored in your browser's local storage, so it will not be shared with the server.<br />
+        <!-- Use this page to create and play levels, share your creations, and enjoy retro fun.<br />
+        Developed using love.js and inspired by the classic Mario Maker style.<br />
+        For questions or feedback, visit our GitHub or community forums.<br /> -->
+      </div>
+    </details>
+  </div>
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>nSMM - Super Mario Maker for TI-Nspire</title>
+  <link rel="icon" href="/img/icon.png" type="image/png">
+  <script src="/lib/tailwind.js"></script>
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <style>
+    @font-face {
+      font-family: 'SMM';
+      src: url('/font/smm.ttf') format('truetype');
+    }
+    @font-face {
+      font-family: 'SMW';
+      src: url('/font/smw.ttf') format('truetype');
+    }
+    @font-face {
+      font-family: 'SMB';
+      src: url('/font/smb.ttf') format('truetype');
+    }
+    body {
+      font-family: 'SMW', sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-gray-950 text-white">
+  <!-- Top Navigation -->
+  <nav class="fixed top-0 inset-x-0 z-50 bg-gray-900 bg-opacity-80 backdrop-blur-md py-3" style="font-family: SMM;">
+    <div class="max-w-6xl mx-auto px-6 flex items-center justify-between">
+      <div class="flex items-center">
+        <img src="/img/icon.png" alt="nSMM Icon" class="h-8 w-8 mr-2">
+        <span class="text-lg font-semibold">nSMM</span>
+      </div>
+      <div class="flex items-center space-x-4">
+        <a href="https://github.com/onlypuppy7/nSMM" class="flex items-center hover:text-yellow-400 transition">
+        <i class="ph ph-github-logo text-xl mr-1"></i>
+        Code
+        </a>
+        <a href="https://dsc.gg/ti-nsmm" class="flex items-center hover:text-yellow-400 transition">
+        <i class="ph ph-discord-logo text-xl mr-1"></i>
+        Discord
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <main class="pt-24 pb-16 bg-gradient-to-br from-gray-950 via-gray-900 to-gray-500">
+    <div class="max-w-4xl mx-auto text-center px-6" style="font-family: SMM;">
+      <img src="/img/logo.png" alt="nSMM Logo" class="mx-auto max-w-sm mb-8 bg-gradient-to-br from-yellow-500 to-yellow-300 p-4 rounded-lg shadow-xl">
+      <h1 class="text-4xl md:text-5xl font-bold mb-4">Super Mario Maker for TI-Nspire</h1>
+      <p class="text-lg md:text-xl text-gray-300 mb-6">
+        The only cross-platform Super Mario Maker experience for TI-Nspire calculators and the web!
+        <!-- Build, share, and play custom Mario levels directly on your TI-Nspire calculator or in your browser! -->
+      </p>
+        <div class="flex justify-center gap-6">
+        <a href="/play" class="inline-block px-10 py-5 bg-yellow-400 text-gray-900 font-bold text-lg rounded-full shadow-lg hover:scale-105 hover:from-yellow-300 hover:to-yellow-500 transition-all duration-200">
+            Play in Browser
+        </a>
+        <a href="https://github.com/onlypuppy7/nSMM/releases/latest" class="inline-block px-10 py-5 bg-yellow-400 text-gray-900 font-bold text-lg rounded-full shadow-lg hover:scale-105 hover:from-yellow-300 hover:to-yellow-500 transition-all duration-200">
+            Play on Calc
+        </a>
+        </div>
+    </div>
+
+    <section class="mt-16 max-w-4xl mx-auto px-6 text-center">
+        <h2 class="text-2xl font-semibold mb-4" style="font-family: SMM;">Watch nSMM in Action</h2>
+        <!-- centered -->
+        <div class="aspect-w-16 aspect-h-9" style="justify-items: center;">
+            <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/wgi3kyVWnwI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="mt-16 grid md:grid-cols-2 gap-12 max-w-6xl mx-auto px-6" style="padding-left: 12em;">
+      <div>
+        <h2 class="text-2xl font-semibold mb-3">Project Overview</h2>
+        <p class="text-gray-300 mb-4">
+          nSMM is an open-source project that brings the iconic Super Mario Maker experience to TI-Nspire calculators, PC and the web. Design levels with precise control, test them instantly, and share with friends!
+        </p>
+        <p class="text-gray-300 mb-4">
+          <strong>Key Features:</strong>
+          <ul class="list-disc list-inside mt-2">
+            <li>Intuitive level editor</li>
+            <li>Cross-platform: calc & browser</li>
+            <li>No Ndless needed</li>
+            <li>Open-source and community-driven</li>
+          </ul>
+        </p>
+      </div>
+      <div class="space-y-6">
+        <img src="/img/screenshot1.gif" alt="Level Editor" class="rounded-lg shadow-lg">
+        <img src="/img/screenshot2.gif" alt="Gameplay Preview" class="rounded-lg shadow-lg">
+      </div>
+    </section>
+
+    <!-- Community Section -->
+    <section class="mt-16 max-w-4xl mx-auto px-6 text-center">
+      <h2 class="text-2xl font-semibold mb-3">Join the Community</h2>
+      <p class="text-gray-300 mb-4">
+        Chat with fellow makers, share levels, and get support on our Discord server.
+      </p>
+      <a href="https://dsc.gg/ti-nsmm" class="inline-block px-6 py-3 bg-gray-800 bg-opacity-50 rounded-full hover:bg-opacity-75 transition text-yellow-400 font-medium">
+        Join Discord
+      </a>
+    </section>
+
+    <footer class="mt-24 py-6 text-center text-gray-500 text-sm" style="font-family: SMB;">
+        © 2025 nSMM • <a href="https://onlypuppy7.online" class="underline hover:text-yellow-400 transition">Built by onlypuppy7</a>
+    </footer>
+  </main>
+</body>
+</html>

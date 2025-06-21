@@ -150,4 +150,5 @@ function titleScreen:paint(gc)
         drawFont(gc,"WELCOME BACK "..username.."!",159-titleScreen.cameraOffsetX,6+titleScreen.cameraOffsetY,"centre",false,true)
         drawFont(gc,titleScreen.splashText,159-titleScreen.cameraOffsetX,17+titleScreen.cameraOffsetY,"centre",nil,"rgb")
     end
+    __PC.allowedHeldKeys = {}
 end

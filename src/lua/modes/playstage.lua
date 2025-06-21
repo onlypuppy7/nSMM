@@ -540,6 +540,11 @@ function playStage:paint(gc,runLogic) --all logic/drawing required to play the s
         playStage.load=playStage.load+1
         drawFont(gc,"LOADING LEVEL FOR PLAY...", nil, nil,"centre",0)
     end
+    __PC.allowedHeldKeys = {
+        down = true,
+        left = true,
+        right = true,
+    }
 end
 
 function playStage:drawCircleTransition(gc,centerX,centerY,frame,out) --out=false/nil, then in. frame values: 1-29

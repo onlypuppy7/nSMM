@@ -41,10 +41,6 @@ function platform.gc:drawString(str, x, y, pos)
 	love.graphics.print(str, x, y + (self.offsets[pos] or self.offsets["bottom"])() )--, 0, self.font[3], self.font[3])
 end
 
-function platform.gc:drawRect(x, y, w, h)
-	love.graphics.rectangle("line", x+1, y+1, w, h)
-end
-
 function platform.gc:fillRect(x, y, w, h)
 	love.graphics.rectangle("fill", x, y, w, h)
 end
@@ -97,18 +93,61 @@ function platform.gc:fillArc(x, y, w, h, startangle, angle)
 end
 
 function platform.gc:drawLine(x1, y1, x2, y2)
-	love.graphics.line(x1, y1, x2, y2)
+	if __PC.penStyle == "smooth" then
+		love.graphics.line(x1, y1, x2, y2)
+		return
+	end
+
+	local dx, dy = x2 - x1, y2 - y1
+	local length = math.sqrt(dx * dx + dy * dy)
+	local angle = math.atan2(dy, dx)
+
+	local dashLength = 4
+	local gapLength = 2
+
+	if __PC.penStyle == "dotted" then
+		dashLength = love.graphics.getLineWidth()
+		gapLength = dashLength * 1.5
+	end
+
+	local progress = 0
+	while progress < length do
+		local seg = math.min(dashLength, length - progress)
+		local sx = x1 + math.cos(angle) * progress
+		local sy = y1 + math.sin(angle) * progress
+		local ex = x1 + math.cos(angle) * (progress + seg)
+		local ey = y1 + math.sin(angle) * (progress + seg)
+
+		if __PC.penStyle == "dotted" then
+			love.graphics.points(sx, sy)
+		else
+			love.graphics.line(sx, sy, ex, ey)
+		end
+
+		progress = progress + dashLength + gapLength
+	end
 end
+
+function platform.gc:drawRect(x, y, w, h)
+	local x2, y2 = x + w, y + h
+	self:drawLine(x+1,y+1,x2, y ) -- top
+	self:drawLine(x2+1,y, x2, y2) -- right
+	self:drawLine(x2+1, y2+1, x,  y2) -- bottom
+	self:drawLine(x+1,  y2, x,  y ) -- left
+end
+
 
 function platform.gc:clipRect(op, x, y, width, height)
 	if op == "reset" then
-		love.graphics.setScissor(0, 0, platform.window:width(), platform.window:height())
+		love.graphics.setScissor(0, 0, platform.window:width() * __PC.scale, platform.window:height() * __PC.scale)
 	elseif op == "set" then
 		love.graphics.setScissor(x, y, width, height)
 	elseif op == "null" then
 		love.graphics.setScissor(0, 0, 0, 0)
 	end
 end
+
+__PC.penStyle = "smooth" --dashed, dotted, smooth
 
 function platform.gc:setPen(thickness, style)	
 	local w	= 1
@@ -118,8 +157,12 @@ function platform.gc:setPen(thickness, style)
 		w = 8
 	end
 
-	--love.graphics.setLineStyle("rough")
+	love.graphics.setLineStyle("rough")
 	love.graphics.setLineWidth(w)
+
+    -- print("Setting pen style to", tostring(style))
+
+    __PC.penStyle = style or "smooth"
 end
 
 function platform.gc:setColorRGB(r, g, b)
@@ -137,6 +180,13 @@ end
 function platform.gc:setAlpha() end
 
 function platform.gc:drawImage(img, x, y)
-	love.graphics.setColor(1, 1, 1, 1) -- white (no tint)
-	love.graphics.draw(img.framebuffer, x, y)
+    local r, g, b, a = love.graphics.getColor()
+
+    -- if img.r ~= 0 then print("image r", img.r) end
+
+    love.graphics.setColor(1, 1, 1, 1) -- white (no tint)
+    love.graphics.draw(img.framebuffer, x + (img.sx * img.w) / 2, y + (img.sy * img.h) / 2, (img.r) * math.pi / 180, img.sx, img.sy, img.w / 2, img.h / 2)
+    -- love.graphics.draw(img.framebuffer, x, y, (img.r) * math.pi / 180, img.sx, img.sy)
+
+    love.graphics.setColor(r, g, b, a)
 end

@@ -1111,4 +1111,7 @@ function editor:paint(gc) --permanent logic loop
             end
             drawFont(gc,"LOADING LEVEL FOR EDITING...",nil,nil,"centre",0)
             editor.LOAD=editor.LOAD+1
-end end end
+        end
+        __PC.allowedHeldKeys = {}
+    end
+end
