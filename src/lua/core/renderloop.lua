@@ -103,4 +103,11 @@ function onpaint(gc)
         collectgarbage()
         -- print("collectgarbage() called, memory usage: " .. collectgarbage("count") .. "kb")
     end
+
+    -- rotated = rotated or texs.Ground
+    -- if rotated then
+    --     rotated = rotated:rotate(1)
+    --     gc:drawImage(rotated, 100, 100)
+    --     print("rots", rotated:width())
+    -- end
 end

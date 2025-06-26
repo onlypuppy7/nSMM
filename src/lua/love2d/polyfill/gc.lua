@@ -185,7 +185,11 @@ function platform.gc:drawImage(img, x, y)
     -- if img.r ~= 0 then print("image r", img.r) end
 
     love.graphics.setColor(1, 1, 1, 1) -- white (no tint)
-    love.graphics.draw(img.framebuffer, x + (img.sx * img.w) / 2, y + (img.sy * img.h) / 2, (img.r) * math.pi / 180, img.sx, img.sy, img.w / 2, img.h / 2)
+
+    local w = img:width()
+    local h = img:height()
+
+    love.graphics.draw(img.framebuffer, x + (img.sx * w) / 2, y + (img.sy * h) / 2, (img.r) * math.pi / 180, img.sx, img.sy, img.w / 2, img.h / 2)
     -- love.graphics.draw(img.framebuffer, x, y, (img.r) * math.pi / 180, img.sx, img.sy)
 
     love.graphics.setColor(r, g, b, a)

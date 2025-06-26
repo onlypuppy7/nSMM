@@ -101,12 +101,22 @@ function imageClass:rotate(rotation)
     return newImg
 end
 
+local function deg2rad(deg)
+    return deg * math.pi / 180
+end
+
 function imageClass:width()
-    return self.w
+    local angle = deg2rad(self.r or 0)
+    local cosA = math.abs(math.cos(angle))
+    local sinA = math.abs(math.sin(angle))
+    return math.floor(self.w * cosA + self.h * sinA)
 end
 
 function imageClass:height()
-    return self.h
+    local angle = deg2rad(self.r or 0)
+    local cosA = math.abs(math.cos(angle))
+    local sinA = math.abs(math.sin(angle))
+    return math.floor(self.h * cosA + self.w * sinA)
 end
 
 imageClass.__index = imageClass
