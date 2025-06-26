@@ -811,7 +811,7 @@ function editor:logic()
             if editor.platformSelect[3]~=true then
                 local length=editor.highlightedTile[1]-editor.platformSelect[1]+1
                 if length>0 then
-                    level.current.set(x,y,"platform_"..tostring(length)..string.sub(editor.selectedID,11,#editor.selectedID))
+                    level.current.set(editor.platformSelect[1],editor.platformSelect[2],"platform_"..tostring(length)..string.sub(editor.selectedID,11,#editor.selectedID))
                 end
             else
                 local ID=level.current.get(x,y)
