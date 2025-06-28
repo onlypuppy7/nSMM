@@ -72,7 +72,7 @@ function editor:init(gc)
     editor.groupIndex[11]={"GIZMOS", "spring_O_1",
     154, 155, 156, nil, "spring_O", "spring_B", "spring_R",
     157, 158, 159, nil, nil, nil, nil, 
-    160, 161, 162, nil, nil, nil, nil,
+    160, 161, 162, nil, nil, "switch_P", nil,
     163, 164, 165, nil, nil, nil, nil,
     nil, nil, nil, nil, nil, nil, nil}
     editor.groupIndex[12]={"LEVEL CONFIG", "flag",
@@ -807,20 +807,20 @@ function editor:logic()
                 end
             end
         elseif editor.platformSelect then cursor.set("animate")
-            local x=editor.highlightedTile[1] local y=editor.highlightedTile[2]
+            local x=editor.platformSelect[1] local y=editor.platformSelect[2]
             if editor.platformSelect[3]~=true then
-                local length=editor.highlightedTile[1]-editor.platformSelect[1]+1
+                local length=editor.highlightedTile[1]-x+1
                 if length>0 then
-                    level.current.set(editor.platformSelect[1],editor.platformSelect[2],"platform_"..tostring(length)..string.sub(editor.selectedID,11,#editor.selectedID))
+                    level.current.set(x,y,"platform_"..tostring(length)..string.sub(editor.selectedID,11,#editor.selectedID))
                 end
             else
                 local ID=level.current.get(x,y)
                 local config=(string.sub(ID,10,#ID)):split("~")
                 local distance
                 if config[3]=="lx" then
-                    distance=tostring(editor.highlightedTile[1]-editor.platformSelect[1])*16
+                    distance=tostring(editor.highlightedTile[1]-x)*16
                 else
-                    distance=tostring(editor.highlightedTile[2]-editor.platformSelect[2])*16
+                    distance=tostring(editor.highlightedTile[2]-y)*16
                 end
                 level.current.set(x,y,"platform_"..config[1].."~"..config[2].."~"..config[3].."~"..distance)
             end
