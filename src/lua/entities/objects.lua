@@ -54,7 +54,7 @@ objFlagpole=class(objAPI)
 objPlatform=class(objAPI)
 
     function objPlatform:setup(objectID,posX,posY,TYPE,despawnable,arg1,arg2)  --platform_length~vel~MODE~distance eg, platform_3~2~lx~64
-        local config=(string.sub(TYPE,10,#TYPE)):split("~")
+        local config=(string.sub(TYPE,#("platform_")+1,#TYPE)):split("~")
         self.length,self.speed,self.ox,self.oy=config[1],config[2],0,0
         self:initObject(objectID,config[3],"outer",nil,{posX,posY},0,0)
         if self.TYPE=="lx" or self.TYPE=="ly" then --loops back and forth on the x/y axis
@@ -98,7 +98,7 @@ objPlatform=class(objAPI)
                 if self.y<=-18 and self.sort=="u" then      self.y=206
                 elseif self.y>=206 and self.sort=="d" then  self.y=-18 end
         end end
-        objAPI:addPlatform(self.objectID,self.x,self.y,self.length*16,self.vx,self.vy) --update the platform
+        self:addPlatform(self.x,self.y,self.length*16,self.vx,self.vy) --update the platform
     end
 
     function objPlatform:draw(gc,x,y,TYPE,isEditor,isIcon)
@@ -129,25 +129,6 @@ objPlatform=class(objAPI)
     end end end end
 
 --------------------------
-------EVENT FUNCTIONS----- NEW drawing format(N/A)
---------------------------
-objEvent=class(objAPI)
-
-    --ok this is some bs. wtf is this? this is a class that just sets an event in the playStage.events table
-    function objEvent:setup(objectID,posX,posY,TYPE,despawnable,arg1,arg2)
-        self:initObject(objectID,TYPE,"inner",nil,{posX,posY},true,0)
-        local eventDetails=TYPE:split("_")
-        playStage.events[eventDetails[2]]=eventDetails[3]
-        objAPI:destroy(objectID,"inner")
-    end
-
-    function objEvent:logic()
-    end
-
-    function objEvent:draw(gc,x,y,TYPE,isEditor,isIcon)
-    end
-
---------------------------
 -----SPRING FUNCTIONS----- NEW drawing format(N/A)
 --------------------------
 objSpring=class(objAPI)
@@ -160,6 +141,8 @@ objSpring=class(objAPI)
         elseif self.TYPE=="spring_R" then self.bounceHeight=24
         end self.boostHeight=self.bounceHeight*1.5
         self.disableStarPoints=true
+
+        self.doMovements=true
     end
 
     function objSpring:logic() --handle both movement and animation
@@ -191,12 +174,6 @@ objSpring=class(objAPI)
             if entity.spring then entity.y=(self.status==3 and self.y-7) or (self.status==2 and self.y-12) or self.y-16 end
         end
         -- for i=1,#self.removeEntities do table.remove(self.springData,self.removeEntities[i]) end
-        self:aggregateCheckX(self.px,true)
-        self:aggregateCheckX(self.vx)
-        self:calculateAccelerationY()
-        if self.py<=0 then self:gravityCheck(-self.py,true) else self:bumpCheck(-self.py) end
-        if self.vy<=0 then self:gravityCheck(-self.vy)      else self:bumpCheck(-self.vy) end
-        self:setNewPushV() self:checkFor()
     end
 
     function objSpring:hit(circumstance)
@@ -219,6 +196,8 @@ objFireball=class(objAPI)
         self:initObject(objectID,TYPE,"particle",nil,{posX,posY,8,8},TYPE=="fireball_L" and -6 or 6,-0.5)
         self.timer=false self.despawnable=true self.status=((math.ceil((framesPassed/2)))%4)+1
         self.doesBounce=7 self.isFireball=true self.disableStarPoints=true self.interactSpring=false
+
+        self.accelerationMultiplier=0.85 --gravity
     end
 
     function objFireball:handleFireballHit()
@@ -229,15 +208,11 @@ objFireball=class(objAPI)
     end
 
     function objFireball:logic()
+        self.doMovements=false
         if not self.dead then
             objAPI:addHitBox(self.objectID,self.x,self.y,12,12,"fireball")
     --X AXIS, Y AXIS + PLATFORMS
-            self:aggregateCheckX(self.px,true)
-            self:aggregateCheckX(self.vx)
-            self:calculateAccelerationY(0.85)
-            if self.py<=0 then self:gravityCheck(-self.py,true) else self:bumpCheck(-self.py)      end
-            if self.vy<=0 then self:gravityCheck(-self.vy)      else self:bumpCheck(-self.vy)      end
-            self:setNewPushV() self:checkFor()
+            self.doMovements=true
     --DEAD
         else self.timer=self.timer+1
             if self.timer>=(flashingDelay*3)+1 then objAPI:destroy(self.objectID,self.LEVEL) return
@@ -275,3 +250,40 @@ objMultiCoinBlock=class(objAPI)
     end end end end
 
     function objMultiCoinBlock:draw(gc,x,y,TYPE,isEditor,isIcon) end -- ...nothing to draw
+
+--------------------------
+------SWITCH FUNCTIONS---- NEW drawing format(N/A)
+--------------------------
+objSwitch=class(objAPI)
+
+    function objSwitch:setup(objectID,posX,posY,TYPE,despawnable,arg1,arg2)  --platform_length~vel~MODE~distance eg, platform_3~2~lx~64
+        local config=(string.sub(TYPE,#("switch_")+1,#TYPE)):split("~")
+
+        self.switchType=config[1]
+
+        self:initObject(objectID,config[3],"outer",nil,{posX,posY},0,0)
+        self.active=false
+        self.despawnable=false self.interactSpring=false self.disableStarPoints=true
+        self.GLOBAL=true --always drawn and logic applying, to reduce pop in
+    end
+
+    function objSwitch:logic()
+        if not self.active then
+            local pX,pY,marioSize=self.x,self.y+self.vy,(mario.power==0 or mario.crouch) and 0 or 16
+            local pW,mX,mY=16,math.floor(mario.x+mario.px),math.floor(mario.y-mario.py)
+            if ((mX+2>=pX and mX+2<=pX+pW) or (mX+13>=pX and mX+13<=pX+pW)) and mY+16==pY and mario.vy==0 then --mario is on platform
+                self.active=true
+                playStage:setEvent(self.switchType.."switch", true)
+            end
+            
+            self:addPlatform(self.x,self.y,16,self.vx,self.vy) --update the platform
+        end
+
+        self.doMovements=not self.active --enables the movement logic, handled by the outer object wrapper
+    end
+
+    function objSwitch:draw(gc,x,y,TYPE,isEditor,isIcon)
+        gc:drawImage(texs["Ground"],x,y)
+        -- if not isEditor then
+        -- else
+    end

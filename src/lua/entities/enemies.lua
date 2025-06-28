@@ -11,16 +11,12 @@ objGoomba=class(objAPI)
 
     function objGoomba:logic() --handle both movement and animation
         self:checkStuckInWall()
+        self.doMovements=false
         if not self.dead then
     --ANIMATION, MARIO COLLISION, X AXIS, Y AXIS + PLATFORMS
             self.status=((math.ceil((playStage.framesPassed/4)))%2)+1
             self:checkMarioCollision({"stomp",3})
-            self:aggregateCheckX(self.px,true)
-            self:aggregateCheckX(self.vx)
-            self:calculateAccelerationY()
-            if self.py<=0 then self:gravityCheck(-self.py,true) else self:bumpCheck(-self.py)      end
-            if self.vy<=0 then self:gravityCheck(-self.vy)      else self:bumpCheck(-self.vy)      end
-            self:setNewPushV() self:checkFor()
+            self.doMovements=true
         elseif self.status==4 then self:animateDeathFlyOffscreen() --fireball/flower
         elseif self.status==3 and (self.deathAnimTimer<playStage.framesPassed) then --stomped
             objAPI:destroy(self.objectID,self.LEVEL)
@@ -192,15 +188,12 @@ objKoopa=class(objAPI)
 
     function objKoopa:logic() --handle both movement and animation
         -- self:checkStuckInWall()
+        self.doMovements=false
         if not self.dead then
     --ANIMATION, MARIO COLLISION, X AXIS, Y AXIS + PLATFORMS
             self.status=((math.ceil((playStage.framesPassed/4)))%2)+1
             self:checkMarioCollision({"transform","shell"..string.sub(self.TYPE,6,8),0,true,4})
-            self:aggregateCheckX(self.px,true)
-            self:aggregateCheckX(self.vx)
-            self:calculateAccelerationY()
-            if self.py<=0 then self:gravityCheck(-self.py,true) else self:bumpCheck(-self.py)      end
-            if self.vy<=0 then self:gravityCheck(-self.vy)      else self:bumpCheck(-self.vy)      end
+            self.doMovements=true
             self:setNewPushV() self:checkFor()
         elseif self.status==3 then self:animateDeathFlyOffscreen() --fireball/flower
         end
@@ -246,14 +239,11 @@ objKoopaPara=class(objAPI)
     end end end
 
     function objKoopaPara:logic() --handle both movement and animation
+        self.doMovements=false
         if not self.dead then
     --ANIMATION, MARIO COLLISION, X AXIS, Y AXIS + PLATFORMS
             self:checkMarioCollision({"transform",string.sub(self.TYPE,2,8),0,true,4})
             if self.TYPE=="Pkoopa_G" then --bouncing koopa
-                self:aggregateCheckX(self.px,true)
-                self:calculateAccelerationY()
-                if self.py<=0 then self:gravityCheck(-self.py,true) else self:bumpCheck(-self.py) end
-                self:setNewPushV() self:checkFor()
                 self.facing=(self.vx>0) and "R_" or "L_"
             else --flying koopa
                 local function calc(top,HV) return math.round((math.sin(((self.count-(HV and 17 or 0))*(180/(HV or 44)))/57.296))*top) end --44 is the total frames of the loop
@@ -263,8 +253,7 @@ objKoopaPara=class(objAPI)
                 else self.facing=(mario.x>self.x) and "R_" or "L_" end
                 self.count=self.count+1
             end
-            self:aggregateCheckX(self.vx)
-            if self.vy<=0 then self:gravityCheck(-self.vy) else self:bumpCheck(-self.vy) end
+            self.doMovements=true
         elseif self.status==3 then self:animateDeathFlyOffscreen() --fireball/flower
         end
     end
@@ -310,17 +299,13 @@ objShell=class(objAPI)
 
     function objShell:logic() --handle both movement and animation
         self:checkStuckInWall()
+        self.doMovements=false
         if not self.dead then
     --MARIO COLLISION, SHELL BOUNDARY, X AXIS, Y AXIS + PLATFORMS
             if self.hitTimer-playStage.framesPassed<=0 then self:checkMarioCollision({"shell"},true) end
             if self.vx~=0 then objAPI:addHitBox(self.objectID,self.x,self.y,16,16,"shell") self.canCollectCoins=true
             else self.canCollectCoins=false end
-            self:aggregateCheckX(self.px,true)
-            self:aggregateCheckX(self.vx)
-            self:calculateAccelerationY()
-            if self.py<=0 then self:gravityCheck(-self.py,true) else self:bumpCheck(-self.py)      end
-            if self.vy<=0 then self:gravityCheck(-self.vy)      else self:bumpCheck(-self.vy)      end
-            self:setNewPushV() self:checkFor()
+            self.doMovements=true
     --ANIMATION
             if not self.dead then
                 if self.koopaTimer==false then self.status=1

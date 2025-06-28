@@ -20,9 +20,11 @@ end
 function plot2ID(searchX,searchY,EDITOR) --returns ID when given *CO-ORDINATES*
     local ID=level.current.get(searchX,searchY)
     if not EDITOR then
-        if ID and blockIndex[ID] and blockIndex[ID].eventswitch and blockIndex[ID].eventswitch[1]~=false then
-            if playStage.events[blockIndex[ID].eventswitch[1]] == blockIndex[ID].eventswitch[2] then
-                ID=blockIndex[ID].eventswitch[3]
+        local eventswitch=blockIndex[ID] and blockIndex[ID].eventswitch
+        if ID and blockIndex[ID] and eventswitch and eventswitch[1]~=false then
+            print(eventswitch[1], eventswitch[2], eventswitch[3], playStage.events[eventswitch[1]], playStage.events[eventswitch[1]] == eventswitch[2], type(playStage.events[eventswitch[1]]), type(eventswitch[2]), type(eventswitch[3]))
+            if playStage.events[eventswitch[1]] == eventswitch[2] then
+                ID=eventswitch[3]
             end
         end
     end return ID or -1 --ID doesnt exist (likely out of bounds)

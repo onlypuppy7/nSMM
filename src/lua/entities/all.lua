@@ -21,7 +21,6 @@ typeIndex={
     flagp = {"objFlagpole",      "background"},
     magic = {"objMagicOrb",      "inner"},
     sprin = {"objSpring",        "inner"},
-    event = {"objEvent",         "inner"},
     switc = {"objSwitch",        "outer"},
 }
 nameIndex={ --this is mainly cope for not having an entity index like the block index

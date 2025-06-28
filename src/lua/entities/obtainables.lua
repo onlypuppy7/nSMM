@@ -12,15 +12,11 @@ objMagicOrb=class(objAPI)
     end
 
     function objMagicOrb:logic() --handle both movement and animation
+        self.doMovements=false
         if not self.dead then
             self:checkMarioCollision({"clear",self.animType},true)
             if self.moveType then
-                self:aggregateCheckX(self.px,true)
-                self:aggregateCheckX(self.vx)
-                self:calculateAccelerationY()
-                if self.py<=0 then self:gravityCheck(-self.py,true) else self:bumpCheck(-self.py) end
-                if self.vy<=0 then self:gravityCheck(-self.vy)      else self:bumpCheck(-self.vy)      end
-                self:setNewPushV() self:checkFor()
+                self.doMovements=true
     end end end
 
     function objMagicOrb:hit()
@@ -76,16 +72,12 @@ objPowerUp=class(objAPI)
     end
 
     function objPowerUp:logic() --handle both movement and animation
+        self.doMovements=false
         if self.blockTimer<playStage.framesPassed then
     --MARIO COLLISION, X AXIS, Y AXIS + PLATFORMS
             self:checkStuckInWall()
             self:checkMarioCollision({"powerup"},true)
-            self:aggregateCheckX(self.px,true)
-            self:aggregateCheckX(self.vx)
-            self:calculateAccelerationY()
-            if self.py<=0 then self:gravityCheck(-self.py,true) else self:bumpCheck(-self.py)      end
-            if self.vy<=0 then self:gravityCheck(-self.vy)      else self:bumpCheck(-self.vy)      end
-            self:setNewPushV() self:checkFor()
+            self.doMovements=true
     --ANIMATION
         else self.y=self.y-4 --rise from block
         end

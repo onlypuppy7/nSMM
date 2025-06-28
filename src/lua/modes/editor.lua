@@ -72,7 +72,7 @@ function editor:init(gc)
     editor.groupIndex[11]={"GIZMOS", "spring_O_1",
     154, 155, 156, nil, "spring_O", "spring_B", "spring_R",
     157, 158, 159, nil, nil, nil, nil, 
-    160, 161, 162, nil, nil, "switch_P", nil,
+    160, 161, 162, nil, nil, "switch_p", nil,
     163, 164, 165, nil, nil, nil, nil,
     nil, nil, nil, nil, nil, nil, nil}
     editor.groupIndex[12]={"LEVEL CONFIG", "flag",

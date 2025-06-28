@@ -93,8 +93,14 @@ function platform.gc:fillArc(x, y, w, h, startangle, angle)
 end
 
 function platform.gc:drawLine(x1, y1, x2, y2)
+    -- x1 = math.ceil(x1)
+    -- y1 = math.ceil(y1)
+    -- x2 = math.ceil(x2)
+    -- y2 = math.ceil(y2)
+
 	if __PC.penStyle == "smooth" then
-		love.graphics.line(x1, y1, x2, y2)
+		-- love.graphics.line(math.round(x1), math.round(y1), math.round(x2), math.round(y2))
+        love.graphics.line(x1, y1, x2, y2)
 		return
 	end
 
@@ -121,7 +127,8 @@ function platform.gc:drawLine(x1, y1, x2, y2)
 		if __PC.penStyle == "dotted" then
 			love.graphics.points(sx, sy)
 		else
-			love.graphics.line(sx, sy, ex, ey)
+			-- love.graphics.line(math.ceil(sx), math.ceil(sy), math.ceil(ex), math.ceil(ey))
+            love.graphics.line(sx, sy, ex, ey)
 		end
 
 		progress = progress + dashLength + gapLength
@@ -130,10 +137,11 @@ end
 
 function platform.gc:drawRect(x, y, w, h)
 	local x2, y2 = x + w, y + h
-	self:drawLine(x+1,y+1,x2, y ) -- top
-	self:drawLine(x2+1,y, x2, y2) -- right
-	self:drawLine(x2+1, y2+1, x,  y2) -- bottom
-	self:drawLine(x+1,  y2, x,  y ) -- left
+    local offset = 1
+	self:drawLine(x +1,     y +1,   x2,     y   ) -- top
+	self:drawLine(x2+1,     y,      x2,     y2  ) -- right
+	self:drawLine(x2+1,     y2+1,   x,      y2  ) -- bottom
+	self:drawLine(x +1,     y2,     x,      y   ) -- left
 end
 
 
@@ -189,7 +197,8 @@ function platform.gc:drawImage(img, x, y)
     local w = img:width()
     local h = img:height()
 
-    love.graphics.draw(img.framebuffer, x + (img.sx * w) / 2, y + (img.sy * h) / 2, (img.r) * math.pi / 180, img.sx, img.sy, img.w / 2, img.h / 2)
+    love.graphics.draw(img.framebuffer, (x + (img.sx * w) / 2), (y + (img.sy * h) / 2), (img.r) * math.pi / 180, img.sx, img.sy, img.w / 2, img.h / 2)
+    -- love.graphics.draw(img.framebuffer, math.floor(x + (img.sx * w) / 2), math.floor(y + (img.sy * h) / 2), (img.r) * math.pi / 180, img.sx, img.sy, img.w / 2, img.h / 2)
     -- love.graphics.draw(img.framebuffer, x, y, (img.r) * math.pi / 180, img.sx, img.sy)
 
     love.graphics.setColor(r, g, b, a)

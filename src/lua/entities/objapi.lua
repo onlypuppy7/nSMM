@@ -51,12 +51,12 @@ function objAPI:addHitBox(objectID,x,y,w,h,TYPE)
     table.insert(hitBoxList,{objectID,x,y,w,h,TYPE})
 end
 
-function objAPI:addPlatform(objectID,x,y,w,xVel,yVel)
+function objAPI:addPlatform(x,y,w,xVel,yVel)
     local yOffset=0
     if math.abs(yVel)>1 then
         yOffset=(math.floor(y-4)%2)
     end
-    table.insert(playStage.platformListAdd,{objectID,x,y-yOffset,w,xVel,yVel})
+    table.insert(playStage.platformListAdd,{self.objectID,x,y-yOffset,w,xVel,yVel})
 end
 
 function objAPI:updatePlatforms()
@@ -454,7 +454,14 @@ function objAPI:handleBumpedBlock(xLOC,yLOC,shell)
     local ID=plot2ID(xLOC,yLOC)
     local pixelXY=plot2pixel(xLOC,yLOC,false)
     if blockIndex[ID].containing~=nil and blockIndex[ID].containing~=false then --if there is something in the block
-        objAPI:createObj(blockIndex[ID].containing,pixelXY[1],pixelXY[2],true) --(TYPE,posX,posY,fromBlock) objAPI:createObj(blockID,(i2-1)*16,212-16*(i),0)
+        local containing=blockIndex[ID].containing
+        if type(containing)=="string" then
+            objAPI:createObj(blockIndex[ID].containing,pixelXY[1],pixelXY[2],true) --(TYPE,posX,posY,fromBlock) objAPI:createObj(blockID,(i2-1)*16,212-16*(i),0)
+        elseif type(containing)=="table" then
+            if containing.type=="event" then
+                playStage:setEvent(containing.target,containing.value) --set event
+            end
+        end
     end
     if blockIndex[ID].breakable==false or (mario.power==0 and not shell) then --create bumped block if unable to be destroyed
         local texture = blockIndex[ID].bumpable[2]
@@ -527,4 +534,16 @@ function objAPI:type2name(TYPE,statusBox) --statusBox: 0=false, 1=true
             if string.sub(config[3],1,1)=="l" then name[3]="Distance: "..math.floor(config[4]/16) end
         end
     end return name
+end
+
+function objAPI:performLogic() --perform logic for the object, to be overridden by each object
+    self:logic()
+    if self.doMovements then
+        if self.px and self.px ~=0 then self:aggregateCheckX(self.px,true) end
+        if self.vx and self.vx ~=0 then self:aggregateCheckX(self.vx) end
+        self:calculateAccelerationY(self.accelerationMultiplier or nil,self.terminalVelocity or nil)
+        if self.py<=0 then self:gravityCheck(-self.py,true) else self:bumpCheck(-self.py) end
+        if self.vy<=0 then self:gravityCheck(-self.vy)      else self:bumpCheck(-self.vy) end
+        self:setNewPushV() self:checkFor()
+    end
 end

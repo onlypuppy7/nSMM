@@ -20,7 +20,10 @@ function playStage:generate(LEVELSTRING,transition,EDITOR)
     if transition==true then
         playStage.transition=20
     end
-    playStage.events["onoff"]="true"
+    playStage.events={
+        onoff=true,
+        pswitch=false,
+    }
 end
 
 function playStage:init()
@@ -371,7 +374,7 @@ function playStage:objLogic()
                         -- print("offscreen y",entity.TYPE)
                         objAPI:destroy(entity.objectID,entity.LEVEL)
                     elseif (((entity.x) > (spawnOffsetX)) and ((entity.x) < (spawnOffsetY))) or (entity.GLOBAL==true) or level.current.enableGlobalEntities==true then --if in view distance
-                        entity:logic()
+                        entity:performLogic()
                         -- print("logic",entity.TYPE)
                     elseif entity.despawnable then
                         -- print("despawn1",entity.TYPE)
@@ -575,4 +578,10 @@ function playStage:drawCircleTransition(gc,centerX,centerY,frame,out) --out=fals
     else
         gc:fillRect(0,0,320,212)
     end
+end
+
+function playStage:setEvent(target, value)
+    print("playStage:setEvent",target,value,type(value))
+    -- print("playStage.events",playStage.events)
+    playStage.events[target]=value
 end

@@ -7,6 +7,7 @@ objBumpedBlock=class(objAPI)
         local objectID="bumpedBlock"..#entityLists.outer+#entityLists.inner+1+framesPassed+math.random(1,99999) --assign random ID
         table.insert(entityLists.outer,tostring(objectID))
         allEntities[objectID]=objBumpedBlock() allEntities[objectID].initObject=objAPI.initObject allEntities[objectID]:setup(objectID,blockX,blockY,TYPE,replaceWith)
+        self.GLOBAL=true
     end
 
     function objBumpedBlock:setup(objectID,blockX,blockY,TYPE,replaceWith) --eg (23,6,"UsedBlock",false)
