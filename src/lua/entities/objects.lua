@@ -70,7 +70,7 @@ objPlatform=class(objAPI)
     end
 
     function objPlatform:logic() --handle both movement and animation
-        if ((self.y<=-16) or( self.y>=204) or (self.x<=-(self.length*16)) or (self.x>=16*level.current.END)) and self.mode~="r" then objAPI:destroy(self.objectID,self.LEVEL) return end --despawn if needed
+        if ((self.y<=-16) or( self.y>=204) or (self.x<=-(self.length*16)) or (self.x>=16*level.current.END)) and self.mode~="r" then self:destroy() return end --despawn if needed
         self.x,self.y=self.x+self.vx,self.y-self.vy --move
         self.ox,self.oy=self.vx,self.vy
     --CHECK IF MARIO COLLIDED
@@ -215,7 +215,7 @@ objFireball=class(objAPI)
             self.doMovements=true
     --DEAD
         else self.timer=self.timer+1
-            if self.timer>=(flashingDelay*3)+1 then objAPI:destroy(self.objectID,self.LEVEL) return
+            if self.timer>=(flashingDelay*3)+1 then self:destroy() return
         end end
     --ANIMATION
         if not self.dead then self.status=((math.ceil((playStage.framesPassed/2)))%4)+1
@@ -239,7 +239,7 @@ objMultiCoinBlock=class(objAPI)
     end
 
     function objMultiCoinBlock:logic()
-        if cTimer(self.timer)<=0 then objAPI:destroy(self.objectID,self.LEVEL)
+        if cTimer(self.timer)<=0 then self:destroy()
         elseif cTimer(self.timer)==1 then --start ending the multi coin period
             local config=self.TYPE:split("_")
             if (pixel2ID(self.x+16,self.y,true)~=99) then pixel2place(tonumber(config[2]),self.x+16,self.y,true) end --get rid of the infinite coin block at all costs
@@ -262,28 +262,39 @@ objSwitch=class(objAPI)
         self.switchType=config[1]
 
         self:initObject(objectID,config[3],"outer",nil,{posX,posY},0,0)
-        self.active=false
+        self.active=true
         self.despawnable=false self.interactSpring=false self.disableStarPoints=true
         self.GLOBAL=true --always drawn and logic applying, to reduce pop in
     end
 
     function objSwitch:logic()
-        if not self.active then
+        if self.active then
             local pX,pY,marioSize=self.x,self.y+self.vy,(mario.power==0 or mario.crouch) and 0 or 16
             local pW,mX,mY=16,math.floor(mario.x+mario.px),math.floor(mario.y-mario.py)
             if ((mX+2>=pX and mX+2<=pX+pW) or (mX+13>=pX and mX+13<=pX+pW)) and mY+16==pY and mario.vy==0 then --mario is on platform
-                self.active=true
+                self.active=false
                 playStage:setEvent(self.switchType.."switch", true)
+                self.pressedAt=playStage.framesPassed+10 --despawn after 10 frames
             end
             
             self:addPlatform(self.x,self.y,16,self.vx,self.vy) --update the platform
         end
 
-        self.doMovements=not self.active --enables the movement logic, handled by the outer object wrapper
+        if not self.active and (playStage.framesPassed-self.pressedAt)>0 then
+            self:destroy(self.objectID,self.LEVEL)
+        end
     end
 
     function objSwitch:draw(gc,x,y,TYPE,isEditor,isIcon)
-        gc:drawImage(texs["Ground"],x,y)
-        -- if not isEditor then
-        -- else
+        if not isEditor then
+            if self.active then
+                gc:drawImage(texs["active_"..self.switchType.."switch_"..tostring((math.ceil((playStage.framesPassedBlock/10)))%2)],x,y)
+            else
+                gc:drawImage(texs["pressed_"..self.switchType.."switch"],x,y+10)
+            end
+        else
+            local config=(string.sub(TYPE,#("switch_")+1,#TYPE)):split("~")
+            local switchType=config[1]
+            gc:drawImage(texs["active_"..switchType.."switch_0"],x,y)
+        end
     end

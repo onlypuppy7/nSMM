@@ -26,7 +26,7 @@ objBumpedBlock=class(objAPI)
         end
         if self.animCount<=4 then self.animCount=self.animCount+1
             self.yA=self.y-math.round(((math.sin((self.animCount*30)/57.296))*8),0) --math..?
-        else objAPI:destroy(self.objectID,self.LEVEL)
+        else self:destroy()
             plot2place(self.replaceWith[3],self.replaceWith[1],self.replaceWith[2])
         end
     end
@@ -54,7 +54,7 @@ objBrickParticle=class(objAPI)
         if self.delay==true then self.delay=false return end --initial frame
     --X AXIS,Y AXIS
         if self.xAnimTimer>playStage.framesPassed then self.x=self.x+self.vx end
-        if self.y>216 then objAPI:destroy(self.objectID,self.LEVEL) return
+        if self.y>216 then self:destroy() return
         else self.vy=(self.vy<0) and (self.vy-0.6) or (self.vy<0.7) and -0.5 or self.vy*0.4
         end self.y=self.y-(self.vy*0.8)
     end
@@ -73,7 +73,7 @@ objScoreParticle=class(objAPI)
     end
 
     function objScoreParticle:logic() 
-        if gTimer(self.animLimit) then objAPI:destroy(self.objectID,self.LEVEL)
+        if gTimer(self.animLimit) then self:destroy()
         else self.y=self.y-3
     end end
 
@@ -95,7 +95,7 @@ objCoinAnim=class(objAPI)
         if self.animCount<16 then self.animCount=self.animCount+1
             self.yA=self.y-(math.sin((self.animCount*9)/57.296))*64
             self.status=((math.ceil((playStage.framesPassed/3)))%4)+1
-        else objAPI:destroy(self.objectID,self.LEVEL) objAPI:addStats("points",200,self.x,self.yA) end
+        else self:destroy() objAPI:addStats("points",200,self.x,self.yA) end
         if self.animCount==16 then self.drawCondition=true end
     end
 

@@ -78,14 +78,14 @@ __PC.onEvents = {
         end
     end,
     keypressed = function(key, scancode, isrepeat)
-        print("keypressed", key, scancode, isrepeat)
+        -- print("keypressed", key, scancode, isrepeat)
         if not heldKeys[key] and __PC.allowedHeldKeys[key] then
             heldKeys[key] = true
         end
         __PC.key2event(key)
     end,
     textinput = function(text)
-        print("textinput", text)
+        -- print("textinput", text)
         __PC.key2event(text, true)
     end,
     mousepressed = function(x, y, button)

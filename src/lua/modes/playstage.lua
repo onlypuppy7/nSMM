@@ -3,23 +3,27 @@ playStage=class()
 
 function playStage:generate(LEVELSTRING,transition,EDITOR)
     gui:clear() --editor.active=false
-    mario.trail={}
     cursor.set("default")
-    playStage:clearEntities()
-    playStage.framesPassed=0
-    mario.framesPassed=0
-    playStage.framesPassedBlock=0
-    playStage.SCORE=0
-    playStage.coinCount=0
     level.perm=LEVELSTRING
-    playStage.load=0
-    playStage.transition=0 playStage.transition2=false
     playStage.EDITOR=EDITOR
-    playStage.cameraBias=30
-    input.left=0 input.right=0 input.up=0 input.down=0 input.action=0 input.stor.left=0 input.stor.right=0 input.stor.up=0 input.stor.down=0 input.stor.action=0
     if transition==true then
         playStage.transition=20
     end
+    self:reset()
+end
+
+function playStage:reset()
+    playStage:clearEntities()
+    mario.trail={}
+    playStage.SCORE=0
+    playStage.coinCount=0
+    playStage.framesPassed=0
+    mario.framesPassed=0
+    playStage.framesPassedBlock=0
+    playStage.cameraBias=30
+    playStage.load=0
+    playStage.transition=0 playStage.transition2=false
+    input.left=0 input.right=0 input.up=0 input.down=0 input.action=0 input.stor.left=0 input.stor.right=0 input.stor.up=0 input.stor.down=0 input.stor.action=0
     playStage.events={
         onoff=true,
         pswitch=false,
@@ -372,7 +376,7 @@ function playStage:objLogic()
                 if entity~=nil and entity.objectID then --if entity exists
                     if ((entity.y)>212) then
                         -- print("offscreen y",entity.TYPE)
-                        objAPI:destroy(entity.objectID,entity.LEVEL)
+                        objAPI:destroyObject(entity.objectID,entity.LEVEL)
                     elseif (((entity.x) > (spawnOffsetX)) and ((entity.x) < (spawnOffsetY))) or (entity.GLOBAL==true) or level.current.enableGlobalEntities==true then --if in view distance
                         entity:performLogic()
                         -- print("logic",entity.TYPE)
@@ -380,7 +384,7 @@ function playStage:objLogic()
                         -- print("despawn1",entity.TYPE)
                         if entity.x<-16 or (entity.x < spawnOffsetX+8) or ((entity.x) > spawnOffsetY-8) then
                             -- print("despawn2",entity.TYPE)
-                            objAPI:destroy(entity.objectID,entity.LEVEL) end
+                            objAPI:destroyObject(entity.objectID,entity.LEVEL) end
                     end
                 else table.remove(focusedList,i) end --get rid of blank entities that may occur as a result of overloading, NOT a substantial issue
 end end end end
@@ -581,7 +585,6 @@ function playStage:drawCircleTransition(gc,centerX,centerY,frame,out) --out=fals
 end
 
 function playStage:setEvent(target, value)
-    print("playStage:setEvent",target,value,type(value))
-    -- print("playStage.events",playStage.events)
+    -- print("playStage:setEvent",target,value,type(value))
     playStage.events[target]=value
 end

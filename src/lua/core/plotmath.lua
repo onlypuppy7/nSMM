@@ -22,7 +22,7 @@ function plot2ID(searchX,searchY,EDITOR) --returns ID when given *CO-ORDINATES*
     if not EDITOR then
         local eventswitch=blockIndex[ID] and blockIndex[ID].eventswitch
         if ID and blockIndex[ID] and eventswitch and eventswitch[1]~=false then
-            print(eventswitch[1], eventswitch[2], eventswitch[3], playStage.events[eventswitch[1]], playStage.events[eventswitch[1]] == eventswitch[2], type(playStage.events[eventswitch[1]]), type(eventswitch[2]), type(eventswitch[3]))
+            -- print(eventswitch[1], eventswitch[2], eventswitch[3], playStage.events[eventswitch[1]], playStage.events[eventswitch[1]] == eventswitch[2], type(playStage.events[eventswitch[1]]), type(eventswitch[2]), type(eventswitch[3]))
             if playStage.events[eventswitch[1]] == eventswitch[2] then
                 ID=eventswitch[3]
             end

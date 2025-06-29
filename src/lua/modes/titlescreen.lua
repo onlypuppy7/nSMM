@@ -7,6 +7,7 @@ function titleScreen:init()
 end
 
 function titleScreen:reset()
+    playStage:reset()
     gui:clear()
     --home screen       (0,0)       //  (0,0)
     gui:newButton(versText,1,290,197)

@@ -58,7 +58,8 @@ function string2image(name,flipImage,string,recolour) --recolour={{{"\000\000","
             local newImg=string
             for i2=3,#recolour[i] do --all recolours
                 newImg=string.sub(newImg,1,20)..substitute(string.sub(newImg,21),recolour[i][i2][1],recolour[i][i2][2])
-            end local imgName=(flip==0) and recolour[i][1] or recolour[i][2]
+            end
+            local imgName=(flip==0) and recolour[i][1] or recolour[i][2]
             texs[imgName]=image.new(newImg)
         end end
         texs[name]=image.new(string)

@@ -19,7 +19,7 @@ objGoomba=class(objAPI)
             self.doMovements=true
         elseif self.status==4 then self:animateDeathFlyOffscreen() --fireball/flower
         elseif self.status==3 and (self.deathAnimTimer<playStage.framesPassed) then --stomped
-            objAPI:destroy(self.objectID,self.LEVEL)
+            self:destroy()
         end
     end
     
@@ -312,7 +312,7 @@ objShell=class(objAPI)
                 elseif self.fromKoopa then
                     if self.koopaTimer<playStage.framesPassed then
                         objAPI:createObj("koopa"..string.sub(self.TYPE,6,8),self.x,self.y)
-                        objAPI:destroy(self.objectID,self.LEVEL) self.status=0
+                        self:destroy() self.status=0
                     elseif (self.koopaTimer-7<playStage.framesPassed) then self.status=2
                     elseif (self.koopaTimer-45<playStage.framesPassed) then
                         local animOption=((math.ceil((playStage.framesPassed)))%4)

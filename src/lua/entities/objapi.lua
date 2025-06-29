@@ -35,8 +35,12 @@ function objAPI:createObj(TYPE,posX,posY,despawnable,arg1,arg2)
     end return objectID
 end
 
-function objAPI:destroy(objectName,LEVEL) --add to cleanup waitlist
+function objAPI:destroyObject(objectName,LEVEL) --add to cleanup waitlist
     table.insert(cleanupListDestroy,{objectName,LEVEL})
+end
+
+function objAPI:destroy()
+    objAPI:destroyObject(self.objectID,self.LEVEL)
 end
 
 function objAPI:transferLayer(objectName,LEVEL,newLEVEL) --add to cleanup waitlist
@@ -193,7 +197,7 @@ function objAPI:animateDeathFlyOffscreen()
     end
     self.y=self.y+self.vy
     if self.y<0 then
-        objAPI:destroy(self.objectID,self.LEVEL)
+        self:destroy()
     end
 end --NEW code approved
 
@@ -382,7 +386,7 @@ end --TODO rewrite needed ##############
 --OBJECT BEHAVIOUR
 function objAPI:checkStuckInWall()
     if self:checkForWall(self.x+8,self.y+8) and not self.dead then --stuck in a block
-        objAPI:destroy(self.objectID,self.LEVEL)
+        self:destroy()
     end
 end --NEW code approved
 
@@ -417,7 +421,7 @@ function objAPI:checkMarioCollision(onStomp,noKill,bodge) bodge=bodge or 0 --bod
                 end
             elseif onStomp[1]=="transform" then
                 local vx,newID=self.vx,objAPI:createObj(onStomp[2],self.x,self.y,nil,onStomp[3],onStomp[4])
-                objAPI:destroy(self.objectID,self.LEVEL) self.status=onStomp[5]
+                self:destroy() self.status=onStomp[5]
                 if string.sub(self.TYPE,1,5)=="Pkoop" then allEntities[newID].vx=sign(vx)*2 end 
             end
             if level.current.enableCoinOnKill then objAPI:createObj("coin",self.x,self.y-16,true) end

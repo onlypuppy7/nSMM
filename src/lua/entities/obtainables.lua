@@ -29,7 +29,7 @@ objMagicOrb=class(objAPI)
                 if not gui.PROMPT then
                     self.animTimer=self.animTimer+1
                     self.status=((math.ceil((self.animTimer/5)))%5)+1
-                    if self.animTimer>=20 then objAPI:destroy(self.objectID,self.LEVEL) playStage.wait=false end
+                    if self.animTimer>=20 then self:destroy() playStage.wait=false end
                 end
             else
                 self.status=((math.ceil((playStage.framesPassed/4)))%4)+1
@@ -63,7 +63,7 @@ objPowerUp=class(objAPI)
         self.doesBounce=(self.TYPE=="star") self.turnAround=true self.allowStarCollision=true
     end
 
-    function objPowerUp:use() objAPI:destroy(self.objectID,self.LEVEL)
+    function objPowerUp:use() self:destroy()
         if self.TYPE=="mushroom1up" then objAPI:addStats("1up",1,self.x,self.y)
         else    if self.TYPE=="mushroom" then       mario:powerUpMario(1)
                 elseif self.TYPE=="fireflower" then mario:powerUpMario(2)
