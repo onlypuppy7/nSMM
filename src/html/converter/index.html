@@ -4,14 +4,77 @@
 <head>
     <meta charset="UTF-8">
     <link rel="icon" href="/img/icon.png" type="image/png">
-    <title>TI-Image Converter</title>
+    <title>Image to TI-Image Converter</title>
+</head>
+
+<body>
+    <center>
+        <h1>onlypuppy7's TI-Image Tools</h1>
+    </center>
+
     <style>
         body {
+            margin: 0;
             font-family: sans-serif;
-            max-width: 70%;
-            margin: auto;
-            padding: 0.5em;
             font-size: smaller;
+        }
+
+        .canvas-wrapper {
+            display: flex;
+            gap: 2em;
+            align-items: flex-start;
+            margin-bottom: 1em;
+        }
+
+        .main-wrapper {
+            display: flex;
+            height: 90vh;
+        }
+
+        .left-pane {
+            width: 70%;
+            padding: 1em;
+            overflow-y: auto;
+            box-sizing: border-box;
+            border-right: 1px solid #ddd;
+            padding-left:  6em;
+            padding-right: 6em;
+        }
+
+        .right-pane {
+            width: 30%;
+            padding: 1em;
+            overflow-y: auto;
+            box-sizing: border-box;
+            padding-left: 3em;
+            padding-right: 3em;
+        }
+
+        canvas.pixel-preview {
+            image-rendering: pixelated;
+            width: 160px;
+            border: 1px solid #ccc;
+            background-color: white;
+            background-image:
+                linear-gradient(45deg, #ccc 25%, transparent 25%),
+                linear-gradient(-45deg, #ccc 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #ccc 75%),
+                linear-gradient(-45deg, transparent 75%, #ccc 75%);
+            background-size: 16px 16px;
+            background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
+        }
+
+        .conversionPre {
+            background: #f0f0f0;
+            padding: 0.5em;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        #colorInfo {
+            align-items: center;
+            gap: 1em;
+            margin-bottom: 1em;
         }
 
         label {
@@ -29,459 +92,170 @@
             margin-top: 0.5em;
             font-family: monospace;
         }
-    </style>
-</head>
-
-<body>
-    <h1>TI-Image Converter (RGB5551)</h1>
-
-    <label>
-        Image Prefix:
-        <input type="text" id="prefix" placeholder="e.g. texs." value="texs.">
-    </label>
-
-    <!-- <label>
-    Image Suffix:
-    <input type="text" id="suffix" placeholder="e.g. texs." value="&quot;)">
-  </label> -->
-
-    <label>
-        Transparency threshold (0–255):
-        <input type="number" id="alphaThreshold" value="128" min="0" max="255">
-    </label>
-
-    <label>
-        Force Resize:
-        <input type="checkbox" id="resizeToggle">
-        Width: <input type="number" id="resizeWidth" value="16" min="1">
-        Height: <input type="number" id="resizeHeight" value="16" min="1">
-    </label>
-
-    <label>
-        Pad escape numbers (e.g. \5 → \005):
-        <input type="checkbox" id="padEscapeNumbers">
-    </label>
-
-    <label>
-        Use \0\0 for transparent pixels:
-        <input type="checkbox" id="compressTransparent" checked>
-    </label>
-
-    <label>
-        <!-- use charCode for printable characters (e.g. \65 for 'A') -->
-        Use text for printable characters (e.g. \65 for 'A'):
-        <input type="checkbox" id="useCharCode" checked>
-    </label>
-
-    <label>
-        Select image(s):
-        <input type="file" id="fileInput" multiple accept="image/*">
-        <button onclick="doConvert()">Convert</button>
-    </label>
-
-    <textarea id="output" readonly>Output will appear here...</textarea>
-    <button onclick="copyOutput()">Copy</button>
-    <button onclick="downloadOutput()">Download .txt</button>
-
-    <script>
-        function rgbToTIColor(r, g, b, a, threshold, compressTransparent = false) {
-            //below for 100% ti nspire scripting tools compatibility, \255\127 takes up more room though than \0\0
-
-            if (!compressTransparent) {
-                const isTransparent = a < threshold;
-
-                if (isTransparent) {
-                    return [0xFF, 0x7F];
-                };
-            };
-
-            const alpha = (a >= threshold) ? 1 : 0;
-            const r5 = Math.floor(r / 8);
-            const g5 = Math.floor(g / 8);
-            const b5 = Math.floor(b / 8);
-
-            const color16 = (alpha << 15) | (r5 << 10) | (g5 << 5) | b5;
-            return [color16 & 0xFF, (color16 >> 8) & 0xFF];
-        }
-
-        function byteToEscape(byte, pad, dontUseChar = false) {
-            if ((byte >= 32 && byte <= 126 && byte !== 92) && !dontUseChar) {
-                return String.fromCharCode(byte);
-            }
-            return "\\" + (pad ? byte.toString().padStart(3, '0') : byte);
-        }
-
-        function buildHeader(width, height) {
-            const stride = width * 2;
-            const header = new Uint8Array(20);
-            const dv = new DataView(header.buffer);
-
-            dv.setUint32(0, width, true);
-            dv.setUint32(4, height, true);
-            header[8] = 0;
-            header[9] = 0;
-            dv.setUint16(10, 0, true);
-            dv.setUint32(12, stride, true);
-            dv.setUint16(16, 16, true);
-            dv.setUint16(18, 1, true);
-
-            return header;
-        }
-
-        async function processImage(file, options) {
-            return new Promise((resolve) => {
-                const img = new Image();
-                const url = URL.createObjectURL(file);
-
-                img.onload = () => {
-                    const canvas = document.createElement("canvas");
-                    canvas.width = options.resize ? options.resizeWidth : img.width;
-                    canvas.height = options.resize ? options.resizeHeight : img.height;
-
-                    const ctx = canvas.getContext("2d");
-                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-                    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-                    const header = buildHeader(canvas.width, canvas.height);
-                    const pixels = [];
-
-                    for (let i = 0; i < imageData.length; i += 4) {
-                        const [r, g, b, a] = imageData.slice(i, i + 4);
-                        pixels.push(...rgbToTIColor(r, g, b, a, options.alphaThreshold, options.compressTransparent));
-                    }
-
-                    const fullData = [...header, ...pixels];
-                    const escaped = fullData.map(b => byteToEscape(b, options.padNumbers, !options.useCharCode)).join('');
-
-                    const baseName = file.name.replace(/\.[^/.]+$/, "");
-                    const prefix = options.prefix || "";
-                    //   const suffix = options.suffix || "";
-                    const declaration = `${prefix}${baseName}`;
-                    resolve(`${declaration}=image.new("${escaped}")`);
-
-                    URL.revokeObjectURL(url);
-                };
-
-                img.src = url;
-            });
-        }
-
-        async function doConvert() {
-            const files = Array.from(document.getElementById("fileInput").files);
-            const output = document.getElementById("output");
-
-            const options = {
-                prefix: document.getElementById("prefix").value,
-                // suffix: document.getElementById("suffix").value,
-                alphaThreshold: parseInt(document.getElementById("alphaThreshold").value),
-                resize: document.getElementById("resizeToggle").checked,
-                resizeWidth: parseInt(document.getElementById("resizeWidth").value),
-                resizeHeight: parseInt(document.getElementById("resizeHeight").value),
-                padNumbers: document.getElementById("padEscapeNumbers").checked,
-                compressTransparent: document.getElementById("compressTransparent").checked,
-                useCharCode: document.getElementById("useCharCode").checked,
-            };
-
-            output.value = "Processing...\n";
-            const results = await Promise.all(files.map(file => processImage(file, options)));
-            output.value = results.join("\n");
-        }
-
-        function downloadOutput() {
-            const text = document.getElementById("output").value;
-            const blob = new Blob([text], {
-                type: "text/plain"
-            });
-            const a = document.createElement("a");
-            a.href = URL.createObjectURL(blob);
-            a.download = "ti-images.txt";
-            a.click();
-        }
-
-        function copyOutput() {
-            const output = document.getElementById("output");
-            output.select();
-            document.execCommand("copy");
-        }
-
-        document.getElementById("fileInput").addEventListener("change", async (e) => {
-            await doConvert();
-        });
-    </script>
-
-    <hr>
-    <h1>Colour Replacer</h1>
-
-    <style>
-        .canvas-wrapper {
-            display: flex;
-            gap: 2em;
-            align-items: flex-start;
-            margin-bottom: 1em;
-        }
-
-        canvas.pixel-preview {
-            image-rendering: pixelated;
-            width: 160px;
-            border: 1px solid #ccc;
-            background: white;
-        }
 
         #colorRulesContainer div {
             margin-top: 0.5em;
         }
-
-        #conversionJson {
-            background: #f0f0f0;
-            padding: 0.5em;
-            white-space: pre-wrap;
-            word-break: break-word;
-        }
     </style>
 
-    <div class="canvas-wrapper">
-        <div>
+    <div class="main-wrapper">
+        <div class="left-pane">
+            <h2>Image to TI-Image Converter</h2>
+
             <label>
-                Import image:
-                <input type="file" id="colorImageInput" accept="image/*">
-            </label><br>
-            <canvas id="originalCanvas" class="pixel-preview"></canvas>
+                Image Prefix:
+                <input type="text" id="prefix" placeholder="e.g. texs." value="texs.">
+            </label>
+
+            <!-- <label>
+    Image Suffix:
+    <input type="text" id="suffix" placeholder="e.g. texs." value="&quot;)">
+  </label> -->
+
+            <label>
+                Transparency threshold (0–255):
+                <input type="number" id="alphaThreshold" value="128" min="0" max="255">
+            </label>
+
+            <label>
+                Force Resize:
+                <input type="checkbox" id="resizeToggle">
+                Width: <input type="number" id="resizeWidth" value="16" min="1">
+                Height: <input type="number" id="resizeHeight" value="16" min="1">
+            </label>
+
+            <label>
+                Pad escape numbers (e.g. \5 → \005):
+                <input type="checkbox" id="padEscapeNumbers">
+            </label>
+
+            <label>
+                Use \0\0 for transparent pixels:
+                <input type="checkbox" id="compressTransparent" checked>
+            </label>
+
+            <label>
+                <!-- use charCode for printable characters (e.g. \65 for 'A') -->
+                Use text for printable characters (e.g. \65 for 'A'):
+                <input type="checkbox" id="useCharCode" checked>
+            </label>
+
+            <label>
+                Select image(s):
+                <input type="file" id="fileInput" multiple accept="image/*">
+                <button onclick="doConvert()">Convert</button>
+            </label>
+
+            <textarea id="output" readonly>Output will appear here...</textarea>
+            <button onclick="copyOutput()">Copy</button>
+            <button onclick="downloadOutput()">Download .txt</button>
+
+            <hr>
+
+            <h2>TI-Image to Image Converter</h2>
+            <label>
+                TI-Image:
+                <input type="text" id="tiImageInput"
+                    placeholder="\16\0\0\0\16\0\0\0\0\0\0\0 \0\0\0\16\0\1\0\0\0\0\0\168\254\168\254\168\254\168\254\168\254\168\254\168\254\168\254\168\254\168\254\168\254\130\221\0\0\0\0\0\0\168\254\168\254v\255v\255v\255v\255v\255v\255\168\254v\255v\255\168\254\168\254\130\221\0\0\168\254\168\254v\255v\255\168\254\168\254\168\254\168\254\168\254\168\254\168\254\168\254v\255\168\254\168\254\130\221\168\254v\255v\255\168\254\168\254\168\254\168\254\168\254\168\254\168\254\168\254\168\254\168\254\168\254\168\254\130\221\168\254v\255\168\254\168\254\168\254v\255v\255v\255v\255v\255\168\254\168\254\168\254\168\254\168\254\130\221\168\254v\255\168\254\168\254\168\254v\255v\255v\255v\255v\255v\255\168\254\168\254\168\254\168\254\130\221\168\254v\255\168\254\168\254\168\254v\255v\255\168\254\168\254v\255v\255\168\254\168\254\168\254\168\254\130\221\168\254v\255\168\254\168\254\168\254v\255v\255v\255v\255v\255v\255\168\254\168\254\168\254\168\254\130\221\168\254v\255\168\254\168\254\168\254v\255v\255v\255v\255v\255\168\254\168\254\168\254\168\254\168\254\130\221\168\254\168\254\168\254\168\254\168\254v\255v\255\168\254\168\254\168\254\168\254\168\254\168\254\168\254\168\254\130\221\168\254v\255\168\254\168\254\168\254v\255v\255\168\254\168\254\168\254\168\254\168\254\168\254\168\254\168\254\130\221\168\254\168\254\168\254\168\254\168\254\168\254\168\254\168\254\168\254\168\254\168\254\168\254\168\254v\255\168\254\130\221\168\254\168\254\168\254\168\254\168\254\168\254\168\254\168\254\168\254\168\254\168\254\168\254\168\254v\255\168\254\130\221\130\221\168\254\168\254\168\254\168\254\168\254\168\254\168\254\168\254v\255\168\254v\255v\255\168\254\168\254\130\221\0\0\130\221\168\254\168\254\168\254\168\254\168\254\168\254\168\254\168\254\168\254\168\254\168\254\168\254\130\221\0\0\0\0\0\0\130\221\130\221\130\221\130\221\130\221\130\221\130\221\130\221\130\221\130\221\130\221\130\221\0\0\0\0">
+            </label>
+            <button onclick="convertTIImage()">Convert</button>
+            <div id="imageOutput" style="margin-top: 1em;">
+                <canvas id="outputCanvas" class="pixel-preview" style="border: 1px solid #000;"></canvas>
+                <!-- download button -->
+                <button onclick="downloadOutputtedImage()">Download Image</button>
+                <div id="outputInfo" style="margin-top: 0.5em; font-family: monospace;"></div>
+            </div>
+
+            <hr>
+            <h2>Colour Replacer</h2>
+
+            <div class="canvas-wrapper">
+                <div>
+                    <label>
+                        Import image:
+                        <input type="file" id="colorImageInput" accept="image/*">
+                    </label><br>
+                    <canvas id="originalCanvas" class="pixel-preview"></canvas>
+                </div>
+
+                <div>
+                    <label>Converted Preview:</label><br>
+                    <canvas id="convertedCanvas" class="pixel-preview"></canvas>
+                </div>
+            </div>
+
+            <h3>Color Conversion Rules</h3>
+            <div id="colorRulesContainer">
+                <div>
+                    Replace <input type="text" value="FF00AA" maxlength="6" class="fromColor"> → <input type="text"
+                        value="000000" maxlength="6" class="toColor">
+                </div>
+            </div>
+            <button onclick="addColorRule()">Add Rule</button>
+
+            <h3>Color Conversion Lua</h3>
+            <pre id="conversionLua" class="conversionPre">{}</pre>
+
+            <h3>Color Conversion JSON</h3>
+            <pre id="conversionJson" class="conversionPre">{}</pre>
+
+            <hr>
+
+            <h2>TI to RGB Converter</h2>
+            <label>
+                TI Color:
+                <input type="text" id="tiColorInput" placeholder="\000\000">
+            </label>
+            <div id="rgbOutput" style="margin-top: 1em; font-family: monospace;"></div>
+            <!-- swatch -->
+            <div id="colorSwatch" style="width: 50px; height: 50px; border: 1px solid #000; margin-top: 0.5em;"></div>
+
+            <hr>
+
+
+
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
         </div>
 
-        <div>
-            <label>Converted Preview:</label><br>
-            <canvas id="convertedCanvas" class="pixel-preview"></canvas>
+        <div class="right-pane">
+
+            <h3>Color Picker</h3>
+            <div id="colorInfo">
+                <div id="pickedColorSwatch" style="width: 40px; height: 40px; border: 1px solid #000;"></div>
+                <div>
+                    Picked Color (HEX): <input type="text" id="pickedColorHex" readonly style="width:80px;">
+                </div>
+                <div>
+                    Picked Color (RGB): <input type="text" id="pickedColorRGB" readonly style="width:120px;">
+                </div>
+                <div>
+                    Picked Color (TI): <input type="text" id="pickedColorTI" readonly style="width:120px;">
+                </div>
+                <div>
+                    Picked Color (TI-optimised): <input type="text" id="pickedColorTIOptimised" readonly style="width:120px;">
+                </div>
+            </div>
         </div>
     </div>
 
-    <h3>Color Picker</h3>
-    <div id="colorInfo" style="display: flex; align-items: center; gap: 1em; margin-bottom: 1em;">
-        <div>
-            Picked Color (HEX): <input type="text" id="pickedColorHex" readonly style="width:80px;">
-        </div>
-        <div id="pickedColorSwatch" style="width: 40px; height: 40px; border: 1px solid #000;"></div>
-        <div>
-            Picked Color (RGB): <input type="text" id="pickedColorRGB" readonly style="width:120px;">
-        </div>
-    </div>
 
-    <h3>Color Conversion Rules</h3>
-    <div id="colorRulesContainer">
-        <div>
-            Replace <input type="text" value="FF00AA" maxlength="6" class="fromColor"> → <input type="text"
-                value="000000" maxlength="6" class="toColor">
-        </div>
-    </div>
-    <button onclick="addColorRule()">Add Rule</button>
-
-    <h3>Color Conversion Lua</h3>
-    <pre id="conversionLua">{}</pre>
-
-    <h3>Color Conversion JSON</h3>
-    <pre id="conversionJson">{}</pre>
-
-    <script>
-        let originalImageData = null;
-
-        const originalCanvas = document.getElementById("originalCanvas");
-        const convertedCanvas = document.getElementById("convertedCanvas");
-        const colorImageInput = document.getElementById("colorImageInput");
-        const conversionJson = document.getElementById("conversionJson");
-
-        function hexToRGB(hex) {
-            const r = parseInt(hex.slice(0, 2), 16);
-            const g = parseInt(hex.slice(2, 4), 16);
-            const b = parseInt(hex.slice(4, 6), 16);
-            return [r, g, b];
-        }
-
-        function rgbToHex(r, g, b) {
-            return [r, g, b].map(v => v.toString(16).padStart(2, '0')).join('').toUpperCase();
-        }
-
-        function onUpdatedRules() {
-            const rules = getColorRules();
-            if (originalImageData) {
-                processReplacementImage(originalImageData, rules);
-            }
-        }
-
-        function getColorRules() {
-            const fromInputs = document.querySelectorAll('.fromColor');
-            const toInputs = document.querySelectorAll('.toColor');
-            const rules = {};
-            for (let i = 0; i < fromInputs.length; i++) {
-                const from = fromInputs[i].value.trim().toUpperCase();
-                const to = toInputs[i].value.trim().toUpperCase();
-                if (/^[0-9A-F]{6}$/.test(from) && /^[0-9A-F]{6}$/.test(to)) {
-                    rules[from] = to;
-                }
-            }
-            conversionJson.textContent = JSON.stringify(rules, null, 2);
-            const luaRules = Object.entries(rules).map(([from, to]) => {
-                const [fr, fg, fb] = hexToRGB(from);
-                const [tr, tg, tb] = hexToRGB(to);
-                const tiFrom = rgbToTIColor(fr, fg, fb, 255, 128);
-                const tiTo = rgbToTIColor(tr, tg, tb, 255, 128);
-
-                //byte to escape
-                const fromEscaped = tiFrom.map(b => byteToEscape(b, true, true)).join('');
-                const toEscaped = tiTo.map(b => byteToEscape(b, true, true)).join('');
-                return `{"${fromEscaped}", "${toEscaped}"}`;
-            }).join(",");
-            document.getElementById("conversionLua").textContent = luaRules;
-            return rules;
-        }
-
-        function addColorRule() {
-            const div = document.createElement('div');
-            div.innerHTML =
-                `Replace <input type="text" value="FF00AA" maxlength="6" class="fromColor"> → <input type="text" value="000000" maxlength="6" class="toColor">`;
-            document.getElementById("colorRulesContainer").appendChild(div);
-        }
-
-        function processReplacementImage(img, rules) {
-            const ow = img.naturalWidth;
-            const oh = img.naturalHeight;
-
-            originalCanvas.width = ow;
-            originalCanvas.height = oh;
-            convertedCanvas.width = ow;
-            convertedCanvas.height = oh;
-
-            const ctx1 = originalCanvas.getContext("2d");
-            const ctx2 = convertedCanvas.getContext("2d");
-
-            ctx1.clearRect(0, 0, ow, oh);
-            ctx2.clearRect(0, 0, ow, oh);
-
-            ctx1.drawImage(img, 0, 0, ow, oh);
-
-            const imageData = ctx1.getImageData(0, 0, ow, oh);
-            const data = imageData.data;
-
-            for (let i = 0; i < data.length; i += 4) {
-                const r = data[i],
-                    g = data[i + 1],
-                    b = data[i + 2];
-                const hex = rgbToHex(r, g, b);
-                if (rules[hex]) {
-                    const [nr, ng, nb] = hexToRGB(rules[hex]);
-                    data[i] = nr;
-                    data[i + 1] = ng;
-                    data[i + 2] = nb;
-                }
-            }
-
-            ctx2.putImageData(imageData, 0, 0);
-        }
-
-        colorImageInput.addEventListener("change", () => {
-            const file = colorImageInput.files[0];
-            if (!file) return;
-
-            const rules = getColorRules();
-
-            const img = new Image();
-            img.onload = () => processReplacementImage(img, rules);
-            img.src = URL.createObjectURL(file);
-            originalImageData = img; // Store the original image data for color picking
-        });
-
-        document.getElementById("colorRulesContainer").addEventListener("input", onUpdatedRules);
-
-        function updateColorPickerDisplay(r, g, b) {
-            const hex = rgbToHex(r, g, b);
-            document.getElementById("pickedColorHex").value = hex;
-            document.getElementById("pickedColorRGB").value = `(${r}, ${g}, ${b})`;
-            document.getElementById("pickedColorSwatch").style.backgroundColor = `#${hex}`;
-        }
-
-        function addCanvasColorPicker(canvas) {
-            canvas.addEventListener("click", function (e) {
-                const rect = canvas.getBoundingClientRect();
-                const scaleX = canvas.width / rect.width;
-                const scaleY = canvas.height / rect.height;
-                const x = Math.floor((e.clientX - rect.left) * scaleX);
-                const y = Math.floor((e.clientY - rect.top) * scaleY);
-
-                const ctx = canvas.getContext("2d");
-                const data = ctx.getImageData(x, y, 1, 1).data;
-                updateColorPickerDisplay(data[0], data[1], data[2]);
-            });
-        }
-
-        addCanvasColorPicker(originalCanvas);
-        addCanvasColorPicker(convertedCanvas);
-    </script>
-
-    <hr>
-
-    <h1>TI to RGB Converter</h1>
-    <label>
-        TI Color:
-        <input type="text" id="tiColorInput" placeholder="\000\000">
-    </label>
-    <div id="rgbOutput" style="margin-top: 1em; font-family: monospace;"></div>
-    <!-- swatch -->
-    <div id="colorSwatch" style="width: 50px; height: 50px; border: 1px solid #000; margin-top: 0.5em;"></div>
-
-    <script>
-        function tiColorToRGB(tiColor) {
-            const bytes = tiColor.match(/\\(\d{3})/g).map(b => parseInt(b.slice(1), 10));
-            if (bytes.length !== 2) return null;
-
-            const color16 = (bytes[1] << 8) | bytes[0];
-            const r5 = (color16 >> 10) & 0x1F;
-            const g5 = (color16 >> 5) & 0x1F;
-            const b5 = color16 & 0x1F;
-
-            const r = ((r5 + 1) * 8) - 1;
-            const g = ((g5 + 1) * 8) - 1;
-            const b = ((b5 + 1) * 8) - 1;
-
-            return {
-                r,
-                g,
-                b,
-                alpha: 1
-            };
-        }
-
-        document.getElementById("tiColorInput").addEventListener("input", function () {
-            const tiColor = this.value.trim();
-            const rgb = tiColorToRGB(tiColor);
-            if (rgb) {
-                document.getElementById("rgbOutput").textContent =
-                    `RGB: (${rgb.r}, ${rgb.g}, ${rgb.b}), Alpha: ${rgb.alpha}` +
-                    `\nHex: #${((rgb.r << 16) | (rgb.g << 8) | rgb.b).toString(16).padStart(6, '0').toUpperCase()}`;
-                document.getElementById("colorSwatch").style.backgroundColor =
-                    `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${rgb.alpha})`;
-            } else {
-                document.getElementById("rgbOutput").textContent = "Invalid TI Color format.";
-            }
-        });
-    </script>
-
-    <hr>
-
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
+    <script src="conversion.js"></script>
 </body>
 
 </html>
