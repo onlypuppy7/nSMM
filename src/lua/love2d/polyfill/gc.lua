@@ -57,7 +57,7 @@ function platform.gc:drawPolyLine(vertices)
 	local x, y, x2, y2 = vertices[1], vertices[2]
 	for i=3, #vertices, 2 do
 		x2, y2	= vertices[i], vertices[i+1]
-		self:drawLine(x, y, x2, y2)
+		drawLine(x, y, x2, y2)
 		x	= x2
 		y	= y2
 	end
@@ -92,11 +92,16 @@ function platform.gc:fillArc(x, y, w, h, startangle, angle)
 	self:drawArc(x, y, w, h, startangle, angle, "fill")
 end
 
-function platform.gc:drawLine(x1, y1, x2, y2)
+local function drawLine(x1, y1, x2, y2)
     -- x1 = math.ceil(x1)
     -- y1 = math.ceil(y1)
     -- x2 = math.ceil(x2)
     -- y2 = math.ceil(y2)
+
+    x1 = x1 + 1
+    x2 = x2 + 1
+    y1 = y1 + 1
+    y2 = y2 + 1
 
 	if __PC.penStyle == "smooth" then
 		-- love.graphics.line(math.round(x1), math.round(y1), math.round(x2), math.round(y2))
@@ -135,13 +140,26 @@ function platform.gc:drawLine(x1, y1, x2, y2)
 	end
 end
 
+function platform.gc:drawLine(x1, y1, x2, y2)
+    -- x1 = x1 + 1
+    -- x2 = x2 + 1
+    -- y1 = y1 + 1
+    -- y2 = y2 + 1
+    x1 = math.round(x1)
+    y1 = math.round(y1)
+    x2 = math.round(x2)
+    y2 = math.round(y2)
+
+    drawLine(x1, y1, x2, y2)
+end
+
 function platform.gc:drawRect(x, y, w, h)
 	local x2, y2 = x + w, y + h
-    local offset = 1
-	self:drawLine(x +1,     y +1,   x2,     y   ) -- top
-	self:drawLine(x2+1,     y,      x2,     y2  ) -- right
-	self:drawLine(x2+1,     y2+1,   x,      y2  ) -- bottom
-	self:drawLine(x +1,     y2,     x,      y   ) -- left
+    -- local offset = 1
+	drawLine(x -1,     y +0,   x2,     y   ) -- top
+	drawLine(x2+0,     y,      x2,     y2  ) -- right
+	drawLine(x2+0,     y2+0,   x,      y2  ) -- bottom
+	drawLine(x +0,     y2,     x,      y   ) -- left
 end
 
 
