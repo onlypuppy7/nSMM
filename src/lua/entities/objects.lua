@@ -265,6 +265,8 @@ objSwitch=class(objAPI)
         self.active=true
         self.despawnable=false self.interactSpring=false self.disableStarPoints=true
         self.GLOBAL=true --always drawn and logic applying, to reduce pop in
+
+        self.doMovements=true
     end
 
     function objSwitch:logic()
@@ -273,7 +275,9 @@ objSwitch=class(objAPI)
             local pW,mX,mY=16,math.floor(mario.x+mario.px),math.floor(mario.y-mario.py)
             if ((mX+2>=pX and mX+2<=pX+pW) or (mX+13>=pX and mX+13<=pX+pW)) and mY+16==pY and mario.vy==0 then --mario is on platform
                 self.active=false
-                playStage:setEvent(self.switchType.."switch", true)
+                local eventName=self.switchType.."switch"
+                local eventValue=self.switchType=="p" and {playStage.framesPassed, playStage.framesPassed+300} or true
+                playStage:setEvent(eventName, eventValue)
                 self.pressedAt=playStage.framesPassed+10 --despawn after 10 frames
             end
             

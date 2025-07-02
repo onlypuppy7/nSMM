@@ -95,15 +95,10 @@ function titleScreen:drawTerrain(gc) --rendered in rows from bottom to top w/ th
         local THEME=1
         for i=math.ceil(titleScreen.cameraOffsetY/16),math.ceil((screenHeight+titleScreen.cameraOffsetY)/16) do --bottom to top, vertically
             local blockID=plot2ID(i2,i)
-            if type(blockID)=='number' then --its a tile. this particular hacked together drawTerrain script cannot do anything else besides it.
-                if blockID<0 then blockID=0 end
-                if i<1 and blockIndex[blockID]["theme"][THEME]~=nil then
-                    local frameForAnim=(math.floor((titleScreen.framesPassedBlock/4)%#blockIndex[blockID]["theme"][THEME]))+1 --(support for animations)
-                    gc:drawImage(texs[blockIndex[blockID]["theme"][THEME][frameForAnim]], ((i2-1)*16)-titleScreen.cameraOffsetX, 212-16*(i)+titleScreen.cameraOffsetY)
-                elseif blockIndex[blockID]["texture"][1]~=nil then
-                    local frameForAnim=(math.floor((titleScreen.framesPassedBlock/4)%#blockIndex[blockID]["texture"]))+1 --(support for animations)
-                    gc:drawImage(texs[blockIndex[blockID]["texture"][frameForAnim]], ((i2-1)*16)-titleScreen.cameraOffsetX, 212-16*(i)+titleScreen.cameraOffsetY) end
-end end end end
+            drawTile(gc, blockID, i2, i, "titleScreen", i<1 and THEME or 0)
+        end
+    end
+end
 
 function titleScreen:drawBackground(gc)
     gc:setColorRGB(97,133,248)

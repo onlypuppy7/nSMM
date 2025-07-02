@@ -10,8 +10,12 @@ function editor:init(gc)
     1  , 4  , 5  , 6  , 7  , 8  , 9  ,
     109, 105, 107, 106, 12 , 13 , 14 ,
     110, 11 , 108, 111, 15 , 16 , 17 ,
-    150, nil, 60 , 61 , 62 , 18 , 29 ,
-    152, 153, nil, 63 , 99 , 19 , 28 }
+    152, 153, 60 , 61 , 62 , 18 , 29 ,
+    166, 167, nil, 63 , 99 , 19 , 28 ,
+    168, 170, 172, 174, nil, nil, nil,
+    169, 171, 173, 175, nil, nil, nil,
+    176, 178, 180, 182, nil, nil, nil,
+    177, 179, 181, 183, nil, nil, nil,}
     editor.groupIndex[2]={"MYSTERY BOXES", "MysteryBox0",
     nil, nil, nil, nil, nil, nil, nil,
     nil, nil, nil, nil,  nil, nil, nil,
@@ -70,9 +74,9 @@ function editor:init(gc)
     nil, nil, nil, nil, nil, nil, nil,
     nil, nil, nil, nil, nil, nil, nil}
     editor.groupIndex[11]={"GIZMOS", "spring_O_1",
-    154, 155, 156, nil, "spring_O", "spring_B", "spring_R",
-    157, 158, 159, nil, nil, nil, nil, 
-    160, 161, 162, nil, nil, "switch_p", nil,
+    154, 155, 156, 150, "spring_O", "spring_B", "spring_R",
+    157, 158, 159, "switch_plo", "switch_plg", "switch_plb", "switch_plr",
+    160, 161, 162, nil, nil, "switch_p", nil, 
     163, 164, 165, nil, nil, nil, nil,
     nil, nil, nil, nil, nil, nil, nil}
     editor.groupIndex[12]={"LEVEL CONFIG", "flag",
@@ -142,6 +146,10 @@ function editor:charIn(chr)
                 editor.minimised=not editor.minimised
             elseif chr=="s" then toolpaletteSelection("File","Save")
             elseif chr=="o" then toolpaletteSelection("File","Open")
+            elseif chr=="n" then toolpaletteSelection("File","Name")
+            elseif chr=="c" then toolpaletteSelection("File","Copy to Clipboard")
+            elseif chr=="l" then toolpaletteSelection("⇥Length","Current Length")
+            elseif chr=="t" then toolpaletteSelection("Time","Current Time Limit")
             elseif chr=="play" then
                 switchTimer(true)
                 playStage:generate(level2string(level.current),false,true)
@@ -353,83 +361,6 @@ function editor:selectID(ID) --false means clicking outside of group (usually ca
     end
 end
 
-function editor:drawTile(gc,blockID,x,y,THEME,ICON)
-    if type(blockID)=='number' then --its a tile
-        local block=blockIndex[blockID]
-
-        if blockID<0 then blockID=0 end
-        local drawBlock=blockID
-        if block["editor"] then
-            drawBlock=block["editor"]
-        end
-        if blockIndex[drawBlock]["theme"][THEME]~=nil then
-            gc:drawImage(texs[blockIndex[drawBlock]["theme"][THEME][1]],x,y)
-        elseif blockIndex[drawBlock]["texture"][1]~=nil then
-            gc:drawImage(texs[blockIndex[drawBlock]["texture"][1]],x,y)
-        end
-        local iconToDraw
-        -- local containing=block["containing"]
-        -- if containing and string.sub(containing,1,5)~="event" then
-        --     if string.sub(containing,1,9)=="multicoin" then containing="multicoin" end
-        --     iconToDraw="icon_"..containing
-        -- end
-
-        local icon=block.icon
-        local iconX=x
-        local iconY=y
-
-        if icon then
-            if type(icon)=="table" then
-                iconToDraw=icon[1]
-                iconX=icon[2] and iconX+icon[2] or iconX
-                iconY=icon[3] and iconY+icon[3] or iconY
-            elseif type(icon)=="string" then
-                iconToDraw=icon
-            end
-        end
-
-        if iconToDraw then
-            gc:drawImage(texs[iconToDraw],iconX,iconY) --texs.icon_star
-        end
-    elseif blockID~=nil then
-        local TYPE=objAPI:type2class(blockID)
-        if TYPE~=false then
-            if ICON then y=y-8 x=x+editor.cameraOffset end
-            obj=entityClasses[TYPE]
-            if ICON then gc:clipRect("set",x-editor.cameraOffset,y+8,16,16) end
-            obj:draw(gc,x-editor.cameraOffset,y+8,blockID,true,ICON) --(gc,x,y,TYPE,isEditor,isIcon)
-            gc:clipRect("reset")
-        elseif blockID=="mario" then
-            gc:drawImage(texs.icon_start,x+1,y-1)
-        elseif blockID=="scrollStopL" then
-            gc:drawImage(texs.icon_scrollStopL,x+2,y+2)
-        elseif blockID=="scrollStopR" then
-            gc:drawImage(texs.icon_scrollStopR,x+2,y+2)
-        elseif blockID=="viewpipe" then
-        elseif blockID=="scrollStopC" then
-            gc:drawImage(texs.icon_scrollStopC,x+2,y+3)
-        elseif string.sub(blockID,1,4)=="warp" then
-            local config=blockID:split("_")
-            local ID,action,option=config[2],config[3],config[4]
-            if action=="edit" or action=="6" then
-                gc:drawImage(texs.group_pipe,x,y)
-                if action=="edit" then drawFont2(gc,addZeros(ID,2),x+5,y+10,nil,false,true)
-                elseif action=="6" then gc:drawImage(texs.levelList_delete,x+4,y+4) end --bin icon
-            elseif action=="1" or action=="3" or action=="7" or action=="8" then
-                if     action=="1" or action=="7" then gc:drawImage(image.copy(texs.entrance_2,12,17),x,y-1) --pipe entrance icon
-                elseif action=="3" or action=="8" then gc:drawImage(image.copy(texs.exit_2,12,17),x,y-1) end --pipe exit icon
-                if action=="1" or action=="3" then  --change type icon(??)
-                elseif action=="7" or action=="8" then gc:drawImage(texs.viewpipe,x+6,y+10) end --view pipe icon
-            elseif action=="4" and option=="4" then
-                gc:drawImage(texs.icon_start,x+1,y-1)
-            elseif action=="2" or action=="4" then
-                gc:drawImage(texs["warp_"..option],x,y)
-            end
-        else --this is for themes (derp, exploited by ElNoob0)
-            gc:drawImage(texs[blockID],x,y)
-        end
-end end
-
 editor.pipeConfig={ --this is sort of randomly here. eh
     ["entrance"]={
         {-8,0,6,2}, --1: pipe facing left (text in top right)
@@ -471,13 +402,12 @@ function editor:drawTerrain(gc) --rendered in rows from bottom to top w/ the row
         for i=1,13 do --bottom to top, vertically (row 14 is reserved for hud/special events and is not drawn)
             local blockID=plot2ID(i2,i,true)
             if type(blockID)=='number' and blockID>=0 then --its a tile
-                editor:drawTile(gc,blockID,((i2-1)*16)-editor.cameraOffset, 212-16*(i)+8,THEME)
-                if i==13 and blockIndex[blockID]["ceiling"] then editor:drawTile(gc,level.current.showCeilingBlock and blockID or 99,((i2-1)*16)-editor.cameraOffset, 212-16*(i+1)+8,THEME) end --draw a barrier above the blocks to denote that mario cannot jump over it
+                drawTile(gc, blockID, i2, i, "editor")
             else --its an object
                 table.insert(objectList,{(i2-1)*16,212-16*(i),blockID}) --x,y,ID
     end end end
     for i=1,#objectList do
-        editor:drawTile(gc,objectList[i][3],objectList[i][1],objectList[i][2])
+        drawTile(gc,objectList[i][3],nil,nil,"editor",nil,{objectList[i][1],objectList[i][2]})
     end
     for i=1,#level.current.pipeData do
         editor:drawPipe(gc,i,level.current.pipeData[i][1][1],level.current.pipeData[i][1][2],"entrance",level.current.pipeData[i][1][3])
@@ -550,7 +480,7 @@ end
 
 function editor:statusBox(gc,logic)
     drawGUIBox(gc,298,-2,20,21)
-    editor:drawTile(gc,editor.selectedID,301,1,plot2theme(editor.highlightedTile[1],true),true)
+    drawTile(gc,editor.selectedID,nil,nil,"ICON",plot2theme(editor.highlightedTile[1],true),{301,1})
     if logic then
         editor.highlightedArea="status"
         local groupName="NOTHING SELECTED!"
@@ -566,7 +496,7 @@ function editor:tilebar(gc,logic)
     drawGUIBox(gc,27,-2,21,21)
     gc:drawImage(texs.group_setpipe,30,1)
     for i=1,11 do
-        gc:drawLine(57+(i*17),1,57+(i*17),16) --box dividers
+        gc:drawLine(57+(i*17),1-1,57+(i*17),16) --box dividers
     end
     for i=1,12 do
         if editor.tilebarTiles[i]~=nil then
@@ -706,14 +636,14 @@ function editor:handleGroup(gc,data)
     for i=0,4 do
         for i2=1,7 do
             local ID=data[((i+scroll)*7)+i2+2]
-            if ID then editor:drawTile(gc,ID,100+((i2-1)*17), 68+(i*17),99,true) end
+            if ID then drawTile(gc,ID,nil,nil,"ICON",false,{100+((i2-1)*17), 68+(i*17),99}) end
     end end
     gc:setColorRGB(108,108,108) --light grey inner box border
-    for i=1,6 do
-        gc:drawLine(99+(i*17),68,99+(i*17),151)
+    for i=1,6 do --vertical dividers
+        gc:drawLine(99+(i*17),68-1,99+(i*17),151+1)
     end
-    for i=1,4 do
-        gc:drawLine(100,67+(i*17),217,67+(i*17))
+    for i=1,4 do --horizontal
+        gc:drawLine(100-1,67+(i*17),217+1,67+(i*17))
     end timer2rainbow(gc,framesPassed+200,10)
     gc:setPen("thin","dashed")
     local pos=pixel2snapgrid(editor.mouseTile.x+2,editor.mouseTile.y-9,17,17,true)
@@ -913,7 +843,7 @@ function toolpaletteSelection(group,option) --has to be a global function, becau
         end
     elseif group=="⇥Length" then
         if string.sub(option,1,14)=="Current Length" then
-            gui:createPrompt("SET LEVEL LENGTH",{"TYPE THE VALUE TO SET","THE LEVEL LENGTH TO!"},4,"length",false)
+            gui:createPrompt("SET LEVEL LENGTH",{"TYPE THE VALUE TO SET","THE LEVEL LENGTH TO!","(CURRENT: "..tostring(level.current.END)..")"},4,"length",false)
         else
             level.current.END=level.current.END+tonumber(option)
             if level.current.END<=20 then level.current.END=20 end
@@ -921,7 +851,7 @@ function toolpaletteSelection(group,option) --has to be a global function, becau
         end
     elseif group=="Time" then
         if string.sub(option,1,18)=="Current Time Limit" then
-            gui:createPrompt("SET TIME LIMIT",{"TYPE THE VALUE TO SET","THE TIME LIMIT TO!"},3,"time",false)
+            gui:createPrompt("SET TIME LIMIT",{"TYPE THE VALUE TO SET","THE TIME LIMIT TO!","(CURRENT: "..tostring(level.current.TIME)..")"},3,"time",false)
         else
             level.current.TIME=level.current.TIME+tonumber(option)
             if level.current.TIME<=5 then level.current.TIME=5
@@ -932,14 +862,14 @@ function toolpaletteSelection(group,option) --has to be a global function, becau
             gui:createPrompt("ENTER COURSE NAME",{"TYPE BELOW TO SET A","NEW COURSE NAME TO BE","ASSOCIATED WITH YOUR","LEVEL AND PRESS ENTER.","ACCEPTED CHARACTERS:","A-Z 0-9 !?/-'().,"},19,"coursename",false) 
         elseif option=="New" then
             gui:createPrompt("CLEAR LEVEL",{"REALLY CLEAR?","UNSAVED LEVEL DATA WILL", "BE DELETED!"},{{"CONFIRM","create"},{"CANCEL","close"}},true,false)
-        elseif option=="Open" then gui:click("editor_open")
-        elseif option=="Save" then gui:click("editor_save")
-        elseif option=="Save As" then gui:click("editor_saveas")
-        elseif option=="Close File" then gui:click("editor_close")
-        elseif option=="Copy to Clipboard" then
+        elseif option:startsWith("Open") then gui:click("editor_open")
+        elseif option:startsWith("Save As") then gui:click("editor_saveas")
+        elseif option:startsWith("Save") then gui:click("editor_save")
+        elseif option:startsWith("Close File") then gui:click("editor_close")
+        elseif option:startsWith("Copy to Clipboard") then
             clipboard.addText(level2string(level.current))
             gui:createPrompt("DONE!",{"LEVEL COPIED","TO CLIPBOARD!"},{{"OK","close"}},nil,nil,false)
-        elseif option=="Load from Clipboard" then
+        elseif option:startsWith("Load from Clipboard") then
             local PASTE=clipboard.getText() or "err"
             if string.sub(PASTE,1,1)=="<" then --very crude for now
                 editor:generate(PASTE)
@@ -993,15 +923,15 @@ function editor:updateToolpalette(init)
 
     local menu = {
         {"File",
-            {"Name: "..string.upper(level.current.courseName), toolpaletteSelection},
+            {"Name: "..string.upper(level.current.courseName).." (N)", toolpaletteSelection},
             "-",
             {"New", toolpaletteSelection},
-            {"Open", toolpaletteSelection},
-            {"Save", toolpaletteSelection},
+            {"Open (O)", toolpaletteSelection},
+            {"Save (S)", toolpaletteSelection},
             {"Save As", toolpaletteSelection},
             {"Close File", toolpaletteSelection},
             "-",
-            {"Copy to Clipboard", toolpaletteSelection},
+            {"Copy to Clipboard (C)", toolpaletteSelection},
             {"Load from Clipboard", toolpaletteSelection},
             "-",
             {(editor.file and "File: Slot "..editor.file or "No File Open!"), toolpaletteSelection},
@@ -1036,7 +966,7 @@ function editor:updateToolpalette(init)
             {aMv[3].."Running Speed", toolpaletteSelection},
         },
         {"⇥Length",
-            {"Current Length: "..level.current.END, toolpaletteSelection},
+            {"Current Length: "..level.current.END.." (L)", toolpaletteSelection},
             "-",
             {"+5", toolpaletteSelection},
             {"+10", toolpaletteSelection},
@@ -1051,7 +981,7 @@ function editor:updateToolpalette(init)
             {"-200", toolpaletteSelection},
         },
         {"Time",
-            {"Current Time Limit: "..level.current.TIME, toolpaletteSelection},
+            {"Current Time Limit: "..level.current.TIME.." (T)", toolpaletteSelection},
             "-",
             {"+5", toolpaletteSelection},
             {"+10", toolpaletteSelection},

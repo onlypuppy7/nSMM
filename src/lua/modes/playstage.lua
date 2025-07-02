@@ -271,23 +271,27 @@ function playStage:drawTerrain(gc) --rendered in rows from bottom to top w/ the 
         for i=1,13 do --bottom to top, vertically (row 14 is reserved for hud/special events and is not drawn)
             local blockID=plot2ID(i2,i)
             if type(blockID)=='number' then --themed blocks
-                if blockID<0 then blockID=0 end
-                if blockIndex[blockID]["theme"][THEME]~=nil then
-                    local animSpeed=blockIndex[blockID]["animSpeed"] or 4 --default animation speed
-                    local frameForAnim=(math.floor((playStage.framesPassedBlock/animSpeed)%#blockIndex[blockID]["theme"][THEME]))+1 --(support for animations)
-                    gc:drawImage(texs[blockIndex[blockID]["theme"][THEME][frameForAnim]], ((i2-1)*16)-playStage.cameraOffset, 212-16*(i)+8)
-                    if i==13 and blockIndex[blockID]["ceiling"] and level.current.showCeilingBlock then gc:drawImage(texs[blockIndex[blockID]["theme"][THEME][frameForAnim]], ((i2-1)*16)-playStage.cameraOffset, 212-16*(i+1)+8) end --draw a block above the blocks to denote that mario cannot jump over it
-            elseif blockIndex[blockID]["texture"][1]~=nil then --it has an animation
-                    local animSpeed=blockIndex[blockID]["animSpeed"] or 4 --default animation speed
-                    local frameForAnim=(math.floor((playStage.framesPassedBlock/animSpeed)%#blockIndex[blockID]["texture"]))+1 --(support for animations)
-                    gc:drawImage(texs[blockIndex[blockID]["texture"][frameForAnim]], ((i2-1)*16)-playStage.cameraOffset, 212-16*(i)+8)
-                    if i==13 and blockIndex[blockID]["ceiling"] and level.current.showCeilingBlock then gc:drawImage(texs[blockIndex[blockID]["texture"][frameForAnim]], ((i2-1)*16)-playStage.cameraOffset, 212-16*(i+1)+8) end --draw a block above the blocks to denote that mario cannot jump over it
-                end --^^^ CAUTION so far no animated blocks are ceiling ones.. if they are then this will cease to work!
+                drawTile(gc, blockID, i2, i, "playStage", THEME)
+                -- if blockID<0 then blockID=0 end
+                -- if blockIndex[blockID]["theme"][THEME]~=nil then
+                --     local animSpeed=blockIndex[blockID]["animSpeed"] or 4 --default animation speed
+                --     local frameForAnim=(math.floor((playStage.framesPassedBlock/animSpeed)%#blockIndex[blockID]["theme"][THEME]))+1 --(support for animations)
+                --     gc:drawImage(texs[blockIndex[blockID]["theme"][THEME][frameForAnim]], ((i2-1)*16)-playStage.cameraOffset, 212-16*(i)+8)
+                --     if i==13 and blockIndex[blockID]["ceiling"] and level.current.showCeilingBlock then gc:drawImage(texs[blockIndex[blockID]["theme"][THEME][frameForAnim]], ((i2-1)*16)-playStage.cameraOffset, 212-16*(i+1)+8) end --draw a block above the blocks to denote that mario cannot jump over it
+                -- elseif blockIndex[blockID]["texture"][1]~=nil then --it has an animation
+                --     local animSpeed=blockIndex[blockID]["animSpeed"] or 4 --default animation speed
+                --     local frameForAnim=(math.floor((playStage.framesPassedBlock/animSpeed)%#blockIndex[blockID]["texture"]))+1 --(support for animations)
+                --     gc:drawImage(texs[blockIndex[blockID]["texture"][frameForAnim]], ((i2-1)*16)-playStage.cameraOffset, 212-16*(i)+8)
+                --     if i==13 and blockIndex[blockID]["ceiling"] and level.current.showCeilingBlock then gc:drawImage(texs[blockIndex[blockID]["texture"][frameForAnim]], ((i2-1)*16)-playStage.cameraOffset, 212-16*(i+1)+8) end --draw a block above the blocks to denote that mario cannot jump over it
+                -- end --^^^ CAUTION so far no animated blocks are ceiling ones.. if they are then this will cease to work!
             else --load the object
                 table.insert(level.current.loadedObjects,{blockID,i2,i}) --to load back if there's a pipe transition
                 plot2place(0,i2,i) --blank it out
                 objAPI:createObj(blockID,(i2-1)*16,212-16*(i),false)
-end end end end
+            end
+        end
+    end
+end
 
 function playStage:drawBackground(gc) --rendered in rows from bottom to top w/ the rows from left to right
     for i=math.ceil(playStage.cameraOffset/16),math.ceil((screenWidth+playStage.cameraOffset)/16) do --left to right, horizontally, only draw what is visible on screen
@@ -474,6 +478,43 @@ function playStage:paint(gc,runLogic) --all logic/drawing required to play the s
             else gc:drawImage(texs.button_create1,6,178)
             end gc:drawImage(texs.prompt_enter,28,203)
         end
+        if playStage.events.pswitch then
+            -- draw a countdown bar
+            local switchStart=playStage.events.pswitch[1]
+            local switchEnd=playStage.events.pswitch[2]
+            local switchLength=switchEnd-switchStart
+            local switchTime=playStage.framesPassed-switchStart
+            local switchPercent=switchTime/switchLength
+
+            if switchPercent>=1 then
+                playStage.events.pswitch=nil --omg logic in the paint function
+            else
+                local barWidth=100
+                local barHeight=4
+                local barY=48
+                local barX=screenWidth/2-barWidth/2
+                local fillWidth=barWidth - math.floor(barWidth * switchPercent)
+
+                if switchPercent < 0.75 or (math.ceil(playStage.framesPassed/(switchPercent > 0.9 and 3 or 6))%2 == 0) then
+                    -- if switchPercent > 0.9 then
+                    --     timer2rainbow(gc,playStage.framesPassed+150,20)
+                    -- else
+                        gc:setColorRGB(14, 28, 164) --dark blue
+                    -- end
+
+                    gc:drawRect(barX - 2, barY - 2, barWidth + 3, barHeight + 3)
+                end
+
+                -- if switchPercent < 0.9 then
+                    gc:setColorRGB(94, 94, 255) --light blue
+                -- end
+
+                gc:fillRect(barX, barY, fillWidth, barHeight)
+
+                -- drawFont(gc, "P", barX - 7, barY + (barHeight / 2) - 3, "centre")
+                drawFont(gc, "P", barX + barWidth / 2, barY - 8, "centre")
+            end
+        end
 
         gui:detectPos(0,8)
 
@@ -585,6 +626,6 @@ function playStage:drawCircleTransition(gc,centerX,centerY,frame,out) --out=fals
 end
 
 function playStage:setEvent(target, value)
-    -- print("playStage:setEvent",target,value,type(value))
+    print("playStage:setEvent",target,value,type(value))
     playStage.events[target]=value
 end

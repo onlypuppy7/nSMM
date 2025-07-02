@@ -6,7 +6,9 @@ objBumpedBlock=class(objAPI)
     function objBumpedBlock:create(blockX,blockY,TYPE,replaceWith) --sorta forgot why i made this specifically have its own create function
         local objectID="bumpedBlock"..#entityLists.outer+#entityLists.inner+1+framesPassed+math.random(1,99999) --assign random ID
         table.insert(entityLists.outer,tostring(objectID))
-        allEntities[objectID]=objBumpedBlock() allEntities[objectID].initObject=objAPI.initObject allEntities[objectID]:setup(objectID,blockX,blockY,TYPE,replaceWith)
+        allEntities[objectID]=objBumpedBlock()
+        allEntities[objectID].initObject=objAPI.initObject
+        allEntities[objectID]:setup(objectID,blockX,blockY,TYPE,replaceWith)
         self.GLOBAL=true
     end
 
@@ -14,7 +16,9 @@ objBumpedBlock=class(objAPI)
         local v,texture=plot2pixel(blockX,blockY),blockIndex[replaceWith]["texture"][1]
         if blockIndex[replaceWith]["theme"][plot2theme(blockX)]~=nil then texture=blockIndex[replaceWith]["theme"][plot2theme(blockX)][1] end
         self:initObject(objectID,texture,"outer",nil,{v[1],v[2]},true,0)
-        self.yA=self.y self.replaceWith={blockX,blockY,replaceWith} self.interactSpring=false
+        self.yA=self.y
+        self.replaceWith={blockX,blockY,ID2eventID(replaceWith)} --ID2eventID is mainly for the p-switch event. this single line probably wont work if you dont have two blocks that mirror each other
+        self.interactSpring=false
         self.animCount=0 self.despawnable=true plot2place(99,blockX,blockY) --barrier
         self.disableStarPoints=true
     end
@@ -39,7 +43,6 @@ objBumpedBlock=class(objAPI)
 -----BRICK PARTICLES------ OLD drawing format#################################################################
 --------------------------
 objBrickParticle=class(objAPI)
-
 
     function objBrickParticle:setup(objectID,posX,posY,TYPE,despawnable,thrustX,thrustY)
         self:initObject(objectID,TYPE,"particle",nil,{posX,posY},thrustX*0.4,math.abs(thrustY*8))

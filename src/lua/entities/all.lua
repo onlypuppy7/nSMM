@@ -98,6 +98,7 @@ nameIndex={ --this is mainly cope for not having an entity index like the block 
     ["spring_R"]       = "Spring (Big)",
     ["spring_B"]       = "Spring (Small)",
     ["bowser"]         = "Bowser",
+    ["switch_p"]         = "P-Switch",
 }
 
 require("entities.objapi")

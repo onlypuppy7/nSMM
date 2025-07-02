@@ -17,16 +17,32 @@ function key2plot(key)
     return {x, y}
 end
 
+function ID2eventID(ID)
+    local eventswitch=blockIndex[ID] and blockIndex[ID].eventswitch
+    if ID and blockIndex[ID] and eventswitch and eventswitch[1]~=false then
+        -- print(eventswitch[1], eventswitch[2], eventswitch[3], playStage.events[eventswitch[1]], playStage.events[eventswitch[1]] == eventswitch[2], type(playStage.events[eventswitch[1]]), type(eventswitch[2]), type(eventswitch[3]))
+        local condition = false
+
+        if eventswitch[2] == "true" then
+            condition = not not playStage.events[eventswitch[1]] --is truthy
+        elseif eventswitch[2] == "false" then
+            condition = not playStage.events[eventswitch[1]] --is falsy
+        else
+            condition = playStage.events[eventswitch[1]] == eventswitch[2]
+        end
+
+        if condition then
+            ID=eventswitch[3]
+        end
+    end
+
+    return ID
+end
+
 function plot2ID(searchX,searchY,EDITOR) --returns ID when given *CO-ORDINATES*
     local ID=level.current.get(searchX,searchY)
     if not EDITOR then
-        local eventswitch=blockIndex[ID] and blockIndex[ID].eventswitch
-        if ID and blockIndex[ID] and eventswitch and eventswitch[1]~=false then
-            -- print(eventswitch[1], eventswitch[2], eventswitch[3], playStage.events[eventswitch[1]], playStage.events[eventswitch[1]] == eventswitch[2], type(playStage.events[eventswitch[1]]), type(eventswitch[2]), type(eventswitch[3]))
-            if playStage.events[eventswitch[1]] == eventswitch[2] then
-                ID=eventswitch[3]
-            end
-        end
+        ID=ID2eventID(ID)
     end return ID or -1 --ID doesnt exist (likely out of bounds)
 end
 
@@ -94,16 +110,16 @@ function pixel2semisolid(NESW,x,y,Global)
 end
 
 function pixel2place(ID,x,y,Global)
-    local POS=pixel2plot(x,y,Global)
-    plot2place(ID,POS[1],POS[2])
+    local plot=pixel2plot(x,y,Global)
+    plot2place(ID,plot[1],plot[2])
 end
 
-function plot2place(ID,x,y)
-    level.current.set(x,y,ID)
+function plot2place(ID,plotX,plotY)
+    level.current.set(plotX,plotY,ID)
 end
 
-function plot2theme(x,EDITOR)
-    return level.current.t[x]
+function plot2theme(plotX,EDITOR)
+    return level.current.t[plotX]
 end
 
 function pixel2theme(x,Global)
@@ -136,4 +152,156 @@ function pixel2snapgrid(x,y,w,h,SELECTOR) --editor only(?)
     if SELECTOR==nil then SELECTOR=false end
     v=grid2pixel(v[1],v[2],w,h,not SELECTOR)
     return {v[1],v[2]}
+end
+
+function ID2block(ID)
+    if blockIndex[ID] then
+        return blockIndex[ID]
+    else
+        return nil
+    end
+end
+
+function drawTile(gc, blockID, plotX, plotY, mode, THEME, position)
+    local EDITOR=mode=="editor" or mode=="ICON"
+    local ICON=mode=="ICON"
+
+    if type(blockID)=="number" then
+        THEME=THEME==nil and plot2theme(plotX) or THEME
+
+        if blockID<0 then blockID=0 end
+        local block=ID2block(blockID)
+        local blockToDraw=block
+
+        if EDITOR and block.editor then
+            blockToDraw=ID2block(block.editor)
+        end
+
+        local animSpeed=blockToDraw["animSpeed"] or 4 --default animation speed
+        local texture=blockToDraw.theme[THEME]~=nil and blockToDraw.theme[THEME] or blockToDraw.texture
+
+        local textureData
+        local oX,oY=0,(mode=="titleScreen" and -8) or 0
+
+        if type(texture)=="string" then
+            textureData=texs[texture]
+        else
+            local framesPassed_=(mode=="playStage" and playStage.framesPassedBlock) or (mode=="titleScreen" and titleScreen.framesPassedBlock) or 0
+            local frameForAnim=(EDITOR and 1) or (math.floor((framesPassed_/animSpeed)%#texture))+1 --(support for animations)
+
+            local frameData=texture[frameForAnim]
+
+            if type(frameData)=="table" then
+                oX=oX+(frameData[2] or 0)
+                oY=oY+(frameData[3] or 0)
+                frameData=frameData[1]
+            end
+
+            textureData=texs[frameData]
+        end
+
+        if not textureData then return end
+
+        local offsetX=(mode=="playStage" and playStage.cameraOffset) or (EDITOR and editor.cameraOffset) or (titleScreen.cameraOffsetX)
+        local offsetY=(mode=="titleScreen" and titleScreen.cameraOffsetY) or 0
+
+        local xPos
+        local yPos
+
+        if position then
+            xPos=position[1]+oX
+            yPos=position[2]+oY
+        else
+            xPos=((plotX-1)*16)-offsetX+oX
+            yPos=212-16*(plotY)+8+offsetY+oY
+        end
+
+        gc:drawImage(textureData, xPos, yPos)
+
+        if plotY==13 and block.ceiling and mode~="titleScreen" then
+            if level.current.showCeilingBlock then
+                gc:drawImage(textureData, xPos, yPos-16)
+            elseif EDITOR then
+                gc:drawImage(texs.Barrier, xPos, yPos-16)
+            end
+        end
+
+        if EDITOR then
+            local iconToDraw
+
+            local icon=block.icon
+            local iconX=xPos
+            local iconY=yPos
+
+            if icon then
+                if type(icon)=="table" then
+                    iconToDraw=icon[1]
+                    iconX=icon[2] and iconX+icon[2] or iconX
+                    iconY=icon[3] and iconY+icon[3] or iconY
+                elseif type(icon)=="string" then
+                    iconToDraw=icon
+                end
+            end
+
+            if iconToDraw then
+                gc:drawImage(texs[iconToDraw],iconX,iconY) --texs.icon_star
+            end
+        end
+    elseif EDITOR then
+        local TYPE=objAPI:type2class(blockID)
+
+        -- print(gc, blockID, plotX, plotY, mode, THEME, position)
+
+        local x,y=position[1],position[2]
+
+        if TYPE~=false then
+            if ICON then y=y-8 x=x+editor.cameraOffset end
+            obj=entityClasses[TYPE]
+            if ICON then gc:clipRect("set",x-editor.cameraOffset,y+8,16,16) end
+            obj:draw(gc,x-editor.cameraOffset,y+8,blockID,true,ICON) --(gc,x,y,TYPE,isEditor,isIcon)
+            gc:clipRect("reset")
+        elseif blockID=="mario" then
+            gc:drawImage(texs.icon_start,x+1,y-1)
+        elseif blockID=="scrollStopL" then
+            gc:drawImage(texs.icon_scrollStopL,x+2,y+2)
+        elseif blockID=="scrollStopR" then
+            gc:drawImage(texs.icon_scrollStopR,x+2,y+2)
+        elseif blockID=="viewpipe" then
+        elseif blockID=="scrollStopC" then
+            gc:drawImage(texs.icon_scrollStopC,x+2,y+3)
+        elseif string.sub(blockID,1,4)=="warp" then
+            local config=blockID:split("_")
+            local ID,action,option=config[2],config[3],config[4]
+            if action=="edit" or action=="6" then
+                gc:drawImage(texs.group_pipe,x,y)
+                if action=="edit" then drawFont2(gc,addZeros(ID,2),x+5,y+10,nil,false,true)
+                elseif action=="6" then gc:drawImage(texs.levelList_delete,x+4,y+4) end --bin icon
+            elseif action=="1" or action=="3" or action=="7" or action=="8" then
+                if     action=="1" or action=="7" then gc:drawImage(image.copy(texs.entrance_2,12,17),x,y-1) --pipe entrance icon
+                elseif action=="3" or action=="8" then gc:drawImage(image.copy(texs.exit_2,12,17),x,y-1) end --pipe exit icon
+                if action=="1" or action=="3" then  --change type icon(??)
+                elseif action=="7" or action=="8" then gc:drawImage(texs.viewpipe,x+6,y+10) end --view pipe icon
+            elseif action=="4" and option=="4" then
+                gc:drawImage(texs.icon_start,x+1,y-1)
+            elseif action=="2" or action=="4" then
+                gc:drawImage(texs["warp_"..option],x,y)
+            end
+        else --this is for themes (derp, exploited by ElNoob0)
+            gc:drawImage(texs[blockID],x,y)
+        end
+    end
+
+
+
+    --     if i==13 and blockIndex[blockID]["ceiling"] and level.current.showCeilingBlock then
+    --         gc:drawImage(texs[blockIndex[blockID]["theme"][THEME][frameForAnim]], ((i2-1)*16)-playStage.cameraOffset, 212-16*(i+1)+8)
+    --     end --draw a block above the blocks to denote that mario cannot jump over it
+    -- elseif blockIndex[blockID]["texture"][1]~=nil then --it has an animation
+    --     local animSpeed=blockIndex[blockID]["animSpeed"] or 4 --default animation speed
+    --     local frameForAnim=(math.floor((playStage.framesPassedBlock/animSpeed)%#blockIndex[blockID]["texture"]))+1 --(support for animations)
+    --     gc:drawImage(texs[blockIndex[blockID]["texture"][frameForAnim]], ((i2-1)*16)-playStage.cameraOffset, 212-16*(i)+8)
+    --     if i==13 and blockIndex[blockID]["ceiling"] and level.current.showCeilingBlock then
+    --         gc:drawImage(texs[blockIndex[blockID]["texture"][frameForAnim]], ((i2-1)*16)-playStage.cameraOffset, 212-16*(i+1)+8)
+    --     end --draw a block above the blocks to denote that mario cannot jump over it
+    -- end --^^^ CAUTION so far no animated blocks are ceiling ones.. if they are then this will cease to work!
 end

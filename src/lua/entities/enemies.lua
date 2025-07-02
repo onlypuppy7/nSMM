@@ -187,7 +187,7 @@ objKoopa=class(objAPI)
     end
 
     function objKoopa:logic() --handle both movement and animation
-        -- self:checkStuckInWall()
+        self:checkStuckInWall()
         self.doMovements=false
         if not self.dead then
     --ANIMATION, MARIO COLLISION, X AXIS, Y AXIS + PLATFORMS
@@ -239,6 +239,7 @@ objKoopaPara=class(objAPI)
     end end end
 
     function objKoopaPara:logic() --handle both movement and animation
+        self:checkStuckInWall()
         self.doMovements=false
         if not self.dead then
     --ANIMATION, MARIO COLLISION, X AXIS, Y AXIS + PLATFORMS
