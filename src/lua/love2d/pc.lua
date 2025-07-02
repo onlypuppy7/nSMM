@@ -27,6 +27,7 @@ __PC.loop = function()
 		platform.window.invalidated	= false
 		platform.window.invaliddata	= 0
 	
+        __PC.ToolPalette:paint(platform.gc)
 	    -- love.graphics.present()
 	end
 

@@ -299,6 +299,9 @@
             }
 
             function sendToLoveBase32(text) {
+                //limit length cause this method is very slow
+                text = text.slice(0, 20000);
+
                 const encoded = base32Encode(text);
                 const target = document.getElementById("canvas");
 
@@ -317,8 +320,10 @@
                 fire("~"); // end
             }
 
-            sendToLoveBase32(clipboardText);
-            console.log('Clipboard text sent to Lua:', clipboardText);
+            if (clipboardText.startsWith("<")) { //level codes only
+                sendToLoveBase32(clipboardText);
+                console.log('Clipboard text sent to Lua:', clipboardText);
+            };
         }
     }).catch(err => {
       //console.warn('Could not read clipboard text:', err);

@@ -257,23 +257,22 @@ objMultiCoinBlock=class(objAPI)
 objSwitch=class(objAPI)
 
     function objSwitch:setup(objectID,posX,posY,TYPE,despawnable,arg1,arg2)  --platform_length~vel~MODE~distance eg, platform_3~2~lx~64
-        local config=(string.sub(TYPE,#("switch_")+1,#TYPE)):split("~")
+        self:apply(self:getOptions(TYPE)) --get options
 
-        self:apply(self:getOptions(config)) --get options
-
-        self:initObject(objectID,config[3],"outer",nil,{posX,posY},0,0)
+        self:initObject(objectID,TYPE,"outer",nil,{posX,posY},0,0)
         self.active=true
-        self.despawnable=false self.interactSpring=false self.disableStarPoints=true
+        self.despawnable=false self.interactSpring=true self.disableStarPoints=true
         self.GLOBAL=true --always drawn and logic applying, to reduce pop in
 
         self.doMovements=true
     end
 
-    function objSwitch:getOptions(config)
+    function objSwitch:getOptions(TYPE)
+        local config=TYPE:split("_")
         local configToSendBack={}
-        configToSendBack.switchType=config[1]
+        configToSendBack.switchType=config[2]
 
-        local options=config[2] or ""
+        local options=config[3] or ""
         configToSendBack.infinite=options:includes("i")
 
         return configToSendBack
@@ -288,14 +287,18 @@ objSwitch=class(objAPI)
                 local eventName=self.switchType.."switch"
                 local eventValue=self.switchType=="p" and {playStage.framesPassed, playStage.framesPassed+300} or true
                 playStage:setEvent(eventName, eventValue)
-                self.pressedAt=playStage.framesPassed+10 --despawn after 10 frames
+                self.pressedAt=playStage.framesPassed+10 --despawn after 10 frames, if wanted
             end
             
             self:addPlatform(self.x,self.y,16,self.vx,self.vy) --update the platform
         end
 
         if not self.active and (playStage.framesPassed-self.pressedAt)>0 then
-            self:destroy(self.objectID,self.LEVEL)
+            if not self.infinite then
+                self:destroy(self.objectID,self.LEVEL)
+            elseif playStage:evaluateEventCondition({self.switchType.."switch","false",nil}) then
+                self.active=true
+            end
         end
     end
 
@@ -307,8 +310,9 @@ objSwitch=class(objAPI)
                 gc:drawImage(texs["pressed_"..self.switchType.."switch"],x,y+10)
             end
         else
-            local config=(string.sub(TYPE,#("switch_")+1,#TYPE)):split("~")
-            local switchType=config[1]
-            gc:drawImage(texs["active_"..switchType.."switch_0"],x,y)
+            local options=self:getOptions(TYPE)
+            gc:drawImage(texs["active_"..options.switchType.."switch_0"],x,y)
+
+            if options.infinite then gc:drawImage(texs.icon_ly,x,y) end
         end
     end

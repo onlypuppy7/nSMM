@@ -34,6 +34,22 @@ platform.gc.font	=	{"", "r", 1, 12}
 
 function platform.gc:setFont(family, style, size)
 	self.font	= {family, style, size/12, size}
+
+    local allowedSizes = {7, 9, 10, 11, 12, 24}
+
+    local closestSize = allowedSizes[1]
+    local minDiff = math.abs(size - closestSize)
+
+    for i = 2, #allowedSizes do
+        local diff = math.abs(size - allowedSizes[i])
+        if diff < minDiff then
+            minDiff = diff
+            closestSize = allowedSizes[i]
+        end
+    end
+
+    self.font = {family, style, closestSize / 12, closestSize}
+
 	fonts.setFont(size, style)
 end
 
@@ -196,7 +212,8 @@ function platform.gc:setColorRGB(r, g, b)
 end
 
 function platform.gc:getStringWidth(str)
-	return 0.6*self.font[4]*#tostring(str)
+    --this isnt rlly accurate
+	return 0.56*self.font[4]*#tostring(str)
 end
 
 function platform.gc:getStringHeight(str)
@@ -211,6 +228,8 @@ function platform.gc:drawImage(img, x, y)
     -- if img.r ~= 0 then print("image r", img.r) end
 
     love.graphics.setColor(1, 1, 1, 1) -- white (no tint)
+
+    if not img then return print("ALERT! img is a nil value!", img, x, y) end
 
     local w = img:width()
     local h = img:height()

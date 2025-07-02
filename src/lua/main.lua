@@ -5,3 +5,5 @@ __PC.scale = 2
 require("nsmm")
 
 require("courseworld.courses")
+
+local gc=platform.gc

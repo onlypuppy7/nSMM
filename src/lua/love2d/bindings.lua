@@ -98,18 +98,22 @@ function love.keypressed(key, scancode, isrepeat)
         if BASE32_ALPHABET[key] then
             base32_buffer = base32_buffer .. key
         end
-    else 
+    elseif not __PC.ToolPalette:bindings("keypressed", key, scancode, isrepeat) then
         __PC.onEvents.keypressed(key, scancode, isrepeat)
     end
 end
 
 
 function love.keyreleased(key, scancode, isrepeat)
-    __PC.onEvents.keyreleased(key, scancode, isrepeat)
+    if not __PC.ToolPalette:bindings("keyreleased", key, scancode, isrepeat) then
+        __PC.onEvents.keyreleased(key, scancode, isrepeat)
+    end
 end
 
 function love.mousepressed(x, y, button)
-    __PC.onEvents.mousepressed(x / __PC.scale, y / __PC.scale, button)
+    if not __PC.ToolPalette:bindings("mousepressed", x / __PC.scale, y / __PC.scale, button) then
+        __PC.onEvents.mousepressed(x / __PC.scale, y / __PC.scale, button)
+    end
 end
 
 function love.focus(f)
@@ -117,11 +121,15 @@ function love.focus(f)
 end
 
 function love.mousereleased(x, y, button)
-    __PC.onEvents.mousereleased(x / __PC.scale, y / __PC.scale, button)
+    if not __PC.ToolPalette:bindings("mousereleased", x / __PC.scale, y / __PC.scale, button) then
+        __PC.onEvents.mousereleased(x / __PC.scale, y / __PC.scale, button)
+    end
 end
 
 function love.mousemoved(x, y, dx, dy, istouch)
-    __PC.onEvents.mousemoved(x / __PC.scale, y / __PC.scale, dx / __PC.scale, dy / __PC.scale, istouch)
+    if not __PC.ToolPalette:bindings("mousemoved", x / __PC.scale, y / __PC.scale, dx / __PC.scale, dy / __PC.scale, istouch) then
+        __PC.onEvents.mousemoved(x / __PC.scale, y / __PC.scale, dx / __PC.scale, dy / __PC.scale, istouch)
+    end
 end
 
 function love.quit()

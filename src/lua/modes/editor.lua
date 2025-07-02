@@ -75,7 +75,7 @@ function editor:init(gc)
     nil, nil, nil, nil, nil, nil, nil}
     editor.groupIndex[11]={"GIZMOS", "spring_O_1",
     154, 155, 156, 150, "spring_O", "spring_B", "spring_R",
-    157, 158, 159, 184, nil, "switch_p", nil, 
+    157, 158, 159, 184, nil, "switch_p", "switch_p_i", 
     160, 161, 162, "switch_plo", "switch_plg", "switch_plb", "switch_plr",
     163, 164, 165, "switch_plo_i", "switch_plg_i", "switch_plb_i", "switch_plr_i",
     nil, nil, nil, nil, nil, nil, nil}
