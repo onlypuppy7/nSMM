@@ -259,7 +259,7 @@ objSwitch=class(objAPI)
     function objSwitch:setup(objectID,posX,posY,TYPE,despawnable,arg1,arg2)  --platform_length~vel~MODE~distance eg, platform_3~2~lx~64
         local config=(string.sub(TYPE,#("switch_")+1,#TYPE)):split("~")
 
-        self.switchType=config[1]
+        self:apply(self:getOptions(config)) --get options
 
         self:initObject(objectID,config[3],"outer",nil,{posX,posY},0,0)
         self.active=true
@@ -267,6 +267,16 @@ objSwitch=class(objAPI)
         self.GLOBAL=true --always drawn and logic applying, to reduce pop in
 
         self.doMovements=true
+    end
+
+    function objSwitch:getOptions(config)
+        local configToSendBack={}
+        configToSendBack.switchType=config[1]
+
+        local options=config[2] or ""
+        configToSendBack.infinite=options:includes("i")
+
+        return configToSendBack
     end
 
     function objSwitch:logic()

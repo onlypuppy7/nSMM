@@ -455,3 +455,7 @@ addBlock(182,"Blue Palace Block (Item, On)",true,{"PLB_Block_Active"})
 addBlock(183,"Blue Palace Block (Item, Off)",false,{{"PLB_Block_Inactive",1,1}})
     addBlock:attribute("eventswitch",{"plbswitch",true,182})
     addBlock:attribute("icon","icon_mushroom1up")
+
+addBlock(184,"Switch Clearer Block",true,{"ClearSwitchBlock"})
+    addBlock:attribute("bumpable",{true,"ClearSwitchBlock",184})
+    addBlock:attribute("containing",{type="switchclear",target=nil,value=nil})

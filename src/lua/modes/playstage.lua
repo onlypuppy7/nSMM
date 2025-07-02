@@ -629,3 +629,17 @@ function playStage:setEvent(target, value)
     print("playStage:setEvent",target,value,type(value))
     playStage.events[target]=value
 end
+
+function playStage:evaluateEventCondition(eventswitch)
+    local condition = false
+
+    if eventswitch[2] == "true" then
+        condition = not not playStage.events[eventswitch[1]] --is truthy
+    elseif eventswitch[2] == "false" then
+        condition = not playStage.events[eventswitch[1]] --is falsy
+    else
+        condition = playStage.events[eventswitch[1]] == eventswitch[2]
+    end
+
+    return condition
+end

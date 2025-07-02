@@ -116,6 +116,16 @@ function extendStandard()
         end return t1
     end
 
+    function table.apply(t1, t2)
+        for k, v in pairs(t2) do
+            if type(v) == "table" and type(t1[k] or false) == "table" then
+                table.apply(t1[k], v)
+            else
+                t1[k] = v
+            end
+        end
+    end
+
     function table.checkForValue(table, checkFor) --arg1: table of booleans arg2: boolean to look for. returns true if all are the same as checkFor
         for _, v in pairs(table) do
             if checkFor then if not v then return false end

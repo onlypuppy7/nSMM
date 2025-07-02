@@ -464,6 +464,12 @@ function objAPI:handleBumpedBlock(xLOC,yLOC,shell)
         elseif type(containing)=="table" then
             if containing.type=="event" then
                 playStage:setEvent(containing.target,containing.value) --set event
+            elseif containing.type=="switchclear" then
+                playStage:setEvent("ploswitch",false)
+                playStage:setEvent("plgswitch",false)
+                playStage:setEvent("plrswitch",false)
+                playStage:setEvent("plbswitch",false)
+                playStage:setEvent("pswitch",false)
             end
         end
     end
@@ -550,4 +556,8 @@ function objAPI:performLogic() --perform logic for the object, to be overridden 
         if self.vy<=0 then self:gravityCheck(-self.vy)      else self:bumpCheck(-self.vy) end
         self:setNewPushV() self:checkFor()
     end
+end
+
+function objAPI:apply(t1)
+    table.apply(self,t1)
 end

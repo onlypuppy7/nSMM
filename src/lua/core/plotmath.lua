@@ -20,18 +20,7 @@ end
 function ID2eventID(ID)
     local eventswitch=blockIndex[ID] and blockIndex[ID].eventswitch
     if ID and blockIndex[ID] and eventswitch and eventswitch[1]~=false then
-        -- print(eventswitch[1], eventswitch[2], eventswitch[3], playStage.events[eventswitch[1]], playStage.events[eventswitch[1]] == eventswitch[2], type(playStage.events[eventswitch[1]]), type(eventswitch[2]), type(eventswitch[3]))
-        local condition = false
-
-        if eventswitch[2] == "true" then
-            condition = not not playStage.events[eventswitch[1]] --is truthy
-        elseif eventswitch[2] == "false" then
-            condition = not playStage.events[eventswitch[1]] --is falsy
-        else
-            condition = playStage.events[eventswitch[1]] == eventswitch[2]
-        end
-
-        if condition then
+        if playStage:evaluateEventCondition(eventswitch) then
             ID=eventswitch[3]
         end
     end
