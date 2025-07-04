@@ -1,3 +1,5 @@
+local console = require("love2d.console.console")
+
 local nativeWidth, nativeHeight = 318, 212
 __PC.scale = 3
 
@@ -36,10 +38,13 @@ function love.draw()
         
     love.graphics.setColor(1, 1, 1)
     love.graphics.draw(gameCanvas, 0, 0, 0, __PC.scale, __PC.scale)
+
+    console.draw()
 end
 
 function love.textinput(text)
-    __PC.onEvents.textinput(text)
+    if not console.isEnabled() then __PC.onEvents.textinput(text) end
+    console.textinput(text)
 end
 
 local receiving = false
@@ -98,20 +103,21 @@ function love.keypressed(key, scancode, isrepeat)
         if BASE32_ALPHABET[key] then
             base32_buffer = base32_buffer .. key
         end
-    elseif not __PC.ToolPalette:bindings("keypressed", key, scancode, isrepeat) then
+    elseif not console.isEnabled() and not __PC.ToolPalette:bindings("keypressed", key, scancode, isrepeat) then
         __PC.onEvents.keypressed(key, scancode, isrepeat)
     end
+    console.keypressed(key, scancode, isrepeat)
 end
 
 
 function love.keyreleased(key, scancode, isrepeat)
-    if not __PC.ToolPalette:bindings("keyreleased", key, scancode, isrepeat) then
+    if not console.isEnabled() and not __PC.ToolPalette:bindings("keyreleased", key, scancode, isrepeat) then
         __PC.onEvents.keyreleased(key, scancode, isrepeat)
     end
 end
 
 function love.mousepressed(x, y, button)
-    if not __PC.ToolPalette:bindings("mousepressed", x / __PC.scale, y / __PC.scale, button) then
+    if not console.isEnabled() and not __PC.ToolPalette:bindings("mousepressed", x / __PC.scale, y / __PC.scale, button) then
         __PC.onEvents.mousepressed(x / __PC.scale, y / __PC.scale, button)
     end
 end
@@ -121,13 +127,13 @@ function love.focus(f)
 end
 
 function love.mousereleased(x, y, button)
-    if not __PC.ToolPalette:bindings("mousereleased", x / __PC.scale, y / __PC.scale, button) then
+    if not console.isEnabled() and not __PC.ToolPalette:bindings("mousereleased", x / __PC.scale, y / __PC.scale, button) then
         __PC.onEvents.mousereleased(x / __PC.scale, y / __PC.scale, button)
     end
 end
 
 function love.mousemoved(x, y, dx, dy, istouch)
-    if not __PC.ToolPalette:bindings("mousemoved", x / __PC.scale, y / __PC.scale, dx / __PC.scale, dy / __PC.scale, istouch) then
+    if not console.isEnabled() and not __PC.ToolPalette:bindings("mousemoved", x / __PC.scale, y / __PC.scale, dx / __PC.scale, dy / __PC.scale, istouch) then
         __PC.onEvents.mousemoved(x / __PC.scale, y / __PC.scale, dx / __PC.scale, dy / __PC.scale, istouch)
     end
 end
