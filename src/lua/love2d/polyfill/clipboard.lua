@@ -3,7 +3,7 @@
 
 -- https://love2d.org/wiki/love.system.getClipboardText
 
-local clipboardText = ""
+local clipboardText = nil
 
 clipboard = {
     addText = function(text)
