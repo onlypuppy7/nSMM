@@ -1,6 +1,7 @@
 local console = require("love2d.console.console")
 
-local nativeWidth, nativeHeight = 318, 212
+__PC.nativeWidth = 256--318
+__PC.nativeHeight = 192--212
 __PC.scale = 3
 
 function love.load()
@@ -10,8 +11,8 @@ function love.load()
     love.window.setIcon(iconData)
 
     __PC.onEvents.load()
-    love.window.setMode(nativeWidth * __PC.scale, nativeHeight * __PC.scale)
-    gameCanvas = love.graphics.newCanvas(nativeWidth, nativeHeight)
+    love.window.setMode(__PC.nativeWidth * __PC.scale, __PC.nativeHeight * __PC.scale)
+    gameCanvas = love.graphics.newCanvas(__PC.nativeWidth, __PC.nativeHeight)
 end
 
 local targetFPS = 30

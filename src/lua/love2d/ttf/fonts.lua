@@ -1,21 +1,26 @@
 fonts	= {}
-fonts.l	= "love2d/ttf/TINSSaRG.TTF"
+fonts.r	= "love2d/ttf/TINSSaRG.TTF"
 fonts.b	= "love2d/ttf/TINSSaBD.TTF"
 fonts.i	= "love2d/ttf/TINSSaIT.TTF"
 
 local nf	= love.graphics.newFont
 
-fonts["r"]	= {nf(fonts.l, 8), nf(fonts.l, 10), nf(fonts.l, 12), nf(fonts.l, 18)}
-fonts["b"]	= {nf(fonts.b, 8), nf(fonts.b, 10), nf(fonts.b, 12), nf(fonts.b, 18)}
-fonts["i"]	= {nf(fonts.i, 8), nf(fonts.i, 10), nf(fonts.i, 12), nf(fonts.i, 18)}
+function fonts.setFont(size, style)
+	style	= (style and fonts[style] and style) or "r"
+	size	= tonumber(size)
 
-function fonts.setFont(s, style)
-	style	= style or "r"
-	s	= tonumber(s)
-	if     s<=8  then s=1
-	elseif s<=10 then s=2
-	elseif s<=12 then s=3
-	else   s=4   end
+	local allowedSizes = {7, 9, 10, 11, 12, 16, 24} --i think 16 technically isnt allowed in lua. oh well.
 
-	love.graphics.setFont(fonts[style][s])
+    local closestSize = allowedSizes[1]
+    local minDiff = math.abs(size - closestSize)
+
+    for i = 2, #allowedSizes do
+        local diff = math.abs(size - allowedSizes[i])
+        if diff < minDiff then
+            minDiff = diff
+            closestSize = allowedSizes[i]
+        end
+    end
+
+	love.graphics.setFont(nf(fonts[style], closestSize))
 end

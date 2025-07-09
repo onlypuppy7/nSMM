@@ -6,4 +6,4 @@ require("nsmm")
 
 require("courseworld.courses")
 
-local gc=platform.gc
+gc=platform.gc

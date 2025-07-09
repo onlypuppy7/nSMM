@@ -33,28 +33,11 @@ platform.gc.offsets["baseline"]	= function () return -platform.gc.font[4]+4 end
 platform.gc.font	=	{"", "r", 1, 12}
 
 function platform.gc:setFont(family, style, size)
-	self.font	= {family, style, size/12, size}
-
-    local allowedSizes = {7, 9, 10, 11, 12, 24}
-
-    local closestSize = allowedSizes[1]
-    local minDiff = math.abs(size - closestSize)
-
-    for i = 2, #allowedSizes do
-        local diff = math.abs(size - allowedSizes[i])
-        if diff < minDiff then
-            minDiff = diff
-            closestSize = allowedSizes[i]
-        end
-    end
-
-    self.font = {family, style, closestSize / 12, closestSize}
-
 	fonts.setFont(size, style)
 end
 
 function platform.gc:drawString(str, x, y, pos)
-	love.graphics.print(str, x, y + (self.offsets[pos] or self.offsets["bottom"])() )--, 0, self.font[3], self.font[3])
+	love.graphics.print(str, x, y + (self.offsets[pos] or self.offsets["bottom"])() )
 end
 
 function platform.gc:fillRect(x, y, w, h)
@@ -207,17 +190,18 @@ function platform.gc:setPen(thickness, style)
     __PC.penStyle = style or "smooth"
 end
 
-function platform.gc:setColorRGB(r, g, b)
-	love.graphics.setColor(r / 255, g / 255, b / 255, 1)	
+function platform.gc:setColorRGB(r, g, b, a)
+	love.graphics.setColor(r / 255, g / 255, b / 255, a and a/255 or 1)	
 end
 
 function platform.gc:getStringWidth(str)
-    --this isnt rlly accurate
-	return 0.56*self.font[4]*#tostring(str)
+    local font = love.graphics.getFont()
+    return font:getWidth(str)
 end
 
 function platform.gc:getStringHeight(str)
-	return self.font[4]+5
+    local font = love.graphics.getFont()
+    return font:getHeight()
 end
 
 function platform.gc:setAlpha() end
@@ -234,7 +218,18 @@ function platform.gc:drawImage(img, x, y)
     local w = img:width()
     local h = img:height()
 
-    love.graphics.draw(img.framebuffer, (x + (img.sx * w) / 2), (y + (img.sy * h) / 2), (img.r) * math.pi / 180, img.sx, img.sy, img.w / 2, img.h / 2)
+    local originX=(x + (img.sx * w) / 2)
+    local originY=(y + (img.sy * h) / 2)
+
+    local rotation=(img.r) * math.pi / 180
+
+    local scaleX=(img.sx)
+    local scaleY=(img.sy)
+
+    local offsetX=(img.w / 2)
+    local offsetY=(img.h / 2)
+
+    love.graphics.draw(img.framebuffer, originX, originY, rotation, scaleX, scaleY, offsetX, offsetY)
     -- love.graphics.draw(img.framebuffer, math.floor(x + (img.sx * w) / 2), math.floor(y + (img.sy * h) / 2), (img.r) * math.pi / 180, img.sx, img.sy, img.w / 2, img.h / 2)
     -- love.graphics.draw(img.framebuffer, x, y, (img.r) * math.pi / 180, img.sx, img.sy)
 
