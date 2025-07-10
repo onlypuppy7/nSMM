@@ -204,7 +204,7 @@ function ToolPalette:paint(gc)
 end
 
 function ToolPalette:keypressed(key, scancode, isrepeat)
-    if key == "m" and love.keyboard.isDown("lctrl", "rctrl") then
+    if key == "m" and (love.keyboard.isDown("lctrl", "rctrl") or love.keyboard.isDown("lshift", "rshift")) then
         self:activate()
         return
     end

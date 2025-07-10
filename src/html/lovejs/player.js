@@ -272,64 +272,6 @@
     });
   };
 
-  let clipboardText = null;
-
-  (setInterval(() => {
-    //get clipboard text every 5 seconds
-    navigator.clipboard.readText().then(text => {
-        if (text && text != clipboardText) {
-            clipboardText = text;
-            //send clipboard text to Lua
-            // Base32 Alphabet (RFC 4648, Crockford-safe)
-            const BASE32_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
-
-            function base32Encode(str) {
-                const bytes = new TextEncoder().encode(str);
-                let bits = "";
-                for (const byte of bytes) bits += byte.toString(2).padStart(8, '0');
-
-                let output = "";
-                for (let i = 0; i < bits.length; i += 5) {
-                    const chunk = bits.substring(i, i + 5).padEnd(5, '0');
-                    const index = parseInt(chunk, 2);
-                    output += BASE32_ALPHABET[index];
-                }
-
-                return output;
-            }
-
-            function sendToLoveBase32(text) {
-                //limit length cause this method is very slow
-                text = text.slice(0, 20000);
-
-                const encoded = base32Encode(text);
-                const target = document.getElementById("canvas");
-
-                function fire(char) {
-                    const event = new KeyboardEvent('keydown', {
-                        key: char,
-                        keyCode: char.charCodeAt(0),
-                        which: char.charCodeAt(0),
-                        bubbles: true
-                    });
-                    target.dispatchEvent(event);
-                }
-
-                fire("~"); // start
-                for (const char of encoded) fire(char);
-                fire("~"); // end
-            }
-
-            if (clipboardText.startsWith("<")) { //level codes only
-                sendToLoveBase32(clipboardText);
-                console.log('Clipboard text sent to Lua:', clipboardText);
-            };
-        }
-    }).catch(err => {
-      //console.warn('Could not read clipboard text:', err);
-    });
-  }), 1000);
-
   // DOM
   var script = document.currentScript;
   var canvas = document.getElementById('canvas');
@@ -433,4 +375,89 @@
   }
 
   window.runLove();
+})();
+
+(async () => {
+  let clipboardText = null;
+
+  // Only run clipboard polling if not Firefox or other restricted environments
+  async function isSafeToPollClipboard() {
+    const isFirefox = navigator.userAgent.toLowerCase().includes("firefox");
+
+    if (isFirefox) {
+      alert('Heads up! You\'re running nSMM in Firefox. This means that rendering is a little off and automatic clipboard reading is disabled. Consider using a Chromium based browser to paste externally.');
+      return false;
+    } else {
+      const readTextSupported = !!navigator.clipboard?.readText;
+      const clipboardPermissions = await navigator.permissions?.query({ name: "clipboard-read" });
+
+      console.log(clipboardPermissions);
+      if (!readTextSupported) {
+        alert('Heads up! Your browser does not support clipboard reading. This means that automatic clipboard reading is disabled. Consider using a more modern browser to paste externally.');
+      } else if ((!clipboardPermissions || clipboardPermissions.state !== "granted")) {
+        alert('Heads up! Your browser supports clipboard reading, but it requires user permission. Please allow clipboard access for nSMM to read levels from your clipboard.');
+      }
+
+      return readTextSupported && (!clipboardPermissions || clipboardPermissions.state === "granted")
+    };
+  }
+
+  if (await isSafeToPollClipboard()) {
+    (setInterval(() => {
+      //get clipboard text every 5 seconds
+      navigator.clipboard.readText().then(text => {
+          if (text && text != clipboardText) {
+              clipboardText = text;
+              //send clipboard text to Lua
+              // Base32 Alphabet (RFC 4648, Crockford-safe)
+              const BASE32_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+
+              function base32Encode(str) {
+                  const bytes = new TextEncoder().encode(str);
+                  let bits = "";
+                  for (const byte of bytes) bits += byte.toString(2).padStart(8, '0');
+
+                  let output = "";
+                  for (let i = 0; i < bits.length; i += 5) {
+                      const chunk = bits.substring(i, i + 5).padEnd(5, '0');
+                      const index = parseInt(chunk, 2);
+                      output += BASE32_ALPHABET[index];
+                  }
+
+                  return output;
+              }
+
+              function sendToLoveBase32(text) {
+                  //limit length cause this method is very slow
+                  text = text.slice(0, 20000);
+
+                  const encoded = base32Encode(text);
+                  const target = document.getElementById("canvas");
+
+                  function fire(char) {
+                      const event = new KeyboardEvent('keydown', {
+                          key: char,
+                          keyCode: char.charCodeAt(0),
+                          which: char.charCodeAt(0),
+                          bubbles: true
+                      });
+                      target.dispatchEvent(event);
+                  }
+
+                  fire("~"); // start
+                  for (const char of encoded) fire(char);
+                  fire("~"); // end
+              }
+
+              if (clipboardText.startsWith("<")) { //level codes only
+                  sendToLoveBase32(clipboardText);
+                  console.log('Clipboard text sent to Lua:', clipboardText);
+              };
+          }
+      }).catch(err => {
+        //console.warn('Could not read clipboard text:', err);
+      });
+    }), 1000);
+  } else {
+  }
 })();
