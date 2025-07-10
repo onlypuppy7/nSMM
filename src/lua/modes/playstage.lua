@@ -71,7 +71,7 @@ end
             editor.active=true editor.file=fileSTOR playStage.active=false
             editor.cameraOffset=math.floor(playStage.cameraOffset/20)*20
         end
-        if debug then --these are mostly legacy functions, prevailing from the most early versions of nsmm
+        if _DEBUG_ then --these are mostly legacy functions, prevailing from the most early versions of nsmm
             if chr=="1" then
                 mario:powerUpMario()
             elseif chr=="2" then
@@ -87,7 +87,7 @@ end
             elseif chr=="f" then frameByFrame=not frameByFrame
             elseif chr=="y" then mario.x=73*16
             elseif chr=="d" then
-                debug=not debug
+                _DEBUG_=not _DEBUG_
             elseif chr=="g" then
                 mario:clearedLevel(190)
             elseif chr=="v" then
@@ -130,7 +130,7 @@ end
         if playStage.EDITOR then playStage:charIn("edit") end
     end
     function playStage:mouseDown()
-        if debug then
+        if _DEBUG_ then
             local placeXY=pixel2plot(mouse.x,mouse.y-8)
             level.current.set(placeXY[1], placeXY[2], blockSelectionListTEMP[(blockSelectionTEMP%(#blockSelectionListTEMP))+1])
         end
@@ -139,7 +139,7 @@ end
         end
     end
     function playStage:rightMouseDown()
-        if debug then
+        if _DEBUG_ then
             local placeXY=pixel2plot(mouse.x,mouse.y-8)
             level.current.set(placeXY[1], placeXY[2], 0)
         end
@@ -270,7 +270,7 @@ function playStage:drawTerrain(gc) --rendered in rows from bottom to top w/ the 
         local THEME=plot2theme(i2)
         for i=1,13 do --bottom to top, vertically (row 14 is reserved for hud/special events and is not drawn)
             local blockID=plot2ID(i2,i)
-            if type(blockID)=='number' then --themed blocks
+            if type(blockID)=="number" then --themed blocks
                 drawTile(gc, blockID, i2, i, "playStage", THEME)
                 -- if blockID<0 then blockID=0 end
                 -- if blockIndex[blockID]["theme"][THEME]~=nil then
@@ -519,7 +519,7 @@ function playStage:paint(gc,runLogic) --all logic/drawing required to play the s
         gui:detectPos(0,8)
 
     --debug stuff
-        if debug then --this is very messy and a complete clusterf*ck
+        if _DEBUG_ then --this is very messy and a complete clusterf*ck
             Profiler:start("playStage:paint debug", true, "playStage:paint drawing")
             
             local highlightedx=pixel2plot(mouse.x,mouse.y-8)[1]

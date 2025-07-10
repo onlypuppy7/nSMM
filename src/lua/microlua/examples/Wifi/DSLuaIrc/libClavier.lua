@@ -126,7 +126,7 @@ clavier.show = function(mat)
 		mat.modif = false
 	end
 	local i
-	local tps = mat.timer:getTime()
+	local tps = mat.timer:time()
 	local cpt = 1
 	for i=1, #mat.tabTApp do
 		if(mat.tabTApp[cpt].time < tps) then
@@ -219,7 +219,7 @@ clavier.held = function(mat,x,y)
 					local obj = {}
 					obj.obj = mat[i][j][pan].canvFond
 					obj.color = mat[i][j][pan].cf
-					obj.time = mat.timer:getTime() + 200
+					obj.time = mat.timer:time() + 200
 					table.insert(mat.tabTApp, obj)
 				end
 			end

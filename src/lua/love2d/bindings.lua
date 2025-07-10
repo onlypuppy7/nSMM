@@ -1,26 +1,29 @@
 local console = require("love2d.console.console")
 
-__PC.nativeWidth = 256--318
-__PC.nativeHeight = 192--212
-__PC.scale = 3
+__PC.nativeWidth = 318
+__PC.nativeHeight = 212
+__PC.scale = 2
 
 function love.load()
-    love.graphics.setDefaultFilter("nearest", "nearest")
+    if not __DS then
+        love.graphics.setDefaultFilter("nearest", "nearest")
 
-    local iconData = love.image.newImageData("love2d/icon.png")
-    love.window.setIcon(iconData)
+        local iconData = love.image.newImageData("love2d/icon.png")
+        love.window.setIcon(iconData)
+
+        love.window.setMode(__PC.nativeWidth * __PC.scale, __PC.nativeHeight * __PC.scale)
+        gameCanvas = love.graphics.newCanvas(__PC.nativeWidth, __PC.nativeHeight)
+    end
 
     __PC.onEvents.load()
-    love.window.setMode(__PC.nativeWidth * __PC.scale, __PC.nativeHeight * __PC.scale)
-    gameCanvas = love.graphics.newCanvas(__PC.nativeWidth, __PC.nativeHeight)
 end
 
 local targetFPS = 30
 local targetDt = 1 / targetFPS
 local maxDt = 0.25
 local accumulator = 0
-local gameCanvas = love.graphics.newCanvas(love.graphics.getWidth(), love.graphics.getHeight())
-gameCanvas:setFilter("nearest", "nearest")
+gameCanvas = love.graphics.newCanvas(love.graphics.getWidth(), love.graphics.getHeight())
+if not __DS then gameCanvas:setFilter("nearest", "nearest") end
 
 function love.draw()
     local dt = math.min(love.timer.getDelta(), maxDt)
@@ -41,6 +44,7 @@ function love.draw()
     love.graphics.draw(gameCanvas, 0, 0, 0, __PC.scale, __PC.scale)
 
     console.draw()
+    love.timer.step()
 end
 
 function love.textinput(text)

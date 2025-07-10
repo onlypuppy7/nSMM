@@ -5,5 +5,5 @@ platform.apilevel = '2.2'
 
 require("core.noop")
 
-debug = false
+_DEBUG_ = false
 __PC = __PC or noop()

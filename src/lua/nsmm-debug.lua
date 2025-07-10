@@ -1,5 +1,5 @@
 notFinal=true
-debug=true
+_DEBUG_=true
 
 require("nsmm")
 

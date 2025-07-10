@@ -30,8 +30,20 @@ platform = {
     end,
 
     window = {
-        height = function () return 212 end,
-        width = function () return 318 end,
+        height = function ()
+            if __DS then
+                return love.graphics.getHeight()
+            else
+                return __PC.nativeHeight
+            end
+        end,
+        width = function ()
+            if __DS then
+                return love.graphics.getWidth()
+            else
+                return __PC.nativeWidth
+            end
+        end,
         invalidate = function(x, y, w, h)
 	        platform.window.invalidated	= true
 

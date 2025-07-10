@@ -34,15 +34,17 @@ local cursors = {
 
 __PC.cursors = {}
 
-for i=1, #cursors do
-    local cursorName = cursors[i]
+if not __DS then
+    for i=1, #cursors do
+        local cursorName = cursors[i]
 
-    local location = "love2d/cursors/"..cursorName:gsub(" ","_")..".png"
+        local location = "love2d/cursors/"..cursorName:gsub(" ","_")..".png"
 
-    print("Loading cursor:", cursorName, "from", location)
+        print("Loading cursor:", cursorName, "from", location)
 
-    local imageData = love.image.newImageData(location)
-    __PC.cursors[cursorName] = love.mouse.newCursor(imageData, 16, 16)
+        local imageData = love.image.newImageData(location)
+        __PC.cursors[cursorName] = love.mouse.newCursor(imageData, 16, 16)
 
-    love.mouse.setCursor(__PC.cursors[cursorName])
+        love.mouse.setCursor(__PC.cursors[cursorName])
+    end
 end

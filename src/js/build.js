@@ -62,6 +62,7 @@ bundleNSMM('nSMMCourseWorld', path.resolve(luaDir + '/courseworld.lua'));
 // bundleNSMM('nSMMCourseWorld.debug', path.resolve(luaDir+'/courseworld-debug.lua'));
 
 // bundleNSMM('pc', path.resolve(luaDir+'/main.lua'));
+bundleNSMM('ds', path.resolve(luaDir + '/ds.lua'));
 
 let htmlFilePath = path.resolve('src/html');
 let htmlDestinationPath = path.resolve('dist/html');

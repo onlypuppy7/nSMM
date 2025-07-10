@@ -40,10 +40,10 @@ function pixel2plot(x,y,Global,EDITOR) --returns co-ordinate of block from a scr
     if Global==true then --doesnt take camera offset into account if true
         plotX=math.ceil((x)/16)
     else -- relative to the camera (DEFAULT)
-        if EDITOR~=true then
-            plotX=math.ceil((x+playStage.cameraOffset)/16)
+        if playStage.active then
+            plotX=math.ceil((x+(playStage.cameraOffset or 0))/16)
         else
-            plotX=math.ceil((x+editor.cameraOffset)/16)
+            plotX=math.ceil((x+(editor.cameraOffset or 0))/16)
         end
     end
     return {plotX,math.ceil((212-y)/16)}
@@ -61,14 +61,14 @@ end
 function pixel2ID(x,y,Global,EDITOR) --function to remove redundant args, returns ID of pixel on screen
     local plots=pixel2plot(x,y,Global,EDITOR)
     local ID=plot2ID(plots[1],plots[2],EDITOR)
-    if type(ID)=='number' then --for random generation (deprecated)
+    if type(ID)=="number" then --for random generation (deprecated)
         if ID<0 then ID=0 end
     end return ID
 end
 
 function pixel2block(x,y,Global,EDITOR) --returns block table from pixel position
     local ID=pixel2ID(x,y,Global,EDITOR)
-    if type(ID)=='number' then
+    if type(ID)=="number" then
         if ID<0 then ID=0 end
         return blockIndex[ID]
     end return nil --ID doesnt exist (likely out of bounds)
@@ -115,6 +115,15 @@ function pixel2theme(x,Global)
     return level.current.t[pixel2plot(x,150,Global)[1]]
 end
 
+function pixel2plotOffset(originX,originY,newX,newY,Global,EDITOR)
+    local plotOrigin=pixel2plot(originX,originY,Global,EDITOR)
+    local plotNew=pixel2plot(newX,newY,Global,EDITOR)
+    return {
+        plotNew[1]-plotOrigin[1],
+        plotNew[2]-plotOrigin[2],
+    }
+end
+
 function pixel2grid(x,y,w,h,Global) --editor only(?)
     local plotX
     if Global==true then --doesnt take camera offset into account if true
@@ -149,6 +158,16 @@ function ID2block(ID)
     else
         return nil
     end
+end
+
+function plotIsInBox(plotX, plotY, vert1, vert2)
+    local minX = math.min(vert1[1], vert2[1])
+    local maxX = math.max(vert1[1], vert2[1])
+    local minY = math.min(vert1[2], vert2[2])
+    local maxY = math.max(vert1[2], vert2[2])
+
+    return plotX >= minX and plotX <= maxX and
+           plotY >= minY and plotY <= maxY
 end
 
 function drawTile(gc, blockID, plotX, plotY, mode, THEME, position)

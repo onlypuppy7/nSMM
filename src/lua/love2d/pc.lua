@@ -12,7 +12,7 @@ __PC.loop = function()
 		__PC.callEvent("timer")
 	end
 
-	if platform.window.invalidated then
+	if platform.window.invalidated or __DS then
 		local id	=	platform.window.invaliddata
         
 		-- if id == 0 then

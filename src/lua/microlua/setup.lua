@@ -1,0 +1,1 @@
+require("microlua.polyfill.all")

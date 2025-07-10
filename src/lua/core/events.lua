@@ -144,7 +144,7 @@ function on.paint(gc)
     end
 
     if not errored then
-        func(not debug)
+        func(not _DEBUG_)
     else
         drawCrashScreen(gc, errored)
     end

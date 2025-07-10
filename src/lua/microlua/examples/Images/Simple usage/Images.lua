@@ -1,5 +1,4 @@
 --[[
-
         ==>[ MICROLUA EXAMPLE ]<==
                     ==>{ Images }<==
         

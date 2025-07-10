@@ -16,7 +16,7 @@ function titleScreen:reset()
     gui:newButton("button_play1",{"button_play2",40,30,-5,-10},167,109,"m1,0")
     gui:newButton("titlescreen_logo",{nil},81,37,nil)
     gui:newButton("R0idle",{nil},26,172,nil) -- i mean... its not a button. but it still works i guess!
-    if debug then gui:newButton("DEBUG MODE ACTIVE!",true,159,197,"debuginfo") end
+    if _DEBUG_ then gui:newButton("DEBUG MODE ACTIVE!",true,159,197,"debuginfo") end
     --options screen    (-320,0)    //  (-1,0)
     gui:newButton("$",true,-298,13,"m1,0") --home icon
     gui:newButton("OPTIONS",2,-161,16)
@@ -84,7 +84,7 @@ end
 
 function titleScreen:charIn(chr)
     if chr=="d" then
-        debug=not debug
+        _DEBUG_=not _DEBUG_
         titleScreen:init()
     end
 end

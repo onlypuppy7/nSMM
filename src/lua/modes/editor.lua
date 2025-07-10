@@ -127,18 +127,32 @@ end end end
 
 function editor:charIn(chr)
     if not gui.PROMPT and not editor.levelList then 
-        if chr=="4" then
+        if chr=="4" then --left
             editor.cameraOffset=editor.cameraOffset-21
+        elseif chr=="8" then --up
+            editor.cameraOffset=editor.cameraOffset-12
+        elseif chr=="6" then --right
+            editor.cameraOffset=editor.cameraOffset+21
+        elseif chr=="2" then --down
+            editor.cameraOffset=editor.cameraOffset+12
         elseif chr=="5" then
             editor:setDisplayedGroup(editor.groupIndex[editor.tilebarTiles[1]])
-        elseif chr=="6" then
-            editor.cameraOffset=editor.cameraOffset+21
         elseif string.sub(editor.selectedID,1,4)~="warp" then
             if chr=="=" then
-                if editor.select==false then
+                if editor.select1==false then
                     editor.eyedropperMode=not editor.eyedropperMode
                     editor.eraseMode=false
                     editor.playMode=false
+                end
+            elseif (chr=="m" or chr=="c") and editor.select2~=false then
+                if editor.select2.move then
+                    editor.select2.move=nil --errrrrm just use a ternary (it doesnt exist)
+                else
+                    editor.select2.move={
+                        x=mouse.x+editor.cameraOffset,
+                        y=mouse.y,
+                        isCopy=chr=="c"
+                    }
                 end
             elseif chr=="−" then
                 editor.showTrail=not editor.showTrail
@@ -156,23 +170,25 @@ function editor:charIn(chr)
                 playStage.active=true
             end
         end
+    elseif editor.displayedGroup and editor.displayedGroup.scroll then
+        if chr=="8" then
+            gui:click("gscrollU")
+        elseif chr=="2" then
+            gui:click("gscrollD")
+        end
     end
 end
 function editor:arrowLeft()
-    if not gui.PROMPT and not editor.levelList then editor.cameraOffset=editor.cameraOffset-21 end
+    editor:charIn("4")
 end
 function editor:arrowRight()
-    if not gui.PROMPT and not editor.levelList then editor.cameraOffset=editor.cameraOffset+21 end
+    editor:charIn("6")
 end
 function editor:arrowUp()
-    if editor.displayedGroup and editor.displayedGroup["scroll"] then
-        gui:click("gscrollU")
-    end
+    editor:charIn("8")
 end
 function editor:arrowDown()
-    if editor.displayedGroup and editor.displayedGroup["scroll"] then
-        gui:click("gscrollD")
-    end
+    editor:charIn("2")
 end
 function editor:mouseDown()
     if gui.PROMPT then
@@ -198,22 +214,26 @@ function editor:mouseDown()
                 editor.selectedID=ID
                 editor.platformSelect=false
             end
-        elseif editor.select==false then
+        elseif editor.select1==false then
             editor:placeTile(TILE,editor.highlightedTile[1],editor.highlightedTile[2])
             if editor.selectedIDCache then editor.selectedID=editor.selectedIDCache editor.selectedIDCache=false end
         elseif editor.select2==false then
             editor.select2=pixel2grid(editor.mouseTile.x,editor.mouseTile.y-8,editor.selectionSize[1],editor.selectionSize[2])
         else
             if editor.select2~=false then
-                local posSelect=grid2pixel(editor.select[1],editor.select[2],editor.selectionSize[1],editor.selectionSize[2],true)
-                local posSelect2=grid2pixel(editor.select2[1],editor.select2[2],editor.selectionSize[1],editor.selectionSize[2],true)
-                local box=editor:determineSelectBox(posSelect[1],posSelect[2],editor.selectionSize[1]-1,editor.selectionSize[2]-1,posSelect2[1],posSelect2[2],editor.selectionSize[1]-1,editor.selectionSize[2]-1)
-                if checkCollision(box[1],box[2]+8,box[3],box[4],editor.mouseTile.x,editor.mouseTile.y,1,1) then
-                    editor:fillTiles(TILE,editor.select[1],editor.select[2],editor.select2[1],editor.select2[2])
-                    if editor.selectedIDCache then editor.selectedID=editor.selectedIDCache editor.selectedIDCache=false end
+                if not editor.select2.move then
+                    local posSelect=grid2pixel(editor.select1[1],editor.select1[2],editor.selectionSize[1],editor.selectionSize[2],true)
+                    local posSelect2=grid2pixel(editor.select2[1],editor.select2[2],editor.selectionSize[1],editor.selectionSize[2],true)
+                    local box=editor:determineSelectBox(posSelect[1],posSelect[2],editor.selectionSize[1]-1,editor.selectionSize[2]-1,posSelect2[1],posSelect2[2],editor.selectionSize[1]-1,editor.selectionSize[2]-1)
+                    if checkCollision(box[1],box[2]+8,box[3],box[4],editor.mouseTile.x,editor.mouseTile.y,1,1) then
+                        editor:fillTiles(TILE,editor.select1[1],editor.select1[2],editor.select2[1],editor.select2[2])
+                        if editor.selectedIDCache then editor.selectedID=editor.selectedIDCache editor.selectedIDCache=false end
+                    end
+                else
+                    editor:translateTiles(editor.select1, editor.select2, editor.select2.move.adjustedPlots[1], editor.select2.move.adjustedPlots[2], true, not editor.select2.move.isCopy)
                 end
             end
-            editor.select=false
+            editor.select1=false
             editor.select2=false
         end
         editor.eyedropperMode=false
@@ -251,8 +271,8 @@ end
 function editor:rightMouseDown()
     if editor.selectedID=="mario" then editor.selectedID=nil end
     if (editor.highlightedArea=="grid") and (not editor.platformSelect) and (string.sub(editor.selectedID,1,4)~="warp") then
-        if editor.select==false then
-            editor.select=pixel2grid(editor.mouseTile.x,editor.mouseTile.y-8,editor.selectionSize[1],editor.selectionSize[2])
+        if editor.select1==false then
+            editor.select1=pixel2grid(editor.mouseTile.x,editor.mouseTile.y-8,editor.selectionSize[1],editor.selectionSize[2])
         elseif editor.select2==false then
             editor.select2=pixel2grid(editor.mouseTile.x,editor.mouseTile.y-8,editor.selectionSize[1],editor.selectionSize[2])
         else editor:mouseDown()
@@ -262,17 +282,17 @@ function editor:rightMouseDown()
         editor.eraseMode=false
 end end
 function editor:backspaceKey()
-    if editor.select==false and (string.sub(editor.selectedID,1,4)~="warp") then
+    if editor.select1==false and (string.sub(editor.selectedID,1,4)~="warp") then
         editor.eraseMode=not editor.eraseMode
         editor.eyedropperMode=false
         editor.playMode=false
     elseif editor.select2~=false and (editor.selectedID==nil or string.sub(editor.selectedID,1,5)~="theme" or string.sub(editor.selectedID,1,6)~="scroll") then
-        editor:fillTiles(0,editor.select[1],editor.select[2],editor.select2[1],editor.select2[2])
-        editor.select=false
+        editor:fillTiles(0,editor.select1[1],editor.select1[2],editor.select2[1],editor.select2[2])
+        editor.select1=false
         editor.select2=false
 end end
 function editor:enterKey()
-    if editor.select==false and editor.playTimer==false and (string.sub(editor.selectedID,1,4)~="warp") then
+    if editor.select1==false and editor.playTimer==false and (string.sub(editor.selectedID,1,4)~="warp") then
         if editor.playMode==false then
             editor.playMode=true
             editor.eyedropperMode=false
@@ -289,9 +309,13 @@ function editor:escapeKey()
         local ID,action,option=config[2],tonumber(config[3]),config[4] --action (before) '2'=entr '4'=exit
         editor.selectedID=editor.selectedIDCache
         editor:selectID("warp_"..ID.."_"..(action-1))
-    elseif editor.select then
-        editor.select=false
-        editor.select2=false
+    elseif editor.select1 then
+        if editor.select2 and editor.select2.move then
+            editor.select2.move=nil
+        else
+            editor.select1=false
+            editor.select2=false
+        end
     elseif editor.platformSelect then
         level.current.set(editor.platformSelect[1],editor.platformSelect[2],0)
         editor.platformSelect=false
@@ -397,15 +421,34 @@ end
 
 function editor:drawTerrain(gc) --rendered in rows from bottom to top w/ the rows from left to right
     local objectList={}
-    for i2=math.ceil(editor.cameraOffset/16),math.ceil((screenWidth+editor.cameraOffset)/16) do --left to right, horizontally, only draw what is visible on screen
-        local THEME=plot2theme(i2,true)
-        for i=1,13 do --bottom to top, vertically (row 14 is reserved for hud/special events and is not drawn)
-            local blockID=plot2ID(i2,i,true)
-            if type(blockID)=='number' and blockID>=0 then --its a tile
-                drawTile(gc, blockID, i2, i, "editor")
+    for plotX=math.ceil(editor.cameraOffset/16),math.ceil((screenWidth+editor.cameraOffset)/16) do --left to right, horizontally, only draw what is visible on screen
+        local THEME=plot2theme(plotX,true)
+        for plotY=1,13 do --bottom to top, vertically (row 14 is reserved for hud/special events and is not drawn)
+            local blockID=plot2ID(plotX,plotY,true)
+
+            if editor.select2 and editor.select2.move then
+                local isInOriginalPositionSelectedBox=plotIsInBox(plotX, plotY, editor.select1, editor.select2)
+                local isInTranslatedPositionSelectedBox=plotIsInBox(plotX, plotY, editor.select2.move.adjustedPlots[1], editor.select2.move.adjustedPlots[2])
+                
+                if isInTranslatedPositionSelectedBox then
+                    local newBlockID=plot2ID(plotX-editor.select2.move.plotOffset[1],plotY-editor.select2.move.plotOffset[2],true)
+                    if (not (type(newBlockID)=="number" and newBlockID<=0)) then
+                        blockID=newBlockID
+                    else
+                        blockID=0
+                    end
+                elseif isInOriginalPositionSelectedBox and not editor.select2.move.isCopy then
+                    blockID=0
+                end
+            end
+
+            if type(blockID)=="number" and blockID>=0 then --its a tile
+                drawTile(gc, blockID, plotX, plotY, "editor")
             else --its an object
-                table.insert(objectList,{(i2-1)*16,212-16*(i),blockID}) --x,y,ID
-    end end end
+                table.insert(objectList,{(plotX-1)*16,212-16*(plotY),blockID}) --x,y,ID
+            end
+        end
+    end
     for i=1,#objectList do
         drawTile(gc,objectList[i][3],nil,nil,"editor",nil,{objectList[i][1],objectList[i][2]})
     end
@@ -467,7 +510,52 @@ function editor:fillTiles(ID, x1, y1, x2, y2)
     for i = x1, x2, differenceX do
         for i2 = y1, y2, differenceY do
             editor:placeTile(ID, i, i2)
-end end end
+        end
+    end
+end
+
+function editor:translateTiles(origin1, origin2, dest1, dest2, skipEmpty, deleteOld)
+    local offsetX = dest1[1] - origin1[1]
+    local offsetY = dest1[2] - origin1[2]
+
+    local minX = math.min(origin1[1], origin2[1])
+    local maxX = math.max(origin1[1], origin2[1])
+    local minY = math.min(origin1[2], origin2[2])
+    local maxY = math.max(origin1[2], origin2[2])
+
+    local tileBuffer = {}
+    local placedTiles = {}
+
+    for plotX = minX, maxX do
+        for plotY = minY, maxY do
+            local id = plot2ID(plotX, plotY, true)
+            table.insert(tileBuffer, {
+                srcX = plotX, srcY = plotY,
+                dstX = plotX + offsetX,
+                dstY = plotY + offsetY,
+                id = id
+            })
+        end
+    end
+
+    for _, tile in ipairs(tileBuffer) do
+        level.current.set(tile.dstX, tile.dstY, tile.id)
+        placedTiles[tile.dstX .. "," .. tile.dstY] = true
+    end
+
+    if deleteOld then
+        for plotX = minX, maxX do
+            for plotY = minY, maxY do
+                local key = plotX .. "," .. plotY
+                if not placedTiles[key] then
+                    level.current.set(plotX, plotY, 0)
+                end
+            end
+        end
+    end
+
+    return placedTiles
+end
 
 function editor:determineSelectBox(x1,y1,w1,h1,x2,y2,w2,h2)
     local x local y local w local h
@@ -527,7 +615,7 @@ function editor:interface(gc)
         return ((pX-(cX+(cR/2)))^2 + (pY-(cY+(cR/2)))^2) < ((cR/2)^2)
     end
     if editor.minimised then playActive=false eyedropperActive=false eraserActive=false trailActive=false tilebarActive=false minimOffset=-12
-    elseif editor.select~=false or string.sub(editor.selectedID,1,4)=="warp" then --which icons should be drawn/be able to be clicked
+    elseif editor.select1~=false or string.sub(editor.selectedID,1,4)=="warp" then --which icons should be drawn/be able to be clicked
         eyedropperActive=false
         playActive=false
         tilebarActive=false
@@ -660,22 +748,38 @@ function editor:handleGroup(gc,data)
     gui.TEXT=IDdesc
 end
 
+function editor:adjustVerticesByPlotOffset(vert1, plotOffset)
+    return {
+        vert1[1]+plotOffset[1],
+        vert1[2]+plotOffset[2]
+    }
+end
+
 function editor:drawGridCursor(gc)
     local pos=pixel2snapgrid(editor.mouseTile.x,editor.mouseTile.y-8,editor.selectionSize[1],editor.selectionSize[2])
     local box
-    if editor.select==false then
+    if editor.select1==false then
         gc:setPen("thin","dotted")
         box={pos[1],pos[2],editor.selectionSize[1]-1,editor.selectionSize[2]-1}
     else
-        local posSelect=grid2pixel(editor.select[1],editor.select[2],editor.selectionSize[1],editor.selectionSize[2],true)
-        local posSelect2
+        local selectPos1=editor.select1
+        local selectPos2=editor.select2 and {editor.select2[1],editor.select2[2]}
+
         if editor.select2==false then
             gc:setPen("thin","dashed")
             posSelect2={pos[1],pos[2]}
         else
             gc:setPen("thin","smooth")
-            posSelect2=grid2pixel(editor.select2[1],editor.select2[2],editor.selectionSize[1],editor.selectionSize[2],true)
+            local selectPos2=editor.select2
+            if editor.select2.move then
+                selectPos1=editor.select2.move.adjustedPlots[1]
+                selectPos2=editor.select2.move.adjustedPlots[2]
+            end
+            posSelect2=grid2pixel(selectPos2[1],selectPos2[2],editor.selectionSize[1],editor.selectionSize[2],true)
         end
+
+        local posSelect=grid2pixel(selectPos1[1],selectPos1[2],editor.selectionSize[1],editor.selectionSize[2],true)
+
         box=editor:determineSelectBox(posSelect[1],posSelect[2],editor.selectionSize[1]-1,editor.selectionSize[2]-1,posSelect2[1],posSelect2[2],editor.selectionSize[1]-1,editor.selectionSize[2]-1)
     end
     if (box[2]+box[4])>203 then box[4]=203-box[2] end
@@ -700,7 +804,13 @@ function editor:drawGridCursor(gc)
             elseif option=="4" then --teleport
                 gc:drawRect(box[1],box[2]+8,box[3],box[4])
         end end
-    else gc:drawRect(box[1],box[2]+8,box[3],box[4])
+    else
+        gc:drawRect(
+            box[1],
+            box[2]+8,
+            box[3],
+            box[4]
+        )
     end
     gc:setPen("thin","smooth")
     editor.highlightedTile=pixel2grid(editor.mouseTile.x,editor.mouseTile.y-8,editor.selectionSize[1],editor.selectionSize[2])
@@ -718,12 +828,29 @@ function editor:logic()
     if mouse.y<12 then editor.mouseTile.y=12 else editor.mouseTile.y=mouse.y end
     editor.mouseTile.x=mouse.x
     if editor.highlightedArea=="grid" then
-        if editor.select~=false then --selection in progress
+        if editor.select1~=false then --selection in progress
             if editor.select2~=false then --selection is finalised
-                local posSelect=grid2pixel(editor.select[1],editor.select[2],editor.selectionSize[1],editor.selectionSize[2],true)
+                local posSelect=grid2pixel(editor.select1[1],editor.select1[2],editor.selectionSize[1],editor.selectionSize[2],true)
                 local posSelect2=grid2pixel(editor.select2[1],editor.select2[2],editor.selectionSize[1],editor.selectionSize[2],true)
                 local box=editor:determineSelectBox(posSelect[1],posSelect[2],editor.selectionSize[1]-1,editor.selectionSize[2]-1,posSelect2[1],posSelect2[2],editor.selectionSize[1]-1,editor.selectionSize[2]-1)
-                if checkCollision(box[1],box[2]+8,box[3],box[4],editor.mouseTile.x,editor.mouseTile.y,1,1) then 
+                if editor.select2.move then
+                    if editor.select2.move.isCopy then
+                        cursor.set("diag resize")
+                    else
+                        cursor.set("translation")
+                    end
+                    local oX=editor.cameraOffset+mouse.x
+                    local oY=mouse.y
+                    editor.select2.move.plotOffset=pixel2plotOffset(
+                        editor.select2.move.x,editor.select2.move.y,
+                        oX,oY,
+                        16,16
+                    )
+                    editor.select2.move.adjustedPlots={
+                        editor:adjustVerticesByPlotOffset(editor.select1, editor.select2.move.plotOffset),
+                        editor:adjustVerticesByPlotOffset(editor.select2, editor.select2.move.plotOffset),
+                    }
+                elseif checkCollision(box[1],box[2]+8,box[3],box[4],editor.mouseTile.x,editor.mouseTile.y,1,1) then 
                     if editor.eraseMode==true then cursor.set("clear")
                     else cursor.set("pencil") end
                 else cursor.set("unavailable")
@@ -793,7 +920,7 @@ function editor:generate(LEVELSTRING)
     level.perm=LEVELSTRING
     editor.LOAD=0 editor.file=false
     editor.cameraOffset=0 editor.notification=false
-    editor.select=false
+    editor.select1=false
     editor.select2=false
     editor.platformSelect=false
     editor.eraseMode=false
@@ -810,6 +937,7 @@ function editor:generate(LEVELSTRING)
 end
 
 function toolpaletteSelection(group,option) --has to be a global function, because toolpalette reasons...
+    print(group,option)
     if group=="Editor Settings" then
         if string.sub(option,-9)=="Auto-Save" then
             editor.enableAutoSave=not editor.enableAutoSave var.store("enableAutoSave",editor.enableAutoSave and "true" or "false")

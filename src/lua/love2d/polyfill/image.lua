@@ -47,7 +47,7 @@ function imageClass:parse(imgstr)
     self.r = 0 --rotation
     -- self.imgstr = imgstr
 	self.framebuffer	= love.graphics.newCanvas(self.w, self.h)
-    self.framebuffer:setFilter("nearest", "nearest")
+    if not __DS then self.framebuffer:setFilter("nearest", "nearest") end
 	love.graphics.setCanvas(self.framebuffer)
 	love.graphics.setBackgroundColor(1, 1, 1)
 	love.graphics.clear()

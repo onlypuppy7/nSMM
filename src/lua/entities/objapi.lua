@@ -314,7 +314,7 @@ function objAPI:gravityCheck(yVel,platformCalc,jumpCalc) --made to work with vel
         end
         if not platformCalc or self.vy==0 then
             if floorL or floorR then
-                if self.doesBounce then self.vy=(type(self.doesBounce)=='number' and self.doesBounce) or 17
+                if self.doesBounce then self.vy=(type(self.doesBounce)=="number" and self.doesBounce) or 17
                 -- elseif self.isBouncy and self.vy<0 then
                 --     self.vy=-((self.lastBounce or self.vy))
                 --     self.lastBounce=-(self.vy)+3.5
@@ -522,7 +522,7 @@ end
 
 function objAPI:type2name(TYPE,statusBox) --statusBox: 0=false, 1=true
     local name=""
-    if type(TYPE)=='number' then
+    if type(TYPE)=="number" then
         if blockIndex[TYPE]~=nil then
             name=blockIndex[TYPE]["name"]
         end
