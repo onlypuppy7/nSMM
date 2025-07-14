@@ -12,7 +12,7 @@ function love.load()
         love.window.setIcon(iconData)
 
         love.window.setMode(__PC.nativeWidth * __PC.scale, __PC.nativeHeight * __PC.scale)
-        -- gameCanvas = love.graphics.newCanvas(__PC.nativeWidth, __PC.nativeHeight)
+        gameCanvas = love.graphics.newCanvas(__PC.nativeWidth, __PC.nativeHeight)
     end
 
     __PC.onEvents.load()
@@ -22,8 +22,8 @@ local targetFPS = 30
 local targetDt = 1 / targetFPS
 local maxDt = 0.25
 local accumulator = 0
--- gameCanvas = love.graphics.newCanvas(love.graphics.getWidth(), love.graphics.getHeight())
--- if not __DS then gameCanvas:setFilter("nearest", "nearest") end
+gameCanvas = love.graphics.newCanvas(love.graphics.getWidth(), love.graphics.getHeight())
+if not __DS then gameCanvas:setFilter("nearest", "nearest") end
 
 function love.draw()
     local dt = math.min(love.timer.getDelta(), maxDt)
@@ -32,16 +32,16 @@ function love.draw()
     if accumulator >= targetDt then
         accumulator = accumulator - targetDt
 
-        -- love.graphics.setCanvas(gameCanvas)
+        love.graphics.setCanvas(gameCanvas)
         love.graphics.clear()
 
         __PC.loop()
         
-        -- love.graphics.setCanvas()
+        love.graphics.setCanvas()
     end
         
     love.graphics.setColor(1, 1, 1)
-    -- love.graphics.draw(gameCanvas, 0, 0, 0, __PC.scale, __PC.scale)
+    love.graphics.draw(gameCanvas, 0, 0, 0, __PC.scale, __PC.scale)
 
     console.draw()
     love.timer.step()
