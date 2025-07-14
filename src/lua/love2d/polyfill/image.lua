@@ -21,7 +21,14 @@ end
 imageClass = class()
 
 function imageClass:init(input)
-    if type(input) == "string" then
+    if type(input) == "string" and input:endsWith(".png") then
+        self.image = love.graphics.newImage(input)
+        self.w = self.image:getWidth()
+        self.h = self.image:getHeight()
+        self.sx = 1
+        self.sy = 1
+        self.r = 1
+    elseif type(input) == "string" then
         self:parse(input)
     elseif type(input) == "table" then
         self.w = input.w
@@ -29,13 +36,14 @@ function imageClass:init(input)
         self.sx = input.sx or 1
         self.sy = input.sy or 1
         self.r = input.r or 0
-        self.data = input.data
-        self.header = input.header
-        self.framebuffer = input.framebuffer
+        -- self.data = input.data
+        -- self.header = input.header
+        self.image = input.image
     end
 end
 
 function imageClass:parse(imgstr)
+    -- print("parsing")
 	self.data   = imgstr
 	self.header = imgstr:sub(1, 20)
 	self.data   = imgstr:sub(21, -1)
@@ -46,7 +54,7 @@ function imageClass:parse(imgstr)
 	self.sy = 1
 	self.r  = 0
 
-	local imageData = love.image.newImageData(self.w, self.h)
+	self.imageData = love.image.newImageData(self.w, self.h)
 
 	for pos = 1, #self.data, 2 do
 		local y = math.floor((pos / 2) / self.w)
@@ -58,7 +66,7 @@ function imageClass:parse(imgstr)
 
 		if isAlpha then
 			-- skip or set alpha = 0
-			imageData:setPixel(x, y, 0, 0, 0, 0)
+			self.imageData:setPixel(x, y, 0, 0, 0, 0)
 		else
 			byte2 = byte2 - 128
 			local color = l_shift(byte2, 8) + byte1
@@ -71,11 +79,11 @@ function imageClass:parse(imgstr)
 			g = g * 256 / 32
 			b = b * 256 / 32
 
-			imageData:setPixel(x, y, r / 255, g / 255, b / 255, 1)
+			self.imageData:setPixel(x, y, r / 255, g / 255, b / 255, 1)
 		end
 	end
 
-	self.framebuffer = love.graphics.newImage(imageData)
+	self.image = love.graphics.newImage(self.imageData)
 end
 
 function imageClass:copy(newWidth, newHeight)

@@ -135,11 +135,17 @@ function love.graphics.getCanvas()
 end
 
 function love.graphics.draw(img, x, y)
-    Canvas.draw(SCREEN_UP, img.framebuffer, math.floor(x), math.floor(y))
+    Canvas.draw(SCREEN_UP, img.image.raw or img.image, math.floor(x), math.floor(y))
 end
 
 function love.graphics.newImage(path)
-    return Image.load(path, VRAM)
+    local raw = Image.load(path, VRAM)
+    local img = {
+        raw = raw,
+        getWidth = function() return Image.width(raw) end,
+        getHeight = function() return Image.height(raw) end,
+    }
+    return img
 end
 
 function love.graphics.setLineStyle(style)

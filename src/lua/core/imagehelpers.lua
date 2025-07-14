@@ -17,6 +17,57 @@ function ti2rgb(data) --will not return fully accurate values due to compressing
     return{R,G,B}
 end
 
+if __PC and __PC.doImageSaving then
+    if love.filesystem.getInfo("image_export") then
+        for _, file in ipairs(love.filesystem.getDirectoryItems("image_export")) do
+            love.filesystem.remove("image_export/" .. file)
+        end
+    else
+        love.filesystem.createDirectory("image_export")
+    end
+end
+
+local function saveImage(name, str)
+    if __PC and __PC.usePresavedImages then --type(str) == "string"
+        texs[name] = image.new("resources/"..name..".png")
+        return true
+    elseif type(str)=="string" then
+        texs[name]=image.new(str)
+        if __PC and __PC.doImageSaving then
+            texs[name].imageData:encode("png", "image_export/"..name..".png")
+        end
+    end
+    return false
+end
+
+function image2rotated(name, img, rotation)
+    if __PC and __PC.doImageSaving then
+        local angle = math.rad(rotation)
+
+        local imageForCanvas = img.image
+
+        local w, h = imageForCanvas:getWidth(), imageForCanvas:getHeight()
+        local rotatedCanvas = love.graphics.newCanvas(w, h)
+
+        love.graphics.setCanvas(rotatedCanvas)
+        love.graphics.clear(0, 0, 0, 0)
+        love.graphics.push()
+        love.graphics.translate(w / 2, h / 2)
+        love.graphics.rotate(angle)
+        love.graphics.draw(imageForCanvas, -w / 2, -h / 2)
+        love.graphics.pop()
+        love.graphics.setCanvas(gameCanvas)
+
+        local imageData = rotatedCanvas:newImageData()
+        imageData:encode("png", "image_export/"..name..".png")
+    end
+
+    if not saveImage(name) then
+        local rotated = image.rotate(img, rotation or 0)
+        texs[name] = rotated
+    end
+end
+
 function string2image(name,flipImage,string,recolour) --recolour={{{"\000\000","\100\100","newname"},more colour swaps},etc}
     local function toInt(v) return string.byte(v) end --if flipping, assumes input string is facing left
     local function toPairs(str)
@@ -37,8 +88,8 @@ function string2image(name,flipImage,string,recolour) --recolour={{{"\000\000","
     end
 
     for flip=0,(flipImage and 1 or 0) do
-        if flip==1 then name=flipImage
-            local function flipImage(img)
+        if flip==1 then
+            local function flipImageHelper(img)
                 local imageString,imageTable,flippedTable=string.sub(img,21),{},{}
                 local w,h=toInt(string.sub(img,1,1))+(toInt(string.sub(img,2,2))*255),toInt(string.sub(img,5,5))+(toInt(string.sub(img,6,6))*255) --retrieve width and height
                 for i=1,#imageString,2 do --conv to table
@@ -52,15 +103,21 @@ function string2image(name,flipImage,string,recolour) --recolour={{{"\000\000","
                 end
                 local flippedString=table.concat(flippedTable) --reconstruct string
                 return string.sub(img,1,20)..flippedString
-            end string=flipImage(string)
+            end
+            name=flipImage
+            if not saveImage(name) then string=flipImageHelper(string) end
         end
         if recolour then for i=1,#recolour do -- recolour = all recoloured images, i = recolours for new img, i2[1] = old colour, i2[2] = new colour, i2[3] = new name
-            local newImg=string
-            for i2=3,#recolour[i] do --all recolours
-                newImg=string.sub(newImg,1,20)..substitute(string.sub(newImg,21),recolour[i][i2][1],recolour[i][i2][2])
-            end
             local imgName=(flip==0) and recolour[i][1] or recolour[i][2]
-            texs[imgName]=image.new(newImg)
-        end end
-        texs[name]=image.new(string)
-end end
+            if not saveImage(imgName) then
+                local newImg=string
+                for i2=3,#recolour[i] do --all recolours
+                    newImg=string.sub(newImg,1,20)..substitute(string.sub(newImg,21),recolour[i][i2][1],recolour[i][i2][2])
+                end
+                saveImage(imgName, newImg)
+                end
+            end
+        end
+        saveImage(name, string)
+    end
+end

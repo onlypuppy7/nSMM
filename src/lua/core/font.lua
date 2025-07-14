@@ -2,25 +2,25 @@ fontLookup={           --all special characters - <>&^&@.!-+
     ["["] = "_1", --coin icon 1
     ["{"] = "_2", --coin icon 2
     ["}"] = "_3", --coin icon 3
-    ["'"] = "_A", --apostrophe
+    ["'"] = "_a", --apostrophe
     [")"] = "_b", --close brackets
-    ["("] = "_B", --open brackets
+    ["("] = "_bc", --open brackets
     [":"] = "_c", --colon
-    ["@"] = "_C", --copyright icon
-    ["."] = "_D", --period
+    ["@"] = "_cp", --copyright icon
+    ["."] = "_d", --period
     ["="] = "_e", --equal
-    ["!"] = "_E", --exclamation mark
+    ["!"] = "_ex", --exclamation mark
     ["$"] = "_h", --home icon
-    ["-"] = "_H", --hyphen
-    [","] = "_K", --comma
-    ["<"] = "_M", --mario icon
-    ["~"] = "_N", --back icon
-    ["^"] = "_P", --power
-    ["?"] = "_Q", --question mark
+    ["-"] = "_hy", --hyphen
+    [","] = "_k", --comma
+    ["<"] = "_m", --mario icon
+    ["~"] = "_n", --back icon
+    ["^"] = "_p", --power
+    ["?"] = "_q", --question mark
     [";"] = "_s", --semicolon
-    ["/"] = "_S", --forward slash
-    [">"] = "_T", --clock/time icon
-    ["+"] = "_X"  --X icon
+    ["/"] = "_sf", --forward slash
+    [">"] = "_t", --clock/time icon
+    ["+"] = "_x"  --X icon
 }
 
 require("data.textures-font")

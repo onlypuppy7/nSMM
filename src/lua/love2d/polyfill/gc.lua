@@ -237,9 +237,11 @@ function platform.gc:drawImage(img, x, y)
 
     -- print(img.framebuffer, originX, originY, rotation, scaleX, scaleY, offsetX, offsetY)
 
-    love.graphics.draw(img.framebuffer, originX, originY, rotation, scaleX, scaleY, offsetX, offsetY)
-    -- love.graphics.draw(img.framebuffer, math.floor(x + (img.sx * w) / 2), math.floor(y + (img.sy * h) / 2), (img.r) * math.pi / 180, img.sx, img.sy, img.w / 2, img.h / 2)
-    -- love.graphics.draw(img.framebuffer, x, y, (img.r) * math.pi / 180, img.sx, img.sy)
+    love.graphics.draw(img.image, originX, originY, rotation, scaleX, scaleY, offsetX, offsetY)
+    -- love.graphics.draw(img.image, math.floor(x + (img.sx * w) / 2), math.floor(y + (img.sy * h) / 2), (img.r) * math.pi / 180, img.sx, img.sy, img.w / 2, img.h / 2)
+    -- love.graphics.draw(img.image, x, y, (img.r) * math.pi / 180, img.sx, img.sy)
 
     love.graphics.setColor(r, g, b, a)
 end
+
+-- gc = platform.gc

@@ -1,6 +1,7 @@
 __PC = {
     fontSupport = true,
     console = false,
+    newImage = love.graphics.newImage,
 }
 
 -- print("love._console", love._console)

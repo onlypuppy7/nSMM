@@ -73,5 +73,5 @@ function platform.gc:drawImage(img, x, y)
     end
 
     -- Note: No rotation or scaling support here (Canvas.draw is basic)
-    Canvas.draw(SCREEN_UP, img.framebuffer, math.floor(x), math.floor(y))
+    Canvas.draw(SCREEN_UP, img.image, math.floor(x), math.floor(y))
 end
