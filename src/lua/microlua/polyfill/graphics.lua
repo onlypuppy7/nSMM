@@ -135,7 +135,8 @@ function love.graphics.getCanvas()
 end
 
 function love.graphics.draw(img, x, y)
-    Canvas.draw(SCREEN_UP, img.image.raw or img.image, math.floor(x), math.floor(y))
+    print(tostring(x)..","..tostring(y))
+    screen.blit(SCREEN_UP, math.floor(x), math.floor(y), img.raw or img)
 end
 
 function love.graphics.newImage(path)
@@ -167,8 +168,8 @@ function love.graphics.setPointSize(width)
 end
 
 function love.graphics.present()
-    if currentCanvas then
-        Canvas.draw(screenTarget, currentCanvas, 0, 0)
-    end
+    -- if currentCanvas then
+    --     Canvas.draw(screenTarget, currentCanvas, 0, 0)
+    -- end
     render()
 end

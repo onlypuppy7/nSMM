@@ -22,28 +22,34 @@ local targetFPS = 30
 local targetDt = 1 / targetFPS
 local maxDt = 0.25
 local accumulator = 0
-gameCanvas = love.graphics.newCanvas(love.graphics.getWidth(), love.graphics.getHeight())
-if not __DS then gameCanvas:setFilter("nearest", "nearest") end
+if not __DS then
+    gameCanvas = love.graphics.newCanvas(love.graphics.getWidth(), love.graphics.getHeight())
+    gameCanvas:setFilter("nearest", "nearest")
+end
 
 function love.draw()
-    local dt = math.min(love.timer.getDelta(), maxDt)
-    accumulator = accumulator + dt
+    if not __DS then
+        local dt = math.min(love.timer.getDelta(), maxDt)
+        accumulator = accumulator + dt
 
-    if accumulator >= targetDt then
-        accumulator = accumulator - targetDt
+        if accumulator >= targetDt then
+            accumulator = accumulator - targetDt
 
-        love.graphics.setCanvas(gameCanvas)
-        love.graphics.clear()
+            love.graphics.setCanvas(gameCanvas)
+            love.graphics.clear()
 
+            __PC.loop()
+            
+            love.graphics.setCanvas()
+        end
+            
+        love.graphics.setColor(1, 1, 1)
+        love.graphics.draw(gameCanvas, 0, 0, 0, __PC.scale, __PC.scale)
+
+        console.draw()
+    else
         __PC.loop()
-        
-        love.graphics.setCanvas()
     end
-        
-    love.graphics.setColor(1, 1, 1)
-    love.graphics.draw(gameCanvas, 0, 0, 0, __PC.scale, __PC.scale)
-
-    console.draw()
     love.timer.step()
 end
 

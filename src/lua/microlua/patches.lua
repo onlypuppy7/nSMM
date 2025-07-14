@@ -68,10 +68,14 @@ end
 
 function platform.gc:drawImage(img, x, y)
     if not img then
-        print("ALERT! img is a nil value!", img, x, y)
-        return
+        -- print("ALERT! img is a nil value!", img, x, y)
+        img = (texs and texs.Brick) or Brick
     end
 
+    print("bruh"..tostring(img.image:getHeight()))
+
+    love.graphics.draw(img.image, math.floor(x), math.floor(y))
+
     -- Note: No rotation or scaling support here (Canvas.draw is basic)
-    Canvas.draw(SCREEN_UP, img.image, math.floor(x), math.floor(y))
+    -- Canvas.draw(SCREEN_UP, img.image.raw, math.floor(x), math.floor(y))
 end
