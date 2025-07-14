@@ -2,10 +2,10 @@ local console = require("love2d.console.console")
 
 __PC.nativeWidth = 318
 __PC.nativeHeight = 212
-__PC.scale = 2
+__PC.scale = __PC.console and 1 or 2
 
 function love.load()
-    if not __DS then
+    if (not __DS) and (not __PC.console) then
         love.graphics.setDefaultFilter("nearest", "nearest")
 
         local iconData = love.image.newImageData("love2d/icon.png")

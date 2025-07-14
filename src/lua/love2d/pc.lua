@@ -1,10 +1,12 @@
 __PC = {
-    fontSupport = true
+    fontSupport = true,
+    console = false,
 }
 
 -- print("love._console", love._console)
 if love._console then
     __PC.fontSupport = false
+    __PC.console = love._console
 end
 
 __PC.timeNow = function()
