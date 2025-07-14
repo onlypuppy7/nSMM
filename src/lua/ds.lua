@@ -23,7 +23,7 @@ require("nsmm")
 --     screen.print(SCREEN_DOWN, 10, 10, "TEST TEXT", Color.new(31, 31, 31))
 
 --     -- Try draw raw canvas directly
---     Canvas.draw(SCREEN_UP, testCanvas, 0, 0)
+--     Canvas.draw(SCREEN_DOWN, testCanvas, 0, 0)
 
 --     -- screen.drawFillRect(SCREEN_DOWN, 20, 20, 10, 10, Color.new(31, 0, 0))
 --     gc:drawImage(pswitchimage, 100, 100)

@@ -7,7 +7,7 @@
     -- __PC.usePresavedImages = true
 
     require("nsmm")
-    require("tests.drawingresources")
+    -- require("tests.drawingresources")
 
     -- require("courseworld.courses")
 -- end)

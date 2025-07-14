@@ -1,0 +1,1381 @@
+[2025-07-14 20:59:29.49] INFO Converting active_plbswitch_0.png to active_plbswitch_0.t3x..
+[2025-07-14 20:59:29.49] INFO Converting active_plbswitch_1.png to active_plbswitch_1.t3x..
+[2025-07-14 20:59:29.49] INFO Converting active_plgswitch_0.png to active_plgswitch_0.t3x..
+[2025-07-14 20:59:29.50] INFO Converting active_plgswitch_1.png to active_plgswitch_1.t3x..
+[2025-07-14 20:59:29.50] INFO Converted active_plbswitch_0.png to active_plbswitch_0.t3x successfully.
+[2025-07-14 20:59:29.51] INFO Converted active_plbswitch_1.png to active_plbswitch_1.t3x successfully.
+[2025-07-14 20:59:29.51] INFO Converting active_ploswitch_0.png to active_ploswitch_0.t3x..
+[2025-07-14 20:59:29.51] INFO Converted active_plgswitch_0.png to active_plgswitch_0.t3x successfully.
+[2025-07-14 20:59:29.51] INFO Converting active_ploswitch_1.png to active_ploswitch_1.t3x..
+[2025-07-14 20:59:29.51] INFO Converting active_plrswitch_0.png to active_plrswitch_0.t3x..
+[2025-07-14 20:59:29.58] INFO Converting active_plrswitch_1.png to active_plrswitch_1.t3x..
+[2025-07-14 20:59:29.59] INFO Converted active_plgswitch_1.png to active_plgswitch_1.t3x successfully.
+[2025-07-14 20:59:29.59] INFO Converted active_ploswitch_0.png to active_ploswitch_0.t3x successfully.
+[2025-07-14 20:59:29.59] INFO Converted active_ploswitch_1.png to active_ploswitch_1.t3x successfully.
+[2025-07-14 20:59:29.59] INFO Converted active_plrswitch_0.png to active_plrswitch_0.t3x successfully.
+[2025-07-14 20:59:29.59] INFO Converting active_pswitch_0.png to active_pswitch_0.t3x..
+[2025-07-14 20:59:29.60] INFO Converted active_plrswitch_1.png to active_plrswitch_1.t3x successfully.
+[2025-07-14 20:59:29.59] INFO Converting active_pswitch_1.png to active_pswitch_1.t3x..
+[2025-07-14 20:59:29.60] INFO Converting Air0.png to Air0.t3x..
+[2025-07-14 20:59:29.60] INFO Converting Air1.png to Air1.t3x..
+[2025-07-14 20:59:29.60] INFO Converting arrow_E.png to arrow_E.t3x..
+[2025-07-14 20:59:29.61] INFO Converted active_pswitch_0.png to active_pswitch_0.t3x successfully.
+[2025-07-14 20:59:29.61] INFO Converting arrow_N.png to arrow_N.t3x..
+[2025-07-14 20:59:29.68] INFO Converted Air0.png to Air0.t3x successfully.
+[2025-07-14 20:59:29.69] INFO Converting arrow_S.png to arrow_S.t3x..
+[2025-07-14 20:59:29.69] INFO Converted active_pswitch_1.png to active_pswitch_1.t3x successfully.
+[2025-07-14 20:59:29.69] INFO Converting arrow_W.png to arrow_W.t3x..
+[2025-07-14 20:59:29.69] INFO Converted Air1.png to Air1.t3x successfully.
+[2025-07-14 20:59:29.69] INFO Converting arrowSign_E.png to arrowSign_E.t3x..
+[2025-07-14 20:59:29.70] INFO Converted arrow_E.png to arrow_E.t3x successfully.
+[2025-07-14 20:59:29.70] INFO Converting arrowSign_N.png to arrowSign_N.t3x..
+[2025-07-14 20:59:29.70] INFO Converted arrow_S.png to arrow_S.t3x successfully.
+[2025-07-14 20:59:29.70] INFO Converting arrowSign_S.png to arrowSign_S.t3x..
+[2025-07-14 20:59:29.78] INFO Converted arrowSign_E.png to arrowSign_E.t3x successfully.
+[2025-07-14 20:59:29.78] INFO Converting arrowSign_W.png to arrowSign_W.t3x..
+[2025-07-14 20:59:29.79] INFO Converted arrow_W.png to arrow_W.t3x successfully.
+[2025-07-14 20:59:29.79] INFO Converting Barrier.png to Barrier.t3x..
+[2025-07-14 20:59:29.79] INFO Converted arrow_N.png to arrow_N.t3x successfully.
+[2025-07-14 20:59:29.79] INFO Converting blaster.png to blaster.t3x..
+[2025-07-14 20:59:29.79] INFO Converted arrowSign_N.png to arrowSign_N.t3x successfully.
+[2025-07-14 20:59:29.79] INFO Converting BlasterBody.png to BlasterBody.t3x..
+[2025-07-14 20:59:29.80] INFO Converted arrowSign_W.png to arrowSign_W.t3x successfully.
+[2025-07-14 20:59:29.80] INFO Converted arrowSign_S.png to arrowSign_S.t3x successfully.
+[2025-07-14 20:59:29.80] INFO Converting bowser_body_L.png to bowser_body_L.t3x..
+[2025-07-14 20:59:29.80] INFO Converting BlasterTop.png to BlasterTop.t3x..
+[2025-07-14 20:59:29.81] INFO Converted blaster.png to blaster.t3x successfully.
+[2025-07-14 20:59:29.81] INFO Converted BlasterBody.png to BlasterBody.t3x successfully.
+[2025-07-14 20:59:29.81] INFO Converting bowser_mouth_1_L.png to bowser_mouth_1_L.t3x..
+[2025-07-14 20:59:29.81] INFO Converting bowser_body_R.png to bowser_body_R.t3x..
+[2025-07-14 20:59:29.89] INFO Converted BlasterTop.png to BlasterTop.t3x successfully.
+[2025-07-14 20:59:29.89] INFO Converting bowser_mouth_1_R.png to bowser_mouth_1_R.t3x..
+[2025-07-14 20:59:29.89] INFO Converted Barrier.png to Barrier.t3x successfully.
+[2025-07-14 20:59:29.89] INFO Converting bowser_mouth_2_L.png to bowser_mouth_2_L.t3x..
+[2025-07-14 20:59:29.89] INFO Converted bowser_mouth_1_L.png to bowser_mouth_1_L.t3x successfully.
+[2025-07-14 20:59:29.89] INFO Converting bowser_mouth_2_R.png to bowser_mouth_2_R.t3x..
+[2025-07-14 20:59:29.90] INFO Converted bowser_body_L.png to bowser_body_L.t3x successfully.
+[2025-07-14 20:59:29.90] INFO Converting bowser_walk_1_L.png to bowser_walk_1_L.t3x..
+[2025-07-14 20:59:29.90] INFO Converted bowser_body_R.png to bowser_body_R.t3x successfully.
+[2025-07-14 20:59:29.90] INFO Converting bowser_walk_1_R.png to bowser_walk_1_R.t3x..
+[2025-07-14 20:59:29.98] INFO Converted bowser_mouth_1_R.png to bowser_mouth_1_R.t3x successfully.
+[2025-07-14 20:59:29.98] INFO Converting bowser_walk_2_L.png to bowser_walk_2_L.t3x..
+[2025-07-14 20:59:29.99] INFO Converted bowser_mouth_2_L.png to bowser_mouth_2_L.t3x successfully.
+[2025-07-14 20:59:29.99] INFO Converted bowser_walk_1_R.png to bowser_walk_1_R.t3x successfully.
+[2025-07-14 20:59:29.99] INFO Converting bowser_walk_2_R.png to bowser_walk_2_R.t3x..
+[2025-07-14 20:59:29.99] INFO Converting BowserStatue_1.png to BowserStatue_1.t3x..
+[2025-07-14 20:59:29.99] INFO Converted bowser_walk_1_L.png to bowser_walk_1_L.t3x successfully.
+[2025-07-14 20:59:29.99] INFO Converting BowserStatue_2.png to BowserStatue_2.t3x..
+[2025-07-14 20:59:30.00] INFO Converted bowser_walk_2_L.png to bowser_walk_2_L.t3x successfully.
+[2025-07-14 20:59:30.00] INFO Converting BowserStatue_3.png to BowserStatue_3.t3x..
+[2025-07-14 20:59:30.00] INFO Converted bowser_mouth_2_R.png to bowser_mouth_2_R.t3x successfully.
+[2025-07-14 20:59:30.00] INFO Converting Brick.png to Brick.t3x..
+[2025-07-14 20:59:30.09] INFO Converted BowserStatue_1.png to BowserStatue_1.t3x successfully.
+[2025-07-14 20:59:30.09] INFO Converting brick_piece1.png to brick_piece1.t3x..
+[2025-07-14 20:59:30.09] INFO Converted bowser_walk_2_R.png to bowser_walk_2_R.t3x successfully.
+[2025-07-14 20:59:30.09] INFO Converting brick_piece1_castle.png to brick_piece1_castle.t3x..
+[2025-07-14 20:59:30.09] INFO Converted BowserStatue_2.png to BowserStatue_2.t3x successfully.
+[2025-07-14 20:59:30.09] INFO Converted Brick.png to Brick.t3x successfully.
+[2025-07-14 20:59:30.09] INFO Converting brick_piece1_underground.png to brick_piece1_underground.t3x..
+[2025-07-14 20:59:30.09] INFO Converting brick_piece2.png to brick_piece2.t3x..
+[2025-07-14 20:59:30.09] INFO Converted BowserStatue_3.png to BowserStatue_3.t3x successfully.
+[2025-07-14 20:59:30.09] INFO Converting brick_piece2_castle.png to brick_piece2_castle.t3x..
+[2025-07-14 20:59:30.10] INFO Converted brick_piece1_castle.png to brick_piece1_castle.t3x successfully.
+[2025-07-14 20:59:30.10] INFO Converting brick_piece2_underground.png to brick_piece2_underground.t3x..
+[2025-07-14 20:59:30.11] INFO Converted brick_piece1.png to brick_piece1.t3x successfully.
+[2025-07-14 20:59:30.11] INFO Converting brick_piece3.png to brick_piece3.t3x..
+[2025-07-14 20:59:30.11] INFO Converted brick_piece2_castle.png to brick_piece2_castle.t3x successfully.
+[2025-07-14 20:59:30.11] INFO Converting brick_piece3_castle.png to brick_piece3_castle.t3x..
+[2025-07-14 20:59:30.19] INFO Converted brick_piece2.png to brick_piece2.t3x successfully.
+[2025-07-14 20:59:30.19] INFO Converting brick_piece3_underground.png to brick_piece3_underground.t3x..
+[2025-07-14 20:59:30.19] INFO Converted brick_piece1_underground.png to brick_piece1_underground.t3x successfully.
+[2025-07-14 20:59:30.19] INFO Converting brick_piece4.png to brick_piece4.t3x..
+[2025-07-14 20:59:30.20] INFO Converted brick_piece2_underground.png to brick_piece2_underground.t3x successfully.
+[2025-07-14 20:59:30.20] INFO Converting brick_piece4_castle.png to brick_piece4_castle.t3x..
+[2025-07-14 20:59:30.20] INFO Converted brick_piece3_castle.png to brick_piece3_castle.t3x successfully.
+[2025-07-14 20:59:30.20] INFO Converting brick_piece4_underground.png to brick_piece4_underground.t3x..
+[2025-07-14 20:59:30.21] INFO Converted brick_piece3.png to brick_piece3.t3x successfully.
+[2025-07-14 20:59:30.21] INFO Converting BrickCastle.png to BrickCastle.t3x..
+[2025-07-14 20:59:30.21] INFO Converted brick_piece3_underground.png to brick_piece3_underground.t3x successfully.
+[2025-07-14 20:59:30.21] INFO Converted brick_piece4.png to brick_piece4.t3x successfully.
+[2025-07-14 20:59:30.21] INFO Converting Bridge.png to Bridge.t3x..
+[2025-07-14 20:59:30.21] INFO Converting BrickUnderground.png to BrickUnderground.t3x..
+[2025-07-14 20:59:30.29] INFO Converted Bridge.png to Bridge.t3x successfully.
+[2025-07-14 20:59:30.29] INFO Converting BridgeRailing.png to BridgeRailing.t3x..
+[2025-07-14 20:59:30.29] INFO Converted brick_piece4_underground.png to brick_piece4_underground.t3x successfully.
+[2025-07-14 20:59:30.29] INFO Converting bullet_L.png to bullet_L.t3x..
+[2025-07-14 20:59:30.29] INFO Converted brick_piece4_castle.png to brick_piece4_castle.t3x successfully.
+[2025-07-14 20:59:30.29] INFO Converting bullet_R.png to bullet_R.t3x..
+[2025-07-14 20:59:30.29] INFO Converted BrickUnderground.png to BrickUnderground.t3x successfully.
+[2025-07-14 20:59:30.29] INFO Converting Bush1.png to Bush1.t3x..
+[2025-07-14 20:59:30.30] INFO Converted BrickCastle.png to BrickCastle.t3x successfully.
+[2025-07-14 20:59:30.30] INFO Converting Bush2.png to Bush2.t3x..
+[2025-07-14 20:59:30.31] INFO Converted BridgeRailing.png to BridgeRailing.t3x successfully.
+[2025-07-14 20:59:30.31] INFO Converting Bush3.png to Bush3.t3x..
+[2025-07-14 20:59:30.31] INFO Converted bullet_R.png to bullet_R.t3x successfully.
+[2025-07-14 20:59:30.31] INFO Converting button_close.png to button_close.t3x..
+[2025-07-14 20:59:30.39] INFO Converted bullet_L.png to bullet_L.t3x successfully.
+[2025-07-14 20:59:30.39] INFO Converting button_create2.png to button_create2.t3x..
+[2025-07-14 20:59:30.39] INFO Converted Bush2.png to Bush2.t3x successfully.
+[2025-07-14 20:59:30.39] INFO Converting button_eraser.png to button_eraser.t3x..
+[2025-07-14 20:59:30.39] INFO Converting button_create1.png to button_create1.t3x..
+[2025-07-14 20:59:30.40] INFO Converted button_close.png to button_close.t3x successfully.
+[2025-07-14 20:59:30.40] INFO Converting button_eyedropper.png to button_eyedropper.t3x..
+[2025-07-14 20:59:30.40] INFO Converted Bush3.png to Bush3.t3x successfully.
+[2025-07-14 20:59:30.40] INFO Converting button_minimiserope.png to button_minimiserope.t3x..
+[2025-07-14 20:59:30.50] INFO Converted button_create1.png to button_create1.t3x successfully.
+[2025-07-14 20:59:30.50] INFO Converting button_play1.png to button_play1.t3x..
+[2025-07-14 20:59:30.50] INFO Converted button_eraser.png to button_eraser.t3x successfully.
+[2025-07-14 20:59:30.50] INFO Converting button_play2.png to button_play2.t3x..
+[2025-07-14 20:59:30.50] INFO Converted button_eyedropper.png to button_eyedropper.t3x successfully.
+[2025-07-14 20:59:30.50] INFO Converting button_trail.png to button_trail.t3x..
+[2025-07-14 20:59:30.51] INFO Converted button_minimiserope.png to button_minimiserope.t3x successfully.
+[2025-07-14 20:59:30.51] INFO Converting Castle1.png to Castle1.t3x..
+[2025-07-14 20:59:30.60] INFO Converted button_create2.png to button_create2.t3x successfully.
+[2025-07-14 20:59:30.60] INFO Converting Castle2.png to Castle2.t3x..
+[2025-07-14 20:59:30.60] INFO Converted button_play1.png to button_play1.t3x successfully.
+[2025-07-14 20:59:30.60] INFO Converting Castle3.png to Castle3.t3x..
+[2025-07-14 20:59:30.60] INFO Converted Castle1.png to Castle1.t3x successfully.
+[2025-07-14 20:59:30.61] INFO Converting Castle4.png to Castle4.t3x..
+[2025-07-14 20:59:30.61] INFO Converted button_trail.png to button_trail.t3x successfully.
+[2025-07-14 20:59:30.61] INFO Converting Castle5.png to Castle5.t3x..
+[2025-07-14 20:59:30.68] INFO Converted button_play2.png to button_play2.t3x successfully.
+[2025-07-14 20:59:30.68] INFO Converting Castle6.png to Castle6.t3x..
+[2025-07-14 20:59:30.69] INFO Converted Castle3.png to Castle3.t3x successfully.
+[2025-07-14 20:59:30.69] INFO Converted Castle2.png to Castle2.t3x successfully.
+[2025-07-14 20:59:30.69] INFO Converting ClearSwitchBlock.png to ClearSwitchBlock.t3x..
+[2025-07-14 20:59:30.69] INFO Converted Castle4.png to Castle4.t3x successfully.
+[2025-07-14 20:59:30.69] INFO Converting Cloud.png to Cloud.t3x..
+[2025-07-14 20:59:30.70] INFO Converted Castle5.png to Castle5.t3x successfully.
+[2025-07-14 20:59:30.70] INFO Converting Cloud1.png to Cloud1.t3x..
+[2025-07-14 20:59:30.70] INFO Converted Castle6.png to Castle6.t3x successfully.
+[2025-07-14 20:59:30.70] INFO Converting Cloud2.png to Cloud2.t3x..
+[2025-07-14 20:59:30.79] INFO Converted ClearSwitchBlock.png to ClearSwitchBlock.t3x successfully.
+[2025-07-14 20:59:30.79] INFO Converting Cloud3.png to Cloud3.t3x..
+[2025-07-14 20:59:30.79] INFO Converted Cloud.png to Cloud.t3x successfully.
+[2025-07-14 20:59:30.79] INFO Converting Cloud4.png to Cloud4.t3x..
+[2025-07-14 20:59:30.79] INFO Converted Cloud2.png to Cloud2.t3x successfully.
+[2025-07-14 20:59:30.80] INFO Converting Cloud5.png to Cloud5.t3x..
+[2025-07-14 20:59:30.80] INFO Converted Cloud1.png to Cloud1.t3x successfully.
+[2025-07-14 20:59:30.80] INFO Converting Cloud6.png to Cloud6.t3x..
+[2025-07-14 20:59:30.88] INFO Converted Cloud3.png to Cloud3.t3x successfully.
+[2025-07-14 20:59:30.88] INFO Converting coin_1.png to coin_1.t3x..
+[2025-07-14 20:59:30.89] INFO Converted Cloud4.png to Cloud4.t3x successfully.
+[2025-07-14 20:59:30.89] INFO Converting coin_2.png to coin_2.t3x..
+[2025-07-14 20:59:30.89] INFO Converted Cloud6.png to Cloud6.t3x successfully.
+[2025-07-14 20:59:30.89] INFO Converting coin_3.png to coin_3.t3x..
+[2025-07-14 20:59:30.90] INFO Converted Cloud5.png to Cloud5.t3x successfully.
+[2025-07-14 20:59:30.90] INFO Converting coin_4.png to coin_4.t3x..
+[2025-07-14 20:59:30.91] INFO Converted coin_1.png to coin_1.t3x successfully.
+[2025-07-14 20:59:30.91] INFO Converting Coin1.png to Coin1.t3x..
+[2025-07-14 20:59:30.91] INFO Converting Castle7.png to Castle7.t3x..
+[2025-07-14 20:59:30.98] INFO Converted coin_2.png to coin_2.t3x successfully.
+[2025-07-14 20:59:30.98] INFO Converting Coin2.png to Coin2.t3x..
+[2025-07-14 20:59:31.00] INFO Converted coin_3.png to coin_3.t3x successfully.
+[2025-07-14 20:59:31.00] INFO Converting Coin3.png to Coin3.t3x..
+[2025-07-14 20:59:31.00] INFO Converted coin_4.png to coin_4.t3x successfully.
+[2025-07-14 20:59:31.00] INFO Converting Conveyor_L_1.png to Conveyor_L_1.t3x..
+[2025-07-14 20:59:31.01] INFO Converted Coin1.png to Coin1.t3x successfully.
+[2025-07-14 20:59:31.01] INFO Converting Conveyor_L_2.png to Conveyor_L_2.t3x..
+[2025-07-14 20:59:31.01] INFO Converted Castle7.png to Castle7.t3x successfully.
+[2025-07-14 20:59:31.01] INFO Converted Coin2.png to Coin2.t3x successfully.
+[2025-07-14 20:59:31.01] INFO Converting Conveyor_L_3.png to Conveyor_L_3.t3x..
+[2025-07-14 20:59:31.01] INFO Converting Conveyor_L_4.png to Conveyor_L_4.t3x..
+[2025-07-14 20:59:31.02] INFO Converted Coin3.png to Coin3.t3x successfully.
+[2025-07-14 20:59:31.02] INFO Converting Conveyor_M_1.png to Conveyor_M_1.t3x..
+[2025-07-14 20:59:31.09] INFO Converted Conveyor_L_2.png to Conveyor_L_2.t3x successfully.
+[2025-07-14 20:59:31.09] INFO Converted Conveyor_M_1.png to Conveyor_M_1.t3x successfully.
+[2025-07-14 20:59:31.09] INFO Converting Conveyor_M_3.png to Conveyor_M_3.t3x..
+[2025-07-14 20:59:31.09] INFO Converting Conveyor_M_2.png to Conveyor_M_2.t3x..
+[2025-07-14 20:59:31.10] INFO Converted Conveyor_L_3.png to Conveyor_L_3.t3x successfully.
+[2025-07-14 20:59:31.10] INFO Converting Conveyor_M_4.png to Conveyor_M_4.t3x..
+[2025-07-14 20:59:31.10] INFO Converted Conveyor_L_1.png to Conveyor_L_1.t3x successfully.
+[2025-07-14 20:59:31.10] INFO Converting Conveyor_R_1.png to Conveyor_R_1.t3x..
+[2025-07-14 20:59:31.11] INFO Converted Conveyor_L_4.png to Conveyor_L_4.t3x successfully.
+[2025-07-14 20:59:31.20] INFO Converted Conveyor_M_2.png to Conveyor_M_2.t3x successfully.
+[2025-07-14 20:59:31.20] INFO Converting Conveyor_R_2.png to Conveyor_R_2.t3x..
+[2025-07-14 20:59:31.21] INFO Converting Conveyor_R_3.png to Conveyor_R_3.t3x..
+[2025-07-14 20:59:31.21] INFO Converted Conveyor_M_4.png to Conveyor_M_4.t3x successfully.
+[2025-07-14 20:59:31.21] INFO Converting Conveyor_R_4.png to Conveyor_R_4.t3x..
+[2025-07-14 20:59:31.21] INFO Converted Conveyor_M_3.png to Conveyor_M_3.t3x successfully.
+[2025-07-14 20:59:31.21] INFO Converting discard.png to discard.t3x..
+[2025-07-14 20:59:31.29] INFO Converted Conveyor_R_1.png to Conveyor_R_1.t3x successfully.
+[2025-07-14 20:59:31.29] INFO Converting EmptyBlock.png to EmptyBlock.t3x..
+[2025-07-14 20:59:31.29] INFO Converted Conveyor_R_3.png to Conveyor_R_3.t3x successfully.
+[2025-07-14 20:59:31.29] INFO Converting EmptyBlockCastle.png to EmptyBlockCastle.t3x..
+[2025-07-14 20:59:31.30] INFO Converted discard.png to discard.t3x successfully.
+[2025-07-14 20:59:31.30] INFO Converting EmptyBlockUnderground.png to EmptyBlockUnderground.t3x..
+[2025-07-14 20:59:31.30] INFO Converted EmptyBlock.png to EmptyBlock.t3x successfully.
+[2025-07-14 20:59:31.30] INFO Converting EntityOnly1.png to EntityOnly1.t3x..
+[2025-07-14 20:59:31.31] INFO Converted Conveyor_R_2.png to Conveyor_R_2.t3x successfully.
+[2025-07-14 20:59:31.39] INFO Converted EmptyBlockCastle.png to EmptyBlockCastle.t3x successfully.
+[2025-07-14 20:59:31.39] INFO Converting EntityOnly2.png to EntityOnly2.t3x..
+[2025-07-14 20:59:31.39] INFO Converting entrance_1.png to entrance_1.t3x..
+[2025-07-14 20:59:31.39] INFO Converted EmptyBlockUnderground.png to EmptyBlockUnderground.t3x successfully.
+[2025-07-14 20:59:31.39] INFO Converting entrance_2.png to entrance_2.t3x..
+[2025-07-14 20:59:31.39] INFO Converted Conveyor_R_4.png to Conveyor_R_4.t3x successfully.
+[2025-07-14 20:59:31.39] INFO Converting entrance_3.png to entrance_3.t3x..
+[2025-07-14 20:59:31.40] INFO Converted entrance_1.png to entrance_1.t3x successfully.
+[2025-07-14 20:59:31.40] INFO Converting exit_1.png to exit_1.t3x..
+[2025-07-14 20:59:31.40] INFO Converted EntityOnly2.png to EntityOnly2.t3x successfully.
+[2025-07-14 20:59:31.40] INFO Converting exit_2.png to exit_2.t3x..
+[2025-07-14 20:59:31.41] INFO Converted EntityOnly1.png to EntityOnly1.t3x successfully.
+[2025-07-14 20:59:31.41] INFO Converting exit_3.png to exit_3.t3x..
+[2025-07-14 20:59:31.49] INFO Converted entrance_2.png to entrance_2.t3x successfully.
+[2025-07-14 20:59:31.49] INFO Converting Fence.png to Fence.t3x..
+[2025-07-14 20:59:31.49] INFO Converted entrance_3.png to entrance_3.t3x successfully.
+[2025-07-14 20:59:31.49] INFO Converted exit_2.png to exit_2.t3x successfully.
+[2025-07-14 20:59:31.49] INFO Converting FencesCast_1.png to FencesCast_1.t3x..
+[2025-07-14 20:59:31.49] INFO Converting FencesCast_2.png to FencesCast_2.t3x..
+[2025-07-14 20:59:31.50] INFO Converted exit_3.png to exit_3.t3x successfully.
+[2025-07-14 20:59:31.50] INFO Converting FencesCast_3.png to FencesCast_3.t3x..
+[2025-07-14 20:59:31.50] INFO Converted Fence.png to Fence.t3x successfully.
+[2025-07-14 20:59:31.50] INFO Converting fireball_A1.png to fireball_A1.t3x..
+[2025-07-14 20:59:31.58] INFO Converted exit_1.png to exit_1.t3x successfully.
+[2025-07-14 20:59:31.58] INFO Converting fireball_A2.png to fireball_A2.t3x..
+[2025-07-14 20:59:31.59] INFO Converted FencesCast_3.png to FencesCast_3.t3x successfully.
+[2025-07-14 20:59:31.59] INFO Converting fireball_A3.png to fireball_A3.t3x..
+[2025-07-14 20:59:31.59] INFO Converted FencesCast_2.png to FencesCast_2.t3x successfully.
+[2025-07-14 20:59:31.59] INFO Converting fireball_L1.png to fireball_L1.t3x..
+[2025-07-14 20:59:31.59] INFO Converted FencesCast_1.png to FencesCast_1.t3x successfully.
+[2025-07-14 20:59:31.59] INFO Converting fireball_L2.png to fireball_L2.t3x..
+[2025-07-14 20:59:31.59] INFO Converted fireball_A1.png to fireball_A1.t3x successfully.
+[2025-07-14 20:59:31.60] INFO Converting fireball_L3.png to fireball_L3.t3x..
+[2025-07-14 20:59:31.60] INFO Converted fireball_A2.png to fireball_A2.t3x successfully.
+[2025-07-14 20:59:31.60] INFO Converting fireball_L4.png to fireball_L4.t3x..
+[2025-07-14 20:59:31.68] INFO Converted fireball_A3.png to fireball_A3.t3x successfully.
+[2025-07-14 20:59:31.68] INFO Converting fireball_R1.png to fireball_R1.t3x..
+[2025-07-14 20:59:31.69] INFO Converted fireball_L2.png to fireball_L2.t3x successfully.
+[2025-07-14 20:59:31.69] INFO Converting fireball_R2.png to fireball_R2.t3x..
+[2025-07-14 20:59:31.69] INFO Converted fireball_L4.png to fireball_L4.t3x successfully.
+[2025-07-14 20:59:31.69] INFO Converting fireball_R3.png to fireball_R3.t3x..
+[2025-07-14 20:59:31.69] INFO Converted fireball_R1.png to fireball_R1.t3x successfully.
+[2025-07-14 20:59:31.69] INFO Converting fireball_R4.png to fireball_R4.t3x..
+[2025-07-14 20:59:31.70] INFO Converted fireball_L3.png to fireball_L3.t3x successfully.
+[2025-07-14 20:59:31.70] INFO Converted fireball_R2.png to fireball_R2.t3x successfully.
+[2025-07-14 20:59:31.70] INFO Converted fireball_R3.png to fireball_R3.t3x successfully.
+[2025-07-14 20:59:31.70] INFO Converting fireflower1.png to fireflower1.t3x..
+[2025-07-14 20:59:31.70] INFO Converting fireflower2.png to fireflower2.t3x..
+[2025-07-14 20:59:31.70] INFO Converted fireball_L1.png to fireball_L1.t3x successfully.
+[2025-07-14 20:59:31.70] INFO Converting fireflower4.png to fireflower4.t3x..
+[2025-07-14 20:59:31.71] INFO Converting fireflower3.png to fireflower3.t3x..
+[2025-07-14 20:59:31.71] INFO Converted fireball_R4.png to fireball_R4.t3x successfully.
+[2025-07-14 20:59:31.78] INFO Converting flag.png to flag.t3x..
+[2025-07-14 20:59:31.79] INFO Converted flag.png to flag.t3x successfully.
+[2025-07-14 20:59:31.79] INFO Converting flagpole_top.png to flagpole_top.t3x..
+[2025-07-14 20:59:31.79] INFO Converted fireflower2.png to fireflower2.t3x successfully.
+[2025-07-14 20:59:31.79] INFO Converting flame_L_1.png to flame_L_1.t3x..
+[2025-07-14 20:59:31.80] INFO Converted fireflower4.png to fireflower4.t3x successfully.
+[2025-07-14 20:59:31.80] INFO Converting flame_L_2.png to flame_L_2.t3x..
+[2025-07-14 20:59:31.80] INFO Converted flagpole_top.png to flagpole_top.t3x successfully.
+[2025-07-14 20:59:31.80] INFO Converting flame_R_1.png to flame_R_1.t3x..
+[2025-07-14 20:59:31.80] INFO Converted fireflower3.png to fireflower3.t3x successfully.
+[2025-07-14 20:59:31.80] INFO Converting flame_R_2.png to flame_R_2.t3x..
+[2025-07-14 20:59:31.81] INFO Converted flame_L_1.png to flame_L_1.t3x successfully.
+[2025-07-14 20:59:31.81] INFO Converting font1__1.png to font1__1.t3x..
+[2025-07-14 20:59:31.89] INFO Converted fireflower1.png to fireflower1.t3x successfully.
+[2025-07-14 20:59:31.89] INFO Converting font1__2.png to font1__2.t3x..
+[2025-07-14 20:59:31.89] INFO Converted flame_R_1.png to flame_R_1.t3x successfully.
+[2025-07-14 20:59:31.89] INFO Converting font1__3.png to font1__3.t3x..
+[2025-07-14 20:59:31.89] INFO Converted flame_R_2.png to flame_R_2.t3x successfully.
+[2025-07-14 20:59:31.89] INFO Converting font1__a.png to font1__a.t3x..
+[2025-07-14 20:59:31.90] INFO Converted font1__2.png to font1__2.t3x successfully.
+[2025-07-14 20:59:31.90] INFO Converting font1__b.png to font1__b.t3x..
+[2025-07-14 20:59:31.90] INFO Converted font1__1.png to font1__1.t3x successfully.
+[2025-07-14 20:59:31.90] INFO Converting font1__bc.png to font1__bc.t3x..
+[2025-07-14 20:59:31.92] INFO Converted font1__3.png to font1__3.t3x successfully.
+[2025-07-14 20:59:31.92] INFO Converting font1__c.png to font1__c.t3x..
+[2025-07-14 20:59:31.92] INFO Converted flame_L_2.png to flame_L_2.t3x successfully.
+[2025-07-14 20:59:31.99] INFO Converting font1__cp.png to font1__cp.t3x..
+[2025-07-14 20:59:31.99] INFO Converted font1__b.png to font1__b.t3x successfully.
+[2025-07-14 20:59:31.99] INFO Converting font1__d.png to font1__d.t3x..
+[2025-07-14 20:59:31.99] INFO Converted font1__bc.png to font1__bc.t3x successfully.
+[2025-07-14 20:59:31.99] INFO Converting font1__e.png to font1__e.t3x..
+[2025-07-14 20:59:31.99] INFO Converted font1__c.png to font1__c.t3x successfully.
+[2025-07-14 20:59:31.99] INFO Converting font1__ex.png to font1__ex.t3x..
+[2025-07-14 20:59:32.00] INFO Converted font1__a.png to font1__a.t3x successfully.
+[2025-07-14 20:59:32.00] INFO Converting font1__h.png to font1__h.t3x..
+[2025-07-14 20:59:32.00] INFO Converted font1__cp.png to font1__cp.t3x successfully.
+[2025-07-14 20:59:32.01] INFO Converting font1__hy.png to font1__hy.t3x..
+[2025-07-14 20:59:32.01] INFO Converted font1__e.png to font1__e.t3x successfully.
+[2025-07-14 20:59:32.01] INFO Converting font1__k.png to font1__k.t3x..
+[2025-07-14 20:59:32.09] INFO Converted font1__d.png to font1__d.t3x successfully.
+[2025-07-14 20:59:32.09] INFO Converting font1__m.png to font1__m.t3x..
+[2025-07-14 20:59:32.09] INFO Converted font1__ex.png to font1__ex.t3x successfully.
+[2025-07-14 20:59:32.09] INFO Converting font1__n.png to font1__n.t3x..
+[2025-07-14 20:59:32.09] INFO Converted font1__h.png to font1__h.t3x successfully.
+[2025-07-14 20:59:32.09] INFO Converting font1__p.png to font1__p.t3x..
+[2025-07-14 20:59:32.09] INFO Converted font1__hy.png to font1__hy.t3x successfully.
+[2025-07-14 20:59:32.10] INFO Converting font1__q.png to font1__q.t3x..
+[2025-07-14 20:59:32.10] INFO Converted font1__k.png to font1__k.t3x successfully.
+[2025-07-14 20:59:32.10] INFO Converting font1__s.png to font1__s.t3x..
+[2025-07-14 20:59:32.10] INFO Converted font1__n.png to font1__n.t3x successfully.
+[2025-07-14 20:59:32.10] INFO Converting font1__sf.png to font1__sf.t3x..
+[2025-07-14 20:59:32.11] INFO Converted font1__m.png to font1__m.t3x successfully.
+[2025-07-14 20:59:32.11] INFO Converting font1__t.png to font1__t.t3x..
+[2025-07-14 20:59:32.19] INFO Converted font1__q.png to font1__q.t3x successfully.
+[2025-07-14 20:59:32.19] INFO Converting font1__x.png to font1__x.t3x..
+[2025-07-14 20:59:32.19] INFO Converted font1__sf.png to font1__sf.t3x successfully.
+[2025-07-14 20:59:32.19] INFO Converting font1_0.png to font1_0.t3x..
+[2025-07-14 20:59:32.19] INFO Converted font1__t.png to font1__t.t3x successfully.
+[2025-07-14 20:59:32.20] INFO Converting font1_1.png to font1_1.t3x..
+[2025-07-14 20:59:32.20] INFO Converted font1__s.png to font1__s.t3x successfully.
+[2025-07-14 20:59:32.20] INFO Converting font1_2.png to font1_2.t3x..
+[2025-07-14 20:59:32.20] INFO Converted font1__p.png to font1__p.t3x successfully.
+[2025-07-14 20:59:32.20] INFO Converting font1_3.png to font1_3.t3x..
+[2025-07-14 20:59:32.21] INFO Converted font1__x.png to font1__x.t3x successfully.
+[2025-07-14 20:59:32.21] INFO Converting font1_4.png to font1_4.t3x..
+[2025-07-14 20:59:32.28] INFO Converted font1_1.png to font1_1.t3x successfully.
+[2025-07-14 20:59:32.28] INFO Converting font1_5.png to font1_5.t3x..
+[2025-07-14 20:59:32.29] INFO Converted font1_0.png to font1_0.t3x successfully.
+[2025-07-14 20:59:32.29] INFO Converting font1_6.png to font1_6.t3x..
+[2025-07-14 20:59:32.29] INFO Converted font1_4.png to font1_4.t3x successfully.
+[2025-07-14 20:59:32.29] INFO Converting font1_7.png to font1_7.t3x..
+[2025-07-14 20:59:32.29] INFO Converted font1_2.png to font1_2.t3x successfully.
+[2025-07-14 20:59:32.29] INFO Converting font1_8.png to font1_8.t3x..
+[2025-07-14 20:59:32.30] INFO Converted font1_5.png to font1_5.t3x successfully.
+[2025-07-14 20:59:32.30] INFO Converting font1_9.png to font1_9.t3x..
+[2025-07-14 20:59:32.30] INFO Converted font1_6.png to font1_6.t3x successfully.
+[2025-07-14 20:59:32.30] INFO Converting font1_a.png to font1_a.t3x..
+[2025-07-14 20:59:32.30] INFO Converted font1_7.png to font1_7.t3x successfully.
+[2025-07-14 20:59:32.30] INFO Converting font1_b.png to font1_b.t3x..
+[2025-07-14 20:59:32.39] INFO Converted font1_8.png to font1_8.t3x successfully.
+[2025-07-14 20:59:32.39] INFO Converted font1_3.png to font1_3.t3x successfully.
+[2025-07-14 20:59:32.39] INFO Converting font1_c.png to font1_c.t3x..
+[2025-07-14 20:59:32.39] INFO Converting font1_d.png to font1_d.t3x..
+[2025-07-14 20:59:32.39] INFO Converted font1_a.png to font1_a.t3x successfully.
+[2025-07-14 20:59:32.39] INFO Converting font1_e.png to font1_e.t3x..
+[2025-07-14 20:59:32.39] INFO Converted font1_b.png to font1_b.t3x successfully.
+[2025-07-14 20:59:32.39] INFO Converting font1_f.png to font1_f.t3x..
+[2025-07-14 20:59:32.40] INFO Converted font1_9.png to font1_9.t3x successfully.
+[2025-07-14 20:59:32.40] INFO Converting font1_g.png to font1_g.t3x..
+[2025-07-14 20:59:32.49] INFO Converted font1_e.png to font1_e.t3x successfully.
+[2025-07-14 20:59:32.49] INFO Converting font1_h.png to font1_h.t3x..
+[2025-07-14 20:59:32.49] INFO Converted font1_c.png to font1_c.t3x successfully.
+[2025-07-14 20:59:32.49] INFO Converted font1_d.png to font1_d.t3x successfully.
+[2025-07-14 20:59:32.49] INFO Converted font1_f.png to font1_f.t3x successfully.
+[2025-07-14 20:59:32.49] INFO Converting font1_j.png to font1_j.t3x..
+[2025-07-14 20:59:32.49] INFO Converting font1_k.png to font1_k.t3x..
+[2025-07-14 20:59:32.50] INFO Converting font1_i.png to font1_i.t3x..
+[2025-07-14 20:59:32.50] INFO Converted font1_h.png to font1_h.t3x successfully.
+[2025-07-14 20:59:32.50] INFO Converting font1_l.png to font1_l.t3x..
+[2025-07-14 20:59:32.51] INFO Converted font1_g.png to font1_g.t3x successfully.
+[2025-07-14 20:59:32.51] INFO Converting font1_m.png to font1_m.t3x..
+[2025-07-14 20:59:32.51] INFO Converted font1_j.png to font1_j.t3x successfully.
+[2025-07-14 20:59:32.51] INFO Converted font1_k.png to font1_k.t3x successfully.
+[2025-07-14 20:59:32.51] INFO Converting font1_n.png to font1_n.t3x..
+[2025-07-14 20:59:32.59] INFO Converted font1_i.png to font1_i.t3x successfully.
+[2025-07-14 20:59:32.59] INFO Converted font1_l.png to font1_l.t3x successfully.
+[2025-07-14 20:59:32.59] INFO Converting font1_q.png to font1_q.t3x..
+[2025-07-14 20:59:32.59] INFO Converting font1_p.png to font1_p.t3x..
+[2025-07-14 20:59:32.59] INFO Converted font1_m.png to font1_m.t3x successfully.
+[2025-07-14 20:59:32.59] INFO Converting font1_o.png to font1_o.t3x..
+[2025-07-14 20:59:32.59] INFO Converting font1_r.png to font1_r.t3x..
+[2025-07-14 20:59:32.60] INFO Converted font1_n.png to font1_n.t3x successfully.
+[2025-07-14 20:59:32.60] INFO Converting font1_s.png to font1_s.t3x..
+[2025-07-14 20:59:32.61] INFO Converted font1_q.png to font1_q.t3x successfully.
+[2025-07-14 20:59:32.61] INFO Converting font1_t.png to font1_t.t3x..
+[2025-07-14 20:59:32.61] INFO Converted font1_o.png to font1_o.t3x successfully.
+[2025-07-14 20:59:32.61] INFO Converting font1_u.png to font1_u.t3x..
+[2025-07-14 20:59:32.69] INFO Converted font1_r.png to font1_r.t3x successfully.
+[2025-07-14 20:59:32.69] INFO Converting font1_v.png to font1_v.t3x..
+[2025-07-14 20:59:32.69] INFO Converted font1_p.png to font1_p.t3x successfully.
+[2025-07-14 20:59:32.69] INFO Converting font1_w.png to font1_w.t3x..
+[2025-07-14 20:59:32.70] INFO Converted font1_t.png to font1_t.t3x successfully.
+[2025-07-14 20:59:32.70] INFO Converting font1_x.png to font1_x.t3x..
+[2025-07-14 20:59:32.70] INFO Converted font1_u.png to font1_u.t3x successfully.
+[2025-07-14 20:59:32.70] INFO Converting font1_y.png to font1_y.t3x..
+[2025-07-14 20:59:32.71] INFO Converted font1_s.png to font1_s.t3x successfully.
+[2025-07-14 20:59:32.71] INFO Converted font1_v.png to font1_v.t3x successfully.
+[2025-07-14 20:59:32.71] INFO Converting font2__B.png to font2__B.t3x..
+[2025-07-14 20:59:32.71] INFO Converting font1_z.png to font1_z.t3x..
+[2025-07-14 20:59:32.71] INFO Converted font1_w.png to font1_w.t3x successfully.
+[2025-07-14 20:59:32.71] INFO Converting font2__c.png to font2__c.t3x..
+[2025-07-14 20:59:32.79] INFO Converted font1_y.png to font1_y.t3x successfully.
+[2025-07-14 20:59:32.79] INFO Converted font1_x.png to font1_x.t3x successfully.
+[2025-07-14 20:59:32.79] INFO Converting font2__D.png to font2__D.t3x..
+[2025-07-14 20:59:32.79] INFO Converting font2__E.png to font2__E.t3x..
+[2025-07-14 20:59:32.79] INFO Converted font2__c.png to font2__c.t3x successfully.
+[2025-07-14 20:59:32.79] INFO Converted font2__B.png to font2__B.t3x successfully.
+[2025-07-14 20:59:32.79] INFO Converting font2_0.png to font2_0.t3x..
+[2025-07-14 20:59:32.79] INFO Converting font2_1.png to font2_1.t3x..
+[2025-07-14 20:59:32.79] INFO Converted font1_z.png to font1_z.t3x successfully.
+[2025-07-14 20:59:32.79] INFO Converting font2_2.png to font2_2.t3x..
+[2025-07-14 20:59:32.80] INFO Converted font2_0.png to font2_0.t3x successfully.
+[2025-07-14 20:59:32.80] INFO Converting font2_3.png to font2_3.t3x..
+[2025-07-14 20:59:32.80] INFO Converted font2__E.png to font2__E.t3x successfully.
+[2025-07-14 20:59:32.80] INFO Converting font2_4.png to font2_4.t3x..
+[2025-07-14 20:59:32.81] INFO Converted font2_2.png to font2_2.t3x successfully.
+[2025-07-14 20:59:32.81] INFO Converting font2_5.png to font2_5.t3x..
+[2025-07-14 20:59:32.88] INFO Converted font2__D.png to font2__D.t3x successfully.
+[2025-07-14 20:59:32.89] INFO Converting font2_6.png to font2_6.t3x..
+[2025-07-14 20:59:32.89] INFO Converted font2_1.png to font2_1.t3x successfully.
+[2025-07-14 20:59:32.89] INFO Converting font2_7.png to font2_7.t3x..
+[2025-07-14 20:59:32.90] INFO Converted font2_6.png to font2_6.t3x successfully.
+[2025-07-14 20:59:32.90] INFO Converting font2_8.png to font2_8.t3x..
+[2025-07-14 20:59:32.90] INFO Converted font2_3.png to font2_3.t3x successfully.
+[2025-07-14 20:59:32.90] INFO Converted font2_4.png to font2_4.t3x successfully.
+[2025-07-14 20:59:32.90] INFO Converting font2_a.png to font2_a.t3x..
+[2025-07-14 20:59:32.90] INFO Converting font2_9.png to font2_9.t3x..
+[2025-07-14 20:59:32.90] INFO Converted font2_7.png to font2_7.t3x successfully.
+[2025-07-14 20:59:32.91] INFO Converted font2_5.png to font2_5.t3x successfully.
+[2025-07-14 20:59:32.91] INFO Converting font2_c.png to font2_c.t3x..
+[2025-07-14 20:59:32.91] INFO Converted font2_8.png to font2_8.t3x successfully.
+[2025-07-14 20:59:32.91] INFO Converting font2_d.png to font2_d.t3x..
+[2025-07-14 20:59:32.99] INFO Converting font2_b.png to font2_b.t3x..
+[2025-07-14 20:59:32.99] INFO Converted font2_c.png to font2_c.t3x successfully.
+[2025-07-14 20:59:32.99] INFO Converting font2_e.png to font2_e.t3x..
+[2025-07-14 20:59:32.99] INFO Converted font2_a.png to font2_a.t3x successfully.
+[2025-07-14 20:59:32.99] INFO Converting font2_f.png to font2_f.t3x..
+[2025-07-14 20:59:33.00] INFO Converted font2_9.png to font2_9.t3x successfully.
+[2025-07-14 20:59:33.00] INFO Converting font2_g.png to font2_g.t3x..
+[2025-07-14 20:59:33.01] INFO Converted font2_e.png to font2_e.t3x successfully.
+[2025-07-14 20:59:33.01] INFO Converting font2_h.png to font2_h.t3x..
+[2025-07-14 20:59:33.08] INFO Converted font2_f.png to font2_f.t3x successfully.
+[2025-07-14 20:59:33.08] INFO Converting font2_i.png to font2_i.t3x..
+[2025-07-14 20:59:33.09] INFO Converted font2_d.png to font2_d.t3x successfully.
+[2025-07-14 20:59:33.09] INFO Converted font2_b.png to font2_b.t3x successfully.
+[2025-07-14 20:59:33.09] INFO Converted font2_g.png to font2_g.t3x successfully.
+[2025-07-14 20:59:33.09] INFO Converting font2_j.png to font2_j.t3x..
+[2025-07-14 20:59:33.09] INFO Converting font2_k.png to font2_k.t3x..
+[2025-07-14 20:59:33.09] INFO Converting font2_l.png to font2_l.t3x..
+[2025-07-14 20:59:33.10] INFO Converted font2_h.png to font2_h.t3x successfully.
+[2025-07-14 20:59:33.10] INFO Converting font2_m.png to font2_m.t3x..
+[2025-07-14 20:59:33.11] INFO Converted font2_i.png to font2_i.t3x successfully.
+[2025-07-14 20:59:33.11] INFO Converted font2_j.png to font2_j.t3x successfully.
+[2025-07-14 20:59:33.11] INFO Converting font2_o.png to font2_o.t3x..
+[2025-07-14 20:59:33.11] INFO Converting font2_n.png to font2_n.t3x..
+[2025-07-14 20:59:33.19] INFO Converted font2_m.png to font2_m.t3x successfully.
+[2025-07-14 20:59:33.19] INFO Converting font2_p.png to font2_p.t3x..
+[2025-07-14 20:59:33.19] INFO Converted font2_o.png to font2_o.t3x successfully.
+[2025-07-14 20:59:33.19] INFO Converting font2_q.png to font2_q.t3x..
+[2025-07-14 20:59:33.19] INFO Converted font2_k.png to font2_k.t3x successfully.
+[2025-07-14 20:59:33.19] INFO Converted font2_l.png to font2_l.t3x successfully.
+[2025-07-14 20:59:33.19] INFO Converting font2_s.png to font2_s.t3x..
+[2025-07-14 20:59:33.20] INFO Converting font2_r.png to font2_r.t3x..
+[2025-07-14 20:59:33.20] INFO Converted font2_s.png to font2_s.t3x successfully.
+[2025-07-14 20:59:33.21] INFO Converting font2_t.png to font2_t.t3x..
+[2025-07-14 20:59:33.21] INFO Converted font2_n.png to font2_n.t3x successfully.
+[2025-07-14 20:59:33.21] INFO Converting font2_u.png to font2_u.t3x..
+[2025-07-14 20:59:33.21] INFO Converted font2_q.png to font2_q.t3x successfully.
+[2025-07-14 20:59:33.21] INFO Converting font2_v.png to font2_v.t3x..
+[2025-07-14 20:59:33.29] INFO Converted font2_p.png to font2_p.t3x successfully.
+[2025-07-14 20:59:33.29] INFO Converting font2_w.png to font2_w.t3x..
+[2025-07-14 20:59:33.29] INFO Converted font2_t.png to font2_t.t3x successfully.
+[2025-07-14 20:59:33.29] INFO Converting font2_x.png to font2_x.t3x..
+[2025-07-14 20:59:33.29] INFO Converted font2_r.png to font2_r.t3x successfully.
+[2025-07-14 20:59:33.29] INFO Converting font2_y.png to font2_y.t3x..
+[2025-07-14 20:59:33.30] INFO Converted font2_u.png to font2_u.t3x successfully.
+[2025-07-14 20:59:33.30] INFO Converting font2_z.png to font2_z.t3x..
+[2025-07-14 20:59:33.31] INFO Converted font2_w.png to font2_w.t3x successfully.
+[2025-07-14 20:59:33.31] INFO Converting goomba1.png to goomba1.t3x..
+[2025-07-14 20:59:33.31] INFO Converted font2_v.png to font2_v.t3x successfully.
+[2025-07-14 20:59:33.31] INFO Converting goomba2.png to goomba2.t3x..
+[2025-07-14 20:59:33.31] INFO Converted font2_y.png to font2_y.t3x successfully.
+[2025-07-14 20:59:33.31] INFO Converting goomba3.png to goomba3.t3x..
+[2025-07-14 20:59:33.38] INFO Converted font2_z.png to font2_z.t3x successfully.
+[2025-07-14 20:59:33.38] INFO Converted font2_x.png to font2_x.t3x successfully.
+[2025-07-14 20:59:33.38] INFO Converting goomba4.png to goomba4.t3x..
+[2025-07-14 20:59:33.38] INFO Converting Ground.png to Ground.t3x..
+[2025-07-14 20:59:33.39] INFO Converted goomba2.png to goomba2.t3x successfully.
+[2025-07-14 20:59:33.39] INFO Converting GroundCastle.png to GroundCastle.t3x..
+[2025-07-14 20:59:33.39] INFO Converted goomba4.png to goomba4.t3x successfully.
+[2025-07-14 20:59:33.39] INFO Converting GroundUnderground.png to GroundUnderground.t3x..
+[2025-07-14 20:59:33.40] INFO Converted Ground.png to Ground.t3x successfully.
+[2025-07-14 20:59:33.40] INFO Converting group_pipe.png to group_pipe.t3x..
+[2025-07-14 20:59:33.40] INFO Converted goomba1.png to goomba1.t3x successfully.
+[2025-07-14 20:59:33.40] INFO Converted GroundCastle.png to GroundCastle.t3x successfully.
+[2025-07-14 20:59:33.40] INFO Converting group_setpipe.png to group_setpipe.t3x..
+[2025-07-14 20:59:33.40] INFO Converting HardBlock.png to HardBlock.t3x..
+[2025-07-14 20:59:33.49] INFO Converted group_setpipe.png to group_setpipe.t3x successfully.
+[2025-07-14 20:59:33.49] INFO Converting HardBlockCastle.png to HardBlockCastle.t3x..
+[2025-07-14 20:59:33.49] INFO Converted goomba3.png to goomba3.t3x successfully.
+[2025-07-14 20:59:33.49] INFO Converting HardBlockUnderground.png to HardBlockUnderground.t3x..
+[2025-07-14 20:59:33.49] INFO Converted GroundUnderground.png to GroundUnderground.t3x successfully.
+[2025-07-14 20:59:33.49] INFO Converting Hill1.png to Hill1.t3x..
+[2025-07-14 20:59:33.50] INFO Converted group_pipe.png to group_pipe.t3x successfully.
+[2025-07-14 20:59:33.50] INFO Converting Hill2.png to Hill2.t3x..
+[2025-07-14 20:59:33.50] INFO Converted HardBlock.png to HardBlock.t3x successfully.
+[2025-07-14 20:59:33.50] INFO Converting Hill3.png to Hill3.t3x..
+[2025-07-14 20:59:33.50] INFO Converted HardBlockCastle.png to HardBlockCastle.t3x successfully.
+[2025-07-14 20:59:33.50] INFO Converting Hill4.png to Hill4.t3x..
+[2025-07-14 20:59:33.51] INFO Converted Hill1.png to Hill1.t3x successfully.
+[2025-07-14 20:59:33.59] INFO Converting Hill5.png to Hill5.t3x..
+[2025-07-14 20:59:33.59] INFO Converted Hill2.png to Hill2.t3x successfully.
+[2025-07-14 20:59:33.59] INFO Converting Hill6.png to Hill6.t3x..
+[2025-07-14 20:59:33.59] INFO Converted Hill3.png to Hill3.t3x successfully.
+[2025-07-14 20:59:33.59] INFO Converting icon_a0.png to icon_a0.t3x..
+[2025-07-14 20:59:33.60] INFO Converted HardBlockUnderground.png to HardBlockUnderground.t3x successfully.
+[2025-07-14 20:59:33.60] INFO Converting icon_a1.png to icon_a1.t3x..
+[2025-07-14 20:59:33.61] INFO Converted Hill5.png to Hill5.t3x successfully.
+[2025-07-14 20:59:33.61] INFO Converted Hill4.png to Hill4.t3x successfully.
+[2025-07-14 20:59:33.61] INFO Converting icon_a2.png to icon_a2.t3x..
+[2025-07-14 20:59:33.61] INFO Converting icon_ad.png to icon_ad.t3x..
+[2025-07-14 20:59:33.69] INFO Converted Hill6.png to Hill6.t3x successfully.
+[2025-07-14 20:59:33.69] INFO Converting icon_al.png to icon_al.t3x..
+[2025-07-14 20:59:33.69] INFO Converting icon_ar.png to icon_ar.t3x..
+[2025-07-14 20:59:33.69] INFO Converted icon_a1.png to icon_a1.t3x successfully.
+[2025-07-14 20:59:33.69] INFO Converting icon_au.png to icon_au.t3x..
+[2025-07-14 20:59:33.69] INFO Converted icon_ad.png to icon_ad.t3x successfully.
+[2025-07-14 20:59:33.69] INFO Converting icon_coin.png to icon_coin.t3x..
+[2025-07-14 20:59:33.70] INFO Converted icon_a2.png to icon_a2.t3x successfully.
+[2025-07-14 20:59:33.70] INFO Converting icon_fd.png to icon_fd.t3x..
+[2025-07-14 20:59:33.70] INFO Converted icon_coin.png to icon_coin.t3x successfully.
+[2025-07-14 20:59:33.70] INFO Converted icon_ar.png to icon_ar.t3x successfully.
+[2025-07-14 20:59:33.70] INFO Converting icon_fl.png to icon_fl.t3x..
+[2025-07-14 20:59:33.71] INFO Converting icon_fireflower.png to icon_fireflower.t3x..
+[2025-07-14 20:59:33.71] INFO Converted icon_au.png to icon_au.t3x successfully.
+[2025-07-14 20:59:33.78] INFO Converted icon_al.png to icon_al.t3x successfully.
+[2025-07-14 20:59:33.79] INFO Converting icon_fu.png to icon_fu.t3x..
+[2025-07-14 20:59:33.79] INFO Converting icon_fr.png to icon_fr.t3x..
+[2025-07-14 20:59:33.79] INFO Converted icon_fireflower.png to icon_fireflower.t3x successfully.
+[2025-07-14 20:59:33.79] INFO Converting icon_lx.png to icon_lx.t3x..
+[2025-07-14 20:59:33.79] INFO Converted icon_fd.png to icon_fd.t3x successfully.
+[2025-07-14 20:59:33.80] INFO Converting icon_ly.png to icon_ly.t3x..
+[2025-07-14 20:59:33.80] INFO Converted icon_fu.png to icon_fu.t3x successfully.
+[2025-07-14 20:59:33.80] INFO Converting icon_m0.png to icon_m0.t3x..
+[2025-07-14 20:59:33.80] INFO Converted icon_fr.png to icon_fr.t3x successfully.
+[2025-07-14 20:59:33.80] INFO Converting icon_m1.png to icon_m1.t3x..
+[2025-07-14 20:59:33.81] INFO Converted icon_fl.png to icon_fl.t3x successfully.
+[2025-07-14 20:59:33.81] INFO Converting icon_multicoin.png to icon_multicoin.t3x..
+[2025-07-14 20:59:33.89] INFO Converted icon_lx.png to icon_lx.t3x successfully.
+[2025-07-14 20:59:33.89] INFO Converting icon_mushroom.png to icon_mushroom.t3x..
+[2025-07-14 20:59:33.89] INFO Converted icon_m1.png to icon_m1.t3x successfully.
+[2025-07-14 20:59:33.89] INFO Converting icon_mushroom1up.png to icon_mushroom1up.t3x..
+[2025-07-14 20:59:33.90] INFO Converted icon_m0.png to icon_m0.t3x successfully.
+[2025-07-14 20:59:33.90] INFO Converting icon_Pfireflower.png to icon_Pfireflower.t3x..
+[2025-07-14 20:59:33.90] INFO Converted icon_mushroom.png to icon_mushroom.t3x successfully.
+[2025-07-14 20:59:33.90] INFO Converting icon_rd.png to icon_rd.t3x..
+[2025-07-14 20:59:33.90] INFO Converted icon_ly.png to icon_ly.t3x successfully.
+[2025-07-14 20:59:33.91] INFO Converting icon_ru.png to icon_ru.t3x..
+[2025-07-14 20:59:33.91] INFO Converted icon_multicoin.png to icon_multicoin.t3x successfully.
+[2025-07-14 20:59:33.91] INFO Converting icon_scrollStopC.png to icon_scrollStopC.t3x..
+[2025-07-14 20:59:33.91] INFO Converted icon_mushroom1up.png to icon_mushroom1up.t3x successfully.
+[2025-07-14 20:59:33.91] INFO Converting icon_scrollStopL.png to icon_scrollStopL.t3x..
+[2025-07-14 20:59:33.99] INFO Converted icon_ru.png to icon_ru.t3x successfully.
+[2025-07-14 20:59:33.99] INFO Converting icon_scrollStopR.png to icon_scrollStopR.t3x..
+[2025-07-14 20:59:33.99] INFO Converted icon_scrollStopC.png to icon_scrollStopC.t3x successfully.
+[2025-07-14 20:59:33.99] INFO Converted icon_Pfireflower.png to icon_Pfireflower.t3x successfully.
+[2025-07-14 20:59:33.99] INFO Converting icon_star.png to icon_star.t3x..
+[2025-07-14 20:59:33.99] INFO Converting icon_start.png to icon_start.t3x..
+[2025-07-14 20:59:34.01] INFO Converted icon_rd.png to icon_rd.t3x successfully.
+[2025-07-14 20:59:34.01] INFO Converted icon_scrollStopL.png to icon_scrollStopL.t3x successfully.
+[2025-07-14 20:59:34.01] INFO Converting InvisibleBlock0.png to InvisibleBlock0.t3x..
+[2025-07-14 20:59:34.01] INFO Converting InvisibleBlock1.png to InvisibleBlock1.t3x..
+[2025-07-14 20:59:34.09] INFO Converted icon_star.png to icon_star.t3x successfully.
+[2025-07-14 20:59:34.09] INFO Converted icon_scrollStopR.png to icon_scrollStopR.t3x successfully.
+[2025-07-14 20:59:34.09] INFO Converted icon_start.png to icon_start.t3x successfully.
+[2025-07-14 20:59:34.09] INFO Converting L_koopa_B_3.png to L_koopa_B_3.t3x..
+[2025-07-14 20:59:34.09] INFO Converting L_koopa_B_2.png to L_koopa_B_2.t3x..
+[2025-07-14 20:59:34.09] INFO Converting L_koopa_B_1.png to L_koopa_B_1.t3x..
+[2025-07-14 20:59:34.09] INFO Converted InvisibleBlock1.png to InvisibleBlock1.t3x successfully.
+[2025-07-14 20:59:34.10] INFO Converting L_koopa_G_1.png to L_koopa_G_1.t3x..
+[2025-07-14 20:59:34.10] INFO Converted InvisibleBlock0.png to InvisibleBlock0.t3x successfully.
+[2025-07-14 20:59:34.10] INFO Converting L_koopa_G_2.png to L_koopa_G_2.t3x..
+[2025-07-14 20:59:34.19] INFO Converted L_koopa_B_2.png to L_koopa_B_2.t3x successfully.
+[2025-07-14 20:59:34.19] INFO Converted L_koopa_G_1.png to L_koopa_G_1.t3x successfully.
+[2025-07-14 20:59:34.19] INFO Converted L_koopa_G_2.png to L_koopa_G_2.t3x successfully.
+[2025-07-14 20:59:34.19] INFO Converting L_koopa_R_1.png to L_koopa_R_1.t3x..
+[2025-07-14 20:59:34.19] INFO Converting L_koopa_G_3.png to L_koopa_G_3.t3x..
+[2025-07-14 20:59:34.19] INFO Converted L_koopa_B_3.png to L_koopa_B_3.t3x successfully.
+[2025-07-14 20:59:34.19] INFO Converting L_koopa_R_3.png to L_koopa_R_3.t3x..
+[2025-07-14 20:59:34.19] INFO Converting L_koopa_R_2.png to L_koopa_R_2.t3x..
+[2025-07-14 20:59:34.20] INFO Converted L_koopa_B_1.png to L_koopa_B_1.t3x successfully.
+[2025-07-14 20:59:34.20] INFO Converting L_Pkoopa_G_1.png to L_Pkoopa_G_1.t3x..
+[2025-07-14 20:59:34.21] INFO Converted L_koopa_R_2.png to L_koopa_R_2.t3x successfully.
+[2025-07-14 20:59:34.21] INFO Converting L_Pkoopa_G_2.png to L_Pkoopa_G_2.t3x..
+[2025-07-14 20:59:34.29] INFO Converted L_koopa_R_1.png to L_koopa_R_1.t3x successfully.
+[2025-07-14 20:59:34.29] INFO Converting L_Pkoopa_G_3.png to L_Pkoopa_G_3.t3x..
+[2025-07-14 20:59:34.30] INFO Converted L_koopa_R_3.png to L_koopa_R_3.t3x successfully.
+[2025-07-14 20:59:34.30] INFO Converted L_koopa_G_3.png to L_koopa_G_3.t3x successfully.
+[2025-07-14 20:59:34.30] INFO Converted L_Pkoopa_G_1.png to L_Pkoopa_G_1.t3x successfully.
+[2025-07-14 20:59:34.30] INFO Converted L_Pkoopa_G_2.png to L_Pkoopa_G_2.t3x successfully.
+[2025-07-14 20:59:34.30] INFO Converting L_Pkoopa_R_2.png to L_Pkoopa_R_2.t3x..
+[2025-07-14 20:59:34.30] INFO Converting L_Pkoopa_R_3.png to L_Pkoopa_R_3.t3x..
+[2025-07-14 20:59:34.30] INFO Converting L0climb1.png to L0climb1.t3x..
+[2025-07-14 20:59:34.30] INFO Converting L_Pkoopa_R_1.png to L_Pkoopa_R_1.t3x..
+[2025-07-14 20:59:34.38] INFO Converted L0climb1.png to L0climb1.t3x successfully.
+[2025-07-14 20:59:34.38] INFO Converting L0climb1star0.png to L0climb1star0.t3x..
+[2025-07-14 20:59:34.39] INFO Converted L_Pkoopa_R_2.png to L_Pkoopa_R_2.t3x successfully.
+[2025-07-14 20:59:34.39] INFO Converting L0climb1star1.png to L0climb1star1.t3x..
+[2025-07-14 20:59:34.39] INFO Converted L_Pkoopa_G_3.png to L_Pkoopa_G_3.t3x successfully.
+[2025-07-14 20:59:34.39] INFO Converting L0climb1star2.png to L0climb1star2.t3x..
+[2025-07-14 20:59:34.39] INFO Converted L_Pkoopa_R_1.png to L_Pkoopa_R_1.t3x successfully.
+[2025-07-14 20:59:34.39] INFO Converting L0climb2.png to L0climb2.t3x..
+[2025-07-14 20:59:34.40] INFO Converted L0climb1star1.png to L0climb1star1.t3x successfully.
+[2025-07-14 20:59:34.40] INFO Converting L0climb2star0.png to L0climb2star0.t3x..
+[2025-07-14 20:59:34.41] INFO Converted L_Pkoopa_R_3.png to L_Pkoopa_R_3.t3x successfully.
+[2025-07-14 20:59:34.41] INFO Converting L0climb2star1.png to L0climb2star1.t3x..
+[2025-07-14 20:59:34.41] INFO Converted L0climb2.png to L0climb2.t3x successfully.
+[2025-07-14 20:59:34.48] INFO Converting L0climb2star2.png to L0climb2star2.t3x..
+[2025-07-14 20:59:34.49] INFO Converted L0climb1star2.png to L0climb1star2.t3x successfully.
+[2025-07-14 20:59:34.49] INFO Converting L0death.png to L0death.t3x..
+[2025-07-14 20:59:34.49] INFO Converted L0climb2star0.png to L0climb2star0.t3x successfully.
+[2025-07-14 20:59:34.49] INFO Converting L0deathstar0.png to L0deathstar0.t3x..
+[2025-07-14 20:59:34.49] INFO Converted L0climb2star1.png to L0climb2star1.t3x successfully.
+[2025-07-14 20:59:34.49] INFO Converting L0deathstar1.png to L0deathstar1.t3x..
+[2025-07-14 20:59:34.49] INFO Converted L0climb2star2.png to L0climb2star2.t3x successfully.
+[2025-07-14 20:59:34.49] INFO Converting L0deathstar2.png to L0deathstar2.t3x..
+[2025-07-14 20:59:34.50] INFO Converted L0climb1star0.png to L0climb1star0.t3x successfully.
+[2025-07-14 20:59:34.50] INFO Converting L0drift.png to L0drift.t3x..
+[2025-07-14 20:59:34.58] INFO Converted L0deathstar0.png to L0deathstar0.t3x successfully.
+[2025-07-14 20:59:34.58] INFO Converting L0driftstar0.png to L0driftstar0.t3x..
+[2025-07-14 20:59:34.58] INFO Converted L0deathstar1.png to L0deathstar1.t3x successfully.
+[2025-07-14 20:59:34.58] INFO Converting L0driftstar1.png to L0driftstar1.t3x..
+[2025-07-14 20:59:34.59] INFO Converted L0death.png to L0death.t3x successfully.
+[2025-07-14 20:59:34.59] INFO Converting L0driftstar2.png to L0driftstar2.t3x..
+[2025-07-14 20:59:34.60] INFO Converted L0deathstar2.png to L0deathstar2.t3x successfully.
+[2025-07-14 20:59:34.60] INFO Converting L0idle.png to L0idle.t3x..
+[2025-07-14 20:59:34.61] INFO Converted L0drift.png to L0drift.t3x successfully.
+[2025-07-14 20:59:34.61] INFO Converting L0idlestar0.png to L0idlestar0.t3x..
+[2025-07-14 20:59:34.61] INFO Converted L0driftstar1.png to L0driftstar1.t3x successfully.
+[2025-07-14 20:59:34.61] INFO Converted L0driftstar0.png to L0driftstar0.t3x successfully.
+[2025-07-14 20:59:34.61] INFO Converting L0idlestar1.png to L0idlestar1.t3x..
+[2025-07-14 20:59:34.61] INFO Converting L0idlestar2.png to L0idlestar2.t3x..
+[2025-07-14 20:59:34.69] INFO Converted L0driftstar2.png to L0driftstar2.t3x successfully.
+[2025-07-14 20:59:34.69] INFO Converting L0jump.png to L0jump.t3x..
+[2025-07-14 20:59:34.69] INFO Converted L0idlestar0.png to L0idlestar0.t3x successfully.
+[2025-07-14 20:59:34.69] INFO Converted L0idlestar2.png to L0idlestar2.t3x successfully.
+[2025-07-14 20:59:34.69] INFO Converting L0jumpstar1.png to L0jumpstar1.t3x..
+[2025-07-14 20:59:34.69] INFO Converting L0jumpstar0.png to L0jumpstar0.t3x..
+[2025-07-14 20:59:34.70] INFO Converted L0jumpstar1.png to L0jumpstar1.t3x successfully.
+[2025-07-14 20:59:34.70] INFO Converting L0jumpstar2.png to L0jumpstar2.t3x..
+[2025-07-14 20:59:34.70] INFO Converted L0idlestar1.png to L0idlestar1.t3x successfully.
+[2025-07-14 20:59:34.70] INFO Converting L0walk1.png to L0walk1.t3x..
+[2025-07-14 20:59:34.78] INFO Converted L0idle.png to L0idle.t3x successfully.
+[2025-07-14 20:59:34.78] INFO Converting L0walk1star0.png to L0walk1star0.t3x..
+[2025-07-14 20:59:34.78] INFO Converted L0jump.png to L0jump.t3x successfully.
+[2025-07-14 20:59:34.78] INFO Converted L0jumpstar2.png to L0jumpstar2.t3x successfully.
+[2025-07-14 20:59:34.79] INFO Converting L0walk1star1.png to L0walk1star1.t3x..
+[2025-07-14 20:59:34.79] INFO Converting L0walk1star2.png to L0walk1star2.t3x..
+[2025-07-14 20:59:34.80] INFO Converted L0jumpstar0.png to L0jumpstar0.t3x successfully.
+[2025-07-14 20:59:34.80] INFO Converting L0walk2.png to L0walk2.t3x..
+[2025-07-14 20:59:34.80] INFO Converted L0walk1.png to L0walk1.t3x successfully.
+[2025-07-14 20:59:34.80] INFO Converting L0walk2star0.png to L0walk2star0.t3x..
+[2025-07-14 20:59:34.80] INFO Converted L0walk1star1.png to L0walk1star1.t3x successfully.
+[2025-07-14 20:59:34.80] INFO Converting L0walk2star1.png to L0walk2star1.t3x..
+[2025-07-14 20:59:34.88] INFO Converted L0walk1star2.png to L0walk1star2.t3x successfully.
+[2025-07-14 20:59:34.88] INFO Converting L0walk2star2.png to L0walk2star2.t3x..
+[2025-07-14 20:59:34.89] INFO Converted L0walk1star0.png to L0walk1star0.t3x successfully.
+[2025-07-14 20:59:34.89] INFO Converting L0walk3.png to L0walk3.t3x..
+[2025-07-14 20:59:34.89] INFO Converted L0walk2star0.png to L0walk2star0.t3x successfully.
+[2025-07-14 20:59:34.89] INFO Converting L0walk3star0.png to L0walk3star0.t3x..
+[2025-07-14 20:59:34.89] INFO Converted L0walk2star2.png to L0walk2star2.t3x successfully.
+[2025-07-14 20:59:34.90] INFO Converting L0walk3star1.png to L0walk3star1.t3x..
+[2025-07-14 20:59:34.90] INFO Converted L0walk2star1.png to L0walk2star1.t3x successfully.
+[2025-07-14 20:59:34.90] INFO Converting L0walk3star2.png to L0walk3star2.t3x..
+[2025-07-14 20:59:34.90] INFO Converted L0walk3star0.png to L0walk3star0.t3x successfully.
+[2025-07-14 20:59:34.90] INFO Converting L1climb1.png to L1climb1.t3x..
+[2025-07-14 20:59:34.91] INFO Converted L0walk2.png to L0walk2.t3x successfully.
+[2025-07-14 20:59:34.91] INFO Converting L1climb1star0.png to L1climb1star0.t3x..
+[2025-07-14 20:59:34.99] INFO Converted L0walk3.png to L0walk3.t3x successfully.
+[2025-07-14 20:59:34.99] INFO Converting L1climb1star1.png to L1climb1star1.t3x..
+[2025-07-14 20:59:34.99] INFO Converted L0walk3star2.png to L0walk3star2.t3x successfully.
+[2025-07-14 20:59:34.99] INFO Converting L1climb1star2.png to L1climb1star2.t3x..
+[2025-07-14 20:59:35.00] INFO Converted L1climb1.png to L1climb1.t3x successfully.
+[2025-07-14 20:59:35.00] INFO Converting L1climb2.png to L1climb2.t3x..
+[2025-07-14 20:59:35.01] INFO Converted L0walk3star1.png to L0walk3star1.t3x successfully.
+[2025-07-14 20:59:35.01] INFO Converted L1climb1star0.png to L1climb1star0.t3x successfully.
+[2025-07-14 20:59:35.01] INFO Converting L1climb2star1.png to L1climb2star1.t3x..
+[2025-07-14 20:59:35.01] INFO Converting L1climb2star0.png to L1climb2star0.t3x..
+[2025-07-14 20:59:35.09] INFO Converted L1climb2star0.png to L1climb2star0.t3x successfully.
+[2025-07-14 20:59:35.10] INFO Converting L1climb2star2.png to L1climb2star2.t3x..
+[2025-07-14 20:59:35.10] INFO Converted L1climb1star1.png to L1climb1star1.t3x successfully.
+[2025-07-14 20:59:35.10] INFO Converting L1crouch.png to L1crouch.t3x..
+[2025-07-14 20:59:35.10] INFO Converted L1climb2.png to L1climb2.t3x successfully.
+[2025-07-14 20:59:35.10] INFO Converting L1crouchstar0.png to L1crouchstar0.t3x..
+[2025-07-14 20:59:35.10] INFO Converted L1climb2star1.png to L1climb2star1.t3x successfully.
+[2025-07-14 20:59:35.10] INFO Converting L1crouchstar1.png to L1crouchstar1.t3x..
+[2025-07-14 20:59:35.10] INFO Converted L1climb1star2.png to L1climb1star2.t3x successfully.
+[2025-07-14 20:59:35.10] INFO Converting L1crouchstar2.png to L1crouchstar2.t3x..
+[2025-07-14 20:59:35.11] INFO Converted L1crouch.png to L1crouch.t3x successfully.
+[2025-07-14 20:59:35.11] INFO Converting L1drift.png to L1drift.t3x..
+[2025-07-14 20:59:35.19] INFO Converted L1climb2star2.png to L1climb2star2.t3x successfully.
+[2025-07-14 20:59:35.19] INFO Converting L1driftstar0.png to L1driftstar0.t3x..
+[2025-07-14 20:59:35.19] INFO Converted L1crouchstar2.png to L1crouchstar2.t3x successfully.
+[2025-07-14 20:59:35.19] INFO Converting L1driftstar1.png to L1driftstar1.t3x..
+[2025-07-14 20:59:35.19] INFO Converted L1crouchstar0.png to L1crouchstar0.t3x successfully.
+[2025-07-14 20:59:35.19] INFO Converting L1driftstar2.png to L1driftstar2.t3x..
+[2025-07-14 20:59:35.20] INFO Converted L1drift.png to L1drift.t3x successfully.
+[2025-07-14 20:59:35.20] INFO Converting L1fire.png to L1fire.t3x..
+[2025-07-14 20:59:35.20] INFO Converted L1crouchstar1.png to L1crouchstar1.t3x successfully.
+[2025-07-14 20:59:35.20] INFO Converting L1firestar0.png to L1firestar0.t3x..
+[2025-07-14 20:59:35.28] INFO Converted L1driftstar0.png to L1driftstar0.t3x successfully.
+[2025-07-14 20:59:35.28] INFO Converting L1firestar1.png to L1firestar1.t3x..
+[2025-07-14 20:59:35.29] INFO Converted L1firestar0.png to L1firestar0.t3x successfully.
+[2025-07-14 20:59:35.29] INFO Converting L1firestar2.png to L1firestar2.t3x..
+[2025-07-14 20:59:35.30] INFO Converted L1driftstar1.png to L1driftstar1.t3x successfully.
+[2025-07-14 20:59:35.30] INFO Converted L1driftstar2.png to L1driftstar2.t3x successfully.
+[2025-07-14 20:59:35.30] INFO Converting L1grow.png to L1grow.t3x..
+[2025-07-14 20:59:35.30] INFO Converting L1growstar0.png to L1growstar0.t3x..
+[2025-07-14 20:59:35.31] INFO Converted L1fire.png to L1fire.t3x successfully.
+[2025-07-14 20:59:35.31] INFO Converting L1growstar1.png to L1growstar1.t3x..
+[2025-07-14 20:59:35.31] INFO Converted L1firestar1.png to L1firestar1.t3x successfully.
+[2025-07-14 20:59:35.31] INFO Converting L1growstar2.png to L1growstar2.t3x..
+[2025-07-14 20:59:35.38] INFO Converted L1firestar2.png to L1firestar2.t3x successfully.
+[2025-07-14 20:59:35.38] INFO Converting L1idle.png to L1idle.t3x..
+[2025-07-14 20:59:35.39] INFO Converted L1grow.png to L1grow.t3x successfully.
+[2025-07-14 20:59:35.39] INFO Converting L1idlestar0.png to L1idlestar0.t3x..
+[2025-07-14 20:59:35.40] INFO Converted L1growstar0.png to L1growstar0.t3x successfully.
+[2025-07-14 20:59:35.40] INFO Converting L1idlestar1.png to L1idlestar1.t3x..
+[2025-07-14 20:59:35.40] INFO Converted L1idle.png to L1idle.t3x successfully.
+[2025-07-14 20:59:35.40] INFO Converting L1idlestar2.png to L1idlestar2.t3x..
+[2025-07-14 20:59:35.40] INFO Converted L1growstar1.png to L1growstar1.t3x successfully.
+[2025-07-14 20:59:35.40] INFO Converting L1jump.png to L1jump.t3x..
+[2025-07-14 20:59:35.49] INFO Converted L1idlestar2.png to L1idlestar2.t3x successfully.
+[2025-07-14 20:59:35.49] INFO Converting L1jumpstar0.png to L1jumpstar0.t3x..
+[2025-07-14 20:59:35.49] INFO Converted L1idlestar0.png to L1idlestar0.t3x successfully.
+[2025-07-14 20:59:35.49] INFO Converting L1jumpstar1.png to L1jumpstar1.t3x..
+[2025-07-14 20:59:35.49] INFO Converted L1idlestar1.png to L1idlestar1.t3x successfully.
+[2025-07-14 20:59:35.49] INFO Converting L1jumpstar2.png to L1jumpstar2.t3x..
+[2025-07-14 20:59:35.49] INFO Converted L1growstar2.png to L1growstar2.t3x successfully.
+[2025-07-14 20:59:35.50] INFO Converting L1walk1.png to L1walk1.t3x..
+[2025-07-14 20:59:35.50] INFO Converted L1jump.png to L1jump.t3x successfully.
+[2025-07-14 20:59:35.50] INFO Converting L1walk1star0.png to L1walk1star0.t3x..
+[2025-07-14 20:59:35.59] INFO Converted L1jumpstar1.png to L1jumpstar1.t3x successfully.
+[2025-07-14 20:59:35.59] INFO Converted L1jumpstar2.png to L1jumpstar2.t3x successfully.
+[2025-07-14 20:59:35.59] INFO Converting L1walk1star1.png to L1walk1star1.t3x..
+[2025-07-14 20:59:35.59] INFO Converting L1walk1star2.png to L1walk1star2.t3x..
+[2025-07-14 20:59:35.60] INFO Converted L1jumpstar0.png to L1jumpstar0.t3x successfully.
+[2025-07-14 20:59:35.60] INFO Converting L1walk2.png to L1walk2.t3x..
+[2025-07-14 20:59:35.60] INFO Converted L1walk1.png to L1walk1.t3x successfully.
+[2025-07-14 20:59:35.60] INFO Converting L1walk2star0.png to L1walk2star0.t3x..
+[2025-07-14 20:59:35.60] INFO Converted L1walk1star0.png to L1walk1star0.t3x successfully.
+[2025-07-14 20:59:35.60] INFO Converting L1walk2star1.png to L1walk2star1.t3x..
+[2025-07-14 20:59:35.61] INFO Converted L1walk1star1.png to L1walk1star1.t3x successfully.
+[2025-07-14 20:59:35.61] INFO Converted L1walk2.png to L1walk2.t3x successfully.
+[2025-07-14 20:59:35.62] INFO Converting L1walk2star2.png to L1walk2star2.t3x..
+[2025-07-14 20:59:35.62] INFO Converting L1walk3.png to L1walk3.t3x..
+[2025-07-14 20:59:35.69] INFO Converted L1walk2star0.png to L1walk2star0.t3x successfully.
+[2025-07-14 20:59:35.69] INFO Converting L1walk3star0.png to L1walk3star0.t3x..
+[2025-07-14 20:59:35.69] INFO Converted L1walk3.png to L1walk3.t3x successfully.
+[2025-07-14 20:59:35.69] INFO Converting L1walk3star1.png to L1walk3star1.t3x..
+[2025-07-14 20:59:35.70] INFO Converted L1walk1star2.png to L1walk1star2.t3x successfully.
+[2025-07-14 20:59:35.70] INFO Converting L1walk3star2.png to L1walk3star2.t3x..
+[2025-07-14 20:59:35.70] INFO Converted L1walk2star1.png to L1walk2star1.t3x successfully.
+[2025-07-14 20:59:35.70] INFO Converted L1walk3star1.png to L1walk3star1.t3x successfully.
+[2025-07-14 20:59:35.70] INFO Converting L2climb1.png to L2climb1.t3x..
+[2025-07-14 20:59:35.71] INFO Converting L2climb2.png to L2climb2.t3x..
+[2025-07-14 20:59:35.79] INFO Converted L1walk2star2.png to L1walk2star2.t3x successfully.
+[2025-07-14 20:59:35.79] INFO Converted L1walk3star0.png to L1walk3star0.t3x successfully.
+[2025-07-14 20:59:35.79] INFO Converting L2crouch.png to L2crouch.t3x..
+[2025-07-14 20:59:35.79] INFO Converting L2drift.png to L2drift.t3x..
+[2025-07-14 20:59:35.79] INFO Converted L1walk3star2.png to L1walk3star2.t3x successfully.
+[2025-07-14 20:59:35.79] INFO Converting L2fire.png to L2fire.t3x..
+[2025-07-14 20:59:35.80] INFO Converted L2climb2.png to L2climb2.t3x successfully.
+[2025-07-14 20:59:35.80] INFO Converted L2crouch.png to L2crouch.t3x successfully.
+[2025-07-14 20:59:35.80] INFO Converting L2grow.png to L2grow.t3x..
+[2025-07-14 20:59:35.80] INFO Converting L2idle.png to L2idle.t3x..
+[2025-07-14 20:59:35.80] INFO Converted L2climb1.png to L2climb1.t3x successfully.
+[2025-07-14 20:59:35.80] INFO Converting L2jump.png to L2jump.t3x..
+[2025-07-14 20:59:35.89] INFO Converted L2idle.png to L2idle.t3x successfully.
+[2025-07-14 20:59:35.89] INFO Converted L2fire.png to L2fire.t3x successfully.
+[2025-07-14 20:59:35.89] INFO Converted L2jump.png to L2jump.t3x successfully.
+[2025-07-14 20:59:35.89] INFO Converting L2walk2.png to L2walk2.t3x..
+[2025-07-14 20:59:35.90] INFO Converting L2walk1.png to L2walk1.t3x..
+[2025-07-14 20:59:35.90] INFO Converting L2walk3.png to L2walk3.t3x..
+[2025-07-14 20:59:35.90] INFO Converted L2drift.png to L2drift.t3x successfully.
+[2025-07-14 20:59:35.90] INFO Converting Lava_0.png to Lava_0.t3x..
+[2025-07-14 20:59:35.90] INFO Converted L2grow.png to L2grow.t3x successfully.
+[2025-07-14 20:59:35.90] INFO Converting Lava_1.png to Lava_1.t3x..
+[2025-07-14 20:59:35.98] INFO Converted L2walk2.png to L2walk2.t3x successfully.
+[2025-07-14 20:59:35.98] INFO Converted Lava_1.png to Lava_1.t3x successfully.
+[2025-07-14 20:59:35.99] INFO Converting Lava_2.png to Lava_2.t3x..
+[2025-07-14 20:59:35.99] INFO Converting Lava_3.png to Lava_3.t3x..
+[2025-07-14 20:59:35.99] INFO Converted Lava_0.png to Lava_0.t3x successfully.
+[2025-07-14 20:59:35.99] INFO Converting Lava_4.png to Lava_4.t3x..
+[2025-07-14 20:59:35.99] INFO Converted L2walk3.png to L2walk3.t3x successfully.
+[2025-07-14 20:59:35.99] INFO Converting Leaves1.png to Leaves1.t3x..
+[2025-07-14 20:59:35.99] INFO Converted L2walk1.png to L2walk1.t3x successfully.
+[2025-07-14 20:59:35.99] INFO Converting Leaves2.png to Leaves2.t3x..
+[2025-07-14 20:59:36.01] INFO Converted Lava_3.png to Lava_3.t3x successfully.
+[2025-07-14 20:59:36.01] INFO Converting Leaves3.png to Leaves3.t3x..
+[2025-07-14 20:59:36.01] INFO Converted Lava_4.png to Lava_4.t3x successfully.
+[2025-07-14 20:59:36.01] INFO Converting levelList_copy.png to levelList_copy.t3x..
+[2025-07-14 20:59:36.09] INFO Converted Leaves2.png to Leaves2.t3x successfully.
+[2025-07-14 20:59:36.09] INFO Converting levelList_delete.png to levelList_delete.t3x..
+[2025-07-14 20:59:36.09] INFO Converted Leaves1.png to Leaves1.t3x successfully.
+[2025-07-14 20:59:36.09] INFO Converting levelList_edit.png to levelList_edit.t3x..
+[2025-07-14 20:59:36.10] INFO Converted Lava_2.png to Lava_2.t3x successfully.
+[2025-07-14 20:59:36.10] INFO Converting levelList_G.png to levelList_G.t3x..
+[2025-07-14 20:59:36.10] INFO Converted levelList_copy.png to levelList_copy.t3x successfully.
+[2025-07-14 20:59:36.10] INFO Converting levelList_length.png to levelList_length.t3x..
+[2025-07-14 20:59:36.10] INFO Converted Leaves3.png to Leaves3.t3x successfully.
+[2025-07-14 20:59:36.10] INFO Converting levelList_new.png to levelList_new.t3x..
+[2025-07-14 20:59:36.10] INFO Converted levelList_delete.png to levelList_delete.t3x successfully.
+[2025-07-14 20:59:36.11] INFO Converting levelList_O.png to levelList_O.t3x..
+[2025-07-14 20:59:36.11] INFO Converted levelList_edit.png to levelList_edit.t3x successfully.
+[2025-07-14 20:59:36.11] INFO Converting levelList_open.png to levelList_open.t3x..
+[2025-07-14 20:59:36.19] INFO Converted levelList_open.png to levelList_open.t3x successfully.
+[2025-07-14 20:59:36.19] INFO Converted levelList_G.png to levelList_G.t3x successfully.
+[2025-07-14 20:59:36.19] INFO Converting levelList_play.png to levelList_play.t3x..
+[2025-07-14 20:59:36.19] INFO Converting levelList_paste.png to levelList_paste.t3x..
+[2025-07-14 20:59:36.19] INFO Converted levelList_new.png to levelList_new.t3x successfully.
+[2025-07-14 20:59:36.19] INFO Converting levelList_R.png to levelList_R.t3x..
+[2025-07-14 20:59:36.20] INFO Converted levelList_length.png to levelList_length.t3x successfully.
+[2025-07-14 20:59:36.20] INFO Converted levelList_O.png to levelList_O.t3x successfully.
+[2025-07-14 20:59:36.20] INFO Converting levelList_scrollDown.png to levelList_scrollDown.t3x..
+[2025-07-14 20:59:36.20] INFO Converting levelList_save.png to levelList_save.t3x..
+[2025-07-14 20:59:36.21] INFO Converted levelList_R.png to levelList_R.t3x successfully.
+[2025-07-14 20:59:36.21] INFO Converting levelList_scrollPiece.png to levelList_scrollPiece.t3x..
+[2025-07-14 20:59:36.29] INFO Converted levelList_paste.png to levelList_paste.t3x successfully.
+[2025-07-14 20:59:36.29] INFO Converting levelList_scrollUp.png to levelList_scrollUp.t3x..
+[2025-07-14 20:59:36.29] INFO Converted levelList_play.png to levelList_play.t3x successfully.
+[2025-07-14 20:59:36.29] INFO Converting magicorb_1.png to magicorb_1.t3x..
+[2025-07-14 20:59:36.30] INFO Converted levelList_scrollDown.png to levelList_scrollDown.t3x successfully.
+[2025-07-14 20:59:36.30] INFO Converting magicorb_2.png to magicorb_2.t3x..
+[2025-07-14 20:59:36.30] INFO Converted levelList_scrollPiece.png to levelList_scrollPiece.t3x successfully.
+[2025-07-14 20:59:36.30] INFO Converting magicorb_3.png to magicorb_3.t3x..
+[2025-07-14 20:59:36.31] INFO Converted levelList_scrollUp.png to levelList_scrollUp.t3x successfully.
+[2025-07-14 20:59:36.31] INFO Converting MarioOnly1.png to MarioOnly1.t3x..
+[2025-07-14 20:59:36.32] INFO Converted levelList_save.png to levelList_save.t3x successfully.
+[2025-07-14 20:59:36.32] INFO Converted magicorb_1.png to magicorb_1.t3x successfully.
+[2025-07-14 20:59:36.32] INFO Converting MushG1.png to MushG1.t3x..
+[2025-07-14 20:59:36.32] INFO Converting MarioOnly2.png to MarioOnly2.t3x..
+[2025-07-14 20:59:36.39] INFO Converted magicorb_3.png to magicorb_3.t3x successfully.
+[2025-07-14 20:59:36.39] INFO Converting MushG2.png to MushG2.t3x..
+[2025-07-14 20:59:36.40] INFO Converted MushG1.png to MushG1.t3x successfully.
+[2025-07-14 20:59:36.40] INFO Converting MushG3.png to MushG3.t3x..
+[2025-07-14 20:59:36.40] INFO Converted MarioOnly2.png to MarioOnly2.t3x successfully.
+[2025-07-14 20:59:36.40] INFO Converting MushR1.png to MushR1.t3x..
+[2025-07-14 20:59:36.41] INFO Converted MarioOnly1.png to MarioOnly1.t3x successfully.
+[2025-07-14 20:59:36.41] INFO Converting MushR2.png to MushR2.t3x..
+[2025-07-14 20:59:36.42] INFO Converted MushG2.png to MushG2.t3x successfully.
+[2025-07-14 20:59:36.42] INFO Converting MushR3.png to MushR3.t3x..
+[2025-07-14 20:59:36.43] INFO Converted MushR2.png to MushR2.t3x successfully.
+[2025-07-14 20:59:36.49] INFO Converted MushG3.png to MushG3.t3x successfully.
+[2025-07-14 20:59:36.49] INFO Converting mushroom1up.png to mushroom1up.t3x..
+[2025-07-14 20:59:36.51] INFO Converting mushroom.png to mushroom.t3x..
+[2025-07-14 20:59:36.52] INFO Converted MushR1.png to MushR1.t3x successfully.
+[2025-07-14 20:59:36.52] INFO Converted magicorb_2.png to magicorb_2.t3x successfully.
+[2025-07-14 20:59:36.52] INFO Converting MushroomsUnd.png to MushroomsUnd.t3x..
+[2025-07-14 20:59:36.52] INFO Converting MushStem.png to MushStem.t3x..
+[2025-07-14 20:59:36.52] INFO Converted MushR3.png to MushR3.t3x successfully.
+[2025-07-14 20:59:36.52] INFO Converting MushTop.png to MushTop.t3x..
+[2025-07-14 20:59:36.53] INFO Converted mushroom.png to mushroom.t3x successfully.
+[2025-07-14 20:59:36.53] INFO Converting MysteryBox0.png to MysteryBox0.t3x..
+[2025-07-14 20:59:36.59] INFO Converted mushroom1up.png to mushroom1up.t3x successfully.
+[2025-07-14 20:59:36.59] INFO Converted MushStem.png to MushStem.t3x successfully.
+[2025-07-14 20:59:36.59] INFO Converting MysteryBox0Underground.png to MysteryBox0Underground.t3x..
+[2025-07-14 20:59:36.59] INFO Converting MysteryBox0Castle.png to MysteryBox0Castle.t3x..
+[2025-07-14 20:59:36.59] INFO Converted MushroomsUnd.png to MushroomsUnd.t3x successfully.
+[2025-07-14 20:59:36.59] INFO Converting MysteryBox1.png to MysteryBox1.t3x..
+[2025-07-14 20:59:36.60] INFO Converted MysteryBox0.png to MysteryBox0.t3x successfully.
+[2025-07-14 20:59:36.60] INFO Converting MysteryBox1Castle.png to MysteryBox1Castle.t3x..
+[2025-07-14 20:59:36.61] INFO Converted MysteryBox1Castle.png to MysteryBox1Castle.t3x successfully.
+[2025-07-14 20:59:36.61] INFO Converting MysteryBox1Underground.png to MysteryBox1Underground.t3x..
+[2025-07-14 20:59:36.62] INFO Converted MysteryBox1.png to MysteryBox1.t3x successfully.
+[2025-07-14 20:59:36.62] INFO Converting MysteryBox2.png to MysteryBox2.t3x..
+[2025-07-14 20:59:36.63] INFO Converted MysteryBox1Underground.png to MysteryBox1Underground.t3x successfully.
+[2025-07-14 20:59:36.63] INFO Converting MysteryBox2Castle.png to MysteryBox2Castle.t3x..
+[2025-07-14 20:59:36.68] INFO Converted MysteryBox2.png to MysteryBox2.t3x successfully.
+[2025-07-14 20:59:36.68] INFO Converting MysteryBox2Underground.png to MysteryBox2Underground.t3x..
+[2025-07-14 20:59:36.69] INFO Converted MushTop.png to MushTop.t3x successfully.
+[2025-07-14 20:59:36.69] INFO Converted MysteryBox0Underground.png to MysteryBox0Underground.t3x successfully.
+[2025-07-14 20:59:36.69] INFO Converted MysteryBox0Castle.png to MysteryBox0Castle.t3x successfully.
+[2025-07-14 20:59:36.69] INFO Converting OffBlock_1.png to OffBlock_1.t3x..
+[2025-07-14 20:59:36.69] INFO Converting OffBlock_2.png to OffBlock_2.t3x..
+[2025-07-14 20:59:36.69] INFO Converting newwarp.png to newwarp.t3x..
+[2025-07-14 20:59:36.70] INFO Converted OffBlock_1.png to OffBlock_1.t3x successfully.
+[2025-07-14 20:59:36.70] INFO Converting OffSwitch_1.png to OffSwitch_1.t3x..
+[2025-07-14 20:59:36.70] INFO Converted OffBlock_2.png to OffBlock_2.t3x successfully.
+[2025-07-14 20:59:36.70] INFO Converting OffSwitch_2.png to OffSwitch_2.t3x..
+[2025-07-14 20:59:36.71] INFO Converted MysteryBox2Underground.png to MysteryBox2Underground.t3x successfully.
+[2025-07-14 20:59:36.71] INFO Converting OnBlock_1.png to OnBlock_1.t3x..
+[2025-07-14 20:59:36.71] INFO Converted MysteryBox2Castle.png to MysteryBox2Castle.t3x successfully.
+[2025-07-14 20:59:36.71] INFO Converted newwarp.png to newwarp.t3x successfully.
+[2025-07-14 20:59:36.71] INFO Converting OneWay_E_1.png to OneWay_E_1.t3x..
+[2025-07-14 20:59:36.71] INFO Converting OnBlock_2.png to OnBlock_2.t3x..
+[2025-07-14 20:59:36.79] INFO Converted OffSwitch_1.png to OffSwitch_1.t3x successfully.
+[2025-07-14 20:59:36.79] INFO Converting OneWay_E_2.png to OneWay_E_2.t3x..
+[2025-07-14 20:59:36.80] INFO Converted OneWay_E_1.png to OneWay_E_1.t3x successfully.
+[2025-07-14 20:59:36.81] INFO Converting OneWay_E_3.png to OneWay_E_3.t3x..
+[2025-07-14 20:59:36.81] INFO Converted OnBlock_1.png to OnBlock_1.t3x successfully.
+[2025-07-14 20:59:36.81] INFO Converting OneWay_N_1.png to OneWay_N_1.t3x..
+[2025-07-14 20:59:36.82] INFO Converted OffSwitch_2.png to OffSwitch_2.t3x successfully.
+[2025-07-14 20:59:36.82] INFO Converting OneWay_N_2.png to OneWay_N_2.t3x..
+[2025-07-14 20:59:36.82] INFO Converted OnBlock_2.png to OnBlock_2.t3x successfully.
+[2025-07-14 20:59:36.82] INFO Converting OneWay_N_3.png to OneWay_N_3.t3x..
+[2025-07-14 20:59:36.89] INFO Converted OneWay_E_3.png to OneWay_E_3.t3x successfully.
+[2025-07-14 20:59:36.89] INFO Converting OneWay_S_1.png to OneWay_S_1.t3x..
+[2025-07-14 20:59:36.89] INFO Converted OneWay_N_2.png to OneWay_N_2.t3x successfully.
+[2025-07-14 20:59:36.89] INFO Converting OneWay_S_2.png to OneWay_S_2.t3x..
+[2025-07-14 20:59:36.90] INFO Converted OneWay_N_1.png to OneWay_N_1.t3x successfully.
+[2025-07-14 20:59:36.90] INFO Converting OneWay_S_3.png to OneWay_S_3.t3x..
+[2025-07-14 20:59:36.90] INFO Converted OneWay_N_3.png to OneWay_N_3.t3x successfully.
+[2025-07-14 20:59:36.90] INFO Converted OneWay_S_1.png to OneWay_S_1.t3x successfully.
+[2025-07-14 20:59:36.90] INFO Converting OneWay_W_2.png to OneWay_W_2.t3x..
+[2025-07-14 20:59:36.90] INFO Converting OneWay_W_1.png to OneWay_W_1.t3x..
+[2025-07-14 20:59:36.91] INFO Converted OneWay_E_2.png to OneWay_E_2.t3x successfully.
+[2025-07-14 20:59:36.91] INFO Converting OneWay_W_3.png to OneWay_W_3.t3x..
+[2025-07-14 20:59:36.99] INFO Converted OneWay_W_1.png to OneWay_W_1.t3x successfully.
+[2025-07-14 20:59:36.99] INFO Converting OnSwitch_1.png to OnSwitch_1.t3x..
+[2025-07-14 20:59:36.99] INFO Converted OneWay_S_2.png to OneWay_S_2.t3x successfully.
+[2025-07-14 20:59:36.99] INFO Converting OnSwitch_2.png to OnSwitch_2.t3x..
+[2025-07-14 20:59:37.00] INFO Converted OneWay_S_3.png to OneWay_S_3.t3x successfully.
+[2025-07-14 20:59:37.00] INFO Converting PBlock_Off.png to PBlock_Off.t3x..
+[2025-07-14 20:59:37.00] INFO Converted OneWay_W_3.png to OneWay_W_3.t3x successfully.
+[2025-07-14 20:59:37.00] INFO Converting PBlock_On.png to PBlock_On.t3x..
+[2025-07-14 20:59:37.00] INFO Converted OnSwitch_1.png to OnSwitch_1.t3x successfully.
+[2025-07-14 20:59:37.00] INFO Converting Peach_1.png to Peach_1.t3x..
+[2025-07-14 20:59:37.01] INFO Converted OneWay_W_2.png to OneWay_W_2.t3x successfully.
+[2025-07-14 20:59:37.01] INFO Converting Peach_2.png to Peach_2.t3x..
+[2025-07-14 20:59:37.09] INFO Converted PBlock_On.png to PBlock_On.t3x successfully.
+[2025-07-14 20:59:37.09] INFO Converted OnSwitch_2.png to OnSwitch_2.t3x successfully.
+[2025-07-14 20:59:37.09] INFO Converted PBlock_Off.png to PBlock_Off.t3x successfully.
+[2025-07-14 20:59:37.09] INFO Converting Pfireflower.png to Pfireflower.t3x..
+[2025-07-14 20:59:37.09] INFO Converting Pipe_Body_HoriL.png to Pipe_Body_HoriL.t3x..
+[2025-07-14 20:59:37.09] INFO Converting Pipe_Body_HoriR.png to Pipe_Body_HoriR.t3x..
+[2025-07-14 20:59:37.10] INFO Converted Peach_2.png to Peach_2.t3x successfully.
+[2025-07-14 20:59:37.10] INFO Converting Pipe_Body_VertL.png to Pipe_Body_VertL.t3x..
+[2025-07-14 20:59:37.11] INFO Converted Pipe_Body_HoriL.png to Pipe_Body_HoriL.t3x successfully.
+[2025-07-14 20:59:37.11] INFO Converted Pfireflower.png to Pfireflower.t3x successfully.
+[2025-07-14 20:59:37.11] INFO Converting Pipe_Body_VertR.png to Pipe_Body_VertR.t3x..
+[2025-07-14 20:59:37.11] INFO Converting Pipe_Connector_EL.png to Pipe_Connector_EL.t3x..
+[2025-07-14 20:59:37.11] INFO Converted Peach_1.png to Peach_1.t3x successfully.
+[2025-07-14 20:59:37.11] INFO Converting Pipe_Connector_ER.png to Pipe_Connector_ER.t3x..
+[2025-07-14 20:59:37.18] INFO Converted Pipe_Body_VertL.png to Pipe_Body_VertL.t3x successfully.
+[2025-07-14 20:59:37.18] INFO Converting Pipe_Connector_NL.png to Pipe_Connector_NL.t3x..
+[2025-07-14 20:59:37.19] INFO Converted Pipe_Body_HoriR.png to Pipe_Body_HoriR.t3x successfully.
+[2025-07-14 20:59:37.19] INFO Converting Pipe_Connector_NR.png to Pipe_Connector_NR.t3x..
+[2025-07-14 20:59:37.20] INFO Converted Pipe_Body_VertR.png to Pipe_Body_VertR.t3x successfully.
+[2025-07-14 20:59:37.20] INFO Converting Pipe_Connector_SL.png to Pipe_Connector_SL.t3x..
+[2025-07-14 20:59:37.20] INFO Converted Pipe_Connector_ER.png to Pipe_Connector_ER.t3x successfully.
+[2025-07-14 20:59:37.21] INFO Converting Pipe_Connector_SR.png to Pipe_Connector_SR.t3x..
+[2025-07-14 20:59:37.21] INFO Converted Pipe_Connector_EL.png to Pipe_Connector_EL.t3x successfully.
+[2025-07-14 20:59:37.21] INFO Converted Pipe_Connector_NR.png to Pipe_Connector_NR.t3x successfully.
+[2025-07-14 20:59:37.21] INFO Converting Pipe_Connector_WR.png to Pipe_Connector_WR.t3x..
+[2025-07-14 20:59:37.21] INFO Converting Pipe_Connector_WL.png to Pipe_Connector_WL.t3x..
+[2025-07-14 20:59:37.28] INFO Converted Pipe_Connector_NL.png to Pipe_Connector_NL.t3x successfully.
+[2025-07-14 20:59:37.28] INFO Converting Pipe_Top_EL.png to Pipe_Top_EL.t3x..
+[2025-07-14 20:59:37.29] INFO Converted Pipe_Connector_SL.png to Pipe_Connector_SL.t3x successfully.
+[2025-07-14 20:59:37.29] INFO Converting Pipe_Top_ER.png to Pipe_Top_ER.t3x..
+[2025-07-14 20:59:37.30] INFO Converted Pipe_Connector_SR.png to Pipe_Connector_SR.t3x successfully.
+[2025-07-14 20:59:37.30] INFO Converted Pipe_Connector_WR.png to Pipe_Connector_WR.t3x successfully.
+[2025-07-14 20:59:37.30] INFO Converting Pipe_Top_NR.png to Pipe_Top_NR.t3x..
+[2025-07-14 20:59:37.30] INFO Converting Pipe_Top_NL.png to Pipe_Top_NL.t3x..
+[2025-07-14 20:59:37.30] INFO Converted Pipe_Top_EL.png to Pipe_Top_EL.t3x successfully.
+[2025-07-14 20:59:37.31] INFO Converting Pipe_Top_SL.png to Pipe_Top_SL.t3x..
+[2025-07-14 20:59:37.38] INFO Converted Pipe_Connector_WL.png to Pipe_Connector_WL.t3x successfully.
+[2025-07-14 20:59:37.38] INFO Converting Pipe_Top_SR.png to Pipe_Top_SR.t3x..
+[2025-07-14 20:59:37.39] INFO Converted Pipe_Top_ER.png to Pipe_Top_ER.t3x successfully.
+[2025-07-14 20:59:37.39] INFO Converting Pipe_Top_WL.png to Pipe_Top_WL.t3x..
+[2025-07-14 20:59:37.39] INFO Converted Pipe_Top_NL.png to Pipe_Top_NL.t3x successfully.
+[2025-07-14 20:59:37.39] INFO Converting Pipe_Top_WR.png to Pipe_Top_WR.t3x..
+[2025-07-14 20:59:37.39] INFO Converted Pipe_Top_NR.png to Pipe_Top_NR.t3x successfully.
+[2025-07-14 20:59:37.39] INFO Converting piranhaplant_1_1.png to piranhaplant_1_1.t3x..
+[2025-07-14 20:59:37.40] INFO Converted Pipe_Top_SL.png to Pipe_Top_SL.t3x successfully.
+[2025-07-14 20:59:37.40] INFO Converting piranhaplant_1_2.png to piranhaplant_1_2.t3x..
+[2025-07-14 20:59:37.41] INFO Converted piranhaplant_1_1.png to piranhaplant_1_1.t3x successfully.
+[2025-07-14 20:59:37.41] INFO Converting piranhaplant_2_1.png to piranhaplant_2_1.t3x..
+[2025-07-14 20:59:37.41] INFO Converted Pipe_Top_SR.png to Pipe_Top_SR.t3x successfully.
+[2025-07-14 20:59:37.41] INFO Converting piranhaplant_2_2.png to piranhaplant_2_2.t3x..
+[2025-07-14 20:59:37.41] INFO Converted Pipe_Top_WL.png to Pipe_Top_WL.t3x successfully.
+[2025-07-14 20:59:37.41] INFO Converting piranhaplant_3_1.png to piranhaplant_3_1.t3x..
+[2025-07-14 20:59:37.49] INFO Converted piranhaplant_1_2.png to piranhaplant_1_2.t3x successfully.
+[2025-07-14 20:59:37.50] INFO Converting piranhaplant_3_2.png to piranhaplant_3_2.t3x..
+[2025-07-14 20:59:37.50] INFO Converted piranhaplant_2_1.png to piranhaplant_2_1.t3x successfully.
+[2025-07-14 20:59:37.50] INFO Converting piranhaplant_4_1.png to piranhaplant_4_1.t3x..
+[2025-07-14 20:59:37.50] INFO Converted piranhaplant_2_2.png to piranhaplant_2_2.t3x successfully.
+[2025-07-14 20:59:37.50] INFO Converting piranhaplant_4_2.png to piranhaplant_4_2.t3x..
+[2025-07-14 20:59:37.50] INFO Converted Pipe_Top_WR.png to Pipe_Top_WR.t3x successfully.
+[2025-07-14 20:59:37.50] INFO Converting platform.png to platform.t3x..
+[2025-07-14 20:59:37.51] INFO Converted piranhaplant_3_1.png to piranhaplant_3_1.t3x successfully.
+[2025-07-14 20:59:37.51] INFO Converting PLB_Block_Active.png to PLB_Block_Active.t3x..
+[2025-07-14 20:59:37.51] INFO Converted platform.png to platform.t3x successfully.
+[2025-07-14 20:59:37.51] INFO Converting PLB_Block_Inactive.png to PLB_Block_Inactive.t3x..
+[2025-07-14 20:59:37.59] INFO Converted piranhaplant_4_1.png to piranhaplant_4_1.t3x successfully.
+[2025-07-14 20:59:37.59] INFO Converted piranhaplant_4_2.png to piranhaplant_4_2.t3x successfully.
+[2025-07-14 20:59:37.59] INFO Converting PLG_Block_Inactive.png to PLG_Block_Inactive.t3x..
+[2025-07-14 20:59:37.59] INFO Converting PLG_Block_Active.png to PLG_Block_Active.t3x..
+[2025-07-14 20:59:37.59] INFO Converted piranhaplant_3_2.png to piranhaplant_3_2.t3x successfully.
+[2025-07-14 20:59:37.59] INFO Converting PLO_Block_Active.png to PLO_Block_Active.t3x..
+[2025-07-14 20:59:37.60] INFO Converted PLB_Block_Active.png to PLB_Block_Active.t3x successfully.
+[2025-07-14 20:59:37.60] INFO Converting PLO_Block_Inactive.png to PLO_Block_Inactive.t3x..
+[2025-07-14 20:59:37.60] INFO Converted PLB_Block_Inactive.png to PLB_Block_Inactive.t3x successfully.
+[2025-07-14 20:59:37.60] INFO Converting PLR_Block_Active.png to PLR_Block_Active.t3x..
+[2025-07-14 20:59:37.61] INFO Converted PLG_Block_Inactive.png to PLG_Block_Inactive.t3x successfully.
+[2025-07-14 20:59:37.61] INFO Converting PLR_Block_Inactive.png to PLR_Block_Inactive.t3x..
+[2025-07-14 20:59:37.69] INFO Converted PLO_Block_Active.png to PLO_Block_Active.t3x successfully.
+[2025-07-14 20:59:37.69] INFO Converted PLO_Block_Inactive.png to PLO_Block_Inactive.t3x successfully.
+[2025-07-14 20:59:37.69] INFO Converting poof_1.png to poof_1.t3x..
+[2025-07-14 20:59:37.69] INFO Converting poof_2.png to poof_2.t3x..
+[2025-07-14 20:59:37.69] INFO Converted PLR_Block_Active.png to PLR_Block_Active.t3x successfully.
+[2025-07-14 20:59:37.69] INFO Converting poof_3.png to poof_3.t3x..
+[2025-07-14 20:59:37.70] INFO Converted PLR_Block_Inactive.png to PLR_Block_Inactive.t3x successfully.
+[2025-07-14 20:59:37.70] INFO Converting poof_4.png to poof_4.t3x..
+[2025-07-14 20:59:37.70] INFO Converted PLG_Block_Active.png to PLG_Block_Active.t3x successfully.
+[2025-07-14 20:59:37.70] INFO Converting PostCast.png to PostCast.t3x..
+[2025-07-14 20:59:37.70] INFO Converted poof_3.png to poof_3.t3x successfully.
+[2025-07-14 20:59:37.70] INFO Converting pressed_plbswitch.png to pressed_plbswitch.t3x..
+[2025-07-14 20:59:37.79] INFO Converted poof_1.png to poof_1.t3x successfully.
+[2025-07-14 20:59:37.79] INFO Converting pressed_plgswitch.png to pressed_plgswitch.t3x..
+[2025-07-14 20:59:37.79] INFO Converted PostCast.png to PostCast.t3x successfully.
+[2025-07-14 20:59:37.79] INFO Converting pressed_ploswitch.png to pressed_ploswitch.t3x..
+[2025-07-14 20:59:37.79] INFO Converted poof_4.png to poof_4.t3x successfully.
+[2025-07-14 20:59:37.79] INFO Converting pressed_plrswitch.png to pressed_plrswitch.t3x..
+[2025-07-14 20:59:37.80] INFO Converted poof_2.png to poof_2.t3x successfully.
+[2025-07-14 20:59:37.80] INFO Converting pressed_pswitch.png to pressed_pswitch.t3x..
+[2025-07-14 20:59:37.80] INFO Converted pressed_plbswitch.png to pressed_plbswitch.t3x successfully.
+[2025-07-14 20:59:37.80] INFO Converting prompt_dash.png to prompt_dash.t3x..
+[2025-07-14 20:59:37.80] INFO Converted pressed_ploswitch.png to pressed_ploswitch.t3x successfully.
+[2025-07-14 20:59:37.80] INFO Converting prompt_del.png to prompt_del.t3x..
+[2025-07-14 20:59:37.81] INFO Converted pressed_plgswitch.png to pressed_plgswitch.t3x successfully.
+[2025-07-14 20:59:37.81] INFO Converting prompt_enter.png to prompt_enter.t3x..
+[2025-07-14 20:59:37.89] INFO Converted pressed_pswitch.png to pressed_pswitch.t3x successfully.
+[2025-07-14 20:59:37.89] INFO Converted prompt_del.png to prompt_del.t3x successfully.
+[2025-07-14 20:59:37.89] INFO Converting prompt_equals.png to prompt_equals.t3x..
+[2025-07-14 20:59:37.89] INFO Converting prompt_power.png to prompt_power.t3x..
+[2025-07-14 20:59:37.89] INFO Converted pressed_plrswitch.png to pressed_plrswitch.t3x successfully.
+[2025-07-14 20:59:37.89] INFO Converting R_koopa_B_1.png to R_koopa_B_1.t3x..
+[2025-07-14 20:59:37.89] INFO Converted prompt_dash.png to prompt_dash.t3x successfully.
+[2025-07-14 20:59:37.89] INFO Converting R_koopa_B_2.png to R_koopa_B_2.t3x..
+[2025-07-14 20:59:37.90] INFO Converted prompt_enter.png to prompt_enter.t3x successfully.
+[2025-07-14 20:59:37.90] INFO Converting R_koopa_B_3.png to R_koopa_B_3.t3x..
+[2025-07-14 20:59:37.91] INFO Converted prompt_equals.png to prompt_equals.t3x successfully.
+[2025-07-14 20:59:37.91] INFO Converting R_koopa_G_1.png to R_koopa_G_1.t3x..
+[2025-07-14 20:59:37.99] INFO Converted prompt_power.png to prompt_power.t3x successfully.
+[2025-07-14 20:59:37.99] INFO Converting R_koopa_G_2.png to R_koopa_G_2.t3x..
+[2025-07-14 20:59:37.99] INFO Converted R_koopa_B_2.png to R_koopa_B_2.t3x successfully.
+[2025-07-14 20:59:37.99] INFO Converting R_koopa_G_3.png to R_koopa_G_3.t3x..
+[2025-07-14 20:59:37.99] INFO Converted R_koopa_B_1.png to R_koopa_B_1.t3x successfully.
+[2025-07-14 20:59:37.99] INFO Converted R_koopa_B_3.png to R_koopa_B_3.t3x successfully.
+[2025-07-14 20:59:37.99] INFO Converting R_koopa_R_2.png to R_koopa_R_2.t3x..
+[2025-07-14 20:59:38.00] INFO Converting R_koopa_R_1.png to R_koopa_R_1.t3x..
+[2025-07-14 20:59:38.01] INFO Converted R_koopa_G_1.png to R_koopa_G_1.t3x successfully.
+[2025-07-14 20:59:38.01] INFO Converting R_koopa_R_3.png to R_koopa_R_3.t3x..
+[2025-07-14 20:59:38.01] INFO Converted R_koopa_G_3.png to R_koopa_G_3.t3x successfully.
+[2025-07-14 20:59:38.01] INFO Converting R_Pkoopa_G_1.png to R_Pkoopa_G_1.t3x..
+[2025-07-14 20:59:38.09] INFO Converted R_koopa_R_1.png to R_koopa_R_1.t3x successfully.
+[2025-07-14 20:59:38.09] INFO Converting R_Pkoopa_G_2.png to R_Pkoopa_G_2.t3x..
+[2025-07-14 20:59:38.09] INFO Converted R_koopa_R_2.png to R_koopa_R_2.t3x successfully.
+[2025-07-14 20:59:38.09] INFO Converting R_Pkoopa_G_3.png to R_Pkoopa_G_3.t3x..
+[2025-07-14 20:59:38.09] INFO Converted R_Pkoopa_G_1.png to R_Pkoopa_G_1.t3x successfully.
+[2025-07-14 20:59:38.09] INFO Converted R_koopa_G_2.png to R_koopa_G_2.t3x successfully.
+[2025-07-14 20:59:38.09] INFO Converting R_Pkoopa_R_1.png to R_Pkoopa_R_1.t3x..
+[2025-07-14 20:59:38.09] INFO Converting R_Pkoopa_R_2.png to R_Pkoopa_R_2.t3x..
+[2025-07-14 20:59:38.10] INFO Converted R_koopa_R_3.png to R_koopa_R_3.t3x successfully.
+[2025-07-14 20:59:38.10] INFO Converting R_Pkoopa_R_3.png to R_Pkoopa_R_3.t3x..
+[2025-07-14 20:59:38.11] INFO Converted R_Pkoopa_G_3.png to R_Pkoopa_G_3.t3x successfully.
+[2025-07-14 20:59:38.11] INFO Converting R0climb1.png to R0climb1.t3x..
+[2025-07-14 20:59:38.11] INFO Converted R_Pkoopa_R_1.png to R_Pkoopa_R_1.t3x successfully.
+[2025-07-14 20:59:38.19] INFO Converting R0climb1star0.png to R0climb1star0.t3x..
+[2025-07-14 20:59:38.20] INFO Converted R_Pkoopa_R_3.png to R_Pkoopa_R_3.t3x successfully.
+[2025-07-14 20:59:38.20] INFO Converted R_Pkoopa_G_2.png to R_Pkoopa_G_2.t3x successfully.
+[2025-07-14 20:59:38.20] INFO Converting R0climb1star1.png to R0climb1star1.t3x..
+[2025-07-14 20:59:38.20] INFO Converting R0climb1star2.png to R0climb1star2.t3x..
+[2025-07-14 20:59:38.20] INFO Converted R_Pkoopa_R_2.png to R_Pkoopa_R_2.t3x successfully.
+[2025-07-14 20:59:38.20] INFO Converted R0climb1.png to R0climb1.t3x successfully.
+[2025-07-14 20:59:38.20] INFO Converting R0climb2.png to R0climb2.t3x..
+[2025-07-14 20:59:38.20] INFO Converting R0climb2star0.png to R0climb2star0.t3x..
+[2025-07-14 20:59:38.20] INFO Converted R0climb1star0.png to R0climb1star0.t3x successfully.
+[2025-07-14 20:59:38.20] INFO Converting R0climb2star1.png to R0climb2star1.t3x..
+[2025-07-14 20:59:38.29] INFO Converted R0climb1star1.png to R0climb1star1.t3x successfully.
+[2025-07-14 20:59:38.29] INFO Converted R0climb1star2.png to R0climb1star2.t3x successfully.
+[2025-07-14 20:59:38.29] INFO Converting R0climb2star2.png to R0climb2star2.t3x..
+[2025-07-14 20:59:38.29] INFO Converting R0death.png to R0death.t3x..
+[2025-07-14 20:59:38.29] INFO Converted R0climb2star0.png to R0climb2star0.t3x successfully.
+[2025-07-14 20:59:38.29] INFO Converting R0deathstar0.png to R0deathstar0.t3x..
+[2025-07-14 20:59:38.29] INFO Converted R0climb2.png to R0climb2.t3x successfully.
+[2025-07-14 20:59:38.29] INFO Converting R0deathstar1.png to R0deathstar1.t3x..
+[2025-07-14 20:59:38.29] INFO Converted R0climb2star1.png to R0climb2star1.t3x successfully.
+[2025-07-14 20:59:38.29] INFO Converting R0deathstar2.png to R0deathstar2.t3x..
+[2025-07-14 20:59:38.31] INFO Converted R0climb2star2.png to R0climb2star2.t3x successfully.
+[2025-07-14 20:59:38.31] INFO Converting R0drift.png to R0drift.t3x..
+[2025-07-14 20:59:38.31] INFO Converted R0deathstar1.png to R0deathstar1.t3x successfully.
+[2025-07-14 20:59:38.31] INFO Converting R0driftstar0.png to R0driftstar0.t3x..
+[2025-07-14 20:59:38.39] INFO Converted R0deathstar0.png to R0deathstar0.t3x successfully.
+[2025-07-14 20:59:38.39] INFO Converted R0death.png to R0death.t3x successfully.
+[2025-07-14 20:59:38.39] INFO Converting R0driftstar2.png to R0driftstar2.t3x..
+[2025-07-14 20:59:38.39] INFO Converted R0deathstar2.png to R0deathstar2.t3x successfully.
+[2025-07-14 20:59:38.39] INFO Converting R0idle.png to R0idle.t3x..
+[2025-07-14 20:59:38.39] INFO Converting R0driftstar1.png to R0driftstar1.t3x..
+[2025-07-14 20:59:38.40] INFO Converted R0drift.png to R0drift.t3x successfully.
+[2025-07-14 20:59:38.40] INFO Converting R0idlestar0.png to R0idlestar0.t3x..
+[2025-07-14 20:59:38.41] INFO Converted R0driftstar0.png to R0driftstar0.t3x successfully.
+[2025-07-14 20:59:38.41] INFO Converted R0driftstar2.png to R0driftstar2.t3x successfully.
+[2025-07-14 20:59:38.41] INFO Converting R0idlestar2.png to R0idlestar2.t3x..
+[2025-07-14 20:59:38.41] INFO Converting R0idlestar1.png to R0idlestar1.t3x..
+[2025-07-14 20:59:38.41] INFO Converted R0idle.png to R0idle.t3x successfully.
+[2025-07-14 20:59:38.41] INFO Converted R0driftstar1.png to R0driftstar1.t3x successfully.
+[2025-07-14 20:59:38.41] INFO Converting R0jump.png to R0jump.t3x..
+[2025-07-14 20:59:38.41] INFO Converting R0jumpstar0.png to R0jumpstar0.t3x..
+[2025-07-14 20:59:38.49] INFO Converted R0idlestar0.png to R0idlestar0.t3x successfully.
+[2025-07-14 20:59:38.49] INFO Converted R0jump.png to R0jump.t3x successfully.
+[2025-07-14 20:59:38.49] INFO Converting R0jumpstar1.png to R0jumpstar1.t3x..
+[2025-07-14 20:59:38.50] INFO Converting R0jumpstar2.png to R0jumpstar2.t3x..
+[2025-07-14 20:59:38.51] INFO Converted R0jumpstar0.png to R0jumpstar0.t3x successfully.
+[2025-07-14 20:59:38.51] INFO Converting R0walk1.png to R0walk1.t3x..
+[2025-07-14 20:59:38.51] INFO Converted R0idlestar1.png to R0idlestar1.t3x successfully.
+[2025-07-14 20:59:38.51] INFO Converting R0walk1star0.png to R0walk1star0.t3x..
+[2025-07-14 20:59:38.58] INFO Converted R0idlestar2.png to R0idlestar2.t3x successfully.
+[2025-07-14 20:59:38.59] INFO Converting R0walk1star1.png to R0walk1star1.t3x..
+[2025-07-14 20:59:38.59] INFO Converted R0jumpstar1.png to R0jumpstar1.t3x successfully.
+[2025-07-14 20:59:38.59] INFO Converting R0walk1star2.png to R0walk1star2.t3x..
+[2025-07-14 20:59:38.59] INFO Converted R0walk1.png to R0walk1.t3x successfully.
+[2025-07-14 20:59:38.59] INFO Converting R0walk2.png to R0walk2.t3x..
+[2025-07-14 20:59:38.59] INFO Converted R0walk1star0.png to R0walk1star0.t3x successfully.
+[2025-07-14 20:59:38.59] INFO Converting R0walk2star0.png to R0walk2star0.t3x..
+[2025-07-14 20:59:38.59] INFO Converted R0jumpstar2.png to R0jumpstar2.t3x successfully.
+[2025-07-14 20:59:38.59] INFO Converting R0walk2star1.png to R0walk2star1.t3x..
+[2025-07-14 20:59:38.60] INFO Converted R0walk1star1.png to R0walk1star1.t3x successfully.
+[2025-07-14 20:59:38.60] INFO Converting R0walk2star2.png to R0walk2star2.t3x..
+[2025-07-14 20:59:38.69] INFO Converted R0walk2star1.png to R0walk2star1.t3x successfully.
+[2025-07-14 20:59:38.69] INFO Converted R0walk1star2.png to R0walk1star2.t3x successfully.
+[2025-07-14 20:59:38.69] INFO Converting R0walk3.png to R0walk3.t3x..
+[2025-07-14 20:59:38.69] INFO Converted R0walk2star2.png to R0walk2star2.t3x successfully.
+[2025-07-14 20:59:38.69] INFO Converting R0walk3star1.png to R0walk3star1.t3x..
+[2025-07-14 20:59:38.70] INFO Converted R0walk2.png to R0walk2.t3x successfully.
+[2025-07-14 20:59:38.70] INFO Converting R0walk3star2.png to R0walk3star2.t3x..
+[2025-07-14 20:59:38.70] INFO Converted R0walk2star0.png to R0walk2star0.t3x successfully.
+[2025-07-14 20:59:38.70] INFO Converting R1climb1.png to R1climb1.t3x..
+[2025-07-14 20:59:38.70] INFO Converted R0walk3star0.png to R0walk3star0.t3x successfully.
+[2025-07-14 20:59:38.70] INFO Converting R1climb1star0.png to R1climb1star0.t3x..
+[2025-07-14 20:59:38.71] INFO Converted R0walk3star1.png to R0walk3star1.t3x successfully.
+[2025-07-14 20:59:38.71] INFO Converting R1climb1star1.png to R1climb1star1.t3x..
+[2025-07-14 20:59:38.78] INFO Converted R0walk3.png to R0walk3.t3x successfully.
+[2025-07-14 20:59:38.78] INFO Converting R1climb1star2.png to R1climb1star2.t3x..
+[2025-07-14 20:59:38.79] INFO Converted R1climb1.png to R1climb1.t3x successfully.
+[2025-07-14 20:59:38.79] INFO Converting R1climb2.png to R1climb2.t3x..
+[2025-07-14 20:59:38.79] INFO Converted R0walk3star2.png to R0walk3star2.t3x successfully.
+[2025-07-14 20:59:38.79] INFO Converting R1climb2star0.png to R1climb2star0.t3x..
+[2025-07-14 20:59:38.80] INFO Converted R1climb1star1.png to R1climb1star1.t3x successfully.
+[2025-07-14 20:59:38.80] INFO Converting R1climb2star1.png to R1climb2star1.t3x..
+[2025-07-14 20:59:38.80] INFO Converted R1climb1star0.png to R1climb1star0.t3x successfully.
+[2025-07-14 20:59:38.80] INFO Converting R1climb2star2.png to R1climb2star2.t3x..
+[2025-07-14 20:59:38.80] INFO Converted R1climb1star2.png to R1climb1star2.t3x successfully.
+[2025-07-14 20:59:38.80] INFO Converting R1crouch.png to R1crouch.t3x..
+[2025-07-14 20:59:38.89] INFO Converted R1climb2star1.png to R1climb2star1.t3x successfully.
+[2025-07-14 20:59:38.89] INFO Converting R1crouchstar0.png to R1crouchstar0.t3x..
+[2025-07-14 20:59:38.90] INFO Converted R1climb2star2.png to R1climb2star2.t3x successfully.
+[2025-07-14 20:59:38.90] INFO Converted R1climb2.png to R1climb2.t3x successfully.
+[2025-07-14 20:59:38.90] INFO Converted R1climb2star0.png to R1climb2star0.t3x successfully.
+[2025-07-14 20:59:38.90] INFO Converting R1crouchstar1.png to R1crouchstar1.t3x..
+[2025-07-14 20:59:38.90] INFO Converting R1crouchstar2.png to R1crouchstar2.t3x..
+[2025-07-14 20:59:38.90] INFO Converting R1drift.png to R1drift.t3x..
+[2025-07-14 20:59:38.91] INFO Converted R1crouchstar0.png to R1crouchstar0.t3x successfully.
+[2025-07-14 20:59:38.91] INFO Converted R1crouch.png to R1crouch.t3x successfully.
+[2025-07-14 20:59:38.91] INFO Converting R1driftstar1.png to R1driftstar1.t3x..
+[2025-07-14 20:59:38.91] INFO Converting R1driftstar0.png to R1driftstar0.t3x..
+[2025-07-14 20:59:38.99] INFO Converted R1crouchstar2.png to R1crouchstar2.t3x successfully.
+[2025-07-14 20:59:39.00] INFO Converting R1driftstar2.png to R1driftstar2.t3x..
+[2025-07-14 20:59:39.00] INFO Converted R1crouchstar1.png to R1crouchstar1.t3x successfully.
+[2025-07-14 20:59:39.01] INFO Converted R1drift.png to R1drift.t3x successfully.
+[2025-07-14 20:59:39.01] INFO Converting R1fire.png to R1fire.t3x..
+[2025-07-14 20:59:39.01] INFO Converting R1firestar0.png to R1firestar0.t3x..
+[2025-07-14 20:59:39.01] INFO Converted R1driftstar1.png to R1driftstar1.t3x successfully.
+[2025-07-14 20:59:39.01] INFO Converting R1firestar1.png to R1firestar1.t3x..
+[2025-07-14 20:59:39.02] INFO Converted R1driftstar0.png to R1driftstar0.t3x successfully.
+[2025-07-14 20:59:39.02] INFO Converting R1firestar2.png to R1firestar2.t3x..
+[2025-07-14 20:59:39.09] INFO Converted R1driftstar2.png to R1driftstar2.t3x successfully.
+[2025-07-14 20:59:39.09] INFO Converting R1grow.png to R1grow.t3x..
+[2025-07-14 20:59:39.10] INFO Converted R1firestar1.png to R1firestar1.t3x successfully.
+[2025-07-14 20:59:39.10] INFO Converted R1firestar2.png to R1firestar2.t3x successfully.
+[2025-07-14 20:59:39.10] INFO Converting R1growstar1.png to R1growstar1.t3x..
+[2025-07-14 20:59:39.10] INFO Converting R1growstar0.png to R1growstar0.t3x..
+[2025-07-14 20:59:39.11] INFO Converted R1grow.png to R1grow.t3x successfully.
+[2025-07-14 20:59:39.11] INFO Converting R1growstar2.png to R1growstar2.t3x..
+[2025-07-14 20:59:39.11] INFO Converted R1fire.png to R1fire.t3x successfully.
+[2025-07-14 20:59:39.11] INFO Converting R1idle.png to R1idle.t3x..
+[2025-07-14 20:59:39.11] INFO Converted R1firestar0.png to R1firestar0.t3x successfully.
+[2025-07-14 20:59:39.12] INFO Converting R1idlestar0.png to R1idlestar0.t3x..
+[2025-07-14 20:59:39.19] INFO Converted R1growstar1.png to R1growstar1.t3x successfully.
+[2025-07-14 20:59:39.19] INFO Converting R1idlestar1.png to R1idlestar1.t3x..
+[2025-07-14 20:59:39.19] INFO Converted R1growstar0.png to R1growstar0.t3x successfully.
+[2025-07-14 20:59:39.19] INFO Converting R1idlestar2.png to R1idlestar2.t3x..
+[2025-07-14 20:59:39.20] INFO Converted R1idle.png to R1idle.t3x successfully.
+[2025-07-14 20:59:39.20] INFO Converting R1jump.png to R1jump.t3x..
+[2025-07-14 20:59:39.21] INFO Converted R1growstar2.png to R1growstar2.t3x successfully.
+[2025-07-14 20:59:39.21] INFO Converting R1jumpstar0.png to R1jumpstar0.t3x..
+[2025-07-14 20:59:39.21] INFO Converted R1idlestar2.png to R1idlestar2.t3x successfully.
+[2025-07-14 20:59:39.21] INFO Converting R1jumpstar1.png to R1jumpstar1.t3x..
+[2025-07-14 20:59:39.29] INFO Converted R1idlestar1.png to R1idlestar1.t3x successfully.
+[2025-07-14 20:59:39.29] INFO Converting R1jumpstar2.png to R1jumpstar2.t3x..
+[2025-07-14 20:59:39.29] INFO Converted R1jumpstar0.png to R1jumpstar0.t3x successfully.
+[2025-07-14 20:59:39.29] INFO Converted R1idlestar0.png to R1idlestar0.t3x successfully.
+[2025-07-14 20:59:39.29] INFO Converted R1jumpstar1.png to R1jumpstar1.t3x successfully.
+[2025-07-14 20:59:39.29] INFO Converting R1walk1.png to R1walk1.t3x..
+[2025-07-14 20:59:39.29] INFO Converting R1walk1star0.png to R1walk1star0.t3x..
+[2025-07-14 20:59:39.29] INFO Converted R1jump.png to R1jump.t3x successfully.
+[2025-07-14 20:59:39.30] INFO Converting R1walk1star1.png to R1walk1star1.t3x..
+[2025-07-14 20:59:39.30] INFO Converting R1walk1star2.png to R1walk1star2.t3x..
+[2025-07-14 20:59:39.30] INFO Converted R1jumpstar2.png to R1jumpstar2.t3x successfully.
+[2025-07-14 20:59:39.30] INFO Converting R1walk2.png to R1walk2.t3x..
+[2025-07-14 20:59:39.39] INFO Converted R1walk1star1.png to R1walk1star1.t3x successfully.
+[2025-07-14 20:59:39.39] INFO Converting R1walk2star0.png to R1walk2star0.t3x..
+[2025-07-14 20:59:39.39] INFO Converted R1walk1.png to R1walk1.t3x successfully.
+[2025-07-14 20:59:39.39] INFO Converting R1walk2star1.png to R1walk2star1.t3x..
+[2025-07-14 20:59:39.40] INFO Converted R1walk1star0.png to R1walk1star0.t3x successfully.
+[2025-07-14 20:59:39.40] INFO Converting R1walk2star2.png to R1walk2star2.t3x..
+[2025-07-14 20:59:39.40] INFO Converted R1walk2.png to R1walk2.t3x successfully.
+[2025-07-14 20:59:39.40] INFO Converting R1walk3.png to R1walk3.t3x..
+[2025-07-14 20:59:39.40] INFO Converted R1walk1star2.png to R1walk1star2.t3x successfully.
+[2025-07-14 20:59:39.40] INFO Converting R1walk3star0.png to R1walk3star0.t3x..
+[2025-07-14 20:59:39.49] INFO Converted R1walk2star1.png to R1walk2star1.t3x successfully.
+[2025-07-14 20:59:39.49] INFO Converting R1walk3star1.png to R1walk3star1.t3x..
+[2025-07-14 20:59:39.49] INFO Converted R1walk3.png to R1walk3.t3x successfully.
+[2025-07-14 20:59:39.49] INFO Converted R1walk3star0.png to R1walk3star0.t3x successfully.
+[2025-07-14 20:59:39.49] INFO Converting R1walk3star2.png to R1walk3star2.t3x..
+[2025-07-14 20:59:39.49] INFO Converting R2climb1.png to R2climb1.t3x..
+[2025-07-14 20:59:39.49] INFO Converted R1walk2star2.png to R1walk2star2.t3x successfully.
+[2025-07-14 20:59:39.50] INFO Converting R2climb2.png to R2climb2.t3x..
+[2025-07-14 20:59:39.50] INFO Converted R1walk2star0.png to R1walk2star0.t3x successfully.
+[2025-07-14 20:59:39.50] INFO Converting R2crouch.png to R2crouch.t3x..
+[2025-07-14 20:59:39.51] INFO Converted R1walk3star1.png to R1walk3star1.t3x successfully.
+[2025-07-14 20:59:39.51] INFO Converting R2drift.png to R2drift.t3x..
+[2025-07-14 20:59:39.59] INFO Converted R2climb1.png to R2climb1.t3x successfully.
+[2025-07-14 20:59:39.59] INFO Converting R2fire.png to R2fire.t3x..
+[2025-07-14 20:59:39.59] INFO Converted R2climb2.png to R2climb2.t3x successfully.
+[2025-07-14 20:59:39.59] INFO Converting R2grow.png to R2grow.t3x..
+[2025-07-14 20:59:39.59] INFO Converted R2crouch.png to R2crouch.t3x successfully.
+[2025-07-14 20:59:39.59] INFO Converting R2idle.png to R2idle.t3x..
+[2025-07-14 20:59:39.59] INFO Converted R1walk3star2.png to R1walk3star2.t3x successfully.
+[2025-07-14 20:59:39.60] INFO Converting R2jump.png to R2jump.t3x..
+[2025-07-14 20:59:39.60] INFO Converted R2fire.png to R2fire.t3x successfully.
+[2025-07-14 20:59:39.60] INFO Converting R2walk1.png to R2walk1.t3x..
+[2025-07-14 20:59:39.68] INFO Converted R2idle.png to R2idle.t3x successfully.
+[2025-07-14 20:59:39.68] INFO Converting R2walk2.png to R2walk2.t3x..
+[2025-07-14 20:59:39.68] INFO Converted R2drift.png to R2drift.t3x successfully.
+[2025-07-14 20:59:39.69] INFO Converting R2walk3.png to R2walk3.t3x..
+[2025-07-14 20:59:39.69] INFO Converted R2jump.png to R2jump.t3x successfully.
+[2025-07-14 20:59:39.69] INFO Converting safeSleep.png to safeSleep.t3x..
+[2025-07-14 20:59:39.70] INFO Converted R2grow.png to R2grow.t3x successfully.
+[2025-07-14 20:59:39.70] INFO Converting score_1up.png to score_1up.t3x..
+[2025-07-14 20:59:39.70] INFO Converted R2walk3.png to R2walk3.t3x successfully.
+[2025-07-14 20:59:39.70] INFO Converting score_100.png to score_100.t3x..
+[2025-07-14 20:59:39.78] INFO Converted R2walk1.png to R2walk1.t3x successfully.
+[2025-07-14 20:59:39.78] INFO Converting score_200.png to score_200.t3x..
+[2025-07-14 20:59:39.79] INFO Converted score_1up.png to score_1up.t3x successfully.
+[2025-07-14 20:59:39.79] INFO Converting score_400.png to score_400.t3x..
+[2025-07-14 20:59:39.79] INFO Converted safeSleep.png to safeSleep.t3x successfully.
+[2025-07-14 20:59:39.79] INFO Converting score_500.png to score_500.t3x..
+[2025-07-14 20:59:39.79] INFO Converted R2walk2.png to R2walk2.t3x successfully.
+[2025-07-14 20:59:39.79] INFO Converting score_800.png to score_800.t3x..
+[2025-07-14 20:59:39.80] INFO Converted score_100.png to score_100.t3x successfully.
+[2025-07-14 20:59:39.80] INFO Converting score_1000.png to score_1000.t3x..
+[2025-07-14 20:59:39.80] INFO Converted score_200.png to score_200.t3x successfully.
+[2025-07-14 20:59:39.80] INFO Converting score_2000.png to score_2000.t3x..
+[2025-07-14 20:59:39.80] INFO Converted score_400.png to score_400.t3x successfully.
+[2025-07-14 20:59:39.80] INFO Converting score_4000.png to score_4000.t3x..
+[2025-07-14 20:59:39.81] INFO Converted score_800.png to score_800.t3x successfully.
+[2025-07-14 20:59:39.81] INFO Converting score_5000.png to score_5000.t3x..
+[2025-07-14 20:59:39.89] INFO Converted score_500.png to score_500.t3x successfully.
+[2025-07-14 20:59:39.89] INFO Converting score_8000.png to score_8000.t3x..
+[2025-07-14 20:59:39.89] INFO Converted score_4000.png to score_4000.t3x successfully.
+[2025-07-14 20:59:39.89] INFO Converting SemiSolidBG.png to SemiSolidBG.t3x..
+[2025-07-14 20:59:39.89] INFO Converted score_1000.png to score_1000.t3x successfully.
+[2025-07-14 20:59:39.89] INFO Converted score_2000.png to score_2000.t3x successfully.
+[2025-07-14 20:59:39.89] INFO Converting shell_B_3.png to shell_B_3.t3x..
+[2025-07-14 20:59:39.89] INFO Converting shell_B_1.png to shell_B_1.t3x..
+[2025-07-14 20:59:39.90] INFO Converted score_5000.png to score_5000.t3x successfully.
+[2025-07-14 20:59:39.90] INFO Converting shell_B_4.png to shell_B_4.t3x..
+[2025-07-14 20:59:39.91] INFO Converted SemiSolidBG.png to SemiSolidBG.t3x successfully.
+[2025-07-14 20:59:39.98] INFO Converting shell_B_5.png to shell_B_5.t3x..
+[2025-07-14 20:59:39.98] INFO Converted shell_B_3.png to shell_B_3.t3x successfully.
+[2025-07-14 20:59:39.98] INFO Converting shell_G_1.png to shell_G_1.t3x..
+[2025-07-14 20:59:39.99] INFO Converted score_8000.png to score_8000.t3x successfully.
+[2025-07-14 20:59:39.99] INFO Converting shell_G_2.png to shell_G_2.t3x..
+[2025-07-14 20:59:39.99] INFO Converted shell_B_1.png to shell_B_1.t3x successfully.
+[2025-07-14 20:59:39.99] INFO Converting shell_G_3.png to shell_G_3.t3x..
+[2025-07-14 20:59:40.00] INFO Converted shell_B_4.png to shell_B_4.t3x successfully.
+[2025-07-14 20:59:40.00] INFO Converting shell_G_4.png to shell_G_4.t3x..
+[2025-07-14 20:59:40.00] INFO Converted shell_B_5.png to shell_B_5.t3x successfully.
+[2025-07-14 20:59:40.00] INFO Converting shell_G_5.png to shell_G_5.t3x..
+[2025-07-14 20:59:40.00] INFO Converted shell_G_2.png to shell_G_2.t3x successfully.
+[2025-07-14 20:59:40.01] INFO Converting shell_R_1.png to shell_R_1.t3x..
+[2025-07-14 20:59:40.09] INFO Converted shell_G_1.png to shell_G_1.t3x successfully.
+[2025-07-14 20:59:40.09] INFO Converting shell_R_2.png to shell_R_2.t3x..
+[2025-07-14 20:59:40.09] INFO Converted shell_G_3.png to shell_G_3.t3x successfully.
+[2025-07-14 20:59:40.09] INFO Converting shell_R_3.png to shell_R_3.t3x..
+[2025-07-14 20:59:40.09] INFO Converted shell_G_5.png to shell_G_5.t3x successfully.
+[2025-07-14 20:59:40.09] INFO Converting shell_R_4.png to shell_R_4.t3x..
+[2025-07-14 20:59:40.10] INFO Converted shell_G_4.png to shell_G_4.t3x successfully.
+[2025-07-14 20:59:40.10] INFO Converting shell_R_5.png to shell_R_5.t3x..
+[2025-07-14 20:59:40.10] INFO Converted shell_R_1.png to shell_R_1.t3x successfully.
+[2025-07-14 20:59:40.10] INFO Converting ShortBush.png to ShortBush.t3x..
+[2025-07-14 20:59:40.10] INFO Converted shell_R_3.png to shell_R_3.t3x successfully.
+[2025-07-14 20:59:40.10] INFO Converting ShortTree_1.png to ShortTree_1.t3x..
+[2025-07-14 20:59:40.18] INFO Converted shell_R_2.png to shell_R_2.t3x successfully.
+[2025-07-14 20:59:40.18] INFO Converting ShortTree_2.png to ShortTree_2.t3x..
+[2025-07-14 20:59:40.19] INFO Converted shell_R_5.png to shell_R_5.t3x successfully.
+[2025-07-14 20:59:40.19] INFO Converting ShortTree_Stem.png to ShortTree_Stem.t3x..
+[2025-07-14 20:59:40.19] INFO Converted ShortTree_1.png to ShortTree_1.t3x successfully.
+[2025-07-14 20:59:40.19] INFO Converting SkeletonUnd_1.png to SkeletonUnd_1.t3x..
+[2025-07-14 20:59:40.19] INFO Converted ShortBush.png to ShortBush.t3x successfully.
+[2025-07-14 20:59:40.20] INFO Converting SkeletonUnd_2.png to SkeletonUnd_2.t3x..
+[2025-07-14 20:59:40.20] INFO Converted shell_R_4.png to shell_R_4.t3x successfully.
+[2025-07-14 20:59:40.20] INFO Converting SkeletonUnd_3.png to SkeletonUnd_3.t3x..
+[2025-07-14 20:59:40.20] INFO Converted ShortTree_2.png to ShortTree_2.t3x successfully.
+[2025-07-14 20:59:40.20] INFO Converting Spikes_1.png to Spikes_1.t3x..
+[2025-07-14 20:59:40.21] INFO Converted ShortTree_Stem.png to ShortTree_Stem.t3x successfully.
+[2025-07-14 20:59:40.21] INFO Converting Spikes_2.png to Spikes_2.t3x..
+[2025-07-14 20:59:40.29] INFO Converted SkeletonUnd_1.png to SkeletonUnd_1.t3x successfully.
+[2025-07-14 20:59:40.29] INFO Converting spring_B_1.png to spring_B_1.t3x..
+[2025-07-14 20:59:40.29] INFO Converted SkeletonUnd_2.png to SkeletonUnd_2.t3x successfully.
+[2025-07-14 20:59:40.29] INFO Converting spring_B_2.png to spring_B_2.t3x..
+[2025-07-14 20:59:40.30] INFO Converted SkeletonUnd_3.png to SkeletonUnd_3.t3x successfully.
+[2025-07-14 20:59:40.30] INFO Converting spring_B_3.png to spring_B_3.t3x..
+[2025-07-14 20:59:40.30] INFO Converted Spikes_2.png to Spikes_2.t3x successfully.
+[2025-07-14 20:59:40.30] INFO Converting spring_O_1.png to spring_O_1.t3x..
+[2025-07-14 20:59:40.30] INFO Converted spring_B_1.png to spring_B_1.t3x successfully.
+[2025-07-14 20:59:40.30] INFO Converting spring_O_2.png to spring_O_2.t3x..
+[2025-07-14 20:59:40.31] INFO Converted Spikes_1.png to Spikes_1.t3x successfully.
+[2025-07-14 20:59:40.31] INFO Converting spring_O_3.png to spring_O_3.t3x..
+[2025-07-14 20:59:40.39] INFO Converted spring_B_2.png to spring_B_2.t3x successfully.
+[2025-07-14 20:59:40.39] INFO Converting spring_R_1.png to spring_R_1.t3x..
+[2025-07-14 20:59:40.39] INFO Converted spring_O_2.png to spring_O_2.t3x successfully.
+[2025-07-14 20:59:40.39] INFO Converting spring_R_2.png to spring_R_2.t3x..
+[2025-07-14 20:59:40.39] INFO Converted spring_O_1.png to spring_O_1.t3x successfully.
+[2025-07-14 20:59:40.39] INFO Converting spring_R_3.png to spring_R_3.t3x..
+[2025-07-14 20:59:40.40] INFO Converted spring_R_1.png to spring_R_1.t3x successfully.
+[2025-07-14 20:59:40.40] INFO Converting star1.png to star1.t3x..
+[2025-07-14 20:59:40.40] INFO Converted spring_B_3.png to spring_B_3.t3x successfully.
+[2025-07-14 20:59:40.40] INFO Converting star2.png to star2.t3x..
+[2025-07-14 20:59:40.40] INFO Converted spring_R_2.png to spring_R_2.t3x successfully.
+[2025-07-14 20:59:40.41] INFO Converting star3.png to star3.t3x..
+[2025-07-14 20:59:40.41] INFO Converted spring_O_3.png to spring_O_3.t3x successfully.
+[2025-07-14 20:59:40.41] INFO Converting star4.png to star4.t3x..
+[2025-07-14 20:59:40.49] INFO Converted spring_R_3.png to spring_R_3.t3x successfully.
+[2025-07-14 20:59:40.49] INFO Converted star1.png to star1.t3x successfully.
+[2025-07-14 20:59:40.49] INFO Converting Stars_1.png to Stars_1.t3x..
+[2025-07-14 20:59:40.49] INFO Converting Stars_2.png to Stars_2.t3x..
+[2025-07-14 20:59:40.50] INFO Converted star2.png to star2.t3x successfully.
+[2025-07-14 20:59:40.50] INFO Converting Stars_3.png to Stars_3.t3x..
+[2025-07-14 20:59:40.50] INFO Converted star4.png to star4.t3x successfully.
+[2025-07-14 20:59:40.50] INFO Converting Stars_4.png to Stars_4.t3x..
+[2025-07-14 20:59:40.50] INFO Converted Stars_1.png to Stars_1.t3x successfully.
+[2025-07-14 20:59:40.50] INFO Converting theme0.png to theme0.t3x..
+[2025-07-14 20:59:40.51] INFO Converted star3.png to star3.t3x successfully.
+[2025-07-14 20:59:40.51] INFO Converting theme1.png to theme1.t3x..
+[2025-07-14 20:59:40.59] INFO Converted Stars_4.png to Stars_4.t3x successfully.
+[2025-07-14 20:59:40.59] INFO Converting theme2.png to theme2.t3x..
+[2025-07-14 20:59:40.59] INFO Converted Stars_2.png to Stars_2.t3x successfully.
+[2025-07-14 20:59:40.59] INFO Converting theme3.png to theme3.t3x..
+[2025-07-14 20:59:40.59] INFO Converted theme0.png to theme0.t3x successfully.
+[2025-07-14 20:59:40.60] INFO Converting titlescreen_buttonL.png to titlescreen_buttonL.t3x..
+[2025-07-14 20:59:40.60] INFO Converted Stars_3.png to Stars_3.t3x successfully.
+[2025-07-14 20:59:40.60] INFO Converting titlescreen_buttonR.png to titlescreen_buttonR.t3x..
+[2025-07-14 20:59:40.60] INFO Converted theme1.png to theme1.t3x successfully.
+[2025-07-14 20:59:40.60] INFO Converting titlescreen_logo.png to titlescreen_logo.t3x..
+[2025-07-14 20:59:40.60] INFO Converted theme2.png to theme2.t3x successfully.
+[2025-07-14 20:59:40.60] INFO Converting Toad_1.png to Toad_1.t3x..
+[2025-07-14 20:59:40.61] INFO Converted theme3.png to theme3.t3x successfully.
+[2025-07-14 20:59:40.61] INFO Converting Toad_2.png to Toad_2.t3x..
+[2025-07-14 20:59:40.69] INFO Converted titlescreen_buttonL.png to titlescreen_buttonL.t3x successfully.
+[2025-07-14 20:59:40.69] INFO Converting transitioncircle_1.png to transitioncircle_1.t3x..
+[2025-07-14 20:59:40.70] INFO Converted Toad_1.png to Toad_1.t3x successfully.
+[2025-07-14 20:59:40.70] INFO Converted Toad_2.png to Toad_2.t3x successfully.
+[2025-07-14 20:59:40.70] INFO Converting transitioncircle_3.png to transitioncircle_3.t3x..
+[2025-07-14 20:59:40.70] INFO Converting transitioncircle_2.png to transitioncircle_2.t3x..
+[2025-07-14 20:59:40.79] INFO Converted titlescreen_buttonR.png to titlescreen_buttonR.t3x successfully.
+[2025-07-14 20:59:40.79] INFO Converted transitioncircle_1.png to transitioncircle_1.t3x successfully.
+[2025-07-14 20:59:40.79] INFO Converting viewpipe.png to viewpipe.t3x..
+[2025-07-14 20:59:40.79] INFO Converting transitioncircle_4.png to transitioncircle_4.t3x..
+[2025-07-14 20:59:40.80] INFO Converted transitioncircle_3.png to transitioncircle_3.t3x successfully.
+[2025-07-14 20:59:40.81] INFO Converting warp_1.png to warp_1.t3x..
+[2025-07-14 20:59:40.81] INFO Converted viewpipe.png to viewpipe.t3x successfully.
+[2025-07-14 20:59:40.81] INFO Converting warp_3.png to warp_3.t3x..
+[2025-07-14 20:59:40.82] INFO Converted transitioncircle_4.png to transitioncircle_4.t3x successfully.
+[2025-07-14 20:59:40.89] INFO Converted transitioncircle_2.png to transitioncircle_2.t3x successfully.
+[2025-07-14 20:59:40.89] INFO Converted warp_1.png to warp_1.t3x successfully.
+[2025-07-14 20:59:40.90] INFO Converted warp_3.png to warp_3.t3x successfully.
+[2025-07-14 20:59:41.00] INFO Converted titlescreen_logo.png to titlescreen_logo.t3x successfully.

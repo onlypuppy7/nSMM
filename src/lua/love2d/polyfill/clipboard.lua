@@ -8,10 +8,12 @@ local clipboardText = nil
 clipboard = {
     addText = function(text)
         print("@COPY"..tostring(text))
-        love.system.setClipboardText(text)
+        if love.system.setClipboardText then
+            love.system.setClipboardText(text)
+        end
     end,
     getText = function()
-        return clipboardText or love.system.getClipboardText()
+        return clipboardText or (love.system.getClipboardText and love.system.getClipboardText())
     end
 }
 

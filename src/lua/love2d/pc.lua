@@ -8,6 +8,7 @@ __PC = {
 if love._console then
     __PC.fontSupport = false
     __PC.console = love._console
+    love.graphics.set3D(false)
 end
 
 __PC.timeNow = function()
@@ -22,7 +23,7 @@ __PC.loop = function()
 		__PC.callEvent("timer")
 	end
 
-	if platform.window.invalidated or __DS then
+	if platform.window.invalidated or __DS or __PC.console then
 		local id	=	platform.window.invaliddata
         
 		-- if id == 0 then
@@ -43,3 +44,7 @@ __PC.loop = function()
 
     __PC.callAllHeldKeys()
 end
+
+-- __PC.logic = function()
+	
+-- end

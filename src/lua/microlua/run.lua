@@ -9,6 +9,6 @@ while not Keys.held.Start do
 
     count = count + 1
 
-    screen.print(SCREEN_DOWN, 0, 0, "Press START to quit "..count, Color.new(31, 31, 31))
+    screen.print(SCREEN_UP, 0, 0, "Press START to quit "..count, Color.new(31, 31, 31))
     render()
 end

@@ -219,7 +219,7 @@ function platform.gc:drawImage(img, x, y)
 
     love.graphics.setColor(1, 1, 1, 1) -- white (no tint)
 
-    if not img then return print("ALERT! img is a nil value!", img, x, y) end
+    if not img then return end --print("ALERT! img is a nil value!", img, x, y)
 
     local w = img:width()
     local h = img:height()

@@ -22,13 +22,15 @@ local targetFPS = 30
 local targetDt = 1 / targetFPS
 local maxDt = 0.25
 local accumulator = 0
-if not __DS then
+if (not __DS) and (not __PC.console) then
     gameCanvas = love.graphics.newCanvas(love.graphics.getWidth(), love.graphics.getHeight())
     gameCanvas:setFilter("nearest", "nearest")
 end
 
-function love.draw()
-    if not __DS then
+function love.draw(screen)
+    if screen == "top" then return end
+
+    if (not __DS) and (not __PC.console) then
         local dt = math.min(love.timer.getDelta(), maxDt)
         accumulator = accumulator + dt
 
@@ -127,14 +129,14 @@ function love.keyreleased(key, scancode, isrepeat)
     end
 end
 
+function love.focus(f)
+    __PC.onEvents.focus(f)
+end
+
 function love.mousepressed(x, y, button)
     if not console.isEnabled() and not __PC.ToolPalette:bindings("mousepressed", x / __PC.scale, y / __PC.scale, button) then
         __PC.onEvents.mousepressed(x / __PC.scale, y / __PC.scale, button)
     end
-end
-
-function love.focus(f)
-    __PC.onEvents.focus(f)
 end
 
 function love.mousereleased(x, y, button)
@@ -147,6 +149,28 @@ function love.mousemoved(x, y, dx, dy, istouch)
     if not console.isEnabled() and not __PC.ToolPalette:bindings("mousemoved", x / __PC.scale, y / __PC.scale, dx / __PC.scale, dy / __PC.scale, istouch) then
         __PC.onEvents.mousemoved(x / __PC.scale, y / __PC.scale, dx / __PC.scale, dy / __PC.scale, istouch)
     end
+end
+
+function love.touchpressed(id, x, y, dx, dy, pressure)
+    print(id, x, y, dx, dy, pressure)
+    love.mousepressed(x, y, 1)
+end
+
+function love.touchreleased(id, x, y, dx, dy, pressure)
+    love.mousereleased(x, y, 1)
+end
+
+function love.touchmoved(id, x, y, dx, dy, pressure)
+    love.mousemoved(x, y, dx, dy, true)
+end
+
+function love.gamepadpressed(joystick, button)
+    print("love.gamepadpressed")
+    print(joystick, button)
+end
+
+function love.joystickpressed(joystick, button)
+    print("joystickpressed", button)
 end
 
 function love.quit()

@@ -35,7 +35,7 @@ end
 
 function love.graphics.rectangle(mode, x, y, w, h)
     if mode == "fill" then
-        screen.drawFillRect(SCREEN_UP, x, y, x + w, y + h, Color.new(unpack(currentColor)))
+        screen.drawFillRect(SCREEN_DOWN, x, y, x + w, y + h, Color.new(unpack(currentColor)))
     else
         error("Unsupported rectangle mode: "..tostring(mode))
     end
@@ -50,7 +50,7 @@ function love.graphics.line(...)
     for i = 1, #args - 2, 2 do
         local x1, y1, x2, y2 = args[i], args[i+1], args[i+2], args[i+3]
         if screen.drawLine then
-            screen.drawLine(SCREEN_UP, x1, y1, x2, y2, Color.new(unpack(currentColor)))
+            screen.drawLine(SCREEN_DOWN, x1, y1, x2, y2, Color.new(unpack(currentColor)))
         end
     end
 end
@@ -64,13 +64,13 @@ function love.graphics.points(...)
     for i = 1, #args, 2 do
         local x, y = args[i], args[i+1]
         if screen.drawPixel then
-            screen.drawPixel(SCREEN_UP, x, y, Color.new(unpack(currentColor)))
+            screen.drawPixel(SCREEN_DOWN, x, y, Color.new(unpack(currentColor)))
         end
     end
 end
 
 function love.graphics.clear()
-    screen.drawFillRect(SCREEN_UP, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, Color.new(unpack(backgroundColor)))
+    screen.drawFillRect(SCREEN_DOWN, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, Color.new(unpack(backgroundColor)))
 end
 
 local currentFont = {
@@ -106,9 +106,9 @@ function love.graphics.print(text, x, y)
     x = x or 0
     y = y or 0
     -- if currentFont then
-    --     screen.printFont(SCREEN_UP, x, y, tostring(text), Color.new(unpack(currentColor)), currentFont:raw())
+    --     screen.printFont(SCREEN_DOWN, x, y, tostring(text), Color.new(unpack(currentColor)), currentFont:raw())
     -- else
-        screen.print(SCREEN_UP, x, y, tostring(text))
+        screen.print(SCREEN_DOWN, x, y, tostring(text))
     -- end
 end
 
@@ -118,7 +118,7 @@ function love.graphics.getHeight() return __DS.nativeHeight end
 
 local currentCanvas = nil
 local canvasList = {}
-local screenTarget = SCREEN_UP
+local screenTarget = SCREEN_DOWN
 
 function love.graphics.newCanvas()
     local c = Canvas.new()
@@ -136,7 +136,7 @@ end
 
 function love.graphics.draw(img, x, y)
     print(tostring(x)..","..tostring(y))
-    screen.blit(SCREEN_UP, math.floor(x), math.floor(y), img.raw or img)
+    screen.blit(SCREEN_DOWN, math.floor(x), math.floor(y), img.raw or img)
 end
 
 function love.graphics.newImage(path)

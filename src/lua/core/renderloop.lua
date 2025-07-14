@@ -56,22 +56,22 @@ function onpaint(gc)
             gc:drawImage(texs.R0walk1,151,170)
             drawFont(gc,"LOADING nSMM - GUI TEXTURES", nil, nil,"centre",0)
         elseif framesPassed==4 then
-            loadTextures("gui")
+            -- loadTextures("gui")
             gc:fillRect(121,194,77*0.48,7)
             gc:drawImage(texs.R0walk2,151,170)
             drawFont(gc,"LOADING nSMM - OBJECT TEXTURES", nil, nil,"centre",0)
         elseif framesPassed==5 then
-            loadTextures("object")
+            -- loadTextures("object")
             gc:fillRect(121,194,77*0.64,7)
             gc:drawImage(texs.R0walk3,151,170)
             drawFont(gc,"LOADING nSMM - MARIO TEXTURES", nil, nil,"centre",0)
         elseif framesPassed==6 then
-            loadTextures("mario1")
+            -- loadTextures("mario1")
             gc:fillRect(121,194,77*0.8,7)
             gc:drawImage(texs.R0walk1,151,170)
             drawFont(gc,"LOADING nSMM - RECOLOUR MARIO", nil, nil,"centre",0)
         elseif framesPassed==7 then
-            loadTextures("mario2")
+            -- loadTextures("mario2")
             gc:fillRect(121,194,77,7)
         else
             drawFont(gc,"DONE!", nil, nil,"centre",0)
