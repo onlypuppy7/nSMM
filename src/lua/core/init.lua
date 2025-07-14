@@ -12,7 +12,7 @@ function initialiseVARS()
         current={},
         perm="",
     }
-    framesPassed=1
+    framesPassed=0
     blockSelectionTEMP=1
     blockSelectionListTEMP={0,1,2,3,4,5,6,7,8,9,10,20,21,22,23,24,28,29,30,31,32,33,34,35,36,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,99,100,101,102,103,104,"mushroom","mushroom1up","fireflower","Pfireflower","star","goomba","koopa_G","koopa_R","shell_G","shell_R","bullet_L","bullet_R","blaster_L","blaster_R","blaster_LR","fireball_L","fireball_R","piranhaplant_1","piranhaplant_2","piranhaplant_3","piranhaplant_4","platform_3~1~lx~64","platform_3~1~ly~64","platform_3~1~al","platform_3~1~ar","platform_3~1~au","platform_3~1~ad","platform_3~1~fu","platform_3~1~fd","platform_3~1~fl","platform_3~1~fr","platform_3~2~ru","platform_3~2~rd"}
     hitProgressionKoopa={500, 800, 1000, 2000, 4000, 5000, 8000}

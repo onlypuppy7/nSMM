@@ -2,7 +2,7 @@
 --tested: no
 
 platform = {
-    apiLevel = '1.5',
+    apilevel = '1.5',
     hw = function()
         return 3
     end,

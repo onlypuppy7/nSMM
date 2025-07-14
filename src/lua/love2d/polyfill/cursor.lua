@@ -6,21 +6,27 @@
 cursor = {}
 
 function cursor.set(name)
-    if type(name) ~= "string" then
-        error("cursor.set expects a string cursor name")
-    end
-    local cursor = __PC.cursors[name]
-    if not cursor then
-        print("Cursor not found:", name)
-    else 
-        love.mouse.setCursor(cursor)
+    if love.mouse then
+        if type(name) ~= "string" then
+            error("cursor.set expects a string cursor name")
+        end
+        local cursor = __PC.cursors[name]
+        if not cursor then
+            print("Cursor not found:", name)
+        else
+            love.mouse.setCursor(cursor)
+        end
     end
 end
 
 function cursor.hide()
-    love.mouse.setVisible(false)
+    if love.mouse then
+        love.mouse.setVisible(false)
+    end
 end
 
 function cursor.show()
-    love.mouse.setVisible(true)
+    if love.mouse then
+        love.mouse.setVisible(true)
+    end
 end

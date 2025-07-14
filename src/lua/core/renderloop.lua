@@ -24,6 +24,7 @@ function onpaint(gc)
         --     local err=2+"e" -- this is just to test the error handling
         -- end
     else --load stuff
+        gc:setColorRGB(0,0,0)
         gc:fillRect(0,0,screenWidth,screenHeight)
         gc:setColorRGB(173,170,173)
         drawSlantedRect(gc,{284,187,10}) drawSlantedRect(gc,{293,187,10})
@@ -33,7 +34,11 @@ function onpaint(gc)
         gc:setColorRGB(255,255,255)
         gc:drawRect(119,192,80,10)
         gc:fillRect(121,194,77*0.1,7)
-        if framesPassed==1 then
+        if framesPassed==0 then
+            gc:setColorRGB(255,255,255)
+            drawFont(gc,"LOADING... 1", nil, nil,"centre",0)
+        elseif framesPassed==1 then
+            drawFont(gc,"LOADING... 2", nil, nil,"centre",0)
             loadFont()
         elseif framesPassed==2 then
             gc:fillRect(121,194,77*0.16,7)

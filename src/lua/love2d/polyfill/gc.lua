@@ -182,7 +182,9 @@ function platform.gc:setPen(thickness, style)
 		w = 8
 	end
 
-	love.graphics.setLineStyle("rough")
+    if love.graphics.setLineStyle then
+	    love.graphics.setLineStyle("rough")
+    end
 	love.graphics.setLineWidth(w)
 
     -- print("Setting pen style to", tostring(style))
@@ -195,13 +197,17 @@ function platform.gc:setColorRGB(r, g, b, a)
 end
 
 function platform.gc:getStringWidth(str)
-    local font = love.graphics.getFont()
-    return font:getWidth(str)
+    if __PC.fontSupport then
+        local font = love.graphics.getFont()
+        return font:getWidth(str)
+    else return 8 * #str end
 end
 
 function platform.gc:getStringHeight(str)
-    local font = love.graphics.getFont()
-    return font:getHeight()
+    if __PC.fontSupport then
+        local font = love.graphics.getFont()
+        return font:getHeight()
+    else return 8 end
 end
 
 function platform.gc:setAlpha() end
@@ -228,6 +234,8 @@ function platform.gc:drawImage(img, x, y)
 
     local offsetX=(img.w / 2)
     local offsetY=(img.h / 2)
+
+    -- print(img.framebuffer, originX, originY, rotation, scaleX, scaleY, offsetX, offsetY)
 
     love.graphics.draw(img.framebuffer, originX, originY, rotation, scaleX, scaleY, offsetX, offsetY)
     -- love.graphics.draw(img.framebuffer, math.floor(x + (img.sx * w) / 2), math.floor(y + (img.sy * h) / 2), (img.r) * math.pi / 180, img.sx, img.sy, img.w / 2, img.h / 2)

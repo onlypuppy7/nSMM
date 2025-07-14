@@ -1,4 +1,11 @@
-__PC = {}
+__PC = {
+    fontSupport = true
+}
+
+-- print("love._console", love._console)
+if love._console then
+    __PC.fontSupport = false
+end
 
 __PC.timeNow = function()
     return love.timer.getTime() * 1000

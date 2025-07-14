@@ -51,7 +51,9 @@ function imageClass:parse(imgstr)
 	love.graphics.setCanvas(self.framebuffer)
 	love.graphics.setBackgroundColor(1, 1, 1)
 	love.graphics.clear()
-	love.graphics.setPointSize(1)
+	if love.graphics.setPointSize then
+        love.graphics.setPointSize(1)
+    end
 	
 	local x, y, byte1, byte2, isAlpha, color, r, g, b
 	for pos=1, #self.data, 2 do

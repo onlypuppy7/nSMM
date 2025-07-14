@@ -11,7 +11,9 @@ end
 
 local heldKeys = {}
 __PC.allowedHeldKeys = {}
-love.keyboard.setKeyRepeat(true)
+if love.keyboard.setKeyRepeat then
+    love.keyboard.setKeyRepeat(true)
+end
 
 function __PC.callAllHeldKeys()
     for key, _ in pairs(heldKeys) do
