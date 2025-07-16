@@ -135,7 +135,7 @@ objBulletBill=class(objAPI)
     end
 
     function objBulletBill:hit(circumstance) --doesnt use standard function as not much needed
-        if circumstance=="mario" then self.dead=true self.vy=0.5 end
+        if circumstance=="mario" then self.dead=true self.vy=0.5 __PC.SOUND:sfx("stomp") end
     end
 
     function objBulletBill:draw(gc,x,y,TYPE,isEditor,isIcon)
@@ -161,11 +161,16 @@ objBlaster=class(objAPI)
                     objAPI:createObj("bullet_L",self.x,self.y,nil,true)
                     objAPI:sendToFront(self.objectID,self.LEVEL)
                     self.timer=sTimer(60)
+                    __PC.SOUND:sfx("bullet")
                 elseif mario.x>self.x and (self.TYPE=="blaster_R" or self.TYPE=="blaster_LR") and pixel2solid(self.x+20,self.y+8,true)==false then --shoot right
                     self.timer=sTimer(60)
                     objAPI:createObj("bullet_R",self.x,self.y,nil,true)
                     objAPI:sendToFront(self.objectID,self.LEVEL)
-    end end end end
+                    __PC.SOUND:sfx("bullet")
+                end
+            end
+        end
+    end
 
     function objBlaster:draw(gc,x,y,TYPE,isEditor,isIcon)
         gc:drawImage(texs.blaster,x,y)

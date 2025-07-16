@@ -443,7 +443,9 @@ function objAPI:checkMarioCollision(onStomp,noKill,bodge) bodge=bodge or 0 --bod
             elseif onStomp[1]=="clear" then
                 if not mario.clear then mario:clearedLevel(onStomp[2]) playStage.wait=true end
                 self.dead=true
-            else mario:powerDownMario() end
+            else
+                mario:powerDownMario()
+            end
         end
         --table.insert(debugBoxes,{mario.x+1,mario.y-marioSize+1,14,14+marioSize})
         --table.insert(debugBoxes,{self.x+4,self.y+3+bodge,self.hitBox[1]-8,self.hitBox[2]-4})

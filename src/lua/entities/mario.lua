@@ -330,6 +330,7 @@ function mario:powerUpMario(optionalPower,forced)
             mario.powerDown=false
             mario.powerAnimTimer=playStage.framesPassedBlock
             mario:calculateAnim(true)
+            __PC.SOUND:sfx("powerup")
         end
     end
 end
@@ -353,6 +354,7 @@ function mario:powerStarMario(optionalLength)
     else
         mario.starTimer=playStage.framesPassed+optionalLength
     end
+    __PC.SOUND:bgm("star")
 end
 
 function mario:kill()
