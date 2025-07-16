@@ -265,9 +265,9 @@ function drawTile(gc, blockID, plotX, plotY, mode, THEME, position)
         if TYPE~=false then
             if ICON then y=y-8 x=x+editor.cameraOffset end
             obj=entityClasses[TYPE]
-            if ICON then gc:clipRect("set",x-editor.cameraOffset,y+8,16,16) end
+            -- if ICON then gc:clipRect("set",x-editor.cameraOffset,y+8,16,16) end
             obj:draw(gc,x-editor.cameraOffset,y+8,blockID,true,ICON) --(gc,x,y,TYPE,isEditor,isIcon)
-            gc:clipRect("reset")
+            -- gc:clipRect("reset")
         elseif blockID=="mario" then
             gc:drawImage(texs.icon_start,x+1,y-1)
         elseif blockID=="scrollStopL" then

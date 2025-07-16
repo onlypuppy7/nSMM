@@ -23,13 +23,13 @@ end
 
 function __PC.key2event(key, isTextInput)
     -- map arrow keys:
-    if key == "up" then
+    if key == "up" or key == "_dpup" or key == "_a" then
         __PC.callEvent("arrowUp")
-    elseif key == "down" then
+    elseif key == "down" or key == "_dpdown" then
         __PC.callEvent("arrowDown")
-    elseif key == "left" then
+    elseif key == "left" or key == "_dpleft" then
         __PC.callEvent("arrowLeft")
-    elseif key == "right" then
+    elseif key == "right" or key == "_dpright" then
         __PC.callEvent("arrowRight")
     else
         -- fallback generic arrowKey:
@@ -37,18 +37,23 @@ function __PC.key2event(key, isTextInput)
             __PC.callEvent("arrowKey", key)
         elseif isTextInput then
             --this is handled by textinput instead
-            __PC.callEvent("charIn", key)
+            for i = 1, #key do
+                local char = key:sub(i, i)
+                __PC.callEvent("charIn", char)
+            end
         end
     end
 
     -- map special keys:
-    if key == "backspace" then
+    if key == "_b" then
+        __PC.callEvent("charIn", "−")
+    elseif key == "backspace" or key == "_x" then -- or key == "_b"
         __PC.callEvent("backspaceKey")
     elseif key == "delete" then
         __PC.callEvent("deleteKey")
-    elseif key == "return" then
+    elseif key == "return" or key == "_start" then
         __PC.callEvent("enterKey")
-    elseif key == "escape" then
+    elseif key == "escape" or key == "_back" then
         __PC.callEvent("escapeKey")
     elseif key == "tab" then
         __PC.callEvent("tabKey")
@@ -91,19 +96,31 @@ __PC.onEvents = {
         __PC.key2event(text, true)
     end,
     mousepressed = function(x, y, button)
-        if button == 1 then
-            __PC.callEvent("mouseDown", x, y)
-        elseif button == 2 then
-            __PC.callEvent("rightMouseDown", x, y)
-            -- __PC.callEvent("grabDown", x, y)
-        end
+        __PC.callEvent("mouseMove", x, y)
+        -- if button == 1 then
+        --     __PC.callEvent("mouseDown", x, y)
+        -- elseif button == 2 then
+        --     __PC.callEvent("rightMouseDown", x, y)
+        --     -- __PC.callEvent("grabDown", x, y)
+        -- end
     end,
     mousereleased = function(x, y, button)
+        __PC.callEvent("mouseMove", x, y)
         if button == 1 then
-            __PC.callEvent("mouseUp", x, y)
+            __PC.callEvent("mouseDown", x, y) --naughty! this is just a change ive made here for nSMM. dont try this at home
         elseif button == 2 then
-            __PC.callEvent("rightMouseUp", x, y)
+            __PC.callEvent("rightMouseDown", x, y)
             -- __PC.callEvent("grabUp", x, y)
+        end
+        -- if button == 1 then
+        --     __PC.callEvent("mouseUp", x, y)
+        -- elseif button == 2 then
+        --     __PC.callEvent("rightMouseUp", x, y)
+        --     -- __PC.callEvent("grabUp", x, y)
+        -- end
+
+        if gui and gui.PROMPT and gui.PROMPT.inputLength then
+            __PC.showKeyboard()
         end
     end,
     mousemoved = function(x, y, dx, dy, istouch)

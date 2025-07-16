@@ -97,10 +97,12 @@ local function drawLine(x1, y1, x2, y2)
     -- x2 = math.ceil(x2)
     -- y2 = math.ceil(y2)
 
-    x1 = x1 + 1
-    x2 = x2 + 1
-    y1 = y1 + 1
-    y2 = y2 + 1
+    local offset = (not love._console) and 1 or 0
+
+    x1 = x1 + offset
+    x2 = x2 + offset
+    y1 = y1 + offset
+    y2 = y2 + offset
 
 	if __PC.penStyle == "smooth" then
 		-- love.graphics.line(math.round(x1), math.round(y1), math.round(x2), math.round(y2))
@@ -112,28 +114,25 @@ local function drawLine(x1, y1, x2, y2)
 	local length = math.sqrt(dx * dx + dy * dy)
 	local angle = math.atan2(dy, dx)
 
+	local cosA, sinA = math.cos(angle), math.sin(angle)
+
 	local dashLength = 4
 	local gapLength = 2
 
 	if __PC.penStyle == "dotted" then
-		dashLength = love.graphics.getLineWidth()
-		gapLength = dashLength * 1.5
+		dashLength = 1
+		gapLength = love.graphics.getLineWidth() * 1.5
 	end
 
 	local progress = 0
 	while progress < length do
 		local seg = math.min(dashLength, length - progress)
-		local sx = x1 + math.cos(angle) * progress
-		local sy = y1 + math.sin(angle) * progress
-		local ex = x1 + math.cos(angle) * (progress + seg)
-		local ey = y1 + math.sin(angle) * (progress + seg)
+		local sx = x1 + cosA * progress
+		local sy = y1 + sinA * progress
+		local ex = x1 + cosA * (progress + seg)
+		local ey = y1 + sinA * (progress + seg)
 
-		if __PC.penStyle == "dotted" then
-			love.graphics.points(sx, sy)
-		else
-			-- love.graphics.line(math.ceil(sx), math.ceil(sy), math.ceil(ex), math.ceil(ey))
-            love.graphics.line(sx, sy, ex, ey)
-		end
+		love.graphics.line(sx, sy, ex, ey)
 
 		progress = progress + dashLength + gapLength
 	end
@@ -163,13 +162,15 @@ end
 
 
 function platform.gc:clipRect(op, x, y, width, height)
-	if op == "reset" then
-		love.graphics.setScissor(0, 0, platform.window:width() * __PC.scale, platform.window:height() * __PC.scale)
-	elseif op == "set" then
-		love.graphics.setScissor(x, y, width, height)
-	elseif op == "null" then
-		love.graphics.setScissor(0, 0, 0, 0)
-	end
+    if __PC.console ~= "3DS" then
+        if op == "reset" then
+            love.graphics.setScissor()
+        elseif op == "set" then
+            love.graphics.setScissor(x, y, width, height)
+        elseif op == "null" then
+            love.graphics.setScissor(0, 0, 0, 0)
+        end
+    end
 end
 
 __PC.penStyle = "smooth" --dashed, dotted, smooth
@@ -244,4 +245,4 @@ function platform.gc:drawImage(img, x, y)
     love.graphics.setColor(r, g, b, a)
 end
 
--- gc = platform.gc
+gc = platform.gc --this is for toolpalette iirc

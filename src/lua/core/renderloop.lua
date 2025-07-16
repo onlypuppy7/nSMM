@@ -1,6 +1,28 @@
+targetLogicFps = targetLogicFps or 99999 --dont do normally
+
+local lastUpdate = timer.getMilliSecCounter()
+local logicTimer = 0
+
 function onpaint(gc)
     if framesPassed>22 then
-        local runLogic=gameSpeed[1+framesPassed%(#gameSpeed)]
+        local now = timer.getMilliSecCounter()
+        local delta = now - lastUpdate
+        lastUpdate = now
+
+        if delta > 250 then delta = 0 end
+
+        logicTimer = logicTimer + delta
+
+        local runLogic = 0
+        local targetMsPerFrame = 1000 / targetLogicFps
+
+        if logicTimer >= targetMsPerFrame then
+            runLogic = 1 * gameSpeed[1 + framesPassed % (#gameSpeed)]
+            logicTimer = logicTimer % targetMsPerFrame
+        end
+
+        -- print(targetLogicFps, runLogic, now)
+
         if playStage.active==true then playStage:paint(gc,runLogic) end
         if editor.active==true then editor:paint(gc) end
         if titleScreen.active==true then titleScreen:paint(gc) end
@@ -56,22 +78,22 @@ function onpaint(gc)
             gc:drawImage(texs.R0walk1,151,170)
             drawFont(gc,"LOADING nSMM - GUI TEXTURES", nil, nil,"centre",0)
         elseif framesPassed==4 then
-            -- loadTextures("gui")
+            loadTextures("gui")
             gc:fillRect(121,194,77*0.48,7)
             gc:drawImage(texs.R0walk2,151,170)
             drawFont(gc,"LOADING nSMM - OBJECT TEXTURES", nil, nil,"centre",0)
         elseif framesPassed==5 then
-            -- loadTextures("object")
+            loadTextures("object")
             gc:fillRect(121,194,77*0.64,7)
             gc:drawImage(texs.R0walk3,151,170)
             drawFont(gc,"LOADING nSMM - MARIO TEXTURES", nil, nil,"centre",0)
         elseif framesPassed==6 then
-            -- loadTextures("mario1")
+            loadTextures("mario1")
             gc:fillRect(121,194,77*0.8,7)
             gc:drawImage(texs.R0walk1,151,170)
             drawFont(gc,"LOADING nSMM - RECOLOUR MARIO", nil, nil,"centre",0)
         elseif framesPassed==7 then
-            -- loadTextures("mario2")
+            loadTextures("mario2")
             gc:fillRect(121,194,77,7)
         else
             drawFont(gc,"DONE!", nil, nil,"centre",0)
@@ -99,9 +121,9 @@ function onpaint(gc)
 
         lastTime = currentTime
         if studentSoftware then
-            print("FPS: " .. fps)
             Profiler:report()
         end
+        print("FPS: " .. fps)
     end
 
     if framesPassed % 100 == 0 then

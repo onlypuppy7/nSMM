@@ -934,6 +934,8 @@ function editor:generate(LEVELSTRING)
     editor.playTimer=false
     editor.enableAutoSave=var.recall("enableAutoSave") == "true"
     editor:setDisplayedGroup(false)
+
+    __PC.SOUND:bgm("editor")
 end
 
 function toolpaletteSelection(group,option) --has to be a global function, because toolpalette reasons...

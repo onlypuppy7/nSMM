@@ -10,6 +10,8 @@ function playStage:generate(LEVELSTRING,transition,EDITOR)
         playStage.transition=20
     end
     self:reset()
+
+    __PC.SOUND:bgm("overworld")
 end
 
 function playStage:reset()
@@ -299,7 +301,8 @@ function playStage:drawBackground(gc) --rendered in rows from bottom to top w/ t
         if THEME==0 then gc:setColorRGB(97,133,248) --daytime
         else gc:setColorRGB(0,0,0) --underground or nighttime or castle
         end
-        gc:fillRect(((i-1)*16)-playStage.cameraOffset,0,18,212) --backdrop
+        -- print(screenWidth, screenHeight)
+        gc:fillRect(((i-1)*16)-playStage.cameraOffset,0,18,math.min(220, screenHeight)) --backdrop
 end end
 
 function playStage:levelLogic()
@@ -592,6 +595,9 @@ function playStage:paint(gc,runLogic) --all logic/drawing required to play the s
         down = true,
         left = true,
         right = true,
+        ["_dpdown"] = true,
+        ["_dpleft"] = true,
+        ["_dpright"] = true,
     }
 end
 

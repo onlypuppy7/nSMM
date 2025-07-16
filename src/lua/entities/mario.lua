@@ -309,6 +309,7 @@ function mario:clearedLevel(xy)
     else
         mario.clear=true mario.clearedTimer=true mario.skipAnim=xy
     end mario.vx=0 mario.vy=-0.1
+    __PC.SOUND:bgm("levelclear")
 end
 
 function mario:powerUpMario(optionalPower,forced)
@@ -335,6 +336,7 @@ function mario:powerDownMario(optionalPower)
         mario.powerDown=true mario.powerUp=false mario.iFrames=-1
         mario.powerAnimTimer=playStage.framesPassedBlock
         mario.animCache= mario.status=="invisible" and mario.animCache or mario.status --cant be invisible during it
+        __PC.SOUND:sfx("warp")
     elseif not mario.dead and not mario.clear and not (mario.iFrames>playStage.framesPassed) and not mario.powerDown and mario.power==0 then
         mario.kill()
     end
@@ -365,6 +367,7 @@ function mario:kill()
         mario.power=0 mario.powerAnim=0
         mario.jumpAnim=0
         mario.deathAnimTimer=playStage.framesPassedBlock
+        __PC.SOUND:bgm("die")
 end end
 
 function mario:teleport(x,y)

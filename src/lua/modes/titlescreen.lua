@@ -80,6 +80,8 @@ function titleScreen:reset()
     
     for i=-21,21 do level.current.set(i,14,9) end
     for i=21,60 do level.current.set(i,-13,1) end
+
+    __PC.SOUND:bgm("menu")
 end
 
 function titleScreen:charIn(chr)

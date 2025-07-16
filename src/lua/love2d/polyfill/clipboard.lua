@@ -11,6 +11,7 @@ clipboard = {
         if love.system.setClipboardText then
             love.system.setClipboardText(text)
         end
+        clipboardText = text
     end,
     getText = function()
         return clipboardText or (love.system.getClipboardText and love.system.getClipboardText())

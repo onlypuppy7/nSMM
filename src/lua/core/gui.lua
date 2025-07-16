@@ -23,6 +23,7 @@ end
 
 function gui:escapeKey()
     if gui.PROMPT and not gui.PROMPT[8] then
+        print("clearing bc esc")
         gui:clearPrompt()
 end end
 
@@ -278,7 +279,9 @@ function gui:createPrompt(header,text,buttons,horizontalButtons,disableExit,x,y,
                 gui:newButton(buttons[i][1],true,x+(w/2),y+(#text*9)+20+offsetY,buttons[i][2],"buttonListPrompt") offsetY=offsetY+17
             end
         end
-    else gui.PROMPT.inputLength=buttons
+    else
+        gui.PROMPT.inputLength=buttons
+        -- __PC.showKeyboard()
     end
     if not disableExit then gui:newButton("button_close",{"button_close",7,7,0,0},x+w-8,y+2,"close","buttonListPrompt") end
 end

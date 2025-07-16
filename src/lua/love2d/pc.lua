@@ -1,14 +1,39 @@
 __PC = {
     fontSupport = true,
-    console = false,
+    consoleHW = false,
     newImage = love.graphics.newImage,
+    useGameCanvas = true,
+    includeOnScreenConsole = true,
+    nativeWidth = 318, --calculator
+    nativeHeight = 212,
+    scale = 2,
 }
 
--- print("love._console", love._console)
-if love._console then
+print("love._console", love._console)
+if love._console or __DS then
     __PC.fontSupport = false
-    __PC.console = love._console
-    love.graphics.set3D(false)
+    __PC.useGameCanvas = false
+    __PC.includeOnScreenConsole = false
+    __PC.scale = 1
+    targetLogicFps = 30
+
+    if love._console then
+        __PC.consoleHW = love._console
+        love.graphics.set3D(false)
+    elseif __DS then
+        __PC.consoleHW = "DS"
+    end
+
+    -- print(__PC.consoleHW)
+    if __PC.consoleHW == "3DS" then
+        __PC.nativeWidth = 320 --ive forgotten what exactly about this is "native" now
+        __PC.nativeHeight = 220
+    end
+end
+
+
+function __PC.showKeyboard()
+    love.keyboard.setTextInput(true)
 end
 
 __PC.timeNow = function()
@@ -23,7 +48,7 @@ __PC.loop = function()
 		__PC.callEvent("timer")
 	end
 
-	if platform.window.invalidated or __DS or __PC.console then
+	if platform.window.invalidated or __DS or __PC.consoleHW then
 		local id	=	platform.window.invaliddata
         
 		-- if id == 0 then
@@ -39,6 +64,10 @@ __PC.loop = function()
 		platform.window.invaliddata	= 0
 	
         __PC.ToolPalette:paint(platform.gc)
+
+        if __PC.console == "3DS" then
+            gc:fillRect(0, 220, 320, 20)
+        end
 	    -- love.graphics.present()
 	end
 

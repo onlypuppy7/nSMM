@@ -7,8 +7,11 @@
     -- __PC.usePresavedImages = true
 
     require("nsmm")
-    -- require("tests.drawingresources")
 
-    -- require("courseworld.courses")
+    require("courseworld.courses")
+
+    -- require("tests.sound")
+
+    -- gameSpeed={0,1}
 -- end)
 -- if not ok then print("nSMM err:", err) end

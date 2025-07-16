@@ -21,7 +21,7 @@ end
 imageClass = class()
 
 function imageClass:init(input)
-    if type(input) == "string" and input:endsWith(".png") then
+    if type(input) == "string" and (input:sub(-4) == ".png") then
         self.image = love.graphics.newImage(input)
         self.w = self.image:getWidth()
         self.h = self.image:getHeight()

@@ -204,7 +204,9 @@ function ToolPalette:paint(gc)
 end
 
 function ToolPalette:keypressed(key, scancode, isrepeat)
-    if key == "m" and (love.keyboard.isDown("lctrl", "rctrl") or love.keyboard.isDown("lshift", "rshift")) then
+    -- print("ToolPalette:keypressed", key, scancode, isrepeat)
+
+    if (key == "m" and (love.keyboard.isDown("lctrl", "rctrl") or love.keyboard.isDown("lshift", "rshift"))) or key == "_y" then
         self:activate()
         return
     end
@@ -216,21 +218,21 @@ function ToolPalette:keypressed(key, scancode, isrepeat)
 
     if self.submenuOpen and submenuEntries then
         -- Submenu navigation
-        if key == "down" then
+        if key == "down" or key == "_dpdown" then
             repeat
                 self.subHoveredIndex = (self.subHoveredIndex or 1) + 1
                 if self.subHoveredIndex > #submenuEntries - 1 then self.subHoveredIndex = 1 end
             until submenuEntries[self.subHoveredIndex + 1] and submenuEntries[self.subHoveredIndex + 1] ~= "-" and not submenuEntries[self.subHoveredIndex + 1].disabled
-        elseif key == "up" then
+        elseif key == "up" or key == "_dpup" then
             repeat
                 self.subHoveredIndex = (self.subHoveredIndex or 1) - 1
                 if self.subHoveredIndex < 1 then self.subHoveredIndex = #submenuEntries - 1 end
             until submenuEntries[self.subHoveredIndex + 1] and submenuEntries[self.subHoveredIndex + 1] ~= "-" and not submenuEntries[self.subHoveredIndex + 1].disabled
-        elseif key == "left" or key == "escape" then
+        elseif key == "left" or key == "escape" or key == "_dpleft" or key == "_back" then
             self.submenuOpen = false
             self.subHoveredIndex = nil
-        elseif key == "right" then
-        elseif key == "return" then
+        elseif key == "right" or key == "_dpright" then
+        elseif key == "return" or key == "_a" then
             local submenuItem = submenuEntries[self.subHoveredIndex + 1]
             if submenuItem and type(submenuItem) == "table" and type(submenuItem[2]) == "function" then
                 submenuItem[2](topEntry[1], submenuItem[1])
@@ -238,22 +240,22 @@ function ToolPalette:keypressed(key, scancode, isrepeat)
             self.active = false
         end
     else
-        if key == "down" then
+        if key == "down" or key == "_dpdown" then
             repeat
                 self.hoveredIndex = self.hoveredIndex + 1
                 if self.hoveredIndex > #self.menuStructure then self.hoveredIndex = 1 end
             until self.menuStructure[self.hoveredIndex] and self.menuStructure[self.hoveredIndex] ~= "-" and not self.menuStructure[self.hoveredIndex].disabled
-        elseif key == "up" then
+        elseif key == "up" or key == "_dpup" then
             repeat
                 self.hoveredIndex = self.hoveredIndex - 1
                 if self.hoveredIndex < 1 then self.hoveredIndex = #self.menuStructure end
             until self.menuStructure[self.hoveredIndex] and self.menuStructure[self.hoveredIndex] ~= "-" and not self.menuStructure[self.hoveredIndex].disabled
-        elseif key == "right" or key == "return" then
+        elseif key == "right" or key == "return" or key == "_dpright" or key == "_a" then
             if submenuEntries then
                 self.submenuOpen = true
                 self.subHoveredIndex = 1
             end
-        elseif key == "escape" then
+        elseif key == "escape" or key == "_back" then
             self.active = false
         end
     end
@@ -337,6 +339,6 @@ function ToolPalette:mousemoved(mx, my)
     -- self.hoveredIndex = nil
 end
 
-function ToolPalette:mousepressed(x, y, button)
+function ToolPalette:mousereleased(x, y, button)
     self:keypressed("return")
 end
