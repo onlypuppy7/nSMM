@@ -17,7 +17,7 @@ function ti2rgb(data) --will not return fully accurate values due to compressing
     return{R,G,B}
 end
 
-if __PC and __PC.doImageSaving then
+if __PC and __PC.doImageSaving and love and love.filesystem then
     if love.filesystem.getInfo("image_export") then
         for _, file in ipairs(love.filesystem.getDirectoryItems("image_export")) do
             love.filesystem.remove("image_export/" .. file)
@@ -28,12 +28,12 @@ if __PC and __PC.doImageSaving then
 end
 
 local function saveImage(name, str)
-    if __PC and __PC.usePresavedImages then --type(str) == "string"
+    if __PC and __PC.usePresavedImages and love and love.filesystem then --type(str) == "string"
         texs[name] = image.new("resources/"..name..".png")
         return true
     elseif type(str)=="string" then
         texs[name]=image.new(str)
-        if __PC and __PC.doImageSaving then
+        if __PC and __PC.doImageSaving and love and love.filesystem then
             texs[name].imageData:encode("png", "image_export/"..name..".png")
         end
     end
@@ -41,7 +41,7 @@ local function saveImage(name, str)
 end
 
 function image2rotated(name, img, rotation)
-    if __PC and __PC.doImageSaving then
+    if __PC and __PC.doImageSaving and love and love.filesystem then
         local angle = math.rad(rotation)
 
         local imageForCanvas = img.image

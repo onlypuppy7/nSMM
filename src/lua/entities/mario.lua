@@ -81,6 +81,11 @@ function mario:calculateInput() --turns inputs into velocity (or crouch/fireball
         local runningBoost=(math.abs(mario.vx)>3) and math.abs(mario.vx) or 0
         mario.jumpAnim=(mario.jumpAnim<=0) and 3 or mario.jumpAnim
         self.vy=18+runningBoost--for a maximum of 25, jump ~5.5 blocks. without boost is 4 blocks (idle)
+        if mario.power==0 then
+            __PC.SOUND:sfx("jump1")
+        else
+            __PC.SOUND:sfx("jump2")
+        end
     else mario.vy=(mario.vy>0) and mario.vy*0.745 or mario.vy end --slow down upwards velocity when jumping (lower is floatier)
     mario.vy=(math.abs(mario.vy)<0.6) and 0 or mario.vy --movement minumum, prevents velocity of 0.00001626 for example
 --SPECIAL ACTIONS

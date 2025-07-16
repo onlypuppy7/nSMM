@@ -182,8 +182,10 @@ function objAPI:addStats(type,value,x,y,fromFlagpole)
             playStage.coinCount=playStage.coinCount%100
             objAPI:addStats("1up",1,mario.x,mario.y)
         end
+        __PC.SOUND:sfx("coin")
     elseif type=="1up" and x~=nil and y~=nil then
         objAPI:createObj("score",x,y,nil,"1up")
+        __PC.SOUND:sfx("1up")
     end
 end
 
@@ -403,8 +405,10 @@ function objAPI:checkMarioCollision(onStomp,noKill,bodge) bodge=bodge or 0 --bod
                 self.status=onStomp[2]
                 self.deathAnimTimer=playStage.framesPassed+10
                 objAPI:sendToFront(self.objectID,self.LEVEL)
+                __PC.SOUND:sfx("stomp")
             elseif onStomp[1]=="dropkill" then
                 self.vy=0.5
+                __PC.SOUND:sfx("stomp")
             elseif onStomp[1]=="powerup" then self:use()
             elseif onStomp[1]=="shell" then
                 self.hitTimer=playStage.framesPassed+8 --avoid instakill after kicking shell or double hits
@@ -414,15 +418,18 @@ function objAPI:checkMarioCollision(onStomp,noKill,bodge) bodge=bodge or 0 --bod
                     if level.current.enableShellBouncing==true then mario.vtempY=8 end
                     objAPI:addStats("points",400,self.x,self.y)
                     self.vx=(self.x>mario.x) and 4 or -4
+                    __PC.SOUND:sfx("kick")
                 else self.vx=0 --shaking or moving, outcome is the same either way
                     self.koopaTimer=playStage.framesPassed+200
                     mario.vtempY=15
                     mario:handleStomp() --repeated code! aaah!
+                    __PC.SOUND:sfx("stomp")
                 end
             elseif onStomp[1]=="transform" then
                 local vx,newID=self.vx,objAPI:createObj(onStomp[2],self.x,self.y,nil,onStomp[3],onStomp[4])
                 self:destroy() self.status=onStomp[5]
-                if string.sub(self.TYPE,1,5)=="Pkoop" then allEntities[newID].vx=sign(vx)*2 end 
+                if string.sub(self.TYPE,1,5)=="Pkoop" then allEntities[newID].vx=sign(vx)*2 end
+                __PC.SOUND:sfx("stomp")
             end
             if level.current.enableCoinOnKill then objAPI:createObj("coin",self.x,self.y-16,true) end
         elseif checkCollision(mario.x+1,mario.y-marioSize+1,14,14+marioSize,self.x+4,self.y+3+bodge,self.hitBox[1]-8,self.hitBox[2]-4) then --hit mario (side)
@@ -431,6 +438,7 @@ function objAPI:checkMarioCollision(onStomp,noKill,bodge) bodge=bodge or 0 --bod
                 self.koopaTimer=false self.hitCount=0
                 objAPI:addStats("points",400,self.x,self.y)
                 self.vx=(self.x>mario.x) and 6 or -6
+                __PC.SOUND:sfx("kick")
             elseif onStomp[1]=="powerup" then self:use()
             elseif onStomp[1]=="clear" then
                 if not mario.clear then mario:clearedLevel(onStomp[2]) playStage.wait=true end
@@ -486,6 +494,7 @@ function objAPI:handleBumpedBlock(xLOC,yLOC,shell)
         objAPI:createObj("brick_piece",pixelXY[1]+8,pixelXY[2]+8,false,3,2.5) --bottom right
         objAPI:createObj("brick_piece",pixelXY[1],pixelXY[2]+8,false,-3,2.5) --bottom left
         objAPI:addHitBox(nil,pixelXY[1]+1,pixelXY[2]-16,14,16,"block")
+        __PC.SOUND:sfx("break")
     end
     --CRASH on below line: line 2174 attempt to index field '?' (a nil value)
     if yLOC<=12 and blockIndex[plot2ID(xLOC,yLOC+1)].coin==true then --if there is a coin above the bumped block

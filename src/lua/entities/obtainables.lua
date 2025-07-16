@@ -57,7 +57,9 @@ objPowerUp=class(objAPI)
         end self.disableStarPoints=true
         self.status=(self.TYPE=="mushroom" or self.TYPE=="mushroom1up") and "" or 1
         self.despawnable=despawnable
-        if despawnable==true then self.blockTimer=playStage.framesPassed+(4-1) self.y=self.y-4
+        if despawnable==true then
+            self.blockTimer=playStage.framesPassed+(4-1) self.y=self.y-4
+            __PC.SOUND:sfx("sprout")
         else self.blockTimer=playStage.framesPassed end
         self.vx=(self.TYPE=="fireflower") and 0 or (level.current.allowBidirectionalSpawning==true and (mario.x<self.x)) and -2 or 2
         self.doesBounce=(self.TYPE=="star") self.turnAround=true self.allowStarCollision=true
