@@ -217,6 +217,7 @@ function editor:mouseDown()
         elseif editor.select1==false then
             editor:placeTile(TILE,editor.highlightedTile[1],editor.highlightedTile[2])
             if editor.selectedIDCache then editor.selectedID=editor.selectedIDCache editor.selectedIDCache=false end
+            
         elseif editor.select2==false then
             editor.select2=pixel2grid(editor.mouseTile.x,editor.mouseTile.y-8,editor.selectionSize[1],editor.selectionSize[2])
         else

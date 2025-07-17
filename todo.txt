@@ -27,3 +27,5 @@ preload all the sounds (scan dir)
 right stick move mouse and _a click
 block placing sounds
 copy/moving selection on controller
+skidding sfx
+add spring sfx
