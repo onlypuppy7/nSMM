@@ -1,4 +1,4 @@
-if (not __DS) and love.mouse then
+if (not __DS) and (__PC.supportsCursor or __PC.emulateCursor) then
     local cursors = {
         "default",
         "hand pointer",
@@ -34,6 +34,7 @@ if (not __DS) and love.mouse then
     }
 
     __PC.cursors = {}
+    __PC.cursorHidden = false
 
     for i=1, #cursors do
         local cursorName = cursors[i]
@@ -42,9 +43,31 @@ if (not __DS) and love.mouse then
 
         print("Loading cursor:", cursorName, "from", location)
 
-        local imageData = love.image.newImageData(location)
-        __PC.cursors[cursorName] = love.mouse.newCursor(imageData, 16, 16)
+        if __PC.supportsCursor then
+            local imageData = love.image.newImageData(location)
+            __PC.cursors[cursorName] = love.mouse.newCursor(imageData, 16, 16)
+        else
+            local image = love.graphics.newImage(location)
+            __PC.cursors[cursorName] = image
+        end
+    end
 
-        love.mouse.setCursor(__PC.cursors[cursorName])
+    if __PC.supportsCursor then
+        cursor.set("default")
+    end
+end
+
+__PC.cursorPos = {x=9999999, y=9999999}
+
+function __PC:simulatedCursorDraw()
+    if __PC.emulateCursor and __PC.cursors and (not __PC.supportsCursor) then
+        if not __PC.cursorHidden then
+            local img = __PC.cursorSet
+            local x, y = __PC.cursorPos.x, __PC.cursorPos.y
+            print(img)
+            
+        love.graphics.setColor(1, 1, 1)
+            love.graphics.draw(img, math.floor(x), math.floor(y), 0, 1, 1, 16, 16)
+        end
     end
 end

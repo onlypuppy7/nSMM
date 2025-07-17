@@ -25,6 +25,7 @@ function __PC.key2event(key, isTextInput)
     -- map arrow keys:
     if key == "up" or key == "_dpup" or key == "_a" then
         __PC.callEvent("arrowUp")
+        if key == "_a" then __PC.callEvent("mouseDown", __PC.cursorPos.x, __PC.cursorPos.y) end
     elseif key == "down" or key == "_dpdown" then
         __PC.callEvent("arrowDown")
     elseif key == "left" or key == "_dpleft" then

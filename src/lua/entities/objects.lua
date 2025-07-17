@@ -198,6 +198,7 @@ objFireball=class(objAPI)
         self.doesBounce=7 self.isFireball=true self.disableStarPoints=true self.interactSpring=false
 
         self.accelerationMultiplier=0.85 --gravity
+        __PC.SOUND:sfx("fireball")
     end
 
     function objFireball:handleFireballHit()
@@ -205,6 +206,7 @@ objFireball=class(objAPI)
         self.x,self.y=self.x-4,self.y-4
         self.TYPE="fireball_A"
         self.status=1
+        __PC.SOUND:sfx("bump")
     end
 
     function objFireball:logic()

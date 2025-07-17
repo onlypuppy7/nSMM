@@ -23,8 +23,8 @@ end
 
 function gui:escapeKey()
     if gui.PROMPT and not gui.PROMPT[8] then
-        print("clearing bc esc")
         gui:clearPrompt()
+        __PC.SOUND:sfx("menuback")
 end end
 
 function gui:enterKey()
@@ -284,6 +284,8 @@ function gui:createPrompt(header,text,buttons,horizontalButtons,disableExit,x,y,
         -- __PC.showKeyboard()
     end
     if not disableExit then gui:newButton("button_close",{"button_close",7,7,0,0},x+w-8,y+2,"close","buttonListPrompt") end
+
+    __PC.SOUND:pauseBGM(true)
 end
 
 function gui:clearPrompt()
@@ -291,6 +293,8 @@ function gui:clearPrompt()
     gui.buttonListPrompt={}
     switchTimer(true)
     gui.input=""
+
+    __PC.SOUND:pauseBGM(false)
 end
 
 function gui:detectPos(offsetX,offsetY,x,y) -- what this does is take the mouse pos and tries to match it to being within the boundary of a button. if it succeeds then it changes the mouse pointer and sets the highlightedButton var to the ID of the button

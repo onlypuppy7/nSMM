@@ -10,8 +10,6 @@ function playStage:generate(LEVELSTRING,transition,EDITOR)
         playStage.transition=20
     end
     self:reset()
-
-    __PC.SOUND:bgm("overworld")
 end
 
 function playStage:reset()
@@ -30,6 +28,8 @@ function playStage:reset()
         onoff=true,
         pswitch=false,
     }
+    playStage.playedHurry=false
+    playStage.currentBGM=false
 end
 
 function playStage:init()
@@ -149,9 +149,10 @@ end
 
 function playStage:PAUSE() --true/false
     gui:clear()
-    if playStage.EDITOR or mario.dead then gui:createPrompt("PAUSED",nil,{{"RESUME","close"},{"EDIT","play_edit"},{"QUIT","quit"}},false)
-    else                                   gui:createPrompt("PAUSED",nil,{{"RESUME","close"},{"RETRY","play_retry"},{"EDIT","play_edit"},{"QUIT","quit"}},false)
+    if playStage.EDITOR or mario.dead then gui:createPrompt("PAUSED",nil,{{"RESUME","unpause"},{"EDIT","play_edit"},{"QUIT","quit"}},false)
+    else                                   gui:createPrompt("PAUSED",nil,{{"RESUME","unpause"},{"RETRY","play_retry"},{"EDIT","play_edit"},{"QUIT","quit"}},false)
     end
+    __PC.SOUND:sfx("pause")
 end
 
 function playStage:handleInput(INPUT)
@@ -315,6 +316,7 @@ function playStage:levelLogic()
         playStage.TIME=level.current.TIME-(math.floor(playStage.framesPassed/18))
         if playStage.TIME<=0 then mario:kill() end
     end
+    playStage:playBGM()
 end
 
 function playStage:scrollCamera(force)
@@ -648,4 +650,42 @@ function playStage:evaluateEventCondition(eventswitch)
     end
 
     return condition
+end
+
+function playStage:playBGM()
+    local theme = pixel2theme(mario.x+8,true)
+
+    if mario.starTimer>playStage.framesPassed then
+        theme = 200
+    end
+
+    if playStage.TIME <= 100 then
+        theme = theme + 100
+        if not playStage.playedHurry then
+            theme = 1000
+        end
+    end
+    -- print(theme)
+
+    if (((not mario.pipe) or theme==1000) and (not mario.clear)) then
+        if playStage.currentBGM~=theme then
+            playStage.currentBGM=theme
+            local theme2bgm = {
+                ["0"] = "overworld",
+                ["1"] = "underground",
+                ["2"] = "night",
+                ["3"] = "castle",
+                ["200"] = "star",
+                ["100"] = "overworldhurry",
+                ["101"] = "undergroundhurry",
+                ["102"] = "nighthurry",
+                ["103"] = "castlehurry",
+                ["300"] = "starhurry",
+                ["1000"] = "hurry",
+            }
+            __PC.SOUND:bgm(theme2bgm[tostring(theme)])
+        end
+    end
+
+    return theme
 end

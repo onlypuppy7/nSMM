@@ -135,7 +135,7 @@ objBulletBill=class(objAPI)
     end
 
     function objBulletBill:hit(circumstance) --doesnt use standard function as not much needed
-        if circumstance=="mario" then self.dead=true self.vy=0.5 __PC.SOUND:sfx("stomp") end
+        if circumstance=="mario" and not self.dead then self.dead=true self.vy=0.5 __PC.SOUND:sfx("kick") end
     end
 
     function objBulletBill:draw(gc,x,y,TYPE,isEditor,isIcon)
@@ -428,6 +428,7 @@ objBowser=class(objAPI)
                 if self.hp<=0 then self:hit("mario") end
             elseif circumstance=="mario" then
                 self:handleHitDefault(circumstance,3)
+                __PC.SOUND:sfx("kick")
             end
         end
     end

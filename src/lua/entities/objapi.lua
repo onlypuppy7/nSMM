@@ -92,6 +92,7 @@ function objAPI:cleanup() --these huge functions relating to every object are ve
                             
                             if aggressorHitBox[6]=="shell" and victomHitBox[3]==true then
                                 hitVictim:handleShellPoints()
+                                __PC.SOUND:sfx("kick")
                                 if entity.destroyShell then hitVictim:hit() end
                             elseif aggressorHitBox[6]=="fireball" and victomHitBox[4]==true then
                                 hitVictim:handleFireballHit()
@@ -183,8 +184,10 @@ function objAPI:addStats(type,value,x,y,fromFlagpole)
             objAPI:addStats("1up",1,mario.x,mario.y)
         end
         __PC.SOUND:sfx("coin")
-    elseif type=="1up" and x~=nil and y~=nil then
-        objAPI:createObj("score",x,y,nil,"1up")
+    elseif type=="1up" then
+        if x~=nil and y~=nil then
+            objAPI:createObj("score",x,y,nil,"1up")
+        end
         __PC.SOUND:sfx("1up")
     end
 end
@@ -460,6 +463,7 @@ function objAPI:handleHitDefault(circumstance,newStatus,newTYPE) --works for mos
     end
     if circumstance=="mario" or circumstance=="fireball" then
         self.vx=(mario.x<self.x) and 2 or -2
+        __PC.SOUND:sfx("kick")
     end objAPI:transferLayer(self.objectID,self.LEVEL,"particle")
     self.LEVEL="particle"
 end --NEW code approved
@@ -481,6 +485,7 @@ function objAPI:handleBumpedBlock(xLOC,yLOC,shell)
                 playStage:setEvent("plbswitch",false)
                 playStage:setEvent("pswitch",false)
             end
+            __PC.SOUND:sfx("switchblock")
         end
     end
     if blockIndex[ID].breakable==false or (mario.power==0 and not shell) then --create bumped block if unable to be destroyed
@@ -503,6 +508,7 @@ function objAPI:handleBumpedBlock(xLOC,yLOC,shell)
         plot2place(0,xLOC,yLOC+1)
         objAPI:createObj("coin",pixelXY[1],pixelXY[2]-16,true)
     end
+    __PC.SOUND:sfx("bump")
 end --TODO rewrite needed ##############
 
 function objAPI:checkFor(CHECK) --cannot be inside aggregatecheckx as has to display changes immediately, otherwise will be a frame late in some instances

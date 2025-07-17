@@ -40,6 +40,7 @@ function onpaint(gc)
                 -- editor:generate(recoveredLevelString)
                 -- editor.active=true
                 -- titleScreen.active=false
+                __PC.SOUND:pauseBGM(false)
             end
         end
         -- if framesPassed==1000 then

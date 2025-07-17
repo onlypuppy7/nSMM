@@ -330,7 +330,8 @@ end end
 
 function editor:PAUSE() --true/false
     gui:clear()
-    gui:createPrompt("PAUSED",nil,{{"RESUME","close"},{"QUIT","quit"}},false)
+    gui:createPrompt("PAUSED",nil,{{"RESUME","unpause"},{"QUIT","quit"}},false)
+    __PC.SOUND:sfx("pause")
 end
 
 function editor:selectID(ID) --false means clicking outside of group (usually cancel)

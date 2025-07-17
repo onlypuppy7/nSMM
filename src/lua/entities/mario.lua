@@ -276,6 +276,13 @@ function mario:calculateAnim(calculateAnimForce) --handles mario's visuals (walk
             level.current.loadedObjects={}
             playStage:clearEntities()
             -- mario[pipeActions[1]]=mario[pipeActions[1]]+pipeActions[2]*11
+            __PC.SOUND:sfx("warp")
+            local theme = playStage:playBGM()
+            if theme~=playStage.currentBGM then
+                __PC.SOUND:stopBGM()
+            end
+            -- playStage.currentBGM=false
+            -- __PC.SOUND:stopBGM()
         elseif pipeTime<=39 then --zoom small out again
             mario[pipeActions[1]]=mario[pipeActions[1]]-pipeActions[2]
             if pipeTime<=32 then
@@ -286,6 +293,7 @@ function mario:calculateAnim(calculateAnimForce) --handles mario's visuals (walk
             if pipeTime==39 then --return game to playing state
                 mario.pipe=false playStage.wait=false
                 playStage.transition2=false
+                __PC.SOUND:pauseBGM(false)
             end
         end
         playStage.transition2=mario.pipe and {mario.x-playStage.cameraOffset+8,mario.y+8,mario.pipe[6]*4} or false
@@ -330,8 +338,8 @@ function mario:powerUpMario(optionalPower,forced)
             mario.powerDown=false
             mario.powerAnimTimer=playStage.framesPassedBlock
             mario:calculateAnim(true)
-            __PC.SOUND:sfx("powerup")
         end
+        __PC.SOUND:sfx("powerup")
     end
 end
 
@@ -354,7 +362,7 @@ function mario:powerStarMario(optionalLength)
     else
         mario.starTimer=playStage.framesPassed+optionalLength
     end
-    __PC.SOUND:bgm("star")
+    playStage.currentBGM=false
 end
 
 function mario:kill()
@@ -431,6 +439,8 @@ function mario:pipeCheck() --print("000000000000")
                     mario.pipe={pipeID,i,3-i,"enter",0,0} --pipeID, initial entr/exit, depart entr/exit, state, timer, transition timer
                     playStage.wait=true
                     success=false
+                    __PC.SOUND:sfx("warp")
+                    -- __PC.SOUND:pauseBGM(true)
                 end
             end
         end

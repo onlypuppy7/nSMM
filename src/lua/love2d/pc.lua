@@ -4,6 +4,12 @@ __PC = {
     newImage = love.graphics.newImage,
     useGameCanvas = true,
     includeOnScreenConsole = true,
+    noCloneSFX = false,
+    supportsBGM = true,
+    supportsPausing = true,
+    supportsCursor = not not (love and love.mouse),
+    emulateCursor = not (love and love.mouse),
+    bgmFormat = "ogg",
     nativeWidth = 318, --calculator
     nativeHeight = 212,
     scale = 2,
@@ -26,8 +32,12 @@ if love._console or __DS then
 
     -- print(__PC.consoleHW)
     if __PC.consoleHW == "3DS" then
-        __PC.nativeWidth = 320 --ive forgotten what exactly about this is "native" now
+        __PC.nativeWidth = 320 --ive forgotten what exactly about this is "native" atp
         __PC.nativeHeight = 220
+        __PC.noCloneSFX = true
+        -- __PC.supportsBGM = false --Source:stop() crashes the system. great! but love.audio.stop works. even better!!
+        __PC.supportsPausing = false --buuuuut love.audio.pause() crashes! yayyy
+        __PC.bgmFormat = "wav" --ogg lags
     end
 end
 
@@ -65,9 +75,11 @@ __PC.loop = function()
 	
         __PC.ToolPalette:paint(platform.gc)
 
-        if __PC.console == "3DS" then
+        if __PC.consoleHW == "3DS" then
             gc:fillRect(0, 220, 320, 20)
         end
+
+        __PC:simulatedCursorDraw()
 	    -- love.graphics.present()
 	end
 

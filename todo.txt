@@ -1,0 +1,29 @@
+todo
+
+fireball input (-)
+toolpalette (Y?)
+30fps (default limit to 0.5x speed prob op)
+
+text fields
+upper screen
+toolpalette (keyreleased instead of keypressed, button mapping)
+
+
+sounds needed:
+
+sfx louder (again)
+
+bump block
+pause
+
+sound when shell kill
+
+transition, extend to bottom
+add black box to hide crap
+
+poll the keyboard/"joystick" instead of using custom thing bc it breaks on lovepotion
+preload all the sounds (scan dir)
+
+right stick move mouse and _a click
+block placing sounds
+copy/moving selection on controller

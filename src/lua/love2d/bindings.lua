@@ -177,20 +177,34 @@ function love.focus(f)
 end
 
 function love.mousepressed(x, y, button)
+    __PC.cursorPos.x = x / __PC.scale
+    __PC.cursorPos.y = y / __PC.scale
+
     if ((not consoleLib) or not consoleLib.isEnabled()) and not __PC.ToolPalette:bindings("mousepressed", x / __PC.scale, y / __PC.scale, button) then
-        __PC.onEvents.mousepressed(x / __PC.scale, y / __PC.scale, button)
+        __PC.onEvents.mousepressed(__PC.cursorPos.x, __PC.cursorPos.y, button)
     end
 end
 
 function love.mousereleased(x, y, button)
+    __PC.cursorPos.x = x / __PC.scale
+    __PC.cursorPos.y = y / __PC.scale
+
     if ((not consoleLib) or not consoleLib.isEnabled()) and not __PC.ToolPalette:bindings("mousereleased", x / __PC.scale, y / __PC.scale, button) then
-        __PC.onEvents.mousereleased(x / __PC.scale, y / __PC.scale, button)
+        __PC.onEvents.mousereleased(__PC.cursorPos.x, __PC.cursorPos.y, button)
     end
 end
 
-function love.mousemoved(x, y, dx, dy, istouch)
+function love.mousemoved(x, y, dx, dy, istouch, isstick)
+    if not isstick then
+        x = x / __PC.scale
+        y = y / __PC.scale
+    end
+
+    __PC.cursorPos.x = math.max(0, math.min(__PC.nativeWidth, x))
+    __PC.cursorPos.y = math.max(0, math.min(__PC.nativeHeight, y))
+
     if ((not consoleLib) or not consoleLib.isEnabled()) and not __PC.ToolPalette:bindings("mousemoved", x / __PC.scale, y / __PC.scale, dx / __PC.scale, dy / __PC.scale, istouch) then
-        __PC.onEvents.mousemoved(x / __PC.scale, y / __PC.scale, dx / __PC.scale, dy / __PC.scale, istouch)
+        __PC.onEvents.mousemoved(__PC.cursorPos.x, __PC.cursorPos.y, dx / __PC.scale, dy / __PC.scale, istouch)
     end
 end
 
@@ -293,6 +307,16 @@ function love.update(dt)
                 state.up = false
             end
         end
+
+        -- RIGHT STICK CURSOR CONTROL
+        local rx, ry = joystick:getGamepadAxis("rightx"), joystick:getGamepadAxis("righty")
+
+        ry = -ry
+
+        --sensitivity: tweak this
+        local speed = 7500
+
+        love.mousemoved(__PC.cursorPos.x + rx * speed * dt, __PC.cursorPos.y + ry * speed * dt, 0, 0, false, true)
     end
 
     __PC.SOUND:update(dt)

@@ -162,7 +162,7 @@ end
 
 
 function platform.gc:clipRect(op, x, y, width, height)
-    if __PC.console ~= "3DS" then
+    if __PC.consoleHW ~= "3DS" then
         if op == "reset" then
             love.graphics.setScissor()
         elseif op == "set" then
