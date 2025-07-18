@@ -55,7 +55,9 @@ function mario:calculateInput() --turns inputs into velocity (or crouch/fireball
             elseif input.left==1 and (mario.vx<0 or mario.jumpAnim>-1) then mario.vx=-input.left end
         end
     elseif (input.left==1 or input.right==1) and (not mario.crouch or mario.vy~=0) then
-        if ((input.left==1 and mario.vx>0.5) or (input.right==1 and mario.vx<-0.5)) and mario.vy==0 then mario.vx=mario.vx*0.9 --drifting slower
+        if ((input.left==1 and mario.vx>0.5) or (input.right==1 and mario.vx<-0.5)) and mario.vy==0 then
+            mario.vx=mario.vx*0.9 --drifting slower
+            __PC.SOUND:sfx("skid", true)
         else --not drifting
         --max running speed 7
             if math.abs(mario.vx)<2.0 then --walking under 2.0
@@ -202,6 +204,7 @@ function mario:calculateAnim(calculateAnimForce) --handles mario's visuals (walk
             if (playStage.TIME-7)>=7 then
                 playStage.SCORE=playStage.SCORE+350
                 playStage.TIME=playStage.TIME-7
+                __PC.SOUND:sfx("timer", true)
             elseif playStage.TIME>0 then
                 playStage.SCORE=playStage.SCORE+50*playStage.TIME
                 playStage.TIME=0 playStage.clearedTimer=playStage.framesPassed+25

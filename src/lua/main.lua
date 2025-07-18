@@ -1,14 +1,15 @@
 -- local ok, err = pcall(function()
 
+    function __loadGame__()
+        require("nsmm")
+        require("courseworld.courses")
+    end
+
     require("love2d.setup")
 
     -- __PC.scale = 2
     -- __PC.doImageSaving = true
     -- __PC.usePresavedImages = true
-
-    require("nsmm")
-
-    require("courseworld.courses")
 
     -- require("tests.sound")
 

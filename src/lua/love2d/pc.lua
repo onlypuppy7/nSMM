@@ -76,6 +76,7 @@ __PC.loop = function()
         __PC.ToolPalette:paint(platform.gc)
 
         if __PC.consoleHW == "3DS" then
+            gc:setColorRGB(0,0,0)
             gc:fillRect(0, 220, 320, 20)
         end
 

@@ -240,12 +240,15 @@ function ToolPalette:keypressed(key, scancode, isrepeat)
             self.active = false
         end
     else
+        print("yuh", key)
         if key == "down" or key == "_dpdown" then
+        print("yuh1", key)
             repeat
                 self.hoveredIndex = self.hoveredIndex + 1
                 if self.hoveredIndex > #self.menuStructure then self.hoveredIndex = 1 end
             until self.menuStructure[self.hoveredIndex] and self.menuStructure[self.hoveredIndex] ~= "-" and not self.menuStructure[self.hoveredIndex].disabled
         elseif key == "up" or key == "_dpup" then
+        print("yuh2", key)
             repeat
                 self.hoveredIndex = self.hoveredIndex - 1
                 if self.hoveredIndex < 1 then self.hoveredIndex = #self.menuStructure end

@@ -594,12 +594,12 @@ function playStage:paint(gc,runLogic) --all logic/drawing required to play the s
         drawFont(gc,"LOADING LEVEL FOR PLAY...", nil, nil,"centre",0)
     end
     __PC.allowedHeldKeys = {
-        down = true,
-        left = true,
-        right = true,
-        ["_dpdown"] = true,
-        ["_dpleft"] = true,
-        ["_dpright"] = true,
+        "down",
+        "_dpdown",
+        "left",
+        "_dpleft",
+        "right",
+        "_dpright",
     }
 end
 
@@ -625,7 +625,7 @@ function playStage:drawCircleTransition(gc,centerX,centerY,frame,out) --out=fals
         local v1=math.max(0,centerY-circleSize)
         local v2=math.max(0,centerX+circleSize-1)
         gc:fillRect(0,0,320,v1+1)--top
-        gc:fillRect(0,math.max(0,circleSize+centerY)-1,320,math.max(0,212-(circleSize+centerY))+2)--bottom
+        gc:fillRect(0,math.max(0,circleSize+centerY)-1,320,math.max(0,math.min(220, screenHeight)-(circleSize+centerY))+2)--bottom
         gc:fillRect(0,v1,math.max(0,centerX-circleSize)+1,circleSize*2)--left
         gc:fillRect(v2,v1,math.max(0,320-v2),circleSize*2)--right
     else
@@ -655,7 +655,9 @@ end
 function playStage:playBGM()
     local theme = pixel2theme(mario.x+8,true)
 
-    if mario.starTimer>playStage.framesPassed then
+    if playStage.events.pswitch then
+        theme = 201
+    elseif mario.starTimer>playStage.framesPassed then
         theme = 200
     end
 
@@ -676,11 +678,13 @@ function playStage:playBGM()
                 ["2"] = "night",
                 ["3"] = "castle",
                 ["200"] = "star",
+                ["201"] = "pswitch",
                 ["100"] = "overworldhurry",
                 ["101"] = "undergroundhurry",
                 ["102"] = "nighthurry",
                 ["103"] = "castlehurry",
                 ["300"] = "starhurry",
+                ["301"] = "pswitchhurry",
                 ["1000"] = "hurry",
             }
             __PC.SOUND:bgm(theme2bgm[tostring(theme)])

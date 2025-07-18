@@ -126,6 +126,7 @@ function editor:setDisplayedGroup(group)
 end end end
 
 function editor:charIn(chr)
+    print(chr)
     if not gui.PROMPT and not editor.levelList then 
         if chr=="4" then --left
             editor.cameraOffset=editor.cameraOffset-21
@@ -144,20 +145,23 @@ function editor:charIn(chr)
                     editor.eraseMode=false
                     editor.playMode=false
                 end
-            elseif (chr=="m" or chr=="c") and editor.select2~=false then
+                __PC.SOUND:sfx("bump")
+            elseif (chr=="m" or chr=="c" or chr=="_leftshoulder" or chr=="_rightshoulder") and editor.select2~=false then
                 if editor.select2.move then
                     editor.select2.move=nil --errrrrm just use a ternary (it doesnt exist)
                 else
                     editor.select2.move={
                         x=mouse.x+editor.cameraOffset,
                         y=mouse.y,
-                        isCopy=chr=="c"
+                        isCopy=(chr=="c" or chr=="_leftshoulder")
                     }
                 end
             elseif chr=="−" then
                 editor.showTrail=not editor.showTrail
+                __PC.SOUND:sfx("bump")
             elseif chr=="^" then
                 editor.minimised=not editor.minimised
+                __PC.SOUND:sfx("camera")
             elseif chr=="s" then toolpaletteSelection("File","Save")
             elseif chr=="o" then toolpaletteSelection("File","Open")
             elseif chr=="n" then toolpaletteSelection("File","Name")
@@ -204,6 +208,7 @@ function editor:mouseDown()
             if not (tostring(ID):isInteger() and ID<=0) then
                 editor.selectedID=ID
             end
+            __PC.SOUND:sfx("coin")
         elseif editor.platformSelect then
             local ID=level.current.get(editor.platformSelect[1],editor.platformSelect[2])
             local config=(string.sub(ID,10,#ID)):split("~")
@@ -217,7 +222,8 @@ function editor:mouseDown()
         elseif editor.select1==false then
             editor:placeTile(TILE,editor.highlightedTile[1],editor.highlightedTile[2])
             if editor.selectedIDCache then editor.selectedID=editor.selectedIDCache editor.selectedIDCache=false end
-            
+            if TILE~=0 then __PC.SOUND:sfx("mapbeep")
+            else __PC.SOUND:sfx("menuback") end
         elseif editor.select2==false then
             editor.select2=pixel2grid(editor.mouseTile.x,editor.mouseTile.y-8,editor.selectionSize[1],editor.selectionSize[2])
         else
@@ -229,6 +235,7 @@ function editor:mouseDown()
                     if checkCollision(box[1],box[2]+8,box[3],box[4],editor.mouseTile.x,editor.mouseTile.y,1,1) then
                         editor:fillTiles(TILE,editor.select1[1],editor.select1[2],editor.select2[1],editor.select2[2])
                         if editor.selectedIDCache then editor.selectedID=editor.selectedIDCache editor.selectedIDCache=false end
+                        __PC.SOUND:sfx("bullet")
                     end
                 else
                     editor:translateTiles(editor.select1, editor.select2, editor.select2.move.adjustedPlots[1], editor.select2.move.adjustedPlots[2], true, not editor.select2.move.isCopy)
@@ -287,10 +294,12 @@ function editor:backspaceKey()
         editor.eraseMode=not editor.eraseMode
         editor.eyedropperMode=false
         editor.playMode=false
+        __PC.SOUND:sfx("bump")
     elseif editor.select2~=false and (editor.selectedID==nil or string.sub(editor.selectedID,1,5)~="theme" or string.sub(editor.selectedID,1,6)~="scroll") then
         editor:fillTiles(0,editor.select1[1],editor.select1[2],editor.select2[1],editor.select2[2])
         editor.select1=false
         editor.select2=false
+        __PC.SOUND:sfx("egghatch")
 end end
 function editor:enterKey()
     if editor.select1==false and editor.playTimer==false and (string.sub(editor.selectedID,1,4)~="warp") then
@@ -784,7 +793,7 @@ function editor:drawGridCursor(gc)
 
         box=editor:determineSelectBox(posSelect[1],posSelect[2],editor.selectionSize[1]-1,editor.selectionSize[2]-1,posSelect2[1],posSelect2[2],editor.selectionSize[1]-1,editor.selectionSize[2]-1)
     end
-    if (box[2]+box[4])>203 then box[4]=203-box[2] end
+    if (box[2]+box[4])>203 and (screenHeight <= 212) then box[4]=203-box[2] end
 
     if string.sub(editor.selectedID,1,4)=="warp" then
         gc:setPen("thin","dashed")

@@ -410,6 +410,7 @@ objBowser=class(objAPI)
             elseif self.fireCountdown<-10 then
                 objAPI:createObj("flame_L",self.x-20,self.y-16,nil,self.lastY-math.random(0,2)*16)
                 self.fireCountdown=math.random(10,120)
+                __PC.SOUND:sfx("flame")
             end despook=self.turnCountdown
             self:calculateAccelerationY(1.03,-4.5)
             if self.py<=0 then self:gravityCheck(-self.py,true) else self:bumpCheck(-self.py)      end
@@ -463,7 +464,7 @@ objBowser=class(objAPI)
 objBowserFlame=class(objAPI)
 
     function objBowserFlame:setup(objectID,posX,posY,TYPE,despawnable,moveToY,arg2)
-        self:initObject(objectID,TYPE,"inner",{16,4,false,false},{posX,math.round(posY+4)},true,0)
+        self:initObject(objectID,TYPE,"outer",{16,4,false,false},{posX,math.round(posY+4)},true,0)
         self.status=1 self.despawnable=true self.interactSpring=false
         self.vx=(self.TYPE=="flame_L") and -3 or 3
         self.moveToY=moveToY and math.round(moveToY+4) or self.y

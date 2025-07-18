@@ -165,10 +165,11 @@ objSpring=class(objAPI)
             local entity=springData[2]
             springData[1]=springData[1]+1
             if springData[1]==2        then self.status=3 entity.vy=0 entity.spring=true --fixes softlock when mario has cleared a level while bouncing on springs
-            elseif springData[1]==4    then self.status=2
+            elseif springData[1]==4 and entity.spring   then self.status=2
                 entity.vy=(entity.objectID=="mario" and input.stor.up>-8) and springData[5] or springData[4]
                 entity.vx=entity.objectID=="mario" and 0 or springData[3]
                 entity.spring=false
+                __PC.SOUND:sfx("spring", false, 1-((self.bounceHeight-16)/64))
             elseif springData[1]==6    then self.status=1 table.remove(self.springData,i)
             end
             if entity.spring then entity.y=(self.status==3 and self.y-7) or (self.status==2 and self.y-12) or self.y-16 end
@@ -261,7 +262,7 @@ objSwitch=class(objAPI)
     function objSwitch:setup(objectID,posX,posY,TYPE,despawnable,arg1,arg2)  --platform_length~vel~MODE~distance eg, platform_3~2~lx~64
         self:apply(self:getOptions(TYPE)) --get options
 
-        self:initObject(objectID,TYPE,"outer",nil,{posX,posY},0,0)
+        self:initObject(objectID,TYPE,"inner",nil,{posX,posY},0,0)
         self.active=true
         self.despawnable=false self.interactSpring=true self.disableStarPoints=true
         self.GLOBAL=true --always drawn and logic applying, to reduce pop in
@@ -290,6 +291,7 @@ objSwitch=class(objAPI)
                 local eventValue=self.switchType=="p" and {playStage.framesPassed, playStage.framesPassed+300} or true
                 playStage:setEvent(eventName, eventValue)
                 self.pressedAt=playStage.framesPassed+10 --despawn after 10 frames, if wanted
+                __PC.SOUND:sfx("switch")
             end
             
             self:addPlatform(self.x,self.y,16,self.vx,self.vy) --update the platform

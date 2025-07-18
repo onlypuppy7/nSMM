@@ -9,23 +9,23 @@ function __PC.callEvent(func, ...)
     end
 end
 
-local heldKeys = {}
-__PC.allowedHeldKeys = {}
-if love.keyboard.setKeyRepeat then
-    love.keyboard.setKeyRepeat(true)
-end
-
-function __PC.callAllHeldKeys()
-    for key, _ in pairs(heldKeys) do
-        __PC.key2event(key)
-    end
-end
-
 function __PC.key2event(key, isTextInput)
     -- map arrow keys:
     if key == "up" or key == "_dpup" or key == "_a" then
-        __PC.callEvent("arrowUp")
-        if key == "_a" then __PC.callEvent("mouseDown", __PC.cursorPos.x, __PC.cursorPos.y) end
+        if key == "_a" and ((playStage and not playStage.active) or (gui and gui.PROMPT)) then
+            local joysticks = love.joystick.getJoysticks()
+            local first = joysticks[1]
+
+            if (first and first:isGamepadDown("leftshoulder", "rightshoulder")) then
+                __PC.callEvent("rightMouseDown", __PC.cursorPos.x, __PC.cursorPos.y)
+            else
+                __PC.callEvent("mouseDown", __PC.cursorPos.x, __PC.cursorPos.y)
+            end
+        else
+            if not (key == "_dpup" and playStage and playStage.active) then
+                __PC.callEvent("arrowUp")
+            end
+        end
     elseif key == "down" or key == "_dpdown" then
         __PC.callEvent("arrowDown")
     elseif key == "left" or key == "_dpleft" then
@@ -70,10 +70,51 @@ function __PC.key2event(key, isTextInput)
         __PC.callEvent("help")
     elseif key == "pause" or key == "break" then
         __PC.callEvent("help")
+    elseif not isTextInput then
+        __PC.callEvent("charIn", key)
     end
 end
 
 --to add: timer, paint, resize(?)
+
+local heldKeys = {}
+__PC.allowedHeldKeys = {}
+if love.keyboard.setKeyRepeat then
+    love.keyboard.setKeyRepeat(true)
+end
+
+function __PC.pollHeldKeys()
+    heldKeys = {} -- reset each frame
+
+    for i = 1, #__PC.allowedHeldKeys do
+        local key = __PC.allowedHeldKeys[i]
+
+        if key:sub(1, 1) == "_" then
+            local gamepadKey = key:sub(2)
+            if love.joystick then
+                local joysticks = love.joystick.getJoysticks()
+                local first = joysticks[1]
+
+                if (first and first:isGamepadDown(gamepadKey)) then
+                    heldKeys[key] = true
+                    -- print(gamepadKey, "is held")
+                end
+            end
+        else
+            if love.keyboard and love.keyboard.isDown and love.keyboard.isDown(key) then
+                heldKeys[key] = true
+            end
+        end
+    end
+end
+
+function __PC.callAllHeldKeys()
+    __PC.pollHeldKeys()
+    for key, _ in pairs(heldKeys) do
+        -- print("key2event(key)", key)
+        __PC.key2event(key)
+    end
+end
 
 __PC.onEvents = {
     load = function()
@@ -81,15 +122,8 @@ __PC.onEvents = {
         __PC.callEvent("construction")
     end,
     keyreleased = function(key, scancode, isrepeat)
-        if heldKeys[key] then
-            heldKeys[key] = nil
-        end
     end,
     keypressed = function(key, scancode, isrepeat)
-        -- print("keypressed", key, scancode, isrepeat)
-        if not heldKeys[key] and __PC.allowedHeldKeys[key] then
-            heldKeys[key] = true
-        end
         __PC.key2event(key)
     end,
     textinput = function(text)

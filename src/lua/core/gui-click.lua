@@ -2,10 +2,13 @@
 
 function gui:click(action) -- actions relating to buttons and prompts go here. also some small tasks too.
     if gui.highlightedButton or action then
-        action=action or gui[gui.highlightedButton[2]][gui.highlightedButton[1]]["action"]
+        --eye bleed below. dont think twice about it.
+        action=action or (gui and gui.highlightedButton and gui.highlightedButton[2] and gui[gui.highlightedButton[2]] and gui.highlightedButton[1] and gui[gui.highlightedButton[2]][gui.highlightedButton[1]] and gui[gui.highlightedButton[2]][gui.highlightedButton[1]]["action"])
         print("gui:click",action)
 
         local sound = "menuselect"
+
+        if (not action) or type(action) ~= "string" then return end
 
         switchTimer(true) --switch timer back on; pay attention to this, all the buttons benefit due to performing some kind of change but future ones may not
         if string.sub(action,1,1)=="m" then --screen moving time

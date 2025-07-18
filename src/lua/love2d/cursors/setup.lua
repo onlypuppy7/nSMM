@@ -64,9 +64,8 @@ function __PC:simulatedCursorDraw()
         if not __PC.cursorHidden then
             local img = __PC.cursorSet
             local x, y = __PC.cursorPos.x, __PC.cursorPos.y
-            print(img)
             
-        love.graphics.setColor(1, 1, 1)
+            love.graphics.setColor(1, 1, 1)
             love.graphics.draw(img, math.floor(x), math.floor(y), 0, 1, 1, 16, 16)
         end
     end

@@ -32,8 +32,23 @@ SOUND.bgms = {
 
 SOUND._sfxCache = {}
 
-function SOUND:sfx(name)
-    print("playing sfx:", name)
+function SOUND:preloadSFX()
+    print("memory before preload sfx:", collectgarbage("count"))
+    local files = love.filesystem.getDirectoryItems("sound")
+    for _, file in ipairs(files) do
+        if file:match("^sfx_.+%.wav$") then
+            local name = file:match("^sfx_(.+)%.wav$")
+            if name and not self._sfxCache[name] then
+                -- print("Preloading SFX:", name)
+                self._sfxCache[name] = love.audio.newSource("sound/"..file, "static")
+            end
+        end
+    end
+    print("memory after preload sfx:", collectgarbage("count"))
+end
+
+function SOUND:sfx(name, waitForPrevious, speed)
+    print("playing sfx:", name, waitForPrevious, speed)
     if not name then return end
 
     local sfx
@@ -42,16 +57,19 @@ function SOUND:sfx(name)
         self._sfxCache[name] = love.audio.newSource("sound/sfx_"..name..".wav", "static")
     end
 
-    if __PC.noCloneSFX then
+    if __PC.noCloneSFX or waitForPrevious then
         sfx = self._sfxCache[name]
     else
         sfx = self._sfxCache[name]:clone()
     end
 
-    love.audio.stop(sfx)
+    if not waitForPrevious then
+        love.audio.stop(sfx)
+    end
 
     if not sfx:isPlaying() then
         sfx:play()
+        if speed and speed~=1 then sfx:setPitch(speed) end
     end
 end
 
@@ -121,3 +139,5 @@ function SOUND:update(dt)
 end
 
 __PC.SOUND = SOUND
+
+__PC.SOUND:preloadSFX()

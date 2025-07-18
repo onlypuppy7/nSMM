@@ -4,7 +4,7 @@ typeIndex={
     Pkoop = {"objKoopaPara",     "inner"},
     shell = {"objShell",         "inner"},
     bulle = {"objBulletBill",    "inner"},
-    flame = {"objBowserFlame",   "inner"},
+    flame = {"objBowserFlame",   "outer"},
     blast = {"objBlaster",       "inner"},
     piran = {"objPiranhaPlant",  "background"},
     bowse = {"objBowser",        "inner"},
@@ -21,7 +21,7 @@ typeIndex={
     flagp = {"objFlagpole",      "background"},
     magic = {"objMagicOrb",      "inner"},
     sprin = {"objSpring",        "inner"},
-    switc = {"objSwitch",        "outer"},
+    switc = {"objSwitch",        "inner"},
 }
 nameIndex={ --this is mainly cope for not having an entity index like the block index
     ["goomba"] =         "Goomba",

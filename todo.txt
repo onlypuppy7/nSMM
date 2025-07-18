@@ -1,31 +1,37 @@
 todo
 
-fireball input (-)
-toolpalette (Y?)
-30fps (default limit to 0.5x speed prob op)
+[x] fireball input (-)
+[x] toolpalette (Y?)
+[x] 30fps (default limit to 0.5x speed prob op)
 
-text fields
-upper screen
-toolpalette (keyreleased instead of keypressed, button mapping)
+[x] text fields
+[x] upper screen
+[x] toolpalette (keyreleased instead of keypressed, button mapping)
 
 
-sounds needed:
+[x] sounds needed:
 
-sfx louder (again)
+[x] sfx louder (again)
 
-bump block
-pause
+[x] bump block
+[x] pause
 
-sound when shell kill
+[x] sound when shell kill
 
-transition, extend to bottom
-add black box to hide crap
+[x] transition, extend to bottom
+[x] add black box to hide crap
 
-poll the keyboard/"joystick" instead of using custom thing bc it breaks on lovepotion
-preload all the sounds (scan dir)
+[x] poll the keyboard/"joystick" instead of using custom thing bc it breaks on lovepotion
+[x] preload all the sounds (scan dir)
 
-right stick move mouse and _a click
-block placing sounds
-copy/moving selection on controller
-skidding sfx
-add spring sfx
+[x] right stick move mouse and _a click
+[x] block placing sounds
+[x] copy/moving selection on controller
+[x] skidding sfx
+[x] add spring sfx
+
+[x] add loading screen for cursors and stuff
+[x] rope sfx
+[x] make the selector reach the bottom
+
+[ ] koopas no longer stationary(?)

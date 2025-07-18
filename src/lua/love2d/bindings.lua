@@ -32,35 +32,59 @@ if __PC.useGameCanvas then
 end
 
 function love.draw(screen)
+    -- screen = "top" --for testing
+
     if screen == "top" then
-        --screen: 800x240
+        -- if not (editor and editor.active) then return end
 
-        --logo: 156x58
-        nSMMLogo = nSMMLogo or love.graphics.newImage("love2d/nsmmlogo.t3x")
-        
-        love.graphics.clear(249, 0xd7/255, 0x3b/255, 1) -- set background color to #f9d73b
+        --uncomment if canvases work
 
-        -- Load logo
-        nSMMLogo = nSMMLogo or love.graphics.newImage("love2d/nsmmlogo.t3x")
+        -- if not topScreenCanvas then
+        --     --screen: 800x240
+        --     topScreenCanvas = love.graphics.newCanvas(800, 240)
+        --     love.graphics.setCanvas(topScreenCanvas)
+            
+            love.graphics.clear(249, 0xd7/255, 0x3b/255, 1) -- set background color to #f9d73b
 
-        -- Draw white box for logo
-        love.graphics.setColor(1, 1, 1)
-        love.graphics.rectangle("fill", 20-5, 20-5, 156+10, 58+10)
+            love.graphics.setColor(1, 1, 1)
+            love.graphics.rectangle("fill", 20-5, 20-5, 156+10, 58+10)
 
-        love.graphics.setColor(1, 1, 1)
-        love.graphics.draw(nSMMLogo, 20, 20)
+            love.graphics.setColor(1, 1, 1)
+            --logo: 156x58
+            nSMMLogo = nSMMLogo or love.graphics.newImage("love2d/nsmmlogo.t3x")
+            love.graphics.draw(nSMMLogo, 20, 20)
 
-        local boxX = 200
-        local boxY = 20
-        local boxW = 160
-        local boxH = 160
+            local boxX = 190
+            local boxY = 5
+            local boxW = 170
+            local boxH = 230
 
-        love.graphics.setColor(1, 1, 1)
-        love.graphics.rectangle("fill", boxX, boxY, boxW, boxH)
+            love.graphics.setColor(1, 1, 1)
+            love.graphics.rectangle("fill", boxX, boxY, boxW, boxH)
 
-        love.graphics.setColor(0, 0, 0)
-        love.graphics.printf("Controls:\nD-Pad / L-Stick - Move\nA - Jump\nB - Fire/(-)\nX - Delete\nY - Open Toolpalette\nSelect - Cancel/Back\nStart - Enter\nTouch - Place\nL/R - Make Selection (While Touching)", boxX + 10, boxY + 10, boxW - 20)
+            gc:setColorRGB(0, 0, 0)
+            gc:setFont("sansserif", "b", 12)
+            gc:drawString("Controls:\nD-Pad\nL-Stick\nA\nB\nX\nY\nSelect\nStart\nTouch\nL/R\n\nR-Stick\nWhile Selecting:\nL\nR", boxX + 10, boxY + 10)
+            gc:setFont("sansserif", "r", 12)
+            -- gc:drawString("-   Move", boxX + 60, boxY + 33)
+            gc:drawString("\n-   Move\n-   Move\n-   Jump/Click\n-   Fire/(-)\n-   Delete\n-   Toolpalette\n-   Cancel/Back\n-   Enter\n-   Place\n-   Make Selection\n    (While Touching)\n-   Move Cursor\n\n-   Copy\n-   Move", boxX + 60, boxY + 10)
+            
+            local creditBoxX = 20
+            local creditBoxY = 100
+            local creditBoxW = 156
+            local creditBoxH = 40
 
+            love.graphics.setColor(1, 1, 1)
+            love.graphics.rectangle("fill", creditBoxX - 4, creditBoxY - 4, creditBoxW + 8, creditBoxH + 8)
+
+            gc:setColorRGB(0, 0, 0)
+            gc:setFont("sansserif", "r", 12)
+            gc:drawString("Originally for TI-Nspire Calculator\nCreated by onlypuppy7\nPowered by LovePotion", creditBoxX, creditBoxY + 7)
+
+        --     love.graphics.setCanvas()
+        -- end
+        -- love.graphics.setColor(1, 1, 1)
+        -- love.graphics.draw(topScreenCanvas, 0, 0)
         return
     end
 
@@ -316,7 +340,10 @@ function love.update(dt)
         --sensitivity: tweak this
         local speed = 7500
 
-        love.mousemoved(__PC.cursorPos.x + rx * speed * dt, __PC.cursorPos.y + ry * speed * dt, 0, 0, false, true)
+        local dx, dy = rx * speed * dt, ry * speed * dt
+        if (math.abs(dx) >= 1) or (math.abs(dy) >= 1) then
+            love.mousemoved(__PC.cursorPos.x + rx * speed * dt, __PC.cursorPos.y + ry * speed * dt, 0, 0, false, true)
+        end
     end
 
     __PC.SOUND:update(dt)
