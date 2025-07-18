@@ -68,8 +68,8 @@ function SOUND:sfx(name, waitForPrevious, speed)
     end
 
     if not sfx:isPlaying() then
+        if sfx.setPitch and speed and speed~=1 then sfx:setPitch(speed) end
         sfx:play()
-        if speed and speed~=1 then sfx:setPitch(speed) end
     end
 end
 

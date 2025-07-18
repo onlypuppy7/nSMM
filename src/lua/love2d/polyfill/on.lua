@@ -70,7 +70,7 @@ function __PC.key2event(key, isTextInput)
         __PC.callEvent("help")
     elseif key == "pause" or key == "break" then
         __PC.callEvent("help")
-    elseif not isTextInput then
+    elseif (not isTextInput) and key:sub(1, 1) == "_" then
         __PC.callEvent("charIn", key)
     end
 end

@@ -8,7 +8,7 @@ import path from 'path';
 //oh no! this file is chatgpt generated!
 //i cant be bothered to write it out
 
-function bundleNSMM(name, luaFilePath) {
+function bundleNSMM(name, luaFilePath, save) {
     let bundledLuaOG = bundle(luaFilePath, {
         paths: [luaDir + '/?.lua'],
     });
@@ -51,6 +51,11 @@ function bundleNSMM(name, luaFilePath) {
     fs.writeFileSync(outputMinifiedFilePath, minifiedLua);
     console.log('Bundled Lua code written to:', outputBundleFilePath);
     console.log('Minified Lua code written to:', outputMinifiedFilePath);
+
+    return {
+        full: bundledLua,
+        min: minifiedLua
+    };
 };
 
 const luaDir = 'src/lua';
@@ -61,8 +66,8 @@ bundleNSMM('nSMM.debug', path.resolve(luaDir + '/nsmm-debug.lua'));
 bundleNSMM('nSMMCourseWorld', path.resolve(luaDir + '/courseworld.lua'));
 // bundleNSMM('nSMMCourseWorld.debug', path.resolve(luaDir+'/courseworld-debug.lua'));
 
-bundleNSMM('pc', path.resolve(luaDir+'/main.lua'));
-bundleNSMM('ds', path.resolve(luaDir + '/ds.lua'));
+let pcNSMM = bundleNSMM('pc', path.resolve(luaDir+'/main.lua'));
+// bundleNSMM('ds', path.resolve(luaDir + '/ds.lua'));
 
 let htmlFilePath = path.resolve('src/html');
 let htmlDestinationPath = path.resolve('dist/html');
@@ -87,33 +92,53 @@ console.log('HTML files copied to:', htmlDestinationPath);
 //bundle lua files into zip
 import JSZip from 'jszip';
 
-//why doesnt jszip have this built-in?
-async function addFolderToZip(zip, folderPath, zipFolderPath = '') {
+async function addFolderToZip(zip, folderPath, zipFolderPath = '', filterExts = [], ignorePairs = []) {
     const items = fs.readdirSync(folderPath);
 
     for (const item of items) {
+        // check ignore list first
+        // console.log(item)
+        const shouldIgnore = ignorePairs.some(([prefix, suffix]) => {
+            return item.startsWith(prefix) && item.endsWith(suffix);
+        });
+
+        if (shouldIgnore) continue;
+
         const fullPath = path.join(folderPath, item);
         const stats = fs.statSync(fullPath);
 
         if (stats.isDirectory()) {
             const folder = zip.folder(path.join(zipFolderPath, item));
-            await addFolderToZip(folder, fullPath, '');
+            await addFolderToZip(folder, fullPath, '', filterExts, ignorePairs);
         } else {
-            const content = fs.readFileSync(fullPath);
-            zip.file(path.join(zipFolderPath, item), content);
-        };
-    };
-};
+            const ext = path.extname(item).toLowerCase();
+            if (filterExts.length === 0 || filterExts.includes(ext)) {
+                const content = fs.readFileSync(fullPath);
+                zip.file(path.join(zipFolderPath, item), content);
+            }
+        }
+    }
+}
 
-async function zipDirectory(folderPath) {
+async function zipDirectory(folderPath, filterExts = [], customFiles = [], ignorePairs = []) {
     const zip = new JSZip();
-    await addFolderToZip(zip, folderPath);
-    return zip.generateAsync({
-        type: 'nodebuffer'
-    });
-};
+    await addFolderToZip(zip, folderPath, '', filterExts, ignorePairs);
 
-const zippedContent = await zipDirectory(luaDir);
+    for (const [filename, content] of customFiles) {
+        zip.file(filename, content);
+    }
+
+    return zip.generateAsync({ type: 'nodebuffer' });
+}
+
+const zippedContent = await zipDirectory(
+    luaDir,
+    ['.wav', '.ogg', '.png', '.ttf'],
+    [['main.lua', pcNSMM.min]],
+    [['bgm_', '.wav']] // ignore files starting with 'bgm_' and ending in '.wav'
+);
+
+
 
 //import crypto miner
 import crypto from 'crypto';
@@ -124,7 +149,6 @@ hash.update(zippedContent);
 const zipHash = hash.digest('hex');
 console.log('Zip file hash:', zipHash);
 
-// Write zip to disk (optional)
 const loveName = `nsmm_${zipHash}`;
 const lovePath = path.join('dist', 'html', 'lovejs', loveName + ".love");
 fs.mkdirSync(path.dirname(lovePath), {
