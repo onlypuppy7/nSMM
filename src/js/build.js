@@ -8,6 +8,21 @@ import path from 'path';
 //oh no! this file is chatgpt generated!
 //i cant be bothered to write it out
 
+const luaDir = 'src/lua';
+
+const confLua = fs.readFileSync(path.join(luaDir, 'conf_PROD.lua'), 'utf8');
+const metaLua = fs.readFileSync(path.join(luaDir, 'meta.lua'), 'utf8');
+
+const str = `versText="1.4.0a"
+versNum=56`;
+
+const match = str.match(/versText="([^"]+)"[\s\S]*?versNum=(\d+)/);
+
+const versText = match[1];
+const versNum = parseInt(match[2]);
+
+console.log(versText, versNum)
+
 function bundleNSMM(name, luaFilePath, save) {
     let bundledLuaOG = bundle(luaFilePath, {
         paths: [luaDir + '/?.lua'],
@@ -58,16 +73,26 @@ function bundleNSMM(name, luaFilePath, save) {
     };
 };
 
-const luaDir = 'src/lua';
-
-bundleNSMM('nSMM', path.resolve(luaDir + '/nsmm.lua'));
+let nsmmcalc = bundleNSMM('nSMM', path.resolve(luaDir + '/nsmm.lua'));
 bundleNSMM('nSMM.debug', path.resolve(luaDir + '/nsmm-debug.lua'));
 
-bundleNSMM('nSMMCourseWorld', path.resolve(luaDir + '/courseworld.lua'));
+let courseworldcalc = bundleNSMM('nSMMCourseWorld', path.resolve(luaDir + '/courseworld.lua'));
 // bundleNSMM('nSMMCourseWorld.debug', path.resolve(luaDir+'/courseworld-debug.lua'));
 
 let pcNSMM = bundleNSMM('pc', path.resolve(luaDir+'/main.lua'));
 // bundleNSMM('ds', path.resolve(luaDir + '/ds.lua'));
+
+let releaseDestPath = path.resolve('dist/release');
+
+//delete old html files
+fs.rmSync(releaseDestPath, {
+    recursive: true,
+    force: true
+});
+
+fs.mkdirSync(releaseDestPath, {
+    recursive: true
+});
 
 let htmlFilePath = path.resolve('src/html');
 let htmlDestinationPath = path.resolve('dist/html');
@@ -92,60 +117,63 @@ console.log('HTML files copied to:', htmlDestinationPath);
 //bundle lua files into zip
 import JSZip from 'jszip';
 
-async function addFolderToZip(zip, folderPath, zipFolderPath = '', filterExts = [], ignorePairs = []) {
+async function addFolderToZip(zip, folderPath, zipFolderPath = '', filterExts = [], ignorePairs = [], baseZipFolderPath = '', isRoot = true) {
     const items = fs.readdirSync(folderPath);
 
     for (const item of items) {
-        // check ignore list first
-        // console.log(item)
         const shouldIgnore = ignorePairs.some(([prefix, suffix]) => {
             return item.startsWith(prefix) && item.endsWith(suffix);
         });
-
         if (shouldIgnore) continue;
 
         const fullPath = path.join(folderPath, item);
         const stats = fs.statSync(fullPath);
 
+        const targetBase = isRoot ? baseZipFolderPath : '';
+        const targetPath = path.join(targetBase, zipFolderPath, item);
+
         if (stats.isDirectory()) {
-            const folder = zip.folder(path.join(zipFolderPath, item));
-            await addFolderToZip(folder, fullPath, '', filterExts, ignorePairs);
+            const folder = zip.folder(targetPath);
+            await addFolderToZip(folder, fullPath, '', filterExts, ignorePairs, baseZipFolderPath, false);
         } else {
             const ext = path.extname(item).toLowerCase();
             if (filterExts.length === 0 || filterExts.includes(ext)) {
                 const content = fs.readFileSync(fullPath);
-                zip.file(path.join(zipFolderPath, item), content);
+                zip.file(targetPath, content);
             }
         }
     }
 }
 
-async function zipDirectory(folderPath, filterExts = [], customFiles = [], ignorePairs = []) {
+async function zipDirectory(folderPath, filterExts = [], customFiles = [], ignorePairs = [], baseZipFolderPath = '') {
     const zip = new JSZip();
-    await addFolderToZip(zip, folderPath, '', filterExts, ignorePairs);
+    await addFolderToZip(zip, folderPath, '', filterExts, ignorePairs, baseZipFolderPath);
 
     for (const [filename, content] of customFiles) {
-        zip.file(filename, content);
+        zip.file(path.join(baseZipFolderPath, filename), content);
     }
 
     return zip.generateAsync({ type: 'nodebuffer' });
 }
 
-const zippedContent = await zipDirectory(
+
+const zippedContentPC = await zipDirectory(
     luaDir,
     ['.wav', '.ogg', '.png', '.ttf'],
-    [['main.lua', pcNSMM.min]],
-    [['bgm_', '.wav']] // ignore files starting with 'bgm_' and ending in '.wav'
+    [
+        ['main.lua', pcNSMM.min],
+        ['conf.lua', confLua],
+    ],
+    [['bgm_', '.wav']], // ignore files starting with 'bgm_' and ending in '.wav'
+    ''
 );
-
-
 
 //import crypto miner
 import crypto from 'crypto';
 
 //create hash for the zip file
 const hash = crypto.createHash('sha256');
-hash.update(zippedContent);
+hash.update(zippedContentPC);
 const zipHash = hash.digest('hex');
 console.log('Zip file hash:', zipHash);
 
@@ -154,10 +182,46 @@ const lovePath = path.join('dist', 'html', 'lovejs', loveName + ".love");
 fs.mkdirSync(path.dirname(lovePath), {
     recursive: true
 });
-fs.writeFileSync(lovePath, zippedContent);
+fs.writeFileSync(lovePath, zippedContentPC);
+
+fs.writeFileSync(path.join('dist', 'release', `nSMM.pc.${versText}.${versNum}.release.love`), zippedContentPC);
 
 //edit index.html to include the zip file
 const indexFilePath = path.join(htmlDestinationPath, 'lovejs', 'index.html');
 let indexContent = fs.readFileSync(indexFilePath, 'utf-8');
 indexContent = indexContent.replaceAll("NSMMHERE", loveName);
 fs.writeFileSync(indexFilePath, indexContent);
+
+const lovepotion3dsx = fs.readFileSync(path.join(luaDir, '..', '3ds', 'lovepotion.3dsx'));
+
+// console.log(lovepotion3dsx)
+
+const zippedContent3ds = await zipDirectory(
+    luaDir,
+    ['.wav', '.t3x', '.ttf'],
+    [
+        ['main.lua', pcNSMM.min],
+        ['conf.lua', confLua],
+        ['../nsmm.3dsx', lovepotion3dsx],
+    ],
+    [],
+    '3ds/nsmm/game'
+);
+
+fs.writeFileSync(path.join('dist', 'release', `nSMM.3ds.${versText}.${versNum}.release.zip`), zippedContent3ds);
+
+fs.writeFileSync(path.join('dist', 'release', `nSMM.ti.${versText}.${versNum}.release.lua`), nsmmcalc.full);
+fs.writeFileSync(path.join('dist', 'release', `nSMM.ti.${versText}.${versNum}.release.min.lua`), nsmmcalc.min);
+
+fs.writeFileSync(path.join('dist', 'release', `nSMMCourseWorld.ti.${versText}.${versNum}.release.lua`), courseworldcalc.full);
+fs.writeFileSync(path.join('dist', 'release', `nSMMCourseWorld.ti.${versText}.${versNum}.release.min.lua`), courseworldcalc.min);
+
+const zippedContentHTML = await zipDirectory(
+    htmlDestinationPath,
+    [],
+    [],
+    [],
+    ''
+);
+
+fs.writeFileSync(path.join('dist', 'release', `nSMM.web.${versText}.${versNum}.release.zip`), zippedContentHTML);

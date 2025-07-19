@@ -37,7 +37,7 @@ function platform.gc:setFont(family, style, size)
 end
 
 function platform.gc:drawString(str, x, y, pos)
-    if __PC.consoleHW == "3DS" then y = y + 4 end
+    if __PC.consoleHW == "3ds" then y = y + 4 end
 	love.graphics.print(str, x, y + (self.offsets[pos] or self.offsets["bottom"])() )
 end
 
@@ -163,7 +163,7 @@ end
 
 
 function platform.gc:clipRect(op, x, y, width, height)
-    if __PC.consoleHW ~= "3DS" then
+    if __PC.consoleHW ~= "3ds" then
         if op == "reset" then
             love.graphics.setScissor()
         elseif op == "set" then

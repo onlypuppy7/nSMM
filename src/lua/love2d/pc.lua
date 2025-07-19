@@ -24,14 +24,14 @@ if love._console or __DS then
     targetLogicFps = 30
 
     if love._console then
-        __PC.consoleHW = love._console
+        __PC.consoleHW = string.lower(love._console)
         love.graphics.set3D(false)
     elseif __DS then
-        __PC.consoleHW = "DS"
+        __PC.consoleHW = "ds"
     end
 
     -- print(__PC.consoleHW)
-    if __PC.consoleHW == "3DS" then
+    if __PC.consoleHW == "3ds" or __PC.consoleHW == "wii u" then
         __PC.nativeWidth = 320 --ive forgotten what exactly about this is "native" atp
         __PC.nativeHeight = 220
         __PC.noCloneSFX = true
@@ -75,7 +75,7 @@ __PC.loop = function()
 	
         __PC.ToolPalette:paint(platform.gc)
 
-        if __PC.consoleHW == "3DS" then
+        if __PC.consoleHW == "3ds" then
             gc:setColorRGB(0,0,0)
             gc:fillRect(0, 220, 320, 20)
         end

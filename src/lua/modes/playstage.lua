@@ -624,12 +624,12 @@ function playStage:drawCircleTransition(gc,centerX,centerY,frame,out) --out=fals
         --DRAW BORDERS
         local v1=math.max(0,centerY-circleSize)
         local v2=math.max(0,centerX+circleSize-1)
-        gc:fillRect(0,0,320,v1+1)--top
-        gc:fillRect(0,math.max(0,circleSize+centerY)-1,320,math.max(0,math.min(220, screenHeight)-(circleSize+centerY))+2)--bottom
+        gc:fillRect(0,0,screenWidth,v1+1)--top
+        gc:fillRect(0,math.max(0,circleSize+centerY)-1,screenWidth,math.max(0,screenHeight-(circleSize+centerY))+2)--bottom
         gc:fillRect(0,v1,math.max(0,centerX-circleSize)+1,circleSize*2)--left
-        gc:fillRect(v2,v1,math.max(0,320-v2),circleSize*2)--right
+        gc:fillRect(v2,v1,math.max(0,screenWidth-v2),circleSize*2)--right
     else
-        gc:fillRect(0,0,320,212)
+        gc:fillRect(0,0,screenWidth,screenHeight)
     end
 end
 

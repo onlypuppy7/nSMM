@@ -126,8 +126,14 @@ function editor:setDisplayedGroup(group)
 end end end
 
 function editor:charIn(chr)
-    print(chr)
-    if not gui.PROMPT and not editor.levelList then 
+    -- print(chr, gui.PROMPT, editor.levelList, editor.displayedGroup, editor.displayedGroup and editor.displayedGroup.scroll)
+    if editor.displayedGroup and editor.displayedGroup.scroll then
+        if chr=="8" then
+            gui:click("gscrollU")
+        elseif chr=="2" then
+            gui:click("gscrollD")
+        end
+    elseif (not gui.PROMPT) and (not editor.levelList) then 
         if chr=="4" then --left
             editor.cameraOffset=editor.cameraOffset-21
         elseif chr=="8" then --up
@@ -173,12 +179,6 @@ function editor:charIn(chr)
                 playStage:generate(level2string(level.current),false,true)
                 playStage.active=true
             end
-        end
-    elseif editor.displayedGroup and editor.displayedGroup.scroll then
-        if chr=="8" then
-            gui:click("gscrollU")
-        elseif chr=="2" then
-            gui:click("gscrollD")
         end
     end
 end
