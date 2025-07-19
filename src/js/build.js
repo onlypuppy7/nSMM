@@ -185,6 +185,7 @@ fs.mkdirSync(path.dirname(lovePath), {
 fs.writeFileSync(lovePath, zippedContentPC);
 
 fs.writeFileSync(path.join('dist', 'release', `nSMM.pc.${versText}.${versNum}.release.love`), zippedContentPC);
+console.log("wrote pc love to release");
 
 //edit index.html to include the zip file
 const indexFilePath = path.join(htmlDestinationPath, 'lovejs', 'index.html');
@@ -209,12 +210,17 @@ const zippedContent3ds = await zipDirectory(
 );
 
 fs.writeFileSync(path.join('dist', 'release', `nSMM.3ds.${versText}.${versNum}.release.zip`), zippedContent3ds);
+console.log("wrote 3ds zip to release");
 
 fs.writeFileSync(path.join('dist', 'release', `nSMM.ti.${versText}.${versNum}.release.lua`), nsmmcalc.full);
+console.log("wrote ti lua to release");
 fs.writeFileSync(path.join('dist', 'release', `nSMM.ti.${versText}.${versNum}.release.min.lua`), nsmmcalc.min);
+console.log("wrote minned ti lua to release");
 
 fs.writeFileSync(path.join('dist', 'release', `nSMMCourseWorld.ti.${versText}.${versNum}.release.lua`), courseworldcalc.full);
+console.log("wrote ti courseworld lua to release");
 fs.writeFileSync(path.join('dist', 'release', `nSMMCourseWorld.ti.${versText}.${versNum}.release.min.lua`), courseworldcalc.min);
+console.log("wrote ti minned courseworld lua to release");
 
 const zippedContentHTML = await zipDirectory(
     htmlDestinationPath,
@@ -225,3 +231,4 @@ const zippedContentHTML = await zipDirectory(
 );
 
 fs.writeFileSync(path.join('dist', 'release', `nSMM.web.${versText}.${versNum}.release.zip`), zippedContentHTML);
+console.log("wrote web archive to release");
