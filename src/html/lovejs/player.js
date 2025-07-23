@@ -380,6 +380,18 @@
 (async () => {
   let clipboardText = null;
 
+  async function waitForFocus() {
+    if (document.hasFocus()) return;
+  
+    return new Promise(resolve => {
+      const onFocus = () => {
+        window.removeEventListener('focus', onFocus);
+        resolve();
+      };
+      window.addEventListener('focus', onFocus);
+    });
+  }
+
   // Only run clipboard polling if not Firefox or other restricted environments
   async function isSafeToPollClipboard() {
     const isFirefox = navigator.userAgent.toLowerCase().includes("firefox");
@@ -391,14 +403,18 @@
       const readTextSupported = !!navigator.clipboard?.readText;
       const clipboardPermissions = await navigator.permissions?.query({ name: "clipboard-read" });
 
-      console.log(clipboardPermissions);
-      if (!readTextSupported) {
-        alert('Heads up! Your browser does not support clipboard reading. This means that automatic clipboard reading is disabled. Consider using a more modern browser to paste externally.');
-      } else if ((!clipboardPermissions || clipboardPermissions.state !== "granted")) {
-        alert('Heads up! Your browser supports clipboard reading, but it requires user permission. Please allow clipboard access for nSMM to read levels from your clipboard.');
+      await waitForFocus();
+      
+      try {
+        // this triggers a permission prompt
+        clipboardText = await navigator.clipboard.readText();
+        console.log('Clipboard access granted');
+        return true;
+      } catch (err) {
+        console.warn('Clipboard access denied or blocked:', err);
+        alert('Heads up! Your browser supports clipboard reading, but permission was denied. Please allow clipboard access for nSMM to read levels from your clipboard.');
+        return false;
       }
-
-      return readTextSupported && (!clipboardPermissions || clipboardPermissions.state === "granted")
     };
   }
 

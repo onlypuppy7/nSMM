@@ -6,3 +6,4 @@ nSMM [MASTER].tns
 **/build/
 **/dist/
 nSMM \[MASTER\].tns
+**/.DS_Store
