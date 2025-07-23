@@ -34,7 +34,7 @@ todo
 [x] rope sfx
 [x] make the selector reach the bottom
 
-[ ] koopas no longer stationary(?)
+[x] koopas no longer stationary(?)
 [ ] platform highlight broken?
 [ ] adjust spring height, and vx
 [ ] autoscroll ignoring scroll stops?

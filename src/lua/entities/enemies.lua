@@ -259,7 +259,7 @@ objKoopaPara=class(objAPI)
                 else self.facing=(mario.x>self.x) and "R_" or "L_" end
                 self.count=self.count+1
             end
-            self.doMovements=true
+            self.doMovements=(not self.config) or (self.config[1] and self.config[2])
         elseif self.status==3 then self:animateDeathFlyOffscreen() --fireball/flower
         end
     end
