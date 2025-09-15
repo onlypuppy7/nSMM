@@ -212,14 +212,14 @@ const zippedContent3ds = await zipDirectory(
 fs.writeFileSync(path.join('dist', 'release', `nSMM.3ds.${versText}.${versNum}.release.zip`), zippedContent3ds);
 console.log("wrote 3ds zip to release");
 
-fs.writeFileSync(path.join('dist', 'release', `nSMM.ti.${versText}.${versNum}.release.lua`), nsmmcalc.full);
+fs.writeFileSync(path.join('dist', 'release', `nSMM.src.${versText}.${versNum}.release.lua`), nsmmcalc.full);
 console.log("wrote ti lua to release");
-fs.writeFileSync(path.join('dist', 'release', `nSMM.ti.${versText}.${versNum}.release.min.lua`), nsmmcalc.min);
+fs.writeFileSync(path.join('dist', 'release', `nSMM.src.${versText}.${versNum}.release.min.lua`), nsmmcalc.min);
 console.log("wrote minned ti lua to release");
 
-fs.writeFileSync(path.join('dist', 'release', `nSMMCourseWorld.ti.${versText}.${versNum}.release.lua`), courseworldcalc.full);
+fs.writeFileSync(path.join('dist', 'release', `nSMMCourseWorld.src.${versText}.${versNum}.release.lua`), courseworldcalc.full);
 console.log("wrote ti courseworld lua to release");
-fs.writeFileSync(path.join('dist', 'release', `nSMMCourseWorld.ti.${versText}.${versNum}.release.min.lua`), courseworldcalc.min);
+fs.writeFileSync(path.join('dist', 'release', `nSMMCourseWorld.src.${versText}.${versNum}.release.min.lua`), courseworldcalc.min);
 console.log("wrote ti minned courseworld lua to release");
 
 const zippedContentHTML = await zipDirectory(
@@ -232,3 +232,24 @@ const zippedContentHTML = await zipDirectory(
 
 fs.writeFileSync(path.join('dist', 'release', `nSMM.web.${versText}.${versNum}.release.zip`), zippedContentHTML);
 console.log("wrote web archive to release");
+
+
+const loveExe = fs.readFileSync(path.join(luaDir, '..', 'win', 'love.exe'));
+
+const outputExe = path.join('dist', 'release', `nSMM.win.${versText}.${versNum}.release.exe`);
+fs.writeFileSync(outputExe, loveExe);
+fs.appendFileSync(outputExe, zippedContentPC);
+console.log("wrote win exe to release");
+
+import rcedit from 'rcedit';
+const iconPath = path.join(luaDir, '..', 'win', 'icon.ico');
+
+rcedit(outputExe, {
+  icon: iconPath,
+}, (err) => {
+  if (err) {
+    console.error('Failed to set icon:', err);
+  } else {
+    console.log('Icon set successfully');
+  }
+});
