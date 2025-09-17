@@ -19,3 +19,13 @@ Building isn't impossible. All the building and (optional) minifying is graceful
 1. `npm i`
 2. `npm run build`
 3. The output directories will be printed to console (typically at `./dist`)
+
+## Credits
+
+TODO, important bc it uses a ton of different things
+
+jim bawens pcspire
+https://github.com/love2d/love-android/releases/download/11.5a/love-11.5-android-embed.apk
+https://raw.githubusercontent.com/iBotPeaches/Apktool/master/scripts/windows/apktool.bat
+https://bitbucket.org/iBotPeaches/apktool/downloads
+https://github.com/patrickfav/uber-apk-signer/releases/tag/v1.3.0
