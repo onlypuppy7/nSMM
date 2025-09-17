@@ -1,4 +1,6 @@
--- local ok, err = pcall(function()
+-- require("tests.joystick")
+
+-- -- local ok, err = pcall(function()
 
     function __loadGame__()
         require("nsmm")
@@ -6,5 +8,6 @@
     end
 
     require("love2d.setup")
--- end)
--- if not ok then print("nSMM err:", err) end
+    
+-- -- end)
+-- -- if not ok then print("nSMM err:", err) end

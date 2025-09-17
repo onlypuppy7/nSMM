@@ -4,9 +4,16 @@ import {
 import luamin from 'luamin';
 import fs from 'fs';
 import path from 'path';
+import sharp from 'sharp';
+import JSZip from 'jszip';
+import { execSync } from 'child_process';
+//import crypto miner
+import crypto from 'crypto';
+import rcedit from 'rcedit';
 
-//oh no! this file is chatgpt generated!
+//oh no! this file is chatgpt generated! also copilot. because its very tedious!!
 //i cant be bothered to write it out
+//this is also windows only right now.
 
 const luaDir = 'src/lua';
 
@@ -115,7 +122,6 @@ fs.cpSync(htmlFilePath, htmlDestinationPath, {
 console.log('HTML files copied to:', htmlDestinationPath);
 
 //bundle lua files into zip
-import JSZip from 'jszip';
 
 async function addFolderToZip(zip, folderPath, zipFolderPath = '', filterExts = [], ignorePairs = [], baseZipFolderPath = '', isRoot = true) {
     const items = fs.readdirSync(folderPath);
@@ -168,8 +174,6 @@ const zippedContentPC = await zipDirectory(
     ''
 );
 
-//import crypto miner
-import crypto from 'crypto';
 
 //create hash for the zip file
 const hash = crypto.createHash('sha256');
@@ -241,7 +245,6 @@ fs.writeFileSync(outputExe, loveExe);
 fs.appendFileSync(outputExe, zippedContentPC);
 console.log("wrote win exe to release");
 
-import rcedit from 'rcedit';
 const iconPath = path.join(luaDir, '..', 'win', 'icon.ico');
 
 rcedit(outputExe, {
@@ -253,3 +256,145 @@ rcedit(outputExe, {
     console.log('Icon set successfully');
   }
 });
+
+//android
+
+try {
+    //start android build
+    //copy android template
+    const androidTemplatePath = path.join(luaDir, '..', 'android', 'love_decoded');
+    const androidBuildPath = path.join('dist', 'android_build');
+
+    //delete old android build
+    fs.rmSync(androidBuildPath, {
+        recursive: true,
+        force: true
+    });
+
+    fs.cpSync(androidTemplatePath, androidBuildPath, {
+        recursive: true,
+        force: true
+    });
+    console.log('Android template copied to:', androidBuildPath);
+
+    const androidManifestPath = path.join(androidBuildPath, 'AndroidManifest.xml');
+
+    const GameName = "nSMM";
+    const GamePackageName = "online.onlypuppy7.nsmm";
+    const GameVersionCode = versNum;
+    const GameVersionSemantic = versText;
+    const ORIENTATION = "sensorLandscape";
+
+    //this is from the love2d wiki
+    const manifestContent = `<?xml version="1.0" encoding="utf-8"?>
+    <manifest package="${GamePackageName}"
+            android:versionCode="${GameVersionCode}"
+            android:versionName="${GameVersionSemantic}"
+            android:installLocation="auto"
+            xmlns:android="http://schemas.android.com/apk/res/android">
+        <uses-permission android:name="android.permission.INTERNET" />
+        <uses-permission android:name="android.permission.VIBRATE" />
+        <uses-permission android:name="android.permission.BLUETOOTH" />
+        <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="18" />
+        <!--Uncomment line below if your game uses microphone capabilities. !-->
+        <!--uses-permission android:name="android.permission.RECORD_AUDIO" /!-->
+
+        <!-- OpenGL ES 2.0 -->
+        <uses-feature android:glEsVersion="0x00020000" />
+        <!-- Touchscreen support -->
+        <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
+        <!-- Game controller support -->
+        <uses-feature android:name="android.hardware.bluetooth" android:required="false" />
+        <uses-feature android:name="android.hardware.gamepad" android:required="false" />
+        <uses-feature android:name="android.hardware.usb.host" android:required="false" />
+        <!-- External mouse input events -->
+        <uses-feature android:name="android.hardware.type.pc" android:required="false" />
+        <!-- Low latency audio -->
+        <uses-feature android:name="android.hardware.audio.low_latency" android:required="false" />
+        <uses-feature android:name="android.hardware.audio.pro" android:required="false" />
+
+        <application
+                android:allowBackup="true"
+                android:icon="@drawable/love"
+                android:label="${GameName}"
+                android:usesCleartextTraffic="true" >
+            <activity
+                    android:name="org.love2d.android.GameActivity"
+                    android:exported="true"
+                    android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboard|keyboardHidden|navigation"
+                    android:label="${GameName}"
+                    android:launchMode="singleInstance"
+                    android:screenOrientation="${ORIENTATION}"
+                    android:resizeableActivity="false"
+                    android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
+                <intent-filter>
+                    <action android:name="android.intent.action.MAIN" />
+                    <category android:name="android.intent.category.LAUNCHER" />
+                    <category android:name="tv.ouya.intent.category.GAME" />
+                </intent-filter>
+                <intent-filter>
+                    <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
+                </intent-filter>
+            </activity>
+        </application>
+    </manifest>`;
+
+    fs.writeFileSync(androidManifestPath, manifestContent);
+    console.log('Android manifest written to:', androidManifestPath);
+
+    const androidAssetsPath = path.join(androidBuildPath, 'assets');
+    fs.mkdirSync(androidAssetsPath, {
+        recursive: true
+    });
+
+    //copy the game.love file to the assets folder
+    const androidGamePath = path.join(androidAssetsPath, 'game.love');
+    fs.writeFileSync(androidGamePath, zippedContentPC);
+    console.log('Android game.love written to:', androidGamePath);
+
+    const iconDrawablePaths = [
+        [path.join(androidBuildPath, 'res', 'drawable-hdpi', 'love.png'), 72],
+        [path.join(androidBuildPath, 'res', 'drawable-mdpi', 'love.png'), 48],
+        [path.join(androidBuildPath, 'res', 'drawable-xhdpi', 'love.png'), 96],
+        [path.join(androidBuildPath, 'res', 'drawable-xxhdpi', 'love.png'), 144],
+        [path.join(androidBuildPath, 'res', 'drawable-xxxhdpi', 'love.png'), 192],
+    ];
+
+    const iconSourcePath = path.join(luaDir, 'love2d', 'icon.png');
+
+    for (const drawablePath of iconDrawablePaths) {
+        const [destPath, size] = drawablePath;
+        await sharp(iconSourcePath).resize(size, size).toFile(destPath);
+        console.log(`Resized icon to ${size}x${size} and saved to:`, destPath);
+    }
+
+    const releaseApkPath = path.join('dist', 'release', `nSMM.android.${versText}.${versNum}.release.apk`);
+    const buildCommand = `.\\src\\android\\apktool.bat b -o ${releaseApkPath} ${androidBuildPath}`;
+    console.log('Starting Android build with command:', buildCommand);
+    execSync(buildCommand, {
+        stdio: 'inherit'
+    });
+    console.log('Android APK built successfully and saved to release folder.');
+
+    //signing
+    const signCommand = `java -jar .\\src\\android\\uber-apk-signer-1.3.0.jar --apks ${path.join('dist', 'release')}`;
+
+    console.log('Starting APK signing with command:', signCommand);
+    execSync(signCommand, {
+        stdio: 'inherit'
+    });
+    console.log('APK signed successfully.');
+
+    //cleanup, delete the unsigned apk, and rename the signed one to release
+    fs.unlinkSync(releaseApkPath);
+    const alignedApkPath = path.join('dist', 'release', `nSMM.android.${versText}.${versNum}.release-aligned-debugSigned.apk`);
+    fs.renameSync(alignedApkPath, releaseApkPath);
+    //move the idsig out of the release folder
+    const idsigPath = path.join('dist', 'release', `nSMM.android.${versText}.${versNum}.release-aligned-debugSigned.apk.idsig`);
+    const idsigDestPath = path.join('dist', `nSMM.android.${versText}.${versNum}.release.apk.idsig`);
+    fs.renameSync(idsigPath, idsigDestPath);
+    console.log('Unsigned APK deleted and signed APK renamed to release.');
+} catch (error) {
+    console.error("Android build failed:", error);
+    console.log("maybe you're not on windows? i havent setup apktool for other os's... yet?");
+}

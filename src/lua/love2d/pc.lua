@@ -13,6 +13,13 @@ __PC = {
     nativeWidth = 318, --calculator
     nativeHeight = 212,
     scale = 2,
+    os = love.system and love.system.getOS and love.system.getOS() or "Unknown", -- "Android", --
+    screenOffsetX = 0,
+    screenOffsetY = 0,
+    screenPaddingX = 0,
+    screenPaddingY = 0,
+    supportsScreenOffset = love.graphics and love.graphics.translate,
+    includeTouchControls = false,
 }
 
 print("love._console", love._console)
@@ -21,6 +28,7 @@ if love._console or __DS then
     __PC.useGameCanvas = false
     __PC.includeOnScreenConsole = false
     __PC.scale = 1
+    __PC.supportsScreenOffset = false
     targetLogicFps = 30
 
     if love._console then
@@ -39,8 +47,40 @@ if love._console or __DS then
         __PC.supportsPausing = false --buuuuut love.audio.pause() crashes! yayyy
         __PC.bgmFormat = "wav" --ogg lags
     end
-end
+elseif __PC.os == "Android" then
+    local width, height = love.graphics.getDimensions()
 
+    __PC.scale = math.min(width / __PC.nativeWidth, height / __PC.nativeHeight) --scale to fit screen
+
+    --set the offsets to center the screen
+    __PC.screenOffsetX = math.floor((width - (__PC.nativeWidth * __PC.scale)) / 2)
+    __PC.screenOffsetY = math.floor((height - (__PC.nativeHeight * __PC.scale)) / 2)
+
+    --set the padding for touch controls and centering
+    __PC.screenPaddingX = math.floor(__PC.screenOffsetX * 2) -- * __PC.scale
+    __PC.screenPaddingY = math.floor(__PC.screenOffsetY * 2) -- * __PC.scale
+
+    __PC.emulateCursor = true
+    __PC.supportsCursor = false
+    __PC.includeTouchControls = true
+end
+    -- local width, height = 2400, 1080
+
+    -- __PC.scale = math.min(width / __PC.nativeWidth, height / __PC.nativeHeight) --scale to fit screen
+
+    -- --set the offsets to center the screen
+    -- __PC.screenOffsetX = math.floor((width - (__PC.nativeWidth * __PC.scale)) / 2)
+    -- __PC.screenOffsetY = math.floor((height - (__PC.nativeHeight * __PC.scale)) / 2)
+
+    -- -- --set the offsets to center the screen
+    -- __PC.screenOffsetX = 16 * __PC.scale
+    -- __PC.screenOffsetY = 16 * __PC.scale
+
+    -- --set the padding for touch controls and centering
+    -- __PC.screenPaddingX = math.floor(__PC.screenOffsetX * 2)
+    -- __PC.screenPaddingY = math.floor(__PC.screenOffsetY * 2)
+    -- __PC.emulateCursor = true
+    -- __PC.supportsCursor = false
 
 function __PC.showKeyboard()
     love.keyboard.setTextInput(true)

@@ -1,7 +1,9 @@
 local consoleLib = false
+require("love2d.controls.virtualcontrols")
 
 if __PC.includeOnScreenConsole then
     consoleLib = require("love2d.console.console")
+    consoleLib.textinput("~") --uncomment to start with console open
 end
 
 function love.load()
@@ -11,10 +13,14 @@ function love.load()
         local iconData = love.image.newImageData("love2d/icon.png")
         love.window.setIcon(iconData)
 
-        love.window.setMode(__PC.nativeWidth * __PC.scale, __PC.nativeHeight * __PC.scale)
+        love.window.setMode((__PC.nativeWidth * __PC.scale) + __PC.screenPaddingX, (__PC.nativeHeight * __PC.scale) + __PC.screenPaddingY)
     end
     if (not __DS) and __PC.useGameCanvas then
         gameCanvas = love.graphics.newCanvas(__PC.nativeWidth, __PC.nativeHeight)
+    end
+
+    if __PC.includeTouchControls then
+        VirtualControls:setup()
     end
 
     __PC.onEvents.load()
@@ -104,9 +110,10 @@ function love.draw(screen)
         end
             
         love.graphics.setColor(1, 1, 1)
-        love.graphics.draw(gameCanvas, 0, 0, 0, __PC.scale, __PC.scale)
+        love.graphics.draw(gameCanvas, __PC.screenOffsetX, __PC.screenOffsetY, 0, __PC.scale, __PC.scale)
 
         if consoleLib then consoleLib.draw() end
+        if __PC.includeTouchControls then VirtualControls:draw() end
     else
         __PC.loop()
     end
@@ -191,78 +198,105 @@ end
 
 
 function love.keyreleased(key, scancode, isrepeat)
-    if ((not consoleLib) or not consoleLib.isEnabled()) and not __PC.ToolPalette:bindings("keyreleased", key, scancode, isrepeat) then
-        __PC.onEvents.keyreleased(key, scancode, isrepeat)
-    end
+    if consoleLib and consoleLib.isEnabled() then return end
+    if __PC.ToolPalette:bindings("keyreleased", key, scancode, isrepeat) then return end
+
+    __PC.onEvents.keyreleased(key, scancode, isrepeat)
 end
 
 function love.focus(f)
     __PC.onEvents.focus(f)
 end
 
-function love.mousepressed(x, y, button)
-    __PC.cursorPos.x = x / __PC.scale
-    __PC.cursorPos.y = y / __PC.scale
+function love.mousepressed(x, y, button, istouch, touches)
+    if __PC.includeTouchControls and not (istouch == "touch") then return end
 
-    if ((not consoleLib) or not consoleLib.isEnabled()) and not __PC.ToolPalette:bindings("mousepressed", x / __PC.scale, y / __PC.scale, button) then
-        __PC.onEvents.mousepressed(__PC.cursorPos.x, __PC.cursorPos.y, button)
-    end
+    __PC.cursorPos.x = (x - __PC.screenOffsetX) / __PC.scale
+    __PC.cursorPos.y = (y - __PC.screenOffsetY) / __PC.scale
+
+    -- if touches and touches > 1 then button = 2 end --this doesnt work actually lmfaoo
+    -- print("mousepressed", button, istouch)
+
+    if consoleLib and consoleLib.isEnabled() then return end
+    if __PC.ToolPalette:bindings("mousepressed", __PC.cursorPos.x, __PC.cursorPos.y, button) then return end
+
+    __PC.onEvents.mousepressed(__PC.cursorPos.x, __PC.cursorPos.y, button)
 end
 
-function love.mousereleased(x, y, button)
-    __PC.cursorPos.x = x / __PC.scale
-    __PC.cursorPos.y = y / __PC.scale
+function love.mousereleased(x, y, button, istouch)
+    if __PC.includeTouchControls and not (istouch == "touch") then return end
 
-    if ((not consoleLib) or not consoleLib.isEnabled()) and not __PC.ToolPalette:bindings("mousereleased", x / __PC.scale, y / __PC.scale, button) then
-        __PC.onEvents.mousereleased(__PC.cursorPos.x, __PC.cursorPos.y, button)
-    end
+    __PC.cursorPos.x = (x - __PC.screenOffsetX) / __PC.scale
+    __PC.cursorPos.y = (y - __PC.screenOffsetY) / __PC.scale
+
+    print("mousereleased", button, istouch)
+
+    if consoleLib and consoleLib.isEnabled() then return end
+    if __PC.ToolPalette:bindings("mousereleased", __PC.cursorPos.x, __PC.cursorPos.y, button) then return end
+
+    __PC.onEvents.mousereleased(__PC.cursorPos.x, __PC.cursorPos.y, button)
 end
 
 function love.mousemoved(x, y, dx, dy, istouch, isstick)
-    if not isstick then
-        x = x / __PC.scale
-        y = y / __PC.scale
+    if __PC.includeTouchControls and not (istouch == "touch" or isstick) then return end
+    -- if __PC.includeTouchControls and (not isstick) and VirtualControls:touchmoved("mouse", x, y, dx, dy, 1) then return end
+
+    if not (isstick) then
+        x = (x - __PC.screenOffsetX) / __PC.scale
+        y = (y - __PC.screenOffsetY) / __PC.scale
     end
 
     __PC.cursorPos.x = math.max(0, math.min(__PC.nativeWidth, x))
     __PC.cursorPos.y = math.max(0, math.min(__PC.nativeHeight, y))
 
-    if ((not consoleLib) or not consoleLib.isEnabled()) and not __PC.ToolPalette:bindings("mousemoved", x / __PC.scale, y / __PC.scale, dx / __PC.scale, dy / __PC.scale, istouch) then
-        __PC.onEvents.mousemoved(__PC.cursorPos.x, __PC.cursorPos.y, dx / __PC.scale, dy / __PC.scale, istouch)
-    end
+    -- print("setting mousemoved", istouch, isstick)
+
+    if consoleLib and consoleLib.isEnabled() then return end
+    if __PC.ToolPalette:bindings("mousemoved", __PC.cursorPos.x, __PC.cursorPos.y, dx / __PC.scale, dy / __PC.scale, istouch) then return end
+
+    __PC.onEvents.mousemoved(__PC.cursorPos.x, __PC.cursorPos.y, dx / __PC.scale, dy / __PC.scale, istouch)
 end
 
 local touchX, touchY = 0, 0
 local touchRadius = 5
 local acceptTouch = false
 
+function __PC:getShoulderDown()
+    local joysticks = love.joystick.getJoysticks()
+    local first = joysticks[1]
+    return first and first:isGamepadDown("leftshoulder", "rightshoulder")
+end
+
 function love.touchpressed(id, x, y, dx, dy, pressure)
+    if __PC.includeTouchControls and VirtualControls:touchpressed(id, x, y, dx, dy, pressure) then return end
+    --important: dont scale x/y because thatll be done in love.mousepressed
+
     touchX, touchY = x, y
     acceptTouch = true
 
-    -- print(id, x, y, dx, dy, pressure)
-    local joysticks = love.joystick.getJoysticks()
-    local first = joysticks[1]
-
-    love.mousepressed(x, y, (first and first:isGamepadDown("leftshoulder", "rightshoulder")) and 2 or 1)
+    love.mousepressed(x, y, __PC:getShoulderDown() and 2 or 1, "touch")
 end
 
 function love.touchreleased(id, x, y, dx, dy, pressure)
-    if acceptTouch then
-        local joysticks = love.joystick.getJoysticks()
-        local first = joysticks[1]
+    if __PC.includeTouchControls and VirtualControls:touchreleased(id, x, y, dx, dy, pressure) then return end
+    --important: dont scale x/y because thatll be done in love.mousereleased
 
-        love.mousereleased(x, y, (first and first:isGamepadDown("leftshoulder", "rightshoulder")) and 2 or 1)
+    if acceptTouch then
+        love.mousereleased(x, y, __PC:getShoulderDown() and 2 or 1, "touch")
     end
 end
 
 function love.touchmoved(id, x, y, dx, dy, pressure)
+    if __PC.includeTouchControls and VirtualControls:touchmoved(id, x, y, dx, dy, pressure) then return end
+    --important: dont scale x/y because thatll be done in love.mousemoved
+
     local distx = x - touchX
     local disty = y - touchY
+    
     if acceptTouch and (distx * distx + disty * disty > touchRadius * touchRadius) then
         acceptTouch = false
     end
-    love.mousemoved(x, y, dx, dy, true)
+    love.mousemoved(x, y, dx, dy, "touch")
 end
 
 function love.gamepadpressed(joystick, button)
