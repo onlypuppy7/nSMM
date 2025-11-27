@@ -88,6 +88,12 @@ require("meta")
     require("modes.titlescreen")
 
 --------------------------
+--DEBUG SCREEN FUNCTIONS--
+--------------------------
+
+    require("modes.debugscreen")
+
+--------------------------
 -------GUI FUNCTIONS------
 --------------------------
 

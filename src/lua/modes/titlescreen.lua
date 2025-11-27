@@ -88,6 +88,11 @@ function titleScreen:charIn(chr)
     if chr=="d" then
         _DEBUG_=not _DEBUG_
         titleScreen:init()
+    elseif chr=="t" and _DEBUG_ then
+        _DEBUG_="menu"
+        debugScreen:init()
+    elseif type(_DEBUG_)=="string" then
+        debugScreen:charIn(chr)
     end
 end
 
@@ -119,7 +124,9 @@ function titleScreen:mouseDown()
 end
 
 function titleScreen:escapeKey()
-    if titleScreen.vx==0 and titleScreen.vy==0 then
+    if type(_DEBUG_)=="string" then
+        debugScreen:escapeKey()
+    elseif titleScreen.vx==0 and titleScreen.vy==0 then
         gui:detectPos(titleScreen.cameraOffsetX,titleScreen.cameraOffsetY,23,17) --select the top left button...
         gui:click() --and click it. could be handled differently, but it works.
     end
@@ -127,26 +134,30 @@ end
 
 function titleScreen:paint(gc)
     cursor.show()
-    titleScreen.framesPassedBlock=titleScreen.framesPassedBlock+1
-    if (titleScreen.vx~=0 or titleScreen.vy~=0) and not gui.PROMPT then
-        switchTimer(true)
-        if math.abs(titleScreen.vx)>0 then
-            titleScreen.cameraOffsetX=titleScreen.cameraOffsetX+((titleScreen.vx/math.abs(titleScreen.vx))*20)
-            titleScreen.vx=titleScreen.vx-(titleScreen.vx/math.abs(titleScreen.vx))
+    if type(_DEBUG_) ~= "string" then
+        titleScreen.framesPassedBlock=titleScreen.framesPassedBlock+1
+        if (titleScreen.vx~=0 or titleScreen.vy~=0) and not gui.PROMPT then
+            switchTimer(true)
+            if math.abs(titleScreen.vx)>0 then
+                titleScreen.cameraOffsetX=titleScreen.cameraOffsetX+((titleScreen.vx/math.abs(titleScreen.vx))*20)
+                titleScreen.vx=titleScreen.vx-(titleScreen.vx/math.abs(titleScreen.vx))
+            end
+            if math.abs(titleScreen.vy)>0 then
+                titleScreen.cameraOffsetY=titleScreen.cameraOffsetY+((titleScreen.vy/math.abs(titleScreen.vy))*14)
+                titleScreen.vy=titleScreen.vy-(titleScreen.vy/math.abs(titleScreen.vy))
+            end
+        else
+            switchTimer(false)
+            gui:detectPos(titleScreen.cameraOffsetX,titleScreen.cameraOffsetY)
         end
-        if math.abs(titleScreen.vy)>0 then
-            titleScreen.cameraOffsetY=titleScreen.cameraOffsetY+((titleScreen.vy/math.abs(titleScreen.vy))*14)
-            titleScreen.vy=titleScreen.vy-(titleScreen.vy/math.abs(titleScreen.vy))
+        titleScreen:drawBackground(gc)
+        titleScreen:drawTerrain(gc)
+        if username~="" then
+            drawFont(gc,"WELCOME BACK "..username.."!",159-titleScreen.cameraOffsetX,6+titleScreen.cameraOffsetY,"centre",false,true)
+            drawFont(gc,titleScreen.splashText,159-titleScreen.cameraOffsetX,17+titleScreen.cameraOffsetY,"centre",nil,"rgb")
         end
     else
-        switchTimer(false)
-        gui:detectPos(titleScreen.cameraOffsetX,titleScreen.cameraOffsetY)
-    end
-    titleScreen:drawBackground(gc)
-    titleScreen:drawTerrain(gc)
-    if username~="" then
-        drawFont(gc,"WELCOME BACK "..username.."!",159-titleScreen.cameraOffsetX,6+titleScreen.cameraOffsetY,"centre",false,true)
-        drawFont(gc,titleScreen.splashText,159-titleScreen.cameraOffsetX,17+titleScreen.cameraOffsetY,"centre",nil,"rgb")
+        debugScreen:paint(gc)
     end
     __PC.allowedHeldKeys = {}
 end

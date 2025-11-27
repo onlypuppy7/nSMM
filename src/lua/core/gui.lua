@@ -57,6 +57,8 @@ function gui:clear()
 end
 
 function gui:paint(gc)
+    if type(_DEBUG_)=="string" then return end
+
     if (not titleScreen.active) and (editor.active or playStage.active) then
         gui:drawButtons(gc,0,8,"buttonList")
         if editor.levelList then gui:drawButtons(gc,0,8,"buttonListlevelListLocal") end --huge bodge, huge cringe
