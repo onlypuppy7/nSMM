@@ -324,9 +324,9 @@ function playStage:scrollCamera(force)
         playStage.cameraTargetOffset=playStage.cameraOffset
         if level.current.autoScroll then
             if playStage.cameraOffset>=playStage.levelWidth-318 then
-                playStage.cameraOffset=playStage.levelWidth-318
+                playStage.cameraTargetOffset=playStage.levelWidth-318
             elseif not (playStage.wait or gui.PROMPT) and playStage.cameraOffset~=playStage.levelWidth-318 then
-                playStage.cameraOffset=playStage.cameraOffset+level.current.autoScroll
+                playStage.cameraTargetOffset=playStage.cameraOffset+level.current.autoScroll
             end
         elseif (playStage.wait==false) and (not mario.powerUp) then
             local biasBoundary=48 --distance from centre (159) that mario has to travel to change the bias direction
@@ -349,10 +349,10 @@ function playStage:scrollCamera(force)
         end
     end
     --scroll stop
-    local function posInList(list,num,bodge)
-        if list[1]>num and bodge then return 2 end --wtf is this
+    local function posInList(list,num,bodge) --find position in list greater than num
+        if list[1]>=num and bodge then return 2 end --wtf is this
         for i=1,#list do
-            if list[i]>num then return i end
+            if list[i]>=num then return i end
         end return #list+(bodge or 0) --i'm really sorry for this
     end
     -- local posLeft,posRight=0,playStage.levelWidth-318 --never scroll past these
@@ -360,9 +360,10 @@ function playStage:scrollCamera(force)
     local posRight=level.current.scrollStopR[math.max(math.min(posInList(level.current.scrollStopR,playStage.cameraTargetOffset),posInList(level.current.scrollStopR,playStage.cameraOffset)),posInList(level.current.scrollStopR,mario.x-306))] --this is held together with post it note glue
     playStage.cameraTargetOffset=math.max(posLeft,math.min(playStage.cameraTargetOffset,posRight)) --clamp values to scroll stops --CONSIDER THIS FOR SCROLL STOP
     --smooth scrolling
-    local lerpFactor=(mario.clear or mario.dead) and 0.25 or force or 0.15 --the lerpFactor (scrolling smoothness (higher=smoother))
+    local lerpFactor=level.current.autoScroll and 0.5 or (mario.clear or mario.dead) and 0.25 or force or 0.15 --the lerpFactor (scrolling smoothness (higher=smoother))
     playStage.cameraOffset=math.round(playStage.cameraOffset+(playStage.cameraTargetOffset-playStage.cameraOffset)*lerpFactor,4)
     playStage.cameraOffset=math.max(0,math.min(playStage.cameraOffset,playStage.levelWidth-318)) --clamp values to level borders --CONSIDER THIS FOR SCROLL STOP
+    -- print(playStage.cameraOffset, playStage.cameraTargetOffset, posLeft, posRight)
     if level.current.autoMove and playStage.cameraOffset>=playStage.levelWidth-318 then
         level.current.autoMove=nil
     end
