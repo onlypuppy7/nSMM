@@ -1,3 +1,5 @@
+--levelserialise.lua
+
 function level2string(levelData,TEMPORARY)
     local starts=pixel2plot(levelData.startX,levelData.startY,true)
     local stageSettings="!" local currentBlock={nil,0} local i=0
@@ -145,7 +147,7 @@ function string2level(STRING,offsetX,offsetY,dataDepth) -- if offsetX is true, t
             levelPos=levelPos+1
             if levelPos<=levelData.END*13 then
                 levelData.set(((levelPos-1)%levelData.END)+1+offsetX, math.ceil(levelPos/levelData.END)+offsetY, data[1])
-            else
+            elseif levelPos<=levelData.END*14 then --prevents first block always being overworld theme
                 levelData.t[((levelPos-1)%levelData.END)+1+offsetX]=data[1]
             end
         end

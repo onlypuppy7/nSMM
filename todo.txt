@@ -40,7 +40,7 @@ todo
 [ ] platform highlight broken?
 [ ] adjust spring height, and vx
 [ ] autoscroll ignoring scroll stops?
-[ ] first tile becoming ground theme (WHY IS THIS STILL AN ISSUE!!!!!!!!!!!!!) <50-v8-5~3-!-500-v1.4.0a-56-My Course-xd-!-!|14>,1*E,*3,111,*20,1*E,*3,111,*27,1*7,*3,111,*27,1*7,*3,111,*27,1*7,*3,switch_p_i,*2B,185*3,*2F,185,*31,185,*30,185,*31,185,*31,166,*31,184,*5A,2*13,*1F
+[x] first tile becoming ground theme (WHY IS THIS STILL AN ISSUE!!!!!!!!!!!!!) <50-v8-5~3-!-500-v1.4.0a-56-My Course-xd-!-!|14>,1*E,*3,111,*20,1*E,*3,111,*27,1*7,*3,111,*27,1*7,*3,111,*27,1*7,*3,switch_p_i,*2B,185*3,*2F,185,*31,185,*30,185,*31,185,*31,166,*31,184,*5A,2*13,*1F
 
 [x] blue coin (p switch)
 [x] added a debug screen
