@@ -37,6 +37,7 @@ todo
 2.0.0: great leap forward update (mechanics + better together)
 
 [x] koopas no longer stationary(?)
+[x] straight line ones dont work either now?
 [ ] platform highlight broken?
 [ ] adjust spring height, and vx
 [x] autoscroll ignoring scroll stops?

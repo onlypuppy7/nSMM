@@ -114,7 +114,7 @@ function mario:calculateMove() --use velocity to update position
 --X handling
     self:aggregateCheckX(mario.px,true) --check & confirm platform's velocity
     self:aggregateCheckX(mario.vx) --check & confirm mario's velocity
-    local rightSideTolerance=305+4
+    local rightSideTolerance=305+2
     if (mario.x<0) or (((mario.x)<playStage.cameraOffset-2) and (level.current.autoScroll or level.current.disableBackScrolling)) then --left side
         mario.x=playStage.cameraOffset-2 if mario.vx<0 then mario.vx=0 end
         if self:multiWallCheck({{13,1},{13,15}}) then mario:kill() end

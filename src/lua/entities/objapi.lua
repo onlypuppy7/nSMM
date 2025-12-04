@@ -568,9 +568,11 @@ function objAPI:performLogic() --perform logic for the object, to be overridden 
     if self.doMovements then
         if self.px and self.px ~=0 then self:aggregateCheckX(self.px,true) end
         if self.vx and self.vx ~=0 then self:aggregateCheckX(self.vx) end
-        self:calculateAccelerationY(self.accelerationMultiplier or nil,self.terminalVelocity or nil)
-        if self.py<=0 then self:gravityCheck(-self.py,true) else self:bumpCheck(-self.py) end
-        if self.vy<=0 then self:gravityCheck(-self.vy)      else self:bumpCheck(-self.vy) end
+        if not self.noMovementY then
+            self:calculateAccelerationY(self.accelerationMultiplier or nil,self.terminalVelocity or nil)
+            if self.py<=0 then self:gravityCheck(-self.py,true) else self:bumpCheck(-self.py) end
+            if self.vy<=0 then self:gravityCheck(-self.vy)      else self:bumpCheck(-self.vy) end
+        end
         self:setNewPushV() self:checkFor()
     end
 end
