@@ -334,6 +334,10 @@ function playStage:drawBackground(gc) --rendered in rows from bottom to top w/ t
                 end
             
                 gc:drawImage(texs[bg], bgX, drawY)
+                --draw second copy if needed
+                if bgX + 512 < drawX + drawW then
+                    gc:drawImage(texs[bg], bgX + 512, drawY)
+                end
 
                 gc:clipRect("reset")
             end
