@@ -303,8 +303,43 @@ function playStage:drawBackground(gc) --rendered in rows from bottom to top w/ t
         else gc:setColorRGB(0,0,0) --underground or nighttime or castle
         end
         -- print(screenWidth, screenHeight)
-        gc:fillRect(((i-1)*16)-playStage.cameraOffset,0,18,math.min(220, screenHeight)) --backdrop
-end end
+        local drawX=((i-1)*16)-playStage.cameraOffset
+        local drawY=0
+        local drawW=18
+        local drawH=math.min(220, screenHeight)
+
+        gc:fillRect(drawX, drawY, drawW, drawH) --backdrop
+        
+        if __PC then --draw parallax background. each is 512x212px, so each column is a 16px chunk (32 columns)
+            local bg = "bg_"..(THEME or 0)
+
+            if texs[bg.."_0"] then --animated background
+                local animSpeed=8 --default animation speed
+                local frameForAnim=(math.floor((playStage.framesPassedBlock/animSpeed)%2)) --(support for animations)
+                bg = bg.."_"..frameForAnim
+            end
+
+            if texs[bg] then
+                gc:clipRect("set", drawX, drawY, drawW, drawH)
+
+                local anchorX = (playStage.cameraOffset * 0.5) % 512
+                local bgX = -anchorX
+            
+                local bgRight = bgX + 512
+                if bgRight < drawX then
+                    bgX = bgX + 512
+                end
+                if bgX > drawX then
+                    bgX = bgX - 512
+                end
+            
+                gc:drawImage(texs[bg], bgX, drawY)
+
+                gc:clipRect("reset")
+            end
+        end
+    end
+end
 
 function playStage:levelLogic()
     if checkCollision(mouse.x,mouse.y,1,1,4,178,40,30) and playStage.EDITOR then

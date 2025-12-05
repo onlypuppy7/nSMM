@@ -1,4 +1,4 @@
-versText="1.4.0a"
+versText="2.0.0a"
 versNum=56
 
 platform.apilevel = '2.2'

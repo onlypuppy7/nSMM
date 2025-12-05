@@ -1,5 +1,5 @@
 --[[
-    RELEASE CHECKLIST: 1.4.0a
+    RELEASE CHECKLIST: 2.0.0a
         # versText
         # versNum
         - rename editor

@@ -5,6 +5,7 @@
     function __loadGame__()
         require("nsmm")
         require("courseworld.courses")
+        require("data.textures-pcextras")
     end
 
     require("love2d.setup")

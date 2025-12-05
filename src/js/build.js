@@ -20,8 +20,7 @@ const luaDir = 'src/lua';
 const confLua = fs.readFileSync(path.join(luaDir, 'conf_PROD.lua'), 'utf8');
 const metaLua = fs.readFileSync(path.join(luaDir, 'meta.lua'), 'utf8');
 
-const str = `versText="1.4.0a"
-versNum=56`;
+const str = metaLua;;
 
 const match = str.match(/versText="([^"]+)"[\s\S]*?versNum=(\d+)/);
 
