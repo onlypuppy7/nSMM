@@ -266,6 +266,7 @@ function objAPI:aggregateCheckX(V,platformCalc) --to move in the x direction
             if isMario and self.vy==0 then mario:pipeCheck() end
             if self.canHitSide and self.vx~=0 then
                 local testPos=finalPos+(V>0 and W-3 or 0)+pol2binary(V)*8 local offsetY={1,H-1}
+                __PC.SOUND:sfx("bump")
                 for i=1,#offsetY do
                     if pixel2bumpable(testPos,self.y+offsetY[i],true) then
                         local v=pixel2plot(testPos,self.y+offsetY[i],true)
@@ -359,10 +360,10 @@ function objAPI:bumpCheck(V,crouchCalc) --made to work with velocity values that
         local topRight,topRightB=checkY(isMario,X+W-3,Y+offsetY,V)
         if crouchCalc and mario.crouch then return not not (topLeftB or topRightB) end --table to boolean :p
         if topLeftB or topRightB then
+            if isMario and self.vy>0 then __PC.SOUND:sfx("bump") end
             self.vy=-0.61
             if self.isFireball then self:handleFireballHit() self.y=self.y-4 return end
             if self.canHit or isMario then --no one knows what self.canHit does. its meaning has been lost to time.
-                __PC.SOUND:sfx("bump")
                 if type(topLeftB)=="boolean" then topLeftB=topRightB end
                 if type(topRightB)=="boolean" then topRightB=topLeftB end
                 topLeftB[2],topRightB[2]=math.max(topLeftB[2],topRightB[2]),math.max(topLeftB[2],topRightB[2])
