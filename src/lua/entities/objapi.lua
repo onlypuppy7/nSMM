@@ -361,7 +361,8 @@ function objAPI:bumpCheck(V,crouchCalc) --made to work with velocity values that
         if topLeftB or topRightB then
             self.vy=-0.61
             if self.isFireball then self:handleFireballHit() self.y=self.y-4 return end
-            if self.canHit or isMario then
+            if self.canHit or isMario then --no one knows what self.canHit does. its meaning has been lost to time.
+                __PC.SOUND:sfx("bump")
                 if type(topLeftB)=="boolean" then topLeftB=topRightB end
                 if type(topRightB)=="boolean" then topRightB=topLeftB end
                 topLeftB[2],topRightB[2]=math.max(topLeftB[2],topRightB[2]),math.max(topLeftB[2],topRightB[2])
