@@ -251,6 +251,7 @@ objKoopaPara=class(objAPI)
             self:checkMarioCollision({"transform",string.sub(self.TYPE,2,8),0,true,4})
             if self.TYPE=="Pkoopa_G" then --bouncing koopa
                 self.facing=(self.vx>0) and "R_" or "L_"
+                self.doMovements=true
             else --flying koopa
                 local function calc(top,HV) return math.round((math.sin(((self.count-(HV and 17 or 0))*(180/(HV or 44)))/57.296))*top) end --44 is the total frames of the loop
                 self.vx=(self.config[1]) and -calc(self.config[1]) or 0 --important! value here is inversed so they fly *up* when loaded
@@ -258,9 +259,9 @@ objKoopaPara=class(objAPI)
                 if self.config[1] then self.facing=(self.count%88)<=44 and "L_" or "R_"
                 else self.facing=(mario.x>self.x) and "R_" or "L_" end
                 self.count=self.count+1
+                self.doMovements=(self.config and (self.config[1] or self.config[2])) or false
+                self.noMovementY=self.vy==0
             end
-            self.doMovements=(self.config and (self.config[1] or self.config[2])) or false
-            self.noMovementY=self.vy==0
             print(self.TYPE,self.vx,self.vy, self.y ,self.doMovements)
         elseif self.status==3 then self:animateDeathFlyOffscreen() --fireball/flower
         end
