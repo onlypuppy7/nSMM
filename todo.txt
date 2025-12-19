@@ -42,8 +42,11 @@ todo
 [ ] adjust spring height, and vx (sustaining it?) 
 [x] autoscroll ignoring scroll stops?
 [x] first tile becoming ground theme (WHY IS THIS STILL AN ISSUE!!!!!!!!!!!!!)
+[ ] on browser version, opening edit a course from course world then playing it crashes.
 
 [x] blue coin (p switch)
 [x] added a debug screen
 
-[ ] pc feature: backgrounds
+[x] pc feature: backgrounds
+
+[ ] hammers, bros
