@@ -259,6 +259,12 @@ rcedit(outputExe, {
 //android
 
 try {
+    //check if system is windows, if not, skip android build
+    if (process.platform !== 'win32') {
+        console.log("Skipping Android build because the system is not Windows.");
+        process.exit(0);
+    }
+
     //start android build
     //copy android template
     const androidTemplatePath = path.join(luaDir, '..', 'android', 'love_decoded');
